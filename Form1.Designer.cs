@@ -19,9 +19,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn symbolColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn lastTradeColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn selectColumn;
-        private System.Windows.Forms.Panel stockControlsPanel;
-        private System.Windows.Forms.FlowLayoutPanel stockButtonsPanel;
-        private System.Windows.Forms.FlowLayoutPanel stockOptionsPanel;
+        private System.Windows.Forms.FlowLayoutPanel stocksBottomPanel;
         private System.Windows.Forms.Button navigationButton;
         private System.Windows.Forms.Button newPortfolioButton;
         private System.Windows.Forms.Button refreshButton;
@@ -42,13 +40,11 @@
         private System.Windows.Forms.Button hideToolsButton;
         private System.Windows.Forms.Button printChartButton;
         private System.Windows.Forms.Button snapshotChartButton;
-        private System.Windows.Forms.Button fullscreenChartButton;
+        private System.Windows.Forms.Button fullScreenChartButton;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.Panel chartInfoPanel;
-        private System.Windows.Forms.Label symbolInfoLabel;
-        private System.Windows.Forms.Label dateTimeInfoLabel;
-        private System.Windows.Forms.Label ohlcvInfoLabel;
+        private System.Windows.Forms.Label chartInfoLabel;
         private System.Windows.Forms.Label chartPlaceholderLabel;
 
         protected override void Dispose(bool disposing)
@@ -76,9 +72,7 @@
             symbolColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             lastTradeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             selectColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            stockControlsPanel = new System.Windows.Forms.Panel();
-            stockButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            stockOptionsPanel = new System.Windows.Forms.FlowLayoutPanel();
+            stocksBottomPanel = new System.Windows.Forms.FlowLayoutPanel();
             navigationButton = new System.Windows.Forms.Button();
             newPortfolioButton = new System.Windows.Forms.Button();
             refreshButton = new System.Windows.Forms.Button();
@@ -99,13 +93,11 @@
             hideToolsButton = new System.Windows.Forms.Button();
             printChartButton = new System.Windows.Forms.Button();
             snapshotChartButton = new System.Windows.Forms.Button();
-            fullscreenChartButton = new System.Windows.Forms.Button();
+            fullScreenChartButton = new System.Windows.Forms.Button();
             chartTabControl = new System.Windows.Forms.TabControl();
             chartTabPage = new System.Windows.Forms.TabPage();
             chartInfoPanel = new System.Windows.Forms.Panel();
-            symbolInfoLabel = new System.Windows.Forms.Label();
-            dateTimeInfoLabel = new System.Windows.Forms.Label();
-            ohlcvInfoLabel = new System.Windows.Forms.Label();
+            chartInfoLabel = new System.Windows.Forms.Label();
             chartPlaceholderLabel = new System.Windows.Forms.Label();
 
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
@@ -114,9 +106,6 @@
             mainSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
             mainMenuStrip.SuspendLayout();
-            stockControlsPanel.SuspendLayout();
-            stockButtonsPanel.SuspendLayout();
-            stockOptionsPanel.SuspendLayout();
             chartPanel.SuspendLayout();
             chartToolbarPanel.SuspendLayout();
             chartTabControl.SuspendLayout();
@@ -124,7 +113,6 @@
             chartInfoPanel.SuspendLayout();
             SuspendLayout();
 
-            // Main menu
             mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
@@ -135,7 +123,6 @@
             portfolioManagementMenuItem.Text = "مدیریت سبد";
             settingsMenuItem.Text = "تنظیمات";
 
-            // Main split: chart on the right, controls on the left.
             mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             mainSplitContainer.Location = new System.Drawing.Point(0, 24);
             mainSplitContainer.Name = "mainSplitContainer";
@@ -144,9 +131,11 @@
             mainSplitContainer.Panel2.Controls.Add(controlTabControl);
             mainSplitContainer.Size = new System.Drawing.Size(1200, 676);
             mainSplitContainer.SplitterDistance = 810;
+            mainSplitContainer.IsSplitterFixed = false;
+            mainSplitContainer.Panel1MinSize = 500;
+            mainSplitContainer.Panel2MinSize = 300;
             mainSplitContainer.TabIndex = 1;
 
-            // Left control area
             controlTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
@@ -154,12 +143,12 @@
             controlTabControl.Name = "controlTabControl";
             controlTabControl.SelectedIndex = 0;
 
-            stocksTabPage.Controls.Add(stocksDataGridView);
-            stocksTabPage.Controls.Add(stockControlsPanel);
-            stocksTabPage.Controls.Add(portfolioComboBox);
-            stocksTabPage.Controls.Add(portfolioLabel);
             stocksTabPage.Text = "سهام";
             stocksTabPage.Padding = new System.Windows.Forms.Padding(8);
+            stocksTabPage.Controls.Add(stocksDataGridView);
+            stocksTabPage.Controls.Add(stocksBottomPanel);
+            stocksTabPage.Controls.Add(portfolioComboBox);
+            stocksTabPage.Controls.Add(portfolioLabel);
 
             portfolioLabel.AutoSize = true;
             portfolioLabel.Location = new System.Drawing.Point(270, 12);
@@ -169,14 +158,13 @@
             portfolioComboBox.Location = new System.Drawing.Point(8, 8);
             portfolioComboBox.Size = new System.Drawing.Size(250, 23);
 
-            // Reduced grid height so the controls below remain visible.
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
             stocksDataGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             stocksDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             stocksDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             stocksDataGridView.Location = new System.Drawing.Point(8, 42);
-            stocksDataGridView.Size = new System.Drawing.Size(350, 465);
+            stocksDataGridView.Size = new System.Drawing.Size(350, 490);
             stocksDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             stocksDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             rowColumn.HeaderText = "ردیف";
@@ -186,50 +174,40 @@
             selectColumn.TrueValue = true;
             selectColumn.FalseValue = false;
 
-            // Bottom stock controls are docked and therefore remain visible at different DPI/scales.
-            stockControlsPanel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            stockControlsPanel.Location = new System.Drawing.Point(8, 512);
-            stockControlsPanel.Size = new System.Drawing.Size(350, 105);
-            stockButtonsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            stockButtonsPanel.Height = 38;
-            stockButtonsPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            stockButtonsPanel.WrapContents = false;
-            stockButtonsPanel.Controls.Add(navigationButton);
-            stockButtonsPanel.Controls.Add(newPortfolioButton);
-            stockButtonsPanel.Controls.Add(refreshButton);
-            stockButtonsPanel.Controls.Add(deleteButton);
-            stockOptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            stockOptionsPanel.Padding = new System.Windows.Forms.Padding(3, 5, 3, 3);
-            stockOptionsPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            stockOptionsPanel.WrapContents = false;
-            stockOptionsPanel.Controls.Add(selectAllCheckBox);
-            stockOptionsPanel.Controls.Add(selectNoneCheckBox);
-            stockOptionsPanel.Controls.Add(speedLabel);
-            stockOptionsPanel.Controls.Add(navigationSpeedTextBox);
-            stockControlsPanel.Controls.Add(stockOptionsPanel);
-            stockControlsPanel.Controls.Add(stockButtonsPanel);
-
+            stocksBottomPanel.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom;
+            stocksBottomPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            stocksBottomPanel.WrapContents = true;
+            stocksBottomPanel.Location = new System.Drawing.Point(8, 540);
+            stocksBottomPanel.Size = new System.Drawing.Size(350, 82);
+            stocksBottomPanel.Padding = new System.Windows.Forms.Padding(0);
+            stocksBottomPanel.Controls.Add(navigationButton);
+            stocksBottomPanel.Controls.Add(newPortfolioButton);
+            stocksBottomPanel.Controls.Add(refreshButton);
+            stocksBottomPanel.Controls.Add(deleteButton);
+            stocksBottomPanel.Controls.Add(selectAllCheckBox);
+            stocksBottomPanel.Controls.Add(selectNoneCheckBox);
+            stocksBottomPanel.Controls.Add(speedLabel);
+            stocksBottomPanel.Controls.Add(navigationSpeedTextBox);
             navigationButton.Text = "پیمایش";
-            navigationButton.Size = new System.Drawing.Size(75, 30);
+            navigationButton.Size = new System.Drawing.Size(72, 28);
             newPortfolioButton.Text = "سبد جدید";
-            newPortfolioButton.Size = new System.Drawing.Size(75, 30);
+            newPortfolioButton.Size = new System.Drawing.Size(78, 28);
             refreshButton.Text = "تازه‌سازی";
-            refreshButton.Size = new System.Drawing.Size(75, 30);
+            refreshButton.Size = new System.Drawing.Size(78, 28);
             deleteButton.Text = "حذف";
-            deleteButton.Size = new System.Drawing.Size(60, 30);
+            deleteButton.Size = new System.Drawing.Size(58, 28);
             selectAllCheckBox.Text = "همه";
             selectAllCheckBox.AutoSize = true;
             selectNoneCheckBox.Text = "هیچکدام";
             selectNoneCheckBox.AutoSize = true;
             speedLabel.Text = "سرعت:";
             speedLabel.AutoSize = true;
-            navigationSpeedTextBox.Size = new System.Drawing.Size(65, 23);
+            navigationSpeedTextBox.Size = new System.Drawing.Size(62, 23);
             navigationSpeedTextBox.Text = "1000";
 
             tabPage2.Text = "فیلترها";
             tabPage3.Text = "سایر";
 
-            // Shared chart toolbar.
             chartPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             chartPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             chartPanel.Controls.Add(chartTabControl);
@@ -249,72 +227,41 @@
             chartToolbarPanel.Controls.Add(hideToolsButton);
             chartToolbarPanel.Controls.Add(printChartButton);
             chartToolbarPanel.Controls.Add(snapshotChartButton);
-            chartToolbarPanel.Controls.Add(fullscreenChartButton);
+            chartToolbarPanel.Controls.Add(fullScreenChartButton);
 
             chartTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
             chartTypeComboBox.SelectedIndex = 0;
             chartTypeComboBox.Location = new System.Drawing.Point(6, 8);
-            chartTypeComboBox.Size = new System.Drawing.Size(100, 23);
-            gridButton.Text = "گرید";
-            gridButton.Location = new System.Drawing.Point(112, 7);
-            gridButton.Size = new System.Drawing.Size(58, 26);
-            crossButton.Text = "Cross";
-            crossButton.Location = new System.Drawing.Point(176, 7);
-            crossButton.Size = new System.Drawing.Size(62, 26);
-            zoomInButton.Text = "+";
-            zoomInButton.Location = new System.Drawing.Point(244, 7);
-            zoomInButton.Size = new System.Drawing.Size(32, 26);
-            zoomOutButton.Text = "−";
-            zoomOutButton.Location = new System.Drawing.Point(282, 7);
-            zoomOutButton.Size = new System.Drawing.Size(32, 26);
-            resetChartButton.Text = "Reset";
-            resetChartButton.Location = new System.Drawing.Point(320, 7);
-            resetChartButton.Size = new System.Drawing.Size(58, 26);
-            hideChartButton.Text = "مخفی چارت";
-            hideChartButton.Location = new System.Drawing.Point(384, 7);
-            hideChartButton.Size = new System.Drawing.Size(82, 26);
-            hideToolsButton.Text = "مخفی ابزار";
-            hideToolsButton.Location = new System.Drawing.Point(472, 7);
-            hideToolsButton.Size = new System.Drawing.Size(82, 26);
-            printChartButton.Text = "چاپ";
-            printChartButton.Location = new System.Drawing.Point(560, 7);
-            printChartButton.Size = new System.Drawing.Size(55, 26);
-            snapshotChartButton.Text = "عکس";
-            snapshotChartButton.Location = new System.Drawing.Point(621, 7);
-            snapshotChartButton.Size = new System.Drawing.Size(55, 26);
-            fullscreenChartButton.Text = "تمام‌صفحه";
-            fullscreenChartButton.Location = new System.Drawing.Point(682, 7);
-            fullscreenChartButton.Size = new System.Drawing.Size(82, 26);
+            chartTypeComboBox.Size = new System.Drawing.Size(92, 23);
+            gridButton.Text = "گرید"; gridButton.Location = new System.Drawing.Point(104, 7); gridButton.Size = new System.Drawing.Size(54, 26);
+            crossButton.Text = "Cross"; crossButton.Location = new System.Drawing.Point(164, 7); crossButton.Size = new System.Drawing.Size(58, 26);
+            zoomInButton.Text = "+"; zoomInButton.Location = new System.Drawing.Point(228, 7); zoomInButton.Size = new System.Drawing.Size(30, 26);
+            zoomOutButton.Text = "−"; zoomOutButton.Location = new System.Drawing.Point(264, 7); zoomOutButton.Size = new System.Drawing.Size(30, 26);
+            resetChartButton.Text = "Reset"; resetChartButton.Location = new System.Drawing.Point(300, 7); resetChartButton.Size = new System.Drawing.Size(54, 26);
+            hideChartButton.Text = "مخفی چارت"; hideChartButton.Location = new System.Drawing.Point(360, 7); hideChartButton.Size = new System.Drawing.Size(78, 26);
+            hideToolsButton.Text = "مخفی ابزار"; hideToolsButton.Location = new System.Drawing.Point(444, 7); hideToolsButton.Size = new System.Drawing.Size(78, 26);
+            printChartButton.Text = "چاپ"; printChartButton.Location = new System.Drawing.Point(528, 7); printChartButton.Size = new System.Drawing.Size(50, 26);
+            snapshotChartButton.Text = "عکس"; snapshotChartButton.Location = new System.Drawing.Point(584, 7); snapshotChartButton.Size = new System.Drawing.Size(50, 26);
+            fullScreenChartButton.Text = "تمام‌صفحه"; fullScreenChartButton.Location = new System.Drawing.Point(640, 7); fullScreenChartButton.Size = new System.Drawing.Size(78, 26);
 
-            // One chart per tab.
             chartTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             chartTabControl.Name = "chartTabControl";
             chartTabControl.Controls.Add(chartTabPage);
             chartTabControl.SelectedIndex = 0;
             chartTabPage.Text = "نماد";
             chartTabPage.Padding = new System.Windows.Forms.Padding(3);
-            chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartTabPage.Controls.Add(chartInfoPanel);
+            chartTabPage.Controls.Add(chartPlaceholderLabel);
 
-            // Chart information overlay: visual UI only for now. Later it will follow the mouse cursor.
-            chartInfoPanel.Location = new System.Drawing.Point(12, 12);
-            chartInfoPanel.Size = new System.Drawing.Size(285, 82);
+            chartInfoPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            chartInfoPanel.Height = 30;
             chartInfoPanel.BackColor = System.Drawing.SystemColors.Control;
-            chartInfoPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            symbolInfoLabel.AutoSize = true;
-            symbolInfoLabel.Location = new System.Drawing.Point(8, 7);
-            symbolInfoLabel.Text = "نماد: —";
-            dateTimeInfoLabel.AutoSize = true;
-            dateTimeInfoLabel.Location = new System.Drawing.Point(8, 29);
-            dateTimeInfoLabel.Text = "تاریخ/زمان: —";
-            ohlcvInfoLabel.AutoSize = true;
-            ohlcvInfoLabel.Location = new System.Drawing.Point(8, 51);
-            ohlcvInfoLabel.Text = "O: —   H: —   L: —   C: —   V: —";
-            chartInfoPanel.Controls.Add(symbolInfoLabel);
-            chartInfoPanel.Controls.Add(dateTimeInfoLabel);
-            chartInfoPanel.Controls.Add(ohlcvInfoLabel);
-
+            chartInfoPanel.Controls.Add(chartInfoLabel);
+            chartInfoLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            chartInfoLabel.Text = "نماد: —    تاریخ/زمان: —    O: —    H: —    L: —    C: —    V: —";
+            chartInfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            chartInfoLabel.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
             chartPlaceholderLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -335,16 +282,11 @@
             mainMenuStrip.ResumeLayout(false);
             mainMenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
-            stockOptionsPanel.ResumeLayout(false);
-            stockOptionsPanel.PerformLayout();
-            stockButtonsPanel.ResumeLayout(false);
-            stockControlsPanel.ResumeLayout(false);
             mainSplitContainer.Panel1.ResumeLayout(false);
             mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
             mainSplitContainer.ResumeLayout(false);
             chartInfoPanel.ResumeLayout(false);
-            chartInfoPanel.PerformLayout();
             chartTabPage.ResumeLayout(false);
             chartTabControl.ResumeLayout(false);
             chartToolbarPanel.ResumeLayout(false);
