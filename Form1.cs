@@ -12,6 +12,8 @@ namespace Trade.It
             mainSplitContainer.Panel2.Controls.Add(chartPanel);
             mainSplitContainer.SplitterDistance = 419;
 
+            mainMenuStrip.RightToLeft = RightToLeft.Yes;
+
             var closeAllChartsMenuItem = new ToolStripMenuItem
             {
                 Name = "closeAllChartsMenuItem",
