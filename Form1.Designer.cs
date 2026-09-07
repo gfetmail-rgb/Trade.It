@@ -1,4 +1,4 @@
-﻿namespace Trade.It
+namespace Trade.It
 {
     partial class Form1
     {
@@ -42,6 +42,13 @@
         private System.Windows.Forms.Panel chartInfoPanel;
         private System.Windows.Forms.Label chartInfoLabel;
         private System.Windows.Forms.Label chartPlaceholderLabel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rowColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn symbolColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn lastTradeColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn selectColumn;
+        private System.Windows.Forms.Button refreshButtonPortfolio;
+        private Trade.It.FiltersTabControl filtersTabControl;
+        private Trade.It.IdentifierTabControl identifierTabControl;
 
         protected override void Dispose(bool disposing)
         {
@@ -95,6 +102,8 @@
             tabPage2 = new TabPage();
             tabPage3 = new TabPage();
             refreshButtonPortfolio = new Button();
+            filtersTabControl = new FiltersTabControl();
+            identifierTabControl = new IdentifierTabControl();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -109,10 +118,10 @@
             stocksTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
             stocksBottomPanel.SuspendLayout();
+            tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
             SuspendLayout();
-            // 
             // mainMenuStrip
-            // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
             mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
@@ -120,46 +129,27 @@
             mainMenuStrip.RightToLeft = RightToLeft.No;
             mainMenuStrip.Size = new Size(1288, 36);
             mainMenuStrip.TabIndex = 0;
-            // 
-            // portfolioDefinitionMenuItem
-            // 
             portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
             portfolioDefinitionMenuItem.Size = new Size(121, 32);
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
-            // 
-            // portfolioManagementMenuItem
-            // 
             portfolioManagementMenuItem.Name = "portfolioManagementMenuItem";
             portfolioManagementMenuItem.Size = new Size(129, 32);
             portfolioManagementMenuItem.Text = "مدیریت سبد";
-            // 
-            // settingsMenuItem
-            // 
             settingsMenuItem.Name = "settingsMenuItem";
             settingsMenuItem.Size = new Size(99, 32);
             settingsMenuItem.Text = "تنظیمات";
-            // 
             // mainSplitContainer
-            // 
             mainSplitContainer.Dock = DockStyle.Fill;
             mainSplitContainer.Location = new Point(0, 36);
             mainSplitContainer.Name = "mainSplitContainer";
-            // 
-            // mainSplitContainer.Panel1
-            // 
             mainSplitContainer.Panel1.Controls.Add(chartPanel);
             mainSplitContainer.Panel1MinSize = 500;
-            // 
-            // mainSplitContainer.Panel2
-            // 
             mainSplitContainer.Panel2.Controls.Add(controlTabControl);
             mainSplitContainer.Panel2MinSize = 300;
             mainSplitContainer.Size = new Size(1288, 744);
             mainSplitContainer.SplitterDistance = 869;
             mainSplitContainer.TabIndex = 1;
-            // 
             // chartPanel
-            // 
             chartPanel.BorderStyle = BorderStyle.FixedSingle;
             chartPanel.Controls.Add(chartTabControl);
             chartPanel.Controls.Add(chartToolbarPanel);
@@ -168,9 +158,7 @@
             chartPanel.Name = "chartPanel";
             chartPanel.Size = new Size(869, 744);
             chartPanel.TabIndex = 0;
-            // 
             // chartTabControl
-            // 
             chartTabControl.Controls.Add(chartTabPage);
             chartTabControl.Dock = DockStyle.Fill;
             chartTabControl.Location = new Point(0, 51);
@@ -178,9 +166,7 @@
             chartTabControl.SelectedIndex = 0;
             chartTabControl.Size = new Size(867, 691);
             chartTabControl.TabIndex = 0;
-            // 
             // chartTabPage
-            // 
             chartTabPage.Controls.Add(chartInfoPanel);
             chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartTabPage.Location = new Point(4, 34);
@@ -189,9 +175,7 @@
             chartTabPage.Size = new Size(859, 653);
             chartTabPage.TabIndex = 0;
             chartTabPage.Text = "نماد";
-            // 
             // chartInfoPanel
-            // 
             chartInfoPanel.BackColor = SystemColors.Control;
             chartInfoPanel.Controls.Add(chartInfoLabel);
             chartInfoPanel.Dock = DockStyle.Top;
@@ -199,9 +183,6 @@
             chartInfoPanel.Name = "chartInfoPanel";
             chartInfoPanel.Size = new Size(853, 30);
             chartInfoPanel.TabIndex = 0;
-            // 
-            // chartInfoLabel
-            // 
             chartInfoLabel.Dock = DockStyle.Fill;
             chartInfoLabel.Location = new Point(0, 0);
             chartInfoLabel.Name = "chartInfoLabel";
@@ -210,9 +191,7 @@
             chartInfoLabel.TabIndex = 0;
             chartInfoLabel.Text = "O: —    H: —    L: —    C: —    V: — تاریخ/زمان : —    ";
             chartInfoLabel.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // chartPlaceholderLabel
-            // 
             chartPlaceholderLabel.Dock = DockStyle.Fill;
             chartPlaceholderLabel.Font = new Font("Segoe UI", 14F);
             chartPlaceholderLabel.Location = new Point(3, 3);
@@ -221,9 +200,7 @@
             chartPlaceholderLabel.TabIndex = 1;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // chartToolbarPanel
-            // 
             chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
@@ -242,98 +219,23 @@
             chartToolbarPanel.Padding = new Padding(6, 5, 6, 5);
             chartToolbarPanel.Size = new Size(867, 51);
             chartToolbarPanel.TabIndex = 1;
-            // 
-            // chartTypeComboBox
-            // 
             chartTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
             chartTypeComboBox.Location = new Point(6, 8);
             chartTypeComboBox.Name = "chartTypeComboBox";
             chartTypeComboBox.Size = new Size(92, 33);
             chartTypeComboBox.TabIndex = 0;
-            // 
-            // gridButton
-            // 
-            gridButton.Location = new Point(99, 7);
-            gridButton.Name = "gridButton";
-            gridButton.Size = new Size(54, 34);
-            gridButton.TabIndex = 1;
-            gridButton.Text = "گرید";
-            // 
-            // crossButton
-            // 
-            crossButton.Location = new Point(154, 7);
-            crossButton.Name = "crossButton";
-            crossButton.Size = new Size(58, 34);
-            crossButton.TabIndex = 2;
-            crossButton.Text = "Cross";
-            // 
-            // zoomInButton
-            // 
-            zoomInButton.Location = new Point(211, 7);
-            zoomInButton.Name = "zoomInButton";
-            zoomInButton.Size = new Size(53, 34);
-            zoomInButton.TabIndex = 3;
-            zoomInButton.Text = "+";
-            // 
-            // zoomOutButton
-            // 
-            zoomOutButton.Location = new Point(265, 7);
-            zoomOutButton.Name = "zoomOutButton";
-            zoomOutButton.Size = new Size(53, 34);
-            zoomOutButton.TabIndex = 4;
-            zoomOutButton.Text = "−";
-            // 
-            // resetChartButton
-            // 
-            resetChartButton.Location = new Point(320, 7);
-            resetChartButton.Name = "resetChartButton";
-            resetChartButton.Size = new Size(66, 34);
-            resetChartButton.TabIndex = 5;
-            resetChartButton.Text = "Reset";
-            // 
-            // hideChartButton
-            // 
-            hideChartButton.Location = new Point(389, 7);
-            hideChartButton.Name = "hideChartButton";
-            hideChartButton.Size = new Size(115, 34);
-            hideChartButton.TabIndex = 6;
-            hideChartButton.Text = "مخفی چارت";
-            // 
-            // hideToolsButton
-            // 
-            hideToolsButton.Location = new Point(507, 7);
-            hideToolsButton.Name = "hideToolsButton";
-            hideToolsButton.Size = new Size(104, 34);
-            hideToolsButton.TabIndex = 7;
-            hideToolsButton.Text = "مخفی ابزار";
-            // 
-            // printChartButton
-            // 
-            printChartButton.Location = new Point(617, 7);
-            printChartButton.Name = "printChartButton";
-            printChartButton.Size = new Size(62, 34);
-            printChartButton.TabIndex = 8;
-            printChartButton.Text = "چاپ";
-            // 
-            // snapshotChartButton
-            // 
-            snapshotChartButton.Location = new Point(685, 7);
-            snapshotChartButton.Name = "snapshotChartButton";
-            snapshotChartButton.Size = new Size(62, 34);
-            snapshotChartButton.TabIndex = 9;
-            snapshotChartButton.Text = "عکس";
-            // 
-            // fullScreenChartButton
-            // 
-            fullScreenChartButton.Location = new Point(753, 7);
-            fullScreenChartButton.Name = "fullScreenChartButton";
-            fullScreenChartButton.Size = new Size(103, 34);
-            fullScreenChartButton.TabIndex = 10;
-            fullScreenChartButton.Text = "تمام‌صفحه";
-            // 
+            gridButton.Location = new Point(99, 7); gridButton.Name = "gridButton"; gridButton.Size = new Size(54, 34); gridButton.TabIndex = 1; gridButton.Text = "گرید";
+            crossButton.Location = new Point(154, 7); crossButton.Name = "crossButton"; crossButton.Size = new Size(58, 34); crossButton.TabIndex = 2; crossButton.Text = "Cross";
+            zoomInButton.Location = new Point(211, 7); zoomInButton.Name = "zoomInButton"; zoomInButton.Size = new Size(53, 34); zoomInButton.TabIndex = 3; zoomInButton.Text = "+";
+            zoomOutButton.Location = new Point(265, 7); zoomOutButton.Name = "zoomOutButton"; zoomOutButton.Size = new Size(53, 34); zoomOutButton.TabIndex = 4; zoomOutButton.Text = "−";
+            resetChartButton.Location = new Point(320, 7); resetChartButton.Name = "resetChartButton"; resetChartButton.Size = new Size(66, 34); resetChartButton.TabIndex = 5; resetChartButton.Text = "Reset";
+            hideChartButton.Location = new Point(389, 7); hideChartButton.Name = "hideChartButton"; hideChartButton.Size = new Size(115, 34); hideChartButton.TabIndex = 6; hideChartButton.Text = "مخفی چارت";
+            hideToolsButton.Location = new Point(507, 7); hideToolsButton.Name = "hideToolsButton"; hideToolsButton.Size = new Size(104, 34); hideToolsButton.TabIndex = 7; hideToolsButton.Text = "مخفی ابزار";
+            printChartButton.Location = new Point(617, 7); printChartButton.Name = "printChartButton"; printChartButton.Size = new Size(62, 34); printChartButton.TabIndex = 8; printChartButton.Text = "چاپ";
+            snapshotChartButton.Location = new Point(685, 7); snapshotChartButton.Name = "snapshotChartButton"; snapshotChartButton.Size = new Size(62, 34); snapshotChartButton.TabIndex = 9; snapshotChartButton.Text = "عکس";
+            fullScreenChartButton.Location = new Point(753, 7); fullScreenChartButton.Name = "fullScreenChartButton"; fullScreenChartButton.Size = new Size(103, 34); fullScreenChartButton.TabIndex = 10; fullScreenChartButton.Text = "تمام‌صفحه";
             // controlTabControl
-            // 
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
             controlTabControl.Controls.Add(tabPage3);
@@ -345,9 +247,7 @@
             controlTabControl.SelectedIndex = 0;
             controlTabControl.Size = new Size(415, 744);
             controlTabControl.TabIndex = 0;
-            // 
             // stocksTabPage
-            // 
             stocksTabPage.Controls.Add(refreshButtonPortfolio);
             stocksTabPage.Controls.Add(stocksDataGridView);
             stocksTabPage.Controls.Add(stocksBottomPanel);
@@ -359,9 +259,7 @@
             stocksTabPage.Size = new Size(407, 706);
             stocksTabPage.TabIndex = 0;
             stocksTabPage.Text = "سهام";
-            // 
             // stocksDataGridView
-            // 
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -376,171 +274,41 @@
             stocksDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             stocksDataGridView.Size = new Size(391, 548);
             stocksDataGridView.TabIndex = 0;
-            // 
-            // rowColumn
-            // 
-            rowColumn.FillWeight = 121.334824F;
-            rowColumn.HeaderText = "ردیف";
-            rowColumn.MinimumWidth = 6;
-            rowColumn.Name = "rowColumn";
-            // 
-            // symbolColumn
-            // 
-            symbolColumn.FillWeight = 149.73262F;
-            symbolColumn.HeaderText = "نماد";
-            symbolColumn.MinimumWidth = 6;
-            symbolColumn.Name = "symbolColumn";
-            // 
-            // lastTradeColumn
-            // 
-            lastTradeColumn.FillWeight = 87.110054F;
-            lastTradeColumn.HeaderText = "آخرین معامله";
-            lastTradeColumn.MinimumWidth = 6;
-            lastTradeColumn.Name = "lastTradeColumn";
-            // 
-            // selectColumn
-            // 
-            selectColumn.FalseValue = false;
-            selectColumn.FillWeight = 41.8225136F;
-            selectColumn.HeaderText = "انتخاب";
-            selectColumn.MinimumWidth = 6;
-            selectColumn.Name = "selectColumn";
-            selectColumn.TrueValue = true;
-            // 
+            rowColumn.FillWeight = 121.334824F; rowColumn.HeaderText = "ردیف"; rowColumn.MinimumWidth = 6; rowColumn.Name = "rowColumn";
+            symbolColumn.FillWeight = 149.73262F; symbolColumn.HeaderText = "نماد"; symbolColumn.MinimumWidth = 6; symbolColumn.Name = "symbolColumn";
+            lastTradeColumn.FillWeight = 87.110054F; lastTradeColumn.HeaderText = "آخرین معامله"; lastTradeColumn.MinimumWidth = 6; lastTradeColumn.Name = "lastTradeColumn";
+            selectColumn.FalseValue = false; selectColumn.FillWeight = 41.8225136F; selectColumn.HeaderText = "انتخاب"; selectColumn.MinimumWidth = 6; selectColumn.Name = "selectColumn"; selectColumn.TrueValue = true;
             // stocksBottomPanel
-            // 
             stocksBottomPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            stocksBottomPanel.Controls.Add(refreshButton);
-            stocksBottomPanel.Controls.Add(navigationSpeedTextBox);
-            stocksBottomPanel.Controls.Add(speedLabel);
-            stocksBottomPanel.Controls.Add(navigationButton);
-            stocksBottomPanel.Controls.Add(newPortfolioButton);
-            stocksBottomPanel.Controls.Add(deleteButton);
-            stocksBottomPanel.Controls.Add(selectNoneCheckBox);
-            stocksBottomPanel.Controls.Add(selectAllCheckBox);
+            stocksBottomPanel.Controls.Add(refreshButton); stocksBottomPanel.Controls.Add(navigationSpeedTextBox); stocksBottomPanel.Controls.Add(speedLabel); stocksBottomPanel.Controls.Add(navigationButton); stocksBottomPanel.Controls.Add(newPortfolioButton); stocksBottomPanel.Controls.Add(deleteButton); stocksBottomPanel.Controls.Add(selectNoneCheckBox); stocksBottomPanel.Controls.Add(selectAllCheckBox);
             stocksBottomPanel.FlowDirection = FlowDirection.RightToLeft;
-            stocksBottomPanel.Location = new Point(8, 601);
-            stocksBottomPanel.Name = "stocksBottomPanel";
-            stocksBottomPanel.Padding = new Padding(4);
-            stocksBottomPanel.Size = new Size(391, 97);
-            stocksBottomPanel.TabIndex = 1;
-            // 
-            // refreshButton
-            // 
-            refreshButton.Location = new Point(7, 7);
-            refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(91, 34);
-            refreshButton.TabIndex = 2;
-            refreshButton.Text = "تازه‌سازی";
-            // 
-            // navigationSpeedTextBox
-            // 
-            navigationSpeedTextBox.Location = new Point(104, 10);
-            navigationSpeedTextBox.Margin = new Padding(2, 6, 3, 3);
-            navigationSpeedTextBox.Name = "navigationSpeedTextBox";
-            navigationSpeedTextBox.Size = new Size(62, 31);
-            navigationSpeedTextBox.TabIndex = 7;
-            navigationSpeedTextBox.Text = "1000";
-            // 
-            // speedLabel
-            // 
-            speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(170, 13);
-            speedLabel.Margin = new Padding(7, 9, 2, 3);
-            speedLabel.Name = "speedLabel";
-            speedLabel.Size = new Size(64, 25);
-            speedLabel.TabIndex = 6;
-            speedLabel.Text = "سرعت:";
-            // 
-            // navigationButton
-            // 
-            navigationButton.Location = new Point(244, 7);
-            navigationButton.Name = "navigationButton";
-            navigationButton.Size = new Size(81, 34);
-            navigationButton.TabIndex = 0;
-            navigationButton.Text = "پیمایش";
-            // 
-            // newPortfolioButton
-            // 
-            newPortfolioButton.Location = new Point(7, 47);
-            newPortfolioButton.Name = "newPortfolioButton";
-            newPortfolioButton.Size = new Size(91, 35);
-            newPortfolioButton.TabIndex = 1;
-            newPortfolioButton.Text = "سبد جدید";
-            // 
-            // deleteButton
-            // 
-            deleteButton.Location = new Point(104, 47);
-            deleteButton.Name = "deleteButton";
-            deleteButton.Size = new Size(92, 35);
-            deleteButton.TabIndex = 3;
-            deleteButton.Text = "حذف";
-            // 
-            // selectAllCheckBox
-            // 
-            selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(276, 53);
-            selectAllCheckBox.Margin = new Padding(7, 9, 3, 3);
-            selectAllCheckBox.Name = "selectAllCheckBox";
-            selectAllCheckBox.Size = new Size(66, 29);
-            selectAllCheckBox.TabIndex = 4;
-            selectAllCheckBox.Text = "همه";
-            // 
-            // selectNoneCheckBox
-            // 
-            selectNoneCheckBox.AutoSize = true;
-            selectNoneCheckBox.Location = new Point(202, 53);
-            selectNoneCheckBox.Margin = new Padding(7, 9, 3, 3);
-            selectNoneCheckBox.Name = "selectNoneCheckBox";
-            selectNoneCheckBox.Size = new Size(64, 29);
-            selectNoneCheckBox.TabIndex = 5;
-            selectNoneCheckBox.Text = "هیچ";
-            // 
-            // portfolioComboBox
-            // 
-            portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            portfolioComboBox.Location = new Point(108, 8);
-            portfolioComboBox.Name = "portfolioComboBox";
-            portfolioComboBox.Size = new Size(287, 33);
-            portfolioComboBox.TabIndex = 2;
-            // 
-            // portfolioLabel
-            // 
-            portfolioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            portfolioLabel.AutoSize = true;
-            portfolioLabel.Location = new Point(497, 12);
-            portfolioLabel.Name = "portfolioLabel";
-            portfolioLabel.Size = new Size(46, 25);
-            portfolioLabel.TabIndex = 3;
-            portfolioLabel.Text = "سبد:";
-            // 
-            // tabPage2
-            // 
-            tabPage2.Location = new Point(4, 34);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Size = new Size(407, 706);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "فیلترها";
-            // 
-            // tabPage3
-            // 
-            tabPage3.Location = new Point(4, 34);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(407, 706);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "سایر";
-            // 
-            // refreshButtonPortfolio
-            // 
-            refreshButtonPortfolio.Location = new Point(15, 7);
-            refreshButtonPortfolio.Name = "refreshButtonPortfolio";
-            refreshButtonPortfolio.Size = new Size(91, 34);
-            refreshButtonPortfolio.TabIndex = 4;
-            refreshButtonPortfolio.Text = "تازه‌سازی";
-            // 
+            stocksBottomPanel.Location = new Point(8, 601); stocksBottomPanel.Name = "stocksBottomPanel"; stocksBottomPanel.Padding = new Padding(4); stocksBottomPanel.Size = new Size(391, 97); stocksBottomPanel.TabIndex = 1;
+            refreshButton.Location = new Point(7, 7); refreshButton.Name = "refreshButton"; refreshButton.Size = new Size(91, 34); refreshButton.TabIndex = 2; refreshButton.Text = "تازه‌سازی";
+            navigationSpeedTextBox.Location = new Point(104, 10); navigationSpeedTextBox.Margin = new Padding(2, 6, 3, 3); navigationSpeedTextBox.Name = "navigationSpeedTextBox"; navigationSpeedTextBox.Size = new Size(62, 31); navigationSpeedTextBox.TabIndex = 7; navigationSpeedTextBox.Text = "1000";
+            speedLabel.AutoSize = true; speedLabel.Location = new Point(170, 13); speedLabel.Margin = new Padding(7, 9, 2, 3); speedLabel.Name = "speedLabel"; speedLabel.Size = new Size(64, 25); speedLabel.TabIndex = 6; speedLabel.Text = "سرعت:";
+            navigationButton.Location = new Point(244, 7); navigationButton.Name = "navigationButton"; navigationButton.Size = new Size(81, 34); navigationButton.TabIndex = 0; navigationButton.Text = "پیمایش";
+            newPortfolioButton.Location = new Point(7, 47); newPortfolioButton.Name = "newPortfolioButton"; newPortfolioButton.Size = new Size(91, 35); newPortfolioButton.TabIndex = 1; newPortfolioButton.Text = "سبد جدید";
+            deleteButton.Location = new Point(104, 47); deleteButton.Name = "deleteButton"; deleteButton.Size = new Size(92, 35); deleteButton.TabIndex = 3; deleteButton.Text = "حذف";
+            selectAllCheckBox.AutoSize = true; selectAllCheckBox.Location = new Point(276, 53); selectAllCheckBox.Margin = new Padding(7, 9, 3, 3); selectAllCheckBox.Name = "selectAllCheckBox"; selectAllCheckBox.Size = new Size(66, 29); selectAllCheckBox.TabIndex = 4; selectAllCheckBox.Text = "همه";
+            selectNoneCheckBox.AutoSize = true; selectNoneCheckBox.Location = new Point(202, 53); selectNoneCheckBox.Margin = new Padding(7, 9, 3, 3); selectNoneCheckBox.Name = "selectNoneCheckBox"; selectNoneCheckBox.Size = new Size(64, 29); selectNoneCheckBox.TabIndex = 5; selectNoneCheckBox.Text = "هیچ";
+            portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right; portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList; portfolioComboBox.Location = new Point(108, 8); portfolioComboBox.Name = "portfolioComboBox"; portfolioComboBox.Size = new Size(287, 33); portfolioComboBox.TabIndex = 2;
+            portfolioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right; portfolioLabel.AutoSize = true; portfolioLabel.Location = new Point(497, 12); portfolioLabel.Name = "portfolioLabel"; portfolioLabel.Size = new Size(46, 25); portfolioLabel.TabIndex = 3; portfolioLabel.Text = "سبد:";
+            refreshButtonPortfolio.Location = new Point(15, 7); refreshButtonPortfolio.Name = "refreshButtonPortfolio"; refreshButtonPortfolio.Size = new Size(91, 34); refreshButtonPortfolio.TabIndex = 4; refreshButtonPortfolio.Text = "تازه‌سازی";
+            // filters tab
+            tabPage2.Controls.Add(filtersTabControl);
+            tabPage2.Location = new Point(4, 34); tabPage2.Name = "tabPage2"; tabPage2.Padding = new Padding(0); tabPage2.Size = new Size(407, 706); tabPage2.TabIndex = 1; tabPage2.Text = "فیلترها";
+            filtersTabControl.Dock = DockStyle.Fill;
+            filtersTabControl.Location = new Point(0, 0);
+            filtersTabControl.Name = "filtersTabControl";
+            filtersTabControl.Size = new Size(407, 706);
+            // identifier tab
+            tabPage3.Controls.Add(identifierTabControl);
+            tabPage3.Location = new Point(4, 34); tabPage3.Name = "tabPage3"; tabPage3.Padding = new Padding(0); tabPage3.Size = new Size(407, 706); tabPage3.TabIndex = 2; tabPage3.Text = "شناسه";
+            identifierTabControl.Dock = DockStyle.Fill;
+            identifierTabControl.Location = new Point(0, 0);
+            identifierTabControl.Name = "identifierTabControl";
+            identifierTabControl.Size = new Size(407, 706);
             // Form1
-            // 
             ClientSize = new Size(1288, 780);
             Controls.Add(mainSplitContainer);
             Controls.Add(mainMenuStrip);
@@ -568,13 +336,10 @@
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
             stocksBottomPanel.ResumeLayout(false);
             stocksBottomPanel.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
-        private DataGridViewTextBoxColumn rowColumn;
-        private DataGridViewTextBoxColumn symbolColumn;
-        private DataGridViewTextBoxColumn lastTradeColumn;
-        private DataGridViewCheckBoxColumn selectColumn;
-        private Button refreshButtonPortfolio;
     }
 }
