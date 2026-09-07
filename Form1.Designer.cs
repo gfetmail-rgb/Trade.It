@@ -94,6 +94,7 @@
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
             tabPage3 = new TabPage();
+            refreshButtonPortfolio = new Button();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -347,6 +348,7 @@
             // 
             // stocksTabPage
             // 
+            stocksTabPage.Controls.Add(refreshButtonPortfolio);
             stocksTabPage.Controls.Add(stocksDataGridView);
             stocksTabPage.Controls.Add(stocksBottomPanel);
             stocksTabPage.Controls.Add(portfolioComboBox);
@@ -366,7 +368,7 @@
             stocksDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             stocksDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
-            stocksDataGridView.Location = new Point(8, 8);
+            stocksDataGridView.Location = new Point(8, 47);
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RightToLeft = RightToLeft.Yes;
             stocksDataGridView.RowHeadersVisible = false;
@@ -407,15 +409,15 @@
             // 
             // stocksBottomPanel
             // 
+            stocksBottomPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksBottomPanel.Controls.Add(refreshButton);
             stocksBottomPanel.Controls.Add(navigationSpeedTextBox);
             stocksBottomPanel.Controls.Add(speedLabel);
             stocksBottomPanel.Controls.Add(navigationButton);
             stocksBottomPanel.Controls.Add(newPortfolioButton);
             stocksBottomPanel.Controls.Add(deleteButton);
-            stocksBottomPanel.Controls.Add(selectAllCheckBox);
             stocksBottomPanel.Controls.Add(selectNoneCheckBox);
-            stocksBottomPanel.Dock = DockStyle.Bottom;
+            stocksBottomPanel.Controls.Add(selectAllCheckBox);
             stocksBottomPanel.FlowDirection = FlowDirection.RightToLeft;
             stocksBottomPanel.Location = new Point(8, 601);
             stocksBottomPanel.Name = "stocksBottomPanel";
@@ -477,7 +479,7 @@
             // selectAllCheckBox
             // 
             selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(202, 53);
+            selectAllCheckBox.Location = new Point(276, 53);
             selectAllCheckBox.Margin = new Padding(7, 9, 3, 3);
             selectAllCheckBox.Name = "selectAllCheckBox";
             selectAllCheckBox.Size = new Size(66, 29);
@@ -487,7 +489,7 @@
             // selectNoneCheckBox
             // 
             selectNoneCheckBox.AutoSize = true;
-            selectNoneCheckBox.Location = new Point(278, 53);
+            selectNoneCheckBox.Location = new Point(202, 53);
             selectNoneCheckBox.Margin = new Padding(7, 9, 3, 3);
             selectNoneCheckBox.Name = "selectNoneCheckBox";
             selectNoneCheckBox.Size = new Size(64, 29);
@@ -496,11 +498,11 @@
             // 
             // portfolioComboBox
             // 
-            portfolioComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            portfolioComboBox.Location = new Point(8, 562);
+            portfolioComboBox.Location = new Point(108, 8);
             portfolioComboBox.Name = "portfolioComboBox";
-            portfolioComboBox.Size = new Size(391, 33);
+            portfolioComboBox.Size = new Size(287, 33);
             portfolioComboBox.TabIndex = 2;
             // 
             // portfolioLabel
@@ -528,6 +530,14 @@
             tabPage3.Size = new Size(407, 706);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "سایر";
+            // 
+            // refreshButtonPortfolio
+            // 
+            refreshButtonPortfolio.Location = new Point(15, 7);
+            refreshButtonPortfolio.Name = "refreshButtonPortfolio";
+            refreshButtonPortfolio.Size = new Size(91, 34);
+            refreshButtonPortfolio.TabIndex = 4;
+            refreshButtonPortfolio.Text = "تازه‌سازی";
             // 
             // Form1
             // 
@@ -565,5 +575,6 @@
         private DataGridViewTextBoxColumn symbolColumn;
         private DataGridViewTextBoxColumn lastTradeColumn;
         private DataGridViewCheckBoxColumn selectColumn;
+        private Button refreshButtonPortfolio;
     }
 }
