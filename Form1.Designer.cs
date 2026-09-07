@@ -64,6 +64,39 @@ namespace Trade.It
         private System.Windows.Forms.ComboBox comparisonOperatorComboBox;
         private System.Windows.Forms.ComboBox comparisonSecondComboBox;
 
+        private System.Windows.Forms.GroupBox comparisonGroup6;
+        private System.Windows.Forms.ComboBox comparisonFirstComboBox6;
+        private System.Windows.Forms.ComboBox comparisonOperatorComboBox6;
+        private System.Windows.Forms.ComboBox comparisonSecondComboBox6;
+        private System.Windows.Forms.TextBox comparisonFirstTextBox6;
+        private System.Windows.Forms.TextBox comparisonSecondTextBox6;
+        private System.Windows.Forms.Label label5_6;
+        private System.Windows.Forms.Label label6_6;
+        private System.Windows.Forms.Label label7_6;
+        private System.Windows.Forms.Label label8_6;
+
+        private System.Windows.Forms.GroupBox comparisonGroup7;
+        private System.Windows.Forms.ComboBox comparisonFirstComboBox7;
+        private System.Windows.Forms.ComboBox comparisonOperatorComboBox7;
+        private System.Windows.Forms.ComboBox comparisonSecondComboBox7;
+        private System.Windows.Forms.TextBox comparisonFirstTextBox7;
+        private System.Windows.Forms.TextBox comparisonSecondTextBox7;
+        private System.Windows.Forms.Label label5_7;
+        private System.Windows.Forms.Label label6_7;
+        private System.Windows.Forms.Label label7_7;
+        private System.Windows.Forms.Label label8_7;
+
+        private System.Windows.Forms.GroupBox comparisonGroup8;
+        private System.Windows.Forms.ComboBox comparisonFirstComboBox8;
+        private System.Windows.Forms.ComboBox comparisonOperatorComboBox8;
+        private System.Windows.Forms.ComboBox comparisonSecondComboBox8;
+        private System.Windows.Forms.TextBox comparisonFirstTextBox8;
+        private System.Windows.Forms.TextBox comparisonSecondTextBox8;
+        private System.Windows.Forms.Label label5_8;
+        private System.Windows.Forms.Label label6_8;
+        private System.Windows.Forms.Label label7_8;
+        private System.Windows.Forms.Label label8_8;
+
         private System.Windows.Forms.GroupBox identifierMainGroup;
         private System.Windows.Forms.TableLayoutPanel identifierLayout;
         private System.Windows.Forms.Label identifierSymbolLabel;
@@ -145,6 +178,36 @@ namespace Trade.It
             statusAllRadio = new RadioButton();
             statusPositiveRadio = new RadioButton();
             statusNegativeRadio = new RadioButton();
+            comparisonGroup6 = new GroupBox();
+            comparisonFirstComboBox6 = new ComboBox();
+            comparisonOperatorComboBox6 = new ComboBox();
+            comparisonSecondComboBox6 = new ComboBox();
+            comparisonFirstTextBox6 = new TextBox();
+            comparisonSecondTextBox6 = new TextBox();
+            label5_6 = new Label();
+            label6_6 = new Label();
+            label7_6 = new Label();
+            label8_6 = new Label();
+            comparisonGroup7 = new GroupBox();
+            comparisonFirstComboBox7 = new ComboBox();
+            comparisonOperatorComboBox7 = new ComboBox();
+            comparisonSecondComboBox7 = new ComboBox();
+            comparisonFirstTextBox7 = new TextBox();
+            comparisonSecondTextBox7 = new TextBox();
+            label5_7 = new Label();
+            label6_7 = new Label();
+            label7_7 = new Label();
+            label8_7 = new Label();
+            comparisonGroup8 = new GroupBox();
+            comparisonFirstComboBox8 = new ComboBox();
+            comparisonOperatorComboBox8 = new ComboBox();
+            comparisonSecondComboBox8 = new ComboBox();
+            comparisonFirstTextBox8 = new TextBox();
+            comparisonSecondTextBox8 = new TextBox();
+            label5_8 = new Label();
+            label6_8 = new Label();
+            label7_8 = new Label();
+            label8_8 = new Label();
             tabPage3 = new TabPage();
             identifierMainGroup = new GroupBox();
             identifierLayout = new TableLayoutPanel();
@@ -193,13 +256,13 @@ namespace Trade.It
             volumeRatioGroup.SuspendLayout();
             nameFilterGroup.SuspendLayout();
             tradingStatusGroup.SuspendLayout();
+            comparisonGroup6.SuspendLayout();
+            comparisonGroup7.SuspendLayout();
+            comparisonGroup8.SuspendLayout();
             tabPage3.SuspendLayout();
             identifierMainGroup.SuspendLayout();
             identifierLayout.SuspendLayout();
             SuspendLayout();
-            // 
-            // mainMenuStrip
-            // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
             mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
@@ -207,46 +270,25 @@ namespace Trade.It
             mainMenuStrip.RightToLeft = RightToLeft.No;
             mainMenuStrip.Size = new Size(1288, 36);
             mainMenuStrip.TabIndex = 0;
-            // 
-            // portfolioDefinitionMenuItem
-            // 
             portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
             portfolioDefinitionMenuItem.Size = new Size(121, 32);
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
-            // 
-            // portfolioManagementMenuItem
-            // 
             portfolioManagementMenuItem.Name = "portfolioManagementMenuItem";
             portfolioManagementMenuItem.Size = new Size(129, 32);
             portfolioManagementMenuItem.Text = "مدیریت سبد";
-            // 
-            // settingsMenuItem
-            // 
             settingsMenuItem.Name = "settingsMenuItem";
             settingsMenuItem.Size = new Size(99, 32);
             settingsMenuItem.Text = "تنظیمات";
-            // 
-            // mainSplitContainer
-            // 
             mainSplitContainer.Dock = DockStyle.Fill;
             mainSplitContainer.Location = new Point(0, 36);
             mainSplitContainer.Name = "mainSplitContainer";
-            // 
-            // mainSplitContainer.Panel1
-            // 
             mainSplitContainer.Panel1.Controls.Add(chartPanel);
             mainSplitContainer.Panel1MinSize = 500;
-            // 
-            // mainSplitContainer.Panel2
-            // 
             mainSplitContainer.Panel2.Controls.Add(controlTabControl);
             mainSplitContainer.Panel2MinSize = 300;
             mainSplitContainer.Size = new Size(1288, 744);
             mainSplitContainer.SplitterDistance = 869;
             mainSplitContainer.TabIndex = 1;
-            // 
-            // chartPanel
-            // 
             chartPanel.BorderStyle = BorderStyle.FixedSingle;
             chartPanel.Controls.Add(chartTabControl);
             chartPanel.Controls.Add(chartToolbarPanel);
@@ -255,9 +297,6 @@ namespace Trade.It
             chartPanel.Name = "chartPanel";
             chartPanel.Size = new Size(869, 744);
             chartPanel.TabIndex = 0;
-            // 
-            // chartTabControl
-            // 
             chartTabControl.Controls.Add(chartTabPage);
             chartTabControl.Dock = DockStyle.Fill;
             chartTabControl.Location = new Point(0, 51);
@@ -265,9 +304,6 @@ namespace Trade.It
             chartTabControl.SelectedIndex = 0;
             chartTabControl.Size = new Size(867, 691);
             chartTabControl.TabIndex = 0;
-            // 
-            // chartTabPage
-            // 
             chartTabPage.Controls.Add(chartInfoPanel);
             chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartTabPage.Location = new Point(4, 34);
@@ -276,9 +312,6 @@ namespace Trade.It
             chartTabPage.Size = new Size(859, 653);
             chartTabPage.TabIndex = 0;
             chartTabPage.Text = "نماد";
-            // 
-            // chartInfoPanel
-            // 
             chartInfoPanel.BackColor = SystemColors.Control;
             chartInfoPanel.Controls.Add(chartInfoLabel);
             chartInfoPanel.Dock = DockStyle.Top;
@@ -286,9 +319,6 @@ namespace Trade.It
             chartInfoPanel.Name = "chartInfoPanel";
             chartInfoPanel.Size = new Size(853, 30);
             chartInfoPanel.TabIndex = 0;
-            // 
-            // chartInfoLabel
-            // 
             chartInfoLabel.Dock = DockStyle.Fill;
             chartInfoLabel.Location = new Point(0, 0);
             chartInfoLabel.Name = "chartInfoLabel";
@@ -297,9 +327,6 @@ namespace Trade.It
             chartInfoLabel.TabIndex = 0;
             chartInfoLabel.Text = "O: —    H: —    L: —    C: —    V: — تاریخ/زمان : —    ";
             chartInfoLabel.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // chartPlaceholderLabel
-            // 
             chartPlaceholderLabel.Dock = DockStyle.Fill;
             chartPlaceholderLabel.Font = new Font("Segoe UI", 14F);
             chartPlaceholderLabel.Location = new Point(3, 3);
@@ -308,9 +335,6 @@ namespace Trade.It
             chartPlaceholderLabel.TabIndex = 1;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // chartToolbarPanel
-            // 
             chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
@@ -329,98 +353,62 @@ namespace Trade.It
             chartToolbarPanel.Padding = new Padding(6, 5, 6, 5);
             chartToolbarPanel.Size = new Size(867, 51);
             chartToolbarPanel.TabIndex = 1;
-            // 
-            // chartTypeComboBox
-            // 
             chartTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
             chartTypeComboBox.Location = new Point(6, 8);
             chartTypeComboBox.Name = "chartTypeComboBox";
             chartTypeComboBox.Size = new Size(92, 33);
             chartTypeComboBox.TabIndex = 0;
-            // 
-            // gridButton
-            // 
             gridButton.Location = new Point(99, 7);
             gridButton.Name = "gridButton";
             gridButton.Size = new Size(54, 34);
             gridButton.TabIndex = 1;
             gridButton.Text = "گرید";
-            // 
-            // crossButton
-            // 
             crossButton.Location = new Point(154, 7);
             crossButton.Name = "crossButton";
             crossButton.Size = new Size(58, 34);
             crossButton.TabIndex = 2;
             crossButton.Text = "Cross";
-            // 
-            // zoomInButton
-            // 
             zoomInButton.Location = new Point(211, 7);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(53, 34);
             zoomInButton.TabIndex = 3;
             zoomInButton.Text = "+";
-            // 
-            // zoomOutButton
-            // 
             zoomOutButton.Location = new Point(265, 7);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(53, 34);
             zoomOutButton.TabIndex = 4;
             zoomOutButton.Text = "−";
-            // 
-            // resetChartButton
-            // 
             resetChartButton.Location = new Point(320, 7);
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(66, 34);
             resetChartButton.TabIndex = 5;
             resetChartButton.Text = "Reset";
-            // 
-            // hideChartButton
-            // 
             hideChartButton.Location = new Point(389, 7);
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(115, 34);
             hideChartButton.TabIndex = 6;
             hideChartButton.Text = "مخفی چارت";
-            // 
-            // hideToolsButton
-            // 
             hideToolsButton.Location = new Point(507, 7);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(104, 34);
             hideToolsButton.TabIndex = 7;
             hideToolsButton.Text = "مخفی ابزار";
-            // 
-            // printChartButton
-            // 
             printChartButton.Location = new Point(617, 7);
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(62, 34);
             printChartButton.TabIndex = 8;
             printChartButton.Text = "چاپ";
-            // 
-            // snapshotChartButton
-            // 
             snapshotChartButton.Location = new Point(685, 7);
             snapshotChartButton.Name = "snapshotChartButton";
             snapshotChartButton.Size = new Size(62, 34);
             snapshotChartButton.TabIndex = 9;
             snapshotChartButton.Text = "عکس";
-            // 
-            // fullScreenChartButton
-            // 
             fullScreenChartButton.Location = new Point(753, 7);
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(103, 34);
             fullScreenChartButton.TabIndex = 10;
             fullScreenChartButton.Text = "تمام‌صفحه";
-            // 
-            // controlTabControl
-            // 
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
             controlTabControl.Controls.Add(tabPage3);
@@ -432,9 +420,6 @@ namespace Trade.It
             controlTabControl.SelectedIndex = 0;
             controlTabControl.Size = new Size(415, 744);
             controlTabControl.TabIndex = 0;
-            // 
-            // stocksTabPage
-            // 
             stocksTabPage.Controls.Add(refreshButtonPortfolio);
             stocksTabPage.Controls.Add(stocksDataGridView);
             stocksTabPage.Controls.Add(stocksBottomPanel);
@@ -446,17 +431,11 @@ namespace Trade.It
             stocksTabPage.Size = new Size(407, 706);
             stocksTabPage.TabIndex = 0;
             stocksTabPage.Text = "سهام";
-            // 
-            // refreshButtonPortfolio
-            // 
             refreshButtonPortfolio.Location = new Point(15, 7);
             refreshButtonPortfolio.Name = "refreshButtonPortfolio";
             refreshButtonPortfolio.Size = new Size(91, 34);
             refreshButtonPortfolio.TabIndex = 4;
             refreshButtonPortfolio.Text = "تازه‌سازی";
-            // 
-            // stocksDataGridView
-            // 
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -471,39 +450,24 @@ namespace Trade.It
             stocksDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             stocksDataGridView.Size = new Size(391, 548);
             stocksDataGridView.TabIndex = 0;
-            // 
-            // rowColumn
-            // 
             rowColumn.FillWeight = 121.334824F;
             rowColumn.HeaderText = "ردیف";
             rowColumn.MinimumWidth = 6;
             rowColumn.Name = "rowColumn";
-            // 
-            // symbolColumn
-            // 
             symbolColumn.FillWeight = 149.73262F;
             symbolColumn.HeaderText = "نماد";
             symbolColumn.MinimumWidth = 6;
             symbolColumn.Name = "symbolColumn";
-            // 
-            // lastTradeColumn
-            // 
             lastTradeColumn.FillWeight = 87.110054F;
             lastTradeColumn.HeaderText = "آخرین معامله";
             lastTradeColumn.MinimumWidth = 6;
             lastTradeColumn.Name = "lastTradeColumn";
-            // 
-            // selectColumn
-            // 
             selectColumn.FalseValue = false;
             selectColumn.FillWeight = 41.8225136F;
             selectColumn.HeaderText = "انتخاب";
             selectColumn.MinimumWidth = 6;
             selectColumn.Name = "selectColumn";
             selectColumn.TrueValue = true;
-            // 
-            // stocksBottomPanel
-            // 
             stocksBottomPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksBottomPanel.Controls.Add(refreshButton);
             stocksBottomPanel.Controls.Add(navigationSpeedTextBox);
@@ -519,26 +483,17 @@ namespace Trade.It
             stocksBottomPanel.Padding = new Padding(4);
             stocksBottomPanel.Size = new Size(391, 97);
             stocksBottomPanel.TabIndex = 1;
-            // 
-            // refreshButton
-            // 
             refreshButton.Location = new Point(7, 7);
             refreshButton.Name = "refreshButton";
             refreshButton.Size = new Size(91, 34);
             refreshButton.TabIndex = 2;
             refreshButton.Text = "تازه‌سازی";
-            // 
-            // navigationSpeedTextBox
-            // 
             navigationSpeedTextBox.Location = new Point(104, 10);
             navigationSpeedTextBox.Margin = new Padding(2, 6, 3, 3);
             navigationSpeedTextBox.Name = "navigationSpeedTextBox";
             navigationSpeedTextBox.Size = new Size(62, 31);
             navigationSpeedTextBox.TabIndex = 7;
             navigationSpeedTextBox.Text = "1000";
-            // 
-            // speedLabel
-            // 
             speedLabel.AutoSize = true;
             speedLabel.Location = new Point(170, 13);
             speedLabel.Margin = new Padding(7, 9, 2, 3);
@@ -546,33 +501,21 @@ namespace Trade.It
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 6;
             speedLabel.Text = "سرعت:";
-            // 
-            // navigationButton
-            // 
             navigationButton.Location = new Point(244, 7);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(81, 34);
             navigationButton.TabIndex = 0;
             navigationButton.Text = "پیمایش";
-            // 
-            // newPortfolioButton
-            // 
             newPortfolioButton.Location = new Point(7, 47);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(91, 35);
             newPortfolioButton.TabIndex = 1;
             newPortfolioButton.Text = "سبد جدید";
-            // 
-            // deleteButton
-            // 
             deleteButton.Location = new Point(104, 47);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(92, 35);
             deleteButton.TabIndex = 3;
             deleteButton.Text = "حذف";
-            // 
-            // selectNoneCheckBox
-            // 
             selectNoneCheckBox.AutoSize = true;
             selectNoneCheckBox.Location = new Point(202, 53);
             selectNoneCheckBox.Margin = new Padding(7, 9, 3, 3);
@@ -580,9 +523,6 @@ namespace Trade.It
             selectNoneCheckBox.Size = new Size(64, 29);
             selectNoneCheckBox.TabIndex = 5;
             selectNoneCheckBox.Text = "هیچ";
-            // 
-            // selectAllCheckBox
-            // 
             selectAllCheckBox.AutoSize = true;
             selectAllCheckBox.Location = new Point(276, 53);
             selectAllCheckBox.Margin = new Padding(7, 9, 3, 3);
@@ -590,18 +530,12 @@ namespace Trade.It
             selectAllCheckBox.Size = new Size(66, 29);
             selectAllCheckBox.TabIndex = 4;
             selectAllCheckBox.Text = "همه";
-            // 
-            // portfolioComboBox
-            // 
             portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new Point(108, 8);
             portfolioComboBox.Name = "portfolioComboBox";
             portfolioComboBox.Size = new Size(287, 33);
             portfolioComboBox.TabIndex = 2;
-            // 
-            // portfolioLabel
-            // 
             portfolioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             portfolioLabel.AutoSize = true;
             portfolioLabel.Location = new Point(497, 12);
@@ -609,10 +543,11 @@ namespace Trade.It
             portfolioLabel.Size = new Size(46, 25);
             portfolioLabel.TabIndex = 3;
             portfolioLabel.Text = "سبد:";
-            // 
-            // tabPage2
-            // 
+
             tabPage2.AutoScroll = true;
+            tabPage2.Controls.Add(comparisonGroup8);
+            tabPage2.Controls.Add(comparisonGroup7);
+            tabPage2.Controls.Add(comparisonGroup6);
             tabPage2.Controls.Add(comparisonGroup);
             tabPage2.Controls.Add(pastDaysGroup);
             tabPage2.Controls.Add(volumeRatioGroup);
@@ -624,9 +559,7 @@ namespace Trade.It
             tabPage2.Size = new Size(407, 706);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "فیلترها";
-            // 
-            // comparisonGroup
-            // 
+
             comparisonGroup.Controls.Add(label8);
             comparisonGroup.Controls.Add(comparisonSecondTextBox);
             comparisonGroup.Controls.Add(label7);
@@ -643,9 +576,6 @@ namespace Trade.It
             comparisonGroup.TabIndex = 0;
             comparisonGroup.TabStop = false;
             comparisonGroup.Text = "5. مقایسه قیمت:";
-            // 
-            // comparisonFirstComboBox
-            // 
             comparisonFirstComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonFirstComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
@@ -653,9 +583,6 @@ namespace Trade.It
             comparisonFirstComboBox.Name = "comparisonFirstComboBox";
             comparisonFirstComboBox.Size = new Size(59, 33);
             comparisonFirstComboBox.TabIndex = 1;
-            // 
-            // comparisonOperatorComboBox
-            // 
             comparisonOperatorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
@@ -663,9 +590,6 @@ namespace Trade.It
             comparisonOperatorComboBox.Name = "comparisonOperatorComboBox";
             comparisonOperatorComboBox.Size = new Size(73, 33);
             comparisonOperatorComboBox.TabIndex = 2;
-            // 
-            // comparisonSecondComboBox
-            // 
             comparisonSecondComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonSecondComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
@@ -673,9 +597,6 @@ namespace Trade.It
             comparisonSecondComboBox.Name = "comparisonSecondComboBox";
             comparisonSecondComboBox.Size = new Size(61, 33);
             comparisonSecondComboBox.TabIndex = 3;
-            // 
-            // pastDaysGroup
-            // 
             pastDaysGroup.Controls.Add(label4);
             pastDaysGroup.Controls.Add(label3);
             pastDaysGroup.Controls.Add(pastDaysTextBox);
@@ -687,9 +608,6 @@ namespace Trade.It
             pastDaysGroup.TabIndex = 1;
             pastDaysGroup.TabStop = false;
             pastDaysGroup.Text = "۴ ـ وضعیت معامله در روزهای گذشته:";
-            // 
-            // pastDaysStatusComboBox
-            // 
             pastDaysStatusComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             pastDaysStatusComboBox.Items.AddRange(new object[] { "معامله داشته‌", "معامله نداشته‌" });
@@ -697,9 +615,6 @@ namespace Trade.It
             pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";
             pastDaysStatusComboBox.Size = new Size(149, 33);
             pastDaysStatusComboBox.TabIndex = 0;
-            // 
-            // pastDaysTextBox
-            // 
             pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pastDaysTextBox.Location = new Point(280, 32);
             pastDaysTextBox.Name = "pastDaysTextBox";
@@ -707,9 +622,6 @@ namespace Trade.It
             pastDaysTextBox.TabIndex = 1;
             pastDaysTextBox.Text = "5";
             pastDaysTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // volumeRatioGroup
-            // 
             volumeRatioGroup.Controls.Add(label2);
             volumeRatioGroup.Controls.Add(label1);
             volumeRatioGroup.Controls.Add(textBox1);
@@ -722,9 +634,6 @@ namespace Trade.It
             volumeRatioGroup.TabIndex = 2;
             volumeRatioGroup.TabStop = false;
             volumeRatioGroup.Text = "3. سهامی که نسبت حجم آخرین کندل به:";
-            // 
-            // volumeRatioOperatorComboBox
-            // 
             volumeRatioOperatorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             volumeRatioOperatorComboBox.Items.AddRange(new object[] { "بزرگتر از", "مساوی", "کوچکتر از", "بزرگتر یا مساوی", "کوچکتر یا مساوی" });
@@ -732,9 +641,6 @@ namespace Trade.It
             volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";
             volumeRatioOperatorComboBox.Size = new Size(119, 33);
             volumeRatioOperatorComboBox.TabIndex = 0;
-            // 
-            // volumeRatioTextBox
-            // 
             volumeRatioTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             volumeRatioTextBox.Location = new Point(120, 63);
             volumeRatioTextBox.Name = "volumeRatioTextBox";
@@ -742,9 +648,6 @@ namespace Trade.It
             volumeRatioTextBox.TabIndex = 1;
             volumeRatioTextBox.Text = "1";
             volumeRatioTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // nameFilterGroup
-            // 
             nameFilterGroup.Controls.Add(nameComboBox);
             nameFilterGroup.Controls.Add(nameTextBox);
             nameFilterGroup.Dock = DockStyle.Top;
@@ -754,9 +657,6 @@ namespace Trade.It
             nameFilterGroup.TabIndex = 3;
             nameFilterGroup.TabStop = false;
             nameFilterGroup.Text = "2. نمایش سهامی که عبارت:";
-            // 
-            // tradingStatusGroup
-            // 
             tradingStatusGroup.Controls.Add(statusAllRadio);
             tradingStatusGroup.Controls.Add(statusPositiveRadio);
             tradingStatusGroup.Controls.Add(statusNegativeRadio);
@@ -767,9 +667,6 @@ namespace Trade.It
             tradingStatusGroup.TabIndex = 4;
             tradingStatusGroup.TabStop = false;
             tradingStatusGroup.Text = "1. نمایش سهامی که امروز معامله:";
-            // 
-            // statusAllRadio
-            // 
             statusAllRadio.AutoSize = true;
             statusAllRadio.Checked = true;
             statusAllRadio.Location = new Point(62, 33);
@@ -779,9 +676,6 @@ namespace Trade.It
             statusAllRadio.TabIndex = 0;
             statusAllRadio.TabStop = true;
             statusAllRadio.Text = "همه";
-            // 
-            // statusPositiveRadio
-            // 
             statusPositiveRadio.AutoSize = true;
             statusPositiveRadio.Location = new Point(139, 33);
             statusPositiveRadio.Margin = new Padding(6);
@@ -789,9 +683,6 @@ namespace Trade.It
             statusPositiveRadio.Size = new Size(77, 29);
             statusPositiveRadio.TabIndex = 1;
             statusPositiveRadio.Text = "داشته";
-            // 
-            // statusNegativeRadio
-            // 
             statusNegativeRadio.AutoSize = true;
             statusNegativeRadio.Location = new Point(228, 33);
             statusNegativeRadio.Margin = new Padding(6);
@@ -799,9 +690,76 @@ namespace Trade.It
             statusNegativeRadio.Size = new Size(83, 29);
             statusNegativeRadio.TabIndex = 2;
             statusNegativeRadio.Text = "نداشته‌";
-            // 
-            // tabPage3
-            // 
+
+            comparisonGroup6.Controls.Add(label8_6);
+            comparisonGroup6.Controls.Add(comparisonSecondTextBox6);
+            comparisonGroup6.Controls.Add(label7_6);
+            comparisonGroup6.Controls.Add(label6_6);
+            comparisonGroup6.Controls.Add(comparisonFirstTextBox6);
+            comparisonGroup6.Controls.Add(label5_6);
+            comparisonGroup6.Controls.Add(comparisonFirstComboBox6);
+            comparisonGroup6.Controls.Add(comparisonOperatorComboBox6);
+            comparisonGroup6.Controls.Add(comparisonSecondComboBox6);
+            comparisonGroup6.Dock = DockStyle.Top;
+            comparisonGroup6.Name = "comparisonGroup6";
+            comparisonGroup6.Size = new Size(391, 133);
+            comparisonGroup6.TabIndex = 5;
+            comparisonGroup6.TabStop = false;
+            comparisonGroup6.Text = "6. مقایسه قیمت:";
+            comparisonFirstComboBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            comparisonFirstComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonFirstComboBox6.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonFirstComboBox6.Location = new Point(260, 36);
+            comparisonFirstComboBox6.Size = new Size(59, 33);
+            comparisonFirstTextBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            comparisonFirstTextBox6.Location = new Point(197, 38);
+            comparisonFirstTextBox6.Size = new Size(57, 31);
+            comparisonFirstTextBox6.Text = "5";
+            comparisonFirstTextBox6.TextAlign = HorizontalAlignment.Center;
+            comparisonOperatorComboBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            comparisonOperatorComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox6.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            comparisonOperatorComboBox6.Location = new Point(11, 44);
+            comparisonOperatorComboBox6.Size = new Size(73, 33);
+            comparisonSecondComboBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            comparisonSecondComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox6.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonSecondComboBox6.Location = new Point(197, 89);
+            comparisonSecondComboBox6.Size = new Size(61, 33);
+            comparisonSecondTextBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            comparisonSecondTextBox6.Location = new Point(134, 91);
+            comparisonSecondTextBox6.Size = new Size(57, 31);
+            comparisonSecondTextBox6.Text = "5";
+            comparisonSecondTextBox6.TextAlign = HorizontalAlignment.Center;
+            label5_6.AutoSize = true; label5_6.Location = new Point(319, 36); label5_6.Size = new Size(55, 25); label5_6.Text = "قیمت";
+            label6_6.AutoSize = true; label6_6.Location = new Point(90, 44); label6_6.Size = new Size(101, 25); label6_6.Text = "کندل گذشته";
+            label7_6.AutoSize = true; label7_6.Location = new Point(264, 89); label7_6.Size = new Size(55, 25); label7_6.Text = "قیمت";
+            label8_6.AutoSize = true; label8_6.Location = new Point(27, 94); label8_6.Size = new Size(101, 25); label8_6.Text = "کندل گذشته";
+
+            comparisonGroup7.Controls.Add(label8_7); comparisonGroup7.Controls.Add(comparisonSecondTextBox7); comparisonGroup7.Controls.Add(label7_7); comparisonGroup7.Controls.Add(label6_7); comparisonGroup7.Controls.Add(comparisonFirstTextBox7); comparisonGroup7.Controls.Add(label5_7); comparisonGroup7.Controls.Add(comparisonFirstComboBox7); comparisonGroup7.Controls.Add(comparisonOperatorComboBox7); comparisonGroup7.Controls.Add(comparisonSecondComboBox7);
+            comparisonGroup7.Dock = DockStyle.Top; comparisonGroup7.Name = "comparisonGroup7"; comparisonGroup7.Size = new Size(391, 133); comparisonGroup7.TabIndex = 6; comparisonGroup7.TabStop = false; comparisonGroup7.Text = "7. مقایسه قیمت:";
+            comparisonFirstComboBox7.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonFirstComboBox7.DropDownStyle = ComboBoxStyle.DropDownList; comparisonFirstComboBox7.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" }); comparisonFirstComboBox7.Location = new Point(260, 36); comparisonFirstComboBox7.Size = new Size(59, 33);
+            comparisonFirstTextBox7.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonFirstTextBox7.Location = new Point(197, 38); comparisonFirstTextBox7.Size = new Size(57, 31); comparisonFirstTextBox7.Text = "5"; comparisonFirstTextBox7.TextAlign = HorizontalAlignment.Center;
+            comparisonOperatorComboBox7.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonOperatorComboBox7.DropDownStyle = ComboBoxStyle.DropDownList; comparisonOperatorComboBox7.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" }); comparisonOperatorComboBox7.Location = new Point(11, 44); comparisonOperatorComboBox7.Size = new Size(73, 33);
+            comparisonSecondComboBox7.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonSecondComboBox7.DropDownStyle = ComboBoxStyle.DropDownList; comparisonSecondComboBox7.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" }); comparisonSecondComboBox7.Location = new Point(197, 89); comparisonSecondComboBox7.Size = new Size(61, 33);
+            comparisonSecondTextBox7.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonSecondTextBox7.Location = new Point(134, 91); comparisonSecondTextBox7.Size = new Size(57, 31); comparisonSecondTextBox7.Text = "5"; comparisonSecondTextBox7.TextAlign = HorizontalAlignment.Center;
+            label5_7.AutoSize = true; label5_7.Location = new Point(319, 36); label5_7.Size = new Size(55, 25); label5_7.Text = "قیمت";
+            label6_7.AutoSize = true; label6_7.Location = new Point(90, 44); label6_7.Size = new Size(101, 25); label6_7.Text = "کندل گذشته";
+            label7_7.AutoSize = true; label7_7.Location = new Point(264, 89); label7_7.Size = new Size(55, 25); label7_7.Text = "قیمت";
+            label8_7.AutoSize = true; label8_7.Location = new Point(27, 94); label8_7.Size = new Size(101, 25); label8_7.Text = "کندل گذشته";
+
+            comparisonGroup8.Controls.Add(label8_8); comparisonGroup8.Controls.Add(comparisonSecondTextBox8); comparisonGroup8.Controls.Add(label7_8); comparisonGroup8.Controls.Add(label6_8); comparisonGroup8.Controls.Add(comparisonFirstTextBox8); comparisonGroup8.Controls.Add(label5_8); comparisonGroup8.Controls.Add(comparisonFirstComboBox8); comparisonGroup8.Controls.Add(comparisonOperatorComboBox8); comparisonGroup8.Controls.Add(comparisonSecondComboBox8);
+            comparisonGroup8.Dock = DockStyle.Top; comparisonGroup8.Name = "comparisonGroup8"; comparisonGroup8.Size = new Size(391, 133); comparisonGroup8.TabIndex = 7; comparisonGroup8.TabStop = false; comparisonGroup8.Text = "8. مقایسه قیمت:";
+            comparisonFirstComboBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonFirstComboBox8.DropDownStyle = ComboBoxStyle.DropDownList; comparisonFirstComboBox8.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" }); comparisonFirstComboBox8.Location = new Point(260, 36); comparisonFirstComboBox8.Size = new Size(59, 33);
+            comparisonFirstTextBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonFirstTextBox8.Location = new Point(197, 38); comparisonFirstTextBox8.Size = new Size(57, 31); comparisonFirstTextBox8.Text = "5"; comparisonFirstTextBox8.TextAlign = HorizontalAlignment.Center;
+            comparisonOperatorComboBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonOperatorComboBox8.DropDownStyle = ComboBoxStyle.DropDownList; comparisonOperatorComboBox8.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" }); comparisonOperatorComboBox8.Location = new Point(11, 44); comparisonOperatorComboBox8.Size = new Size(73, 33);
+            comparisonSecondComboBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonSecondComboBox8.DropDownStyle = ComboBoxStyle.DropDownList; comparisonSecondComboBox8.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" }); comparisonSecondComboBox8.Location = new Point(197, 89); comparisonSecondComboBox8.Size = new Size(61, 33);
+            comparisonSecondTextBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonSecondTextBox8.Location = new Point(134, 91); comparisonSecondTextBox8.Size = new Size(57, 31); comparisonSecondTextBox8.Text = "5"; comparisonSecondTextBox8.TextAlign = HorizontalAlignment.Center;
+            label5_8.AutoSize = true; label5_8.Location = new Point(319, 36); label5_8.Size = new Size(55, 25); label5_8.Text = "قیمت";
+            label6_8.AutoSize = true; label6_8.Location = new Point(90, 44); label6_8.Size = new Size(101, 25); label6_8.Text = "کندل گذشته";
+            label7_8.AutoSize = true; label7_8.Location = new Point(264, 89); label7_8.Size = new Size(55, 25); label7_8.Text = "قیمت";
+            label8_8.AutoSize = true; label8_8.Location = new Point(27, 94); label8_8.Size = new Size(101, 25); label8_8.Text = "کندل گذشته";
+
             tabPage3.AutoScroll = true;
             tabPage3.Controls.Add(identifierMainGroup);
             tabPage3.Location = new Point(4, 34);
@@ -810,9 +768,6 @@ namespace Trade.It
             tabPage3.Size = new Size(407, 706);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "شناسه";
-            // 
-            // identifierMainGroup
-            // 
             identifierMainGroup.Controls.Add(identifierLayout);
             identifierMainGroup.Dock = DockStyle.Top;
             identifierMainGroup.Location = new Point(8, 8);
@@ -821,9 +776,6 @@ namespace Trade.It
             identifierMainGroup.TabIndex = 0;
             identifierMainGroup.TabStop = false;
             identifierMainGroup.Text = "اطلاعات شناسه";
-            // 
-            // identifierLayout
-            // 
             identifierLayout.ColumnCount = 2;
             identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
             identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -844,293 +796,36 @@ namespace Trade.It
             identifierLayout.Name = "identifierLayout";
             identifierLayout.Padding = new Padding(8);
             identifierLayout.RowCount = 6;
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            identifierLayout.Size = new Size(385, 300);
-            identifierLayout.TabIndex = 0;
-            // 
-            // identifierSymbolLabel
-            // 
-            identifierSymbolLabel.Dock = DockStyle.Fill;
-            identifierSymbolLabel.Location = new Point(275, 8);
-            identifierSymbolLabel.Name = "identifierSymbolLabel";
-            identifierSymbolLabel.Size = new Size(99, 20);
-            identifierSymbolLabel.TabIndex = 0;
-            identifierSymbolLabel.Text = "نماد:";
-            identifierSymbolLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierSymbolTextBox
-            // 
-            identifierSymbolTextBox.Dock = DockStyle.Fill;
-            identifierSymbolTextBox.Location = new Point(11, 11);
-            identifierSymbolTextBox.Name = "identifierSymbolTextBox";
-            identifierSymbolTextBox.Size = new Size(258, 31);
-            identifierSymbolTextBox.TabIndex = 1;
-            // 
-            // identifierNameLabel
-            // 
-            identifierNameLabel.Dock = DockStyle.Fill;
-            identifierNameLabel.Location = new Point(275, 28);
-            identifierNameLabel.Name = "identifierNameLabel";
-            identifierNameLabel.Size = new Size(99, 20);
-            identifierNameLabel.TabIndex = 2;
-            identifierNameLabel.Text = "نام شرکت:";
-            identifierNameLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierNameTextBox
-            // 
-            identifierNameTextBox.Dock = DockStyle.Fill;
-            identifierNameTextBox.Location = new Point(11, 31);
-            identifierNameTextBox.Name = "identifierNameTextBox";
-            identifierNameTextBox.Size = new Size(258, 31);
-            identifierNameTextBox.TabIndex = 3;
-            // 
-            // identifierTsetmcLabel
-            // 
-            identifierTsetmcLabel.Dock = DockStyle.Fill;
-            identifierTsetmcLabel.Location = new Point(275, 48);
-            identifierTsetmcLabel.Name = "identifierTsetmcLabel";
-            identifierTsetmcLabel.Size = new Size(99, 20);
-            identifierTsetmcLabel.TabIndex = 4;
-            identifierTsetmcLabel.Text = "کد TSETMC:";
-            identifierTsetmcLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierTsetmcTextBox
-            // 
-            identifierTsetmcTextBox.Dock = DockStyle.Fill;
-            identifierTsetmcTextBox.Location = new Point(11, 51);
-            identifierTsetmcTextBox.Name = "identifierTsetmcTextBox";
-            identifierTsetmcTextBox.Size = new Size(258, 31);
-            identifierTsetmcTextBox.TabIndex = 5;
-            // 
-            // identifierMarketLabel
-            // 
-            identifierMarketLabel.Dock = DockStyle.Fill;
-            identifierMarketLabel.Location = new Point(275, 68);
-            identifierMarketLabel.Name = "identifierMarketLabel";
-            identifierMarketLabel.Size = new Size(99, 20);
-            identifierMarketLabel.TabIndex = 6;
-            identifierMarketLabel.Text = "بازار:";
-            identifierMarketLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierMarketComboBox
-            // 
-            identifierMarketComboBox.Dock = DockStyle.Fill;
-            identifierMarketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            identifierMarketComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "سایر" });
-            identifierMarketComboBox.Location = new Point(11, 71);
-            identifierMarketComboBox.Name = "identifierMarketComboBox";
-            identifierMarketComboBox.Size = new Size(258, 33);
-            identifierMarketComboBox.TabIndex = 7;
-            // 
-            // identifierGroupLabel
-            // 
-            identifierGroupLabel.Dock = DockStyle.Fill;
-            identifierGroupLabel.Location = new Point(275, 88);
-            identifierGroupLabel.Name = "identifierGroupLabel";
-            identifierGroupLabel.Size = new Size(99, 20);
-            identifierGroupLabel.TabIndex = 8;
-            identifierGroupLabel.Text = "گروه صنعت:";
-            identifierGroupLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierGroupTextBox
-            // 
-            identifierGroupTextBox.Dock = DockStyle.Fill;
-            identifierGroupTextBox.Location = new Point(11, 91);
-            identifierGroupTextBox.Name = "identifierGroupTextBox";
-            identifierGroupTextBox.Size = new Size(258, 31);
-            identifierGroupTextBox.TabIndex = 9;
-            // 
-            // identifierDescriptionLabel
-            // 
-            identifierDescriptionLabel.Dock = DockStyle.Fill;
-            identifierDescriptionLabel.Location = new Point(275, 108);
-            identifierDescriptionLabel.Name = "identifierDescriptionLabel";
-            identifierDescriptionLabel.Size = new Size(99, 184);
-            identifierDescriptionLabel.TabIndex = 10;
-            identifierDescriptionLabel.Text = "توضیحات:";
-            identifierDescriptionLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierDescriptionTextBox
-            // 
-            identifierDescriptionTextBox.Dock = DockStyle.Fill;
-            identifierDescriptionTextBox.Location = new Point(11, 111);
-            identifierDescriptionTextBox.Multiline = true;
-            identifierDescriptionTextBox.Name = "identifierDescriptionTextBox";
-            identifierDescriptionTextBox.Size = new Size(258, 178);
-            identifierDescriptionTextBox.TabIndex = 11;
-            // 
-            // nameComboBox
-            // 
-            nameComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            nameComboBox.FormattingEnabled = true;
-            nameComboBox.Items.AddRange(new object[] { "هر جای نام باشد", "در ابتدای نام باشد", "در انتهای نام باشد", "در میانه نام باشد", "در نام نباشد" });
-            nameComboBox.Location = new Point(14, 41);
-            nameComboBox.Name = "nameComboBox";
-            nameComboBox.Size = new Size(238, 33);
-            nameComboBox.TabIndex = 0;
-            nameComboBox.Text = "هر جای نام باشد";
-            // 
-            // nameTextBox
-            // 
-            nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            nameTextBox.Location = new Point(258, 42);
-            nameTextBox.Name = "nameTextBox";
-            nameTextBox.Size = new Size(119, 31);
-            nameTextBox.TabIndex = 1;
-            // 
-            // textBox1
-            // 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            textBox1.Location = new Point(228, 29);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(59, 31);
-            textBox1.TabIndex = 2;
-            textBox1.Text = "1";
-            textBox1.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(117, 33);
-            label1.Name = "label1";
-            label1.Size = new Size(101, 25);
-            label1.TabIndex = 3;
-            label1.Text = "کندل گذشته";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(67, 66);
-            label2.Name = "label2";
-            label2.Size = new Size(47, 25);
-            label2.TabIndex = 4;
-            label2.Text = "باشد";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(343, 35);
-            label3.Name = "label3";
-            label3.Size = new Size(29, 25);
-            label3.TabIndex = 5;
-            label3.Text = "در";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(186, 35);
-            label4.Name = "label4";
-            label4.Size = new Size(88, 25);
-            label4.TabIndex = 6;
-            label4.Text = "روز گذشته";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(319, 36);
-            label5.Name = "label5";
-            label5.Size = new Size(55, 25);
-            label5.TabIndex = 5;
-            label5.Text = "قیمت";
-            // 
-            // comparisonFirstTextBox
-            // 
-            comparisonFirstTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            comparisonFirstTextBox.Location = new Point(197, 38);
-            comparisonFirstTextBox.Name = "comparisonFirstTextBox";
-            comparisonFirstTextBox.Size = new Size(57, 31);
-            comparisonFirstTextBox.TabIndex = 6;
-            comparisonFirstTextBox.Text = "5";
-            comparisonFirstTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(90, 44);
-            label6.Name = "label6";
-            label6.Size = new Size(101, 25);
-            label6.TabIndex = 7;
-            label6.Text = "کندل گذشته";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(264, 89);
-            label7.Name = "label7";
-            label7.Size = new Size(55, 25);
-            label7.TabIndex = 8;
-            label7.Text = "قیمت";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(27, 94);
-            label8.Name = "label8";
-            label8.Size = new Size(101, 25);
-            label8.TabIndex = 10;
-            label8.Text = "کندل گذشته";
-            // 
-            // comparisonSecondTextBox
-            // 
-            comparisonSecondTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            comparisonSecondTextBox.Location = new Point(134, 91);
-            comparisonSecondTextBox.Name = "comparisonSecondTextBox";
-            comparisonSecondTextBox.Size = new Size(57, 31);
-            comparisonSecondTextBox.TabIndex = 9;
-            comparisonSecondTextBox.Text = "5";
-            comparisonSecondTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // Form1
-            // 
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F)); identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F)); identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F)); identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F)); identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F)); identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            identifierLayout.Size = new Size(385, 300); identifierLayout.TabIndex = 0;
+            identifierSymbolLabel.Dock = DockStyle.Fill; identifierSymbolLabel.Location = new Point(275, 8); identifierSymbolLabel.Size = new Size(99, 20); identifierSymbolLabel.Text = "نماد:"; identifierSymbolLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierSymbolTextBox.Dock = DockStyle.Fill; identifierSymbolTextBox.Location = new Point(11, 11); identifierSymbolTextBox.Size = new Size(258, 31);
+            identifierNameLabel.Dock = DockStyle.Fill; identifierNameLabel.Location = new Point(275, 28); identifierNameLabel.Size = new Size(99, 20); identifierNameLabel.Text = "نام شرکت:"; identifierNameLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierNameTextBox.Dock = DockStyle.Fill; identifierNameTextBox.Location = new Point(11, 31); identifierNameTextBox.Size = new Size(258, 31);
+            identifierTsetmcLabel.Dock = DockStyle.Fill; identifierTsetmcLabel.Location = new Point(275, 48); identifierTsetmcLabel.Size = new Size(99, 20); identifierTsetmcLabel.Text = "کد TSETMC:"; identifierTsetmcLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierTsetmcTextBox.Dock = DockStyle.Fill; identifierTsetmcTextBox.Location = new Point(11, 51); identifierTsetmcTextBox.Size = new Size(258, 31);
+            identifierMarketLabel.Dock = DockStyle.Fill; identifierMarketLabel.Location = new Point(275, 68); identifierMarketLabel.Size = new Size(99, 20); identifierMarketLabel.Text = "بازار:"; identifierMarketLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierMarketComboBox.Dock = DockStyle.Fill; identifierMarketComboBox.DropDownStyle = ComboBoxStyle.DropDownList; identifierMarketComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "سایر" }); identifierMarketComboBox.Location = new Point(11, 71); identifierMarketComboBox.Size = new Size(258, 33);
+            identifierGroupLabel.Dock = DockStyle.Fill; identifierGroupLabel.Location = new Point(275, 88); identifierGroupLabel.Size = new Size(99, 20); identifierGroupLabel.Text = "گروه صنعت:"; identifierGroupLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierGroupTextBox.Dock = DockStyle.Fill; identifierGroupTextBox.Location = new Point(11, 91); identifierGroupTextBox.Size = new Size(258, 31);
+            identifierDescriptionLabel.Dock = DockStyle.Fill; identifierDescriptionLabel.Location = new Point(275, 108); identifierDescriptionLabel.Size = new Size(99, 184); identifierDescriptionLabel.Text = "توضیحات:"; identifierDescriptionLabel.TextAlign = ContentAlignment.MiddleRight;
+            identifierDescriptionTextBox.Dock = DockStyle.Fill; identifierDescriptionTextBox.Location = new Point(11, 111); identifierDescriptionTextBox.Multiline = true; identifierDescriptionTextBox.Size = new Size(258, 178);
+            nameComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left; nameComboBox.FormattingEnabled = true; nameComboBox.Items.AddRange(new object[] { "هر جای نام باشد", "در ابتدای نام باشد", "در انتهای نام باشد", "در میانه نام باشد", "در نام نباشد" }); nameComboBox.Location = new Point(14, 41); nameComboBox.Size = new Size(238, 33); nameComboBox.Text = "هر جای نام باشد";
+            nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right; nameTextBox.Location = new Point(258, 42); nameTextBox.Size = new Size(119, 31);
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left; textBox1.Location = new Point(228, 29); textBox1.Size = new Size(59, 31); textBox1.Text = "1"; textBox1.TextAlign = HorizontalAlignment.Center;
+            label1.AutoSize = true; label1.Location = new Point(117, 33); label1.Size = new Size(101, 25); label1.Text = "کندل گذشته";
+            label2.AutoSize = true; label2.Location = new Point(67, 66); label2.Size = new Size(47, 25); label2.Text = "باشد";
+            label3.AutoSize = true; label3.Location = new Point(343, 35); label3.Size = new Size(29, 25); label3.Text = "در";
+            label4.AutoSize = true; label4.Location = new Point(186, 35); label4.Size = new Size(88, 25); label4.Text = "روز گذشته";
+            label5.AutoSize = true; label5.Location = new Point(319, 36); label5.Size = new Size(55, 25); label5.Text = "قیمت";
+            comparisonFirstTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonFirstTextBox.Location = new Point(197, 38); comparisonFirstTextBox.Size = new Size(57, 31); comparisonFirstTextBox.Text = "5"; comparisonFirstTextBox.TextAlign = HorizontalAlignment.Center;
+            label6.AutoSize = true; label6.Location = new Point(90, 44); label6.Size = new Size(101, 25); label6.Text = "کندل گذشته";
+            label7.AutoSize = true; label7.Location = new Point(264, 89); label7.Size = new Size(55, 25); label7.Text = "قیمت";
+            label8.AutoSize = true; label8.Location = new Point(27, 94); label8.Size = new Size(101, 25); label8.Text = "کندل گذشته";
+            comparisonSecondTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left; comparisonSecondTextBox.Location = new Point(134, 91); comparisonSecondTextBox.Size = new Size(57, 31); comparisonSecondTextBox.Text = "5"; comparisonSecondTextBox.TextAlign = HorizontalAlignment.Center;
             ClientSize = new Size(1288, 780);
-            Controls.Add(mainSplitContainer);
-            Controls.Add(mainMenuStrip);
-            MainMenuStrip = mainMenuStrip;
-            MinimumSize = new Size(900, 600);
-            Name = "Form1";
-            RightToLeft = RightToLeft.No;
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Trade.It";
-            WindowState = FormWindowState.Maximized;
-            mainMenuStrip.ResumeLayout(false);
-            mainMenuStrip.PerformLayout();
-            mainSplitContainer.Panel1.ResumeLayout(false);
-            mainSplitContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
-            mainSplitContainer.ResumeLayout(false);
-            chartPanel.ResumeLayout(false);
-            chartTabControl.ResumeLayout(false);
-            chartTabPage.ResumeLayout(false);
-            chartInfoPanel.ResumeLayout(false);
-            chartToolbarPanel.ResumeLayout(false);
-            controlTabControl.ResumeLayout(false);
-            stocksTabPage.ResumeLayout(false);
-            stocksTabPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
-            stocksBottomPanel.ResumeLayout(false);
-            stocksBottomPanel.PerformLayout();
-            tabPage2.ResumeLayout(false);
-            comparisonGroup.ResumeLayout(false);
-            comparisonGroup.PerformLayout();
-            pastDaysGroup.ResumeLayout(false);
-            pastDaysGroup.PerformLayout();
-            volumeRatioGroup.ResumeLayout(false);
-            volumeRatioGroup.PerformLayout();
-            nameFilterGroup.ResumeLayout(false);
-            nameFilterGroup.PerformLayout();
-            tradingStatusGroup.ResumeLayout(false);
-            tradingStatusGroup.PerformLayout();
-            tabPage3.ResumeLayout(false);
-            identifierMainGroup.ResumeLayout(false);
-            identifierLayout.ResumeLayout(false);
-            identifierLayout.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            Controls.Add(mainSplitContainer); Controls.Add(mainMenuStrip); MainMenuStrip = mainMenuStrip; MinimumSize = new Size(900, 600); Name = "Form1"; RightToLeft = RightToLeft.No; StartPosition = FormStartPosition.CenterScreen; Text = "Trade.It"; WindowState = FormWindowState.Maximized;
+            mainMenuStrip.ResumeLayout(false); mainMenuStrip.PerformLayout(); mainSplitContainer.Panel1.ResumeLayout(false); mainSplitContainer.Panel2.ResumeLayout(false); ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit(); mainSplitContainer.ResumeLayout(false); chartPanel.ResumeLayout(false); chartTabControl.ResumeLayout(false); chartTabPage.ResumeLayout(false); chartInfoPanel.ResumeLayout(false); chartToolbarPanel.ResumeLayout(false); controlTabControl.ResumeLayout(false); stocksTabPage.ResumeLayout(false); stocksTabPage.PerformLayout(); ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit(); stocksBottomPanel.ResumeLayout(false); stocksBottomPanel.PerformLayout(); tabPage2.ResumeLayout(false); comparisonGroup.ResumeLayout(false); comparisonGroup.PerformLayout(); pastDaysGroup.ResumeLayout(false); pastDaysGroup.PerformLayout(); volumeRatioGroup.ResumeLayout(false); volumeRatioGroup.PerformLayout(); nameFilterGroup.ResumeLayout(false); nameFilterGroup.PerformLayout(); tradingStatusGroup.ResumeLayout(false); tradingStatusGroup.PerformLayout(); comparisonGroup6.ResumeLayout(false); comparisonGroup6.PerformLayout(); comparisonGroup7.ResumeLayout(false); comparisonGroup7.PerformLayout(); comparisonGroup8.ResumeLayout(false); comparisonGroup8.PerformLayout(); tabPage3.ResumeLayout(false); identifierMainGroup.ResumeLayout(false); identifierLayout.ResumeLayout(false); identifierLayout.PerformLayout(); ResumeLayout(false); PerformLayout();
         }
         private ComboBox nameComboBox;
         private TextBox nameTextBox;
