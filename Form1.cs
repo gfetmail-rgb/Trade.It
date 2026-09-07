@@ -6,6 +6,19 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            mainSplitContainer.Panel1.Controls.Clear();
+            mainSplitContainer.Panel2.Controls.Clear();
+            mainSplitContainer.Panel1.Controls.Add(controlTabControl);
+            mainSplitContainer.Panel2.Controls.Add(chartPanel);
+            mainSplitContainer.SplitterDistance = 419;
+
+            var closeAllChartsMenuItem = new ToolStripMenuItem
+            {
+                Name = "closeAllChartsMenuItem",
+                Text = "بستن همه چارتها"
+            };
+            mainMenuStrip.Items.Add(closeAllChartsMenuItem);
+
             tabPage3.Controls.Clear();
             tabPage3.AutoScroll = true;
 
