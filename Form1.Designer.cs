@@ -161,11 +161,11 @@
 
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
-            stocksDataGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            stocksDataGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             stocksDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             stocksDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             stocksDataGridView.Location = new System.Drawing.Point(8, 42);
-            stocksDataGridView.Size = new System.Drawing.Size(350, 474);
+            stocksDataGridView.Size = new System.Drawing.Size(350, 400);
             stocksDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -177,11 +177,11 @@
             selectColumn.TrueValue = true;
             selectColumn.FalseValue = false;
 
-            stocksBottomPanel.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom;
+            stocksBottomPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             stocksBottomPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             stocksBottomPanel.WrapContents = true;
-            stocksBottomPanel.Location = new System.Drawing.Point(8, 524);
-            stocksBottomPanel.Size = new System.Drawing.Size(350, 98);
+            stocksBottomPanel.Location = new System.Drawing.Point(8, 450);
+            stocksBottomPanel.Size = new System.Drawing.Size(350, 92);
             stocksBottomPanel.Padding = new System.Windows.Forms.Padding(4);
             stocksBottomPanel.AutoScroll = false;
             stocksBottomPanel.Controls.Add(navigationButton);
