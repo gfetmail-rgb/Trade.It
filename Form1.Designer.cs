@@ -151,12 +151,13 @@
             stocksTabPage.Controls.Add(portfolioLabel);
 
             portfolioLabel.AutoSize = true;
-            portfolioLabel.Location = new System.Drawing.Point(270, 12);
+            portfolioLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            portfolioLabel.Location = new System.Drawing.Point(290, 12);
             portfolioLabel.Text = "سبد:";
             portfolioComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new System.Drawing.Point(8, 8);
-            portfolioComboBox.Size = new System.Drawing.Size(250, 23);
+            portfolioComboBox.Size = new System.Drawing.Size(270, 23);
 
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
@@ -164,8 +165,10 @@
             stocksDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             stocksDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             stocksDataGridView.Location = new System.Drawing.Point(8, 42);
-            stocksDataGridView.Size = new System.Drawing.Size(350, 490);
+            stocksDataGridView.Size = new System.Drawing.Size(350, 474);
             stocksDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            stocksDataGridView.RowHeadersVisible = false;
+            stocksDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             stocksDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             rowColumn.HeaderText = "ردیف";
             symbolColumn.HeaderText = "نماد";
@@ -177,9 +180,10 @@
             stocksBottomPanel.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom;
             stocksBottomPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             stocksBottomPanel.WrapContents = true;
-            stocksBottomPanel.Location = new System.Drawing.Point(8, 540);
-            stocksBottomPanel.Size = new System.Drawing.Size(350, 82);
-            stocksBottomPanel.Padding = new System.Windows.Forms.Padding(0);
+            stocksBottomPanel.Location = new System.Drawing.Point(8, 524);
+            stocksBottomPanel.Size = new System.Drawing.Size(350, 98);
+            stocksBottomPanel.Padding = new System.Windows.Forms.Padding(4);
+            stocksBottomPanel.AutoScroll = false;
             stocksBottomPanel.Controls.Add(navigationButton);
             stocksBottomPanel.Controls.Add(newPortfolioButton);
             stocksBottomPanel.Controls.Add(refreshButton);
@@ -188,22 +192,31 @@
             stocksBottomPanel.Controls.Add(selectNoneCheckBox);
             stocksBottomPanel.Controls.Add(speedLabel);
             stocksBottomPanel.Controls.Add(navigationSpeedTextBox);
+
             navigationButton.Text = "پیمایش";
             navigationButton.Size = new System.Drawing.Size(72, 28);
+            navigationButton.Margin = new System.Windows.Forms.Padding(3);
             newPortfolioButton.Text = "سبد جدید";
             newPortfolioButton.Size = new System.Drawing.Size(78, 28);
+            newPortfolioButton.Margin = new System.Windows.Forms.Padding(3);
             refreshButton.Text = "تازه‌سازی";
             refreshButton.Size = new System.Drawing.Size(78, 28);
+            refreshButton.Margin = new System.Windows.Forms.Padding(3);
             deleteButton.Text = "حذف";
             deleteButton.Size = new System.Drawing.Size(58, 28);
+            deleteButton.Margin = new System.Windows.Forms.Padding(3);
             selectAllCheckBox.Text = "همه";
             selectAllCheckBox.AutoSize = true;
+            selectAllCheckBox.Margin = new System.Windows.Forms.Padding(7, 9, 3, 3);
             selectNoneCheckBox.Text = "هیچکدام";
             selectNoneCheckBox.AutoSize = true;
+            selectNoneCheckBox.Margin = new System.Windows.Forms.Padding(7, 9, 3, 3);
             speedLabel.Text = "سرعت:";
             speedLabel.AutoSize = true;
+            speedLabel.Margin = new System.Windows.Forms.Padding(7, 9, 2, 3);
             navigationSpeedTextBox.Size = new System.Drawing.Size(62, 23);
             navigationSpeedTextBox.Text = "1000";
+            navigationSpeedTextBox.Margin = new System.Windows.Forms.Padding(2, 6, 3, 3);
 
             tabPage2.Text = "فیلترها";
             tabPage3.Text = "سایر";
