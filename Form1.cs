@@ -52,7 +52,8 @@ namespace Trade.It
                 Margin = new Padding(3)
             });
 
-            tabPage3.Controls.Add(identifierButtonsPanel);
+            identifierMainGroup.Controls.Add(identifierButtonsPanel);
+            identifierButtonsPanel.BringToFront();
         }
 
         private void nameTextBox_TextChanged(object sender, EventArgs e)
