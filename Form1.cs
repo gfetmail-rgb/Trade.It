@@ -5,7 +5,6 @@ namespace Trade.It
         public Form1()
         {
             InitializeComponent();
-            BuildFiltersTab();
         }
     }
 }
