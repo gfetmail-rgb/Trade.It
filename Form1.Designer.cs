@@ -73,11 +73,13 @@
             mainMenuStrip.SuspendLayout();
             SuspendLayout();
 
+            // Real menu aligned to the left while keeping Persian text readable.
             mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.Size = new System.Drawing.Size(1200, 24);
             mainMenuStrip.TabIndex = 0;
+            mainMenuStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
             portfolioManagementMenuItem.Text = "مدیریت سبد";
             settingsMenuItem.Text = "تنظیمات";
@@ -86,10 +88,11 @@
             mainSplitContainer.Location = new System.Drawing.Point(0, 24);
             mainSplitContainer.Name = "mainSplitContainer";
             mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Vertical;
-            mainSplitContainer.Panel1.Controls.Add(controlTabControl);
-            mainSplitContainer.Panel2.Controls.Add(chartPanel);
+            // Panel1 = chart (right), Panel2 = controls/tabs (left).
+            mainSplitContainer.Panel1.Controls.Add(chartPanel);
+            mainSplitContainer.Panel2.Controls.Add(controlTabControl);
             mainSplitContainer.Size = new System.Drawing.Size(1200, 676);
-            mainSplitContainer.SplitterDistance = 390;
+            mainSplitContainer.SplitterDistance = 810;
             mainSplitContainer.TabIndex = 1;
 
             controlTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -149,7 +152,6 @@
             deleteButton.Text = "حذف";
             deleteButton.Location = new System.Drawing.Point(266, 580);
             deleteButton.Size = new System.Drawing.Size(80, 30);
-
             selectAllCheckBox.Text = "همه";
             selectAllCheckBox.AutoSize = true;
             selectAllCheckBox.Location = new System.Drawing.Point(8, 620);
@@ -180,8 +182,9 @@
             MainMenuStrip = mainMenuStrip;
             MinimumSize = new System.Drawing.Size(900, 600);
             Name = "Form1";
-            RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            RightToLeftLayout = true;
+            // Do not mirror the complete form: chart must stay on the right and menu on the left.
+            RightToLeft = System.Windows.Forms.RightToLeft.No;
+            RightToLeftLayout = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Trade.It";
             WindowState = System.Windows.Forms.FormWindowState.Maximized;
