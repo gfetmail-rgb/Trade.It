@@ -6,10 +6,42 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            tabPage3.Controls.Clear();
+
+            identifierMainGroup.Dock = DockStyle.Fill;
+            identifierMainGroup.Location = new Point(8, 56);
+            identifierMainGroup.Size = new Size(tabPage3.ClientSize.Width - 16, tabPage3.ClientSize.Height - 64);
+            identifierMainGroup.Text = "اطلاعات شناسه";
+
+            identifierLayout.Dock = DockStyle.Fill;
+            identifierLayout.Padding = new Padding(12);
+            identifierLayout.RowCount = 6;
+            identifierLayout.RowStyles.Clear();
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
+            identifierSymbolLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            identifierNameLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            identifierTsetmcLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            identifierMarketLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            identifierGroupLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            identifierDescriptionLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+
+            identifierSymbolTextBox.Font = new Font("Segoe UI", 10F);
+            identifierNameTextBox.Font = new Font("Segoe UI", 10F);
+            identifierTsetmcTextBox.Font = new Font("Segoe UI", 10F);
+            identifierMarketComboBox.Font = new Font("Segoe UI", 10F);
+            identifierGroupTextBox.Font = new Font("Segoe UI", 10F);
+            identifierDescriptionTextBox.Font = new Font("Segoe UI", 10F);
+
             var identifierButtonsPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 48,
+                Height = 52,
                 Padding = new Padding(4),
                 FlowDirection = FlowDirection.RightToLeft,
                 WrapContents = false,
@@ -19,40 +51,41 @@ namespace Trade.It
             identifierButtonsPanel.Controls.Add(new Button
             {
                 Text = "جدید",
-                Width = 58,
-                Height = 34,
+                Width = 62,
+                Height = 36,
                 Margin = new Padding(3)
             });
             identifierButtonsPanel.Controls.Add(new Button
             {
                 Text = "ذخیره",
-                Width = 65,
-                Height = 34,
+                Width = 70,
+                Height = 36,
                 Margin = new Padding(3)
             });
             identifierButtonsPanel.Controls.Add(new Button
             {
                 Text = "حذف",
-                Width = 58,
-                Height = 34,
+                Width = 62,
+                Height = 36,
                 Margin = new Padding(3)
             });
             identifierButtonsPanel.Controls.Add(new Button
             {
                 Text = "حذف همه",
-                Width = 78,
-                Height = 34,
+                Width = 80,
+                Height = 36,
                 Margin = new Padding(3)
             });
             identifierButtonsPanel.Controls.Add(new Button
             {
                 Text = "ورود از اکسل",
                 Width = 105,
-                Height = 34,
+                Height = 36,
                 Margin = new Padding(3)
             });
 
-            identifierMainGroup.Controls.Add(identifierButtonsPanel);
+            tabPage3.Controls.Add(identifierMainGroup);
+            tabPage3.Controls.Add(identifierButtonsPanel);
             identifierButtonsPanel.BringToFront();
         }
 
