@@ -153,14 +153,14 @@ namespace Trade.It
                 RightToLeft = RightToLeft.Yes;
                 RightToLeftLayout = true;
                 MinimumSize = new Size(760, 760);
-                Size = new Size(860, 820);
+                Size = new Size(860, 980);
                 Font = new Font("Segoe UI", 10F);
 
                 var mainPanel = new TableLayoutPanel
                 {
                     Dock = DockStyle.Fill,
                     ColumnCount = 1,
-                    RowCount = 10,
+                    RowCount = 11,
                     Padding = new Padding(14),
                     AutoScroll = true,
                     RightToLeft = RightToLeft.Yes
@@ -173,6 +173,7 @@ namespace Trade.It
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
+                mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 190F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 190F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 190F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
@@ -283,6 +284,50 @@ namespace Trade.It
                 previewGridGroup.Controls.Add(previewGrid);
                 mainPanel.Controls.Add(previewGridGroup, 0, 8);
 
+                var mappingGroup = new GroupBox
+                {
+                    Text = "Mapping ستون‌های داده",
+                    Dock = DockStyle.Fill,
+                    Padding = new Padding(8)
+                };
+                var mappingGrid = new DataGridView
+                {
+                    Dock = DockStyle.Fill,
+                    AllowUserToAddRows = false,
+                    AllowUserToDeleteRows = false,
+                    ReadOnly = false,
+                    AutoGenerateColumns = false,
+                    RowHeadersVisible = false,
+                    SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                    RightToLeft = RightToLeft.Yes
+                };
+                mappingGrid.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    HeaderText = "ستون فایل",
+                    Width = 180,
+                    Name = "fileColumn"
+                });
+                mappingGrid.Columns.Add(new DataGridViewComboBoxColumn
+                {
+                    HeaderText = "ستون استاندارد داده",
+                    Width = 220,
+                    Name = "standardColumn"
+                });
+                mappingGrid.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    HeaderText = "نوع داده",
+                    Width = 130,
+                    Name = "dataTypeColumn"
+                });
+                mappingGrid.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    HeaderText = "توضیحات",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    Name = "mappingDescriptionColumn"
+                });
+                mappingGroup.Controls.Add(mappingGrid);
+                mainPanel.Controls.Add(mappingGroup, 0, 9);
+
                 var bottomPanel = new FlowLayoutPanel
                 {
                     Dock = DockStyle.Fill,
@@ -295,7 +340,7 @@ namespace Trade.It
                 bottomPanel.Controls.Add(CreateButton("ذخیره سبد", 120));
                 bottomPanel.Controls.Add(CreateButton("Mapping", 110));
                 bottomPanel.Controls.Add(CreateButton("تست", 90));
-                mainPanel.Controls.Add(bottomPanel, 0, 9);
+                mainPanel.Controls.Add(bottomPanel, 0, 10);
 
                 Controls.Add(mainPanel);
             }
