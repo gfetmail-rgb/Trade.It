@@ -1,4 +1,4 @@
-﻿namespace Trade.It
+namespace Trade.It
 {
     partial class Form1
     {
@@ -636,15 +636,17 @@
             comparisonGroup.Controls.Add(comparisonFirstComboBox);
             comparisonGroup.Controls.Add(comparisonOperatorComboBox);
             comparisonGroup.Controls.Add(comparisonSecondComboBox);
-            comparisonGroup.Location = new Point(11, 388);
+            comparisonGroup.Dock = DockStyle.Top;
+            comparisonGroup.Location = new Point(8, 374);
             comparisonGroup.Name = "comparisonGroup";
-            comparisonGroup.Size = new Size(388, 133);
+            comparisonGroup.Size = new Size(391, 133);
             comparisonGroup.TabIndex = 0;
             comparisonGroup.TabStop = false;
             comparisonGroup.Text = "5. مقایسه قیمت:";
             // 
             // comparisonFirstComboBox
             // 
+            comparisonFirstComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonFirstComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
             comparisonFirstComboBox.Location = new Point(260, 36);
@@ -654,6 +656,7 @@
             // 
             // comparisonOperatorComboBox
             // 
+            comparisonOperatorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
             comparisonOperatorComboBox.Location = new Point(11, 44);
@@ -663,6 +666,7 @@
             // 
             // comparisonSecondComboBox
             // 
+            comparisonSecondComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonSecondComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
             comparisonSecondComboBox.Location = new Point(197, 89);
@@ -676,7 +680,8 @@
             pastDaysGroup.Controls.Add(label3);
             pastDaysGroup.Controls.Add(pastDaysTextBox);
             pastDaysGroup.Controls.Add(pastDaysStatusComboBox);
-            pastDaysGroup.Location = new Point(8, 280);
+            pastDaysGroup.Dock = DockStyle.Top;
+            pastDaysGroup.Location = new Point(8, 272);
             pastDaysGroup.Name = "pastDaysGroup";
             pastDaysGroup.Size = new Size(391, 102);
             pastDaysGroup.TabIndex = 1;
@@ -685,18 +690,17 @@
             // 
             // pastDaysStatusComboBox
             // 
-            pastDaysStatusComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pastDaysStatusComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             pastDaysStatusComboBox.Items.AddRange(new object[] { "معامله داشته‌", "معامله نداشته‌" });
             pastDaysStatusComboBox.Location = new Point(40, 30);
             pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";
             pastDaysStatusComboBox.Size = new Size(149, 33);
             pastDaysStatusComboBox.TabIndex = 0;
-            pastDaysStatusComboBox.SelectedIndexChanged += pastDaysStatusComboBox_SelectedIndexChanged;
             // 
             // pastDaysTextBox
             // 
-            pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pastDaysTextBox.Location = new Point(280, 32);
             pastDaysTextBox.Name = "pastDaysTextBox";
             pastDaysTextBox.Size = new Size(57, 31);
@@ -721,7 +725,7 @@
             // 
             // volumeRatioOperatorComboBox
             // 
-            volumeRatioOperatorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            volumeRatioOperatorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             volumeRatioOperatorComboBox.Items.AddRange(new object[] { "بزرگتر از", "مساوی", "کوچکتر از", "بزرگتر یا مساوی", "کوچکتر یا مساوی" });
             volumeRatioOperatorComboBox.Location = new Point(181, 63);
@@ -731,7 +735,7 @@
             // 
             // volumeRatioTextBox
             // 
-            volumeRatioTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            volumeRatioTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             volumeRatioTextBox.Location = new Point(120, 63);
             volumeRatioTextBox.Name = "volumeRatioTextBox";
             volumeRatioTextBox.Size = new Size(55, 31);
@@ -962,6 +966,7 @@
             // 
             // nameComboBox
             // 
+            nameComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             nameComboBox.FormattingEnabled = true;
             nameComboBox.Items.AddRange(new object[] { "هر جای نام باشد", "در ابتدای نام باشد", "در انتهای نام باشد", "در میانه نام باشد", "در نام نباشد" });
             nameComboBox.Location = new Point(14, 41);
@@ -972,6 +977,7 @@
             // 
             // nameTextBox
             // 
+            nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             nameTextBox.Location = new Point(258, 42);
             nameTextBox.Name = "nameTextBox";
             nameTextBox.Size = new Size(119, 31);
@@ -979,7 +985,7 @@
             // 
             // textBox1
             // 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             textBox1.Location = new Point(228, 29);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(59, 31);
@@ -1034,7 +1040,7 @@
             // 
             // comparisonFirstTextBox
             // 
-            comparisonFirstTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comparisonFirstTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonFirstTextBox.Location = new Point(197, 38);
             comparisonFirstTextBox.Name = "comparisonFirstTextBox";
             comparisonFirstTextBox.Size = new Size(57, 31);
@@ -1071,7 +1077,7 @@
             // 
             // comparisonSecondTextBox
             // 
-            comparisonSecondTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comparisonSecondTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             comparisonSecondTextBox.Location = new Point(134, 91);
             comparisonSecondTextBox.Name = "comparisonSecondTextBox";
             comparisonSecondTextBox.Size = new Size(57, 31);
