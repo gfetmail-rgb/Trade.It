@@ -7,6 +7,7 @@ namespace Trade.It
             InitializeComponent();
 
             tabPage3.Controls.Clear();
+            tabPage3.AutoScroll = true;
 
             var identifierButtonsPanel = new FlowLayoutPanel
             {
@@ -38,7 +39,8 @@ namespace Trade.It
 
             var identifierGroup = new GroupBox
             {
-                Dock = DockStyle.Fill,
+                Dock = DockStyle.Top,
+                AutoSize = true,
                 Text = "اطلاعات شناسه",
                 Padding = new Padding(10),
                 RightToLeft = RightToLeft.Yes
