@@ -8,36 +8,6 @@ namespace Trade.It
 
             tabPage3.Controls.Clear();
 
-            identifierMainGroup.Dock = DockStyle.Fill;
-            identifierMainGroup.Location = new Point(8, 56);
-            identifierMainGroup.Size = new Size(tabPage3.ClientSize.Width - 16, tabPage3.ClientSize.Height - 64);
-            identifierMainGroup.Text = "اطلاعات شناسه";
-
-            identifierLayout.Dock = DockStyle.Fill;
-            identifierLayout.Padding = new Padding(12);
-            identifierLayout.RowCount = 6;
-            identifierLayout.RowStyles.Clear();
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-
-            identifierSymbolLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-            identifierNameLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-            identifierTsetmcLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-            identifierMarketLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-            identifierGroupLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-            identifierDescriptionLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
-
-            identifierSymbolTextBox.Font = new Font("Segoe UI", 10F);
-            identifierNameTextBox.Font = new Font("Segoe UI", 10F);
-            identifierTsetmcTextBox.Font = new Font("Segoe UI", 10F);
-            identifierMarketComboBox.Font = new Font("Segoe UI", 10F);
-            identifierGroupTextBox.Font = new Font("Segoe UI", 10F);
-            identifierDescriptionTextBox.Font = new Font("Segoe UI", 10F);
-
             var identifierButtonsPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
@@ -48,43 +18,101 @@ namespace Trade.It
                 RightToLeft = RightToLeft.Yes
             };
 
-            identifierButtonsPanel.Controls.Add(new Button
+            foreach (var buttonInfo in new[]
             {
-                Text = "جدید",
-                Width = 62,
-                Height = 36,
-                Margin = new Padding(3)
-            });
-            identifierButtonsPanel.Controls.Add(new Button
+                (Text: "جدید", Width: 62),
+                (Text: "ذخیره", Width: 70),
+                (Text: "حذف", Width: 62),
+                (Text: "حذف همه", Width: 80),
+                (Text: "ورود از اکسل", Width: 105)
+            })
             {
-                Text = "ذخیره",
-                Width = 70,
-                Height = 36,
-                Margin = new Padding(3)
-            });
-            identifierButtonsPanel.Controls.Add(new Button
-            {
-                Text = "حذف",
-                Width = 62,
-                Height = 36,
-                Margin = new Padding(3)
-            });
-            identifierButtonsPanel.Controls.Add(new Button
-            {
-                Text = "حذف همه",
-                Width = 80,
-                Height = 36,
-                Margin = new Padding(3)
-            });
-            identifierButtonsPanel.Controls.Add(new Button
-            {
-                Text = "ورود از اکسل",
-                Width = 105,
-                Height = 36,
-                Margin = new Padding(3)
-            });
+                identifierButtonsPanel.Controls.Add(new Button
+                {
+                    Text = buttonInfo.Text,
+                    Width = buttonInfo.Width,
+                    Height = 36,
+                    Margin = new Padding(3)
+                });
+            }
 
-            tabPage3.Controls.Add(identifierMainGroup);
+            var identifierGroup = new GroupBox
+            {
+                Dock = DockStyle.Fill,
+                Text = "اطلاعات شناسه",
+                Padding = new Padding(10),
+                RightToLeft = RightToLeft.Yes
+            };
+
+            var identifierFields = new (string Label, bool Combo)[]
+            {
+                ("کد ۱۲ رقمی نماد", false),
+                ("کد ۵ رقمی نماد", false),
+                ("نام لاتین شرکت", false),
+                ("کد ۴ رقمی شرکت", false),
+                ("نام شرکت", false),
+                ("نماد فارسی", false),
+                ("نماد ۳۰ رقمی فارسی", false),
+                ("کد ۱۲ رقمی شرکت", false),
+                ("بازار", true),
+                ("کد تابلو", false),
+                ("کد گروه صنعت", false),
+                ("گروه صنعت", false),
+                ("کد زیر گروه صنعت", false),
+                ("زیر گروه صنعت", false)
+            };
+
+            var identifierTable = new TableLayoutPanel
+            {
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                ColumnCount = 2,
+                RowCount = identifierFields.Length,
+                Padding = new Padding(6),
+                RightToLeft = RightToLeft.Yes
+            };
+            identifierTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
+            identifierTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+
+            foreach (var field in identifierFields)
+            {
+                var label = new Label
+                {
+                    Text = field.Label,
+                    Dock = DockStyle.Fill,
+                    TextAlign = ContentAlignment.MiddleRight,
+                    Margin = new Padding(4),
+                    Font = new Font("Segoe UI", 10F)
+                };
+
+                Control input;
+                if (field.Combo)
+                {
+                    input = new ComboBox
+                    {
+                        Dock = DockStyle.Fill,
+                        DropDownStyle = ComboBoxStyle.DropDownList,
+                        Font = new Font("Segoe UI", 10F),
+                        Margin = new Padding(4)
+                    };
+                }
+                else
+                {
+                    input = new TextBox
+                    {
+                        Dock = DockStyle.Fill,
+                        Font = new Font("Segoe UI", 10F),
+                        Margin = new Padding(4)
+                    };
+                }
+
+                identifierTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+                identifierTable.Controls.Add(label);
+                identifierTable.Controls.Add(input);
+            }
+
+            identifierGroup.Controls.Add(identifierTable);
+            tabPage3.Controls.Add(identifierGroup);
             tabPage3.Controls.Add(identifierButtonsPanel);
             identifierButtonsPanel.BringToFront();
         }
