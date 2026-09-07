@@ -28,6 +28,19 @@
         private System.Windows.Forms.Label speedLabel;
         private System.Windows.Forms.TextBox navigationSpeedTextBox;
         private System.Windows.Forms.Panel chartPanel;
+        private System.Windows.Forms.Panel chartToolbarPanel;
+        private System.Windows.Forms.ComboBox chartTypeComboBox;
+        private System.Windows.Forms.Button gridButton;
+        private System.Windows.Forms.Button crossButton;
+        private System.Windows.Forms.Button zoomInButton;
+        private System.Windows.Forms.Button zoomOutButton;
+        private System.Windows.Forms.Button resetChartButton;
+        private System.Windows.Forms.Button hideChartButton;
+        private System.Windows.Forms.Button hideToolsButton;
+        private System.Windows.Forms.Button printChartButton;
+        private System.Windows.Forms.Button snapshotChartButton;
+        private System.Windows.Forms.TabControl chartTabControl;
+        private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.Label chartPlaceholderLabel;
 
         protected override void Dispose(bool disposing)
@@ -64,17 +77,36 @@
             speedLabel = new System.Windows.Forms.Label();
             navigationSpeedTextBox = new System.Windows.Forms.TextBox();
             chartPanel = new System.Windows.Forms.Panel();
+            chartToolbarPanel = new System.Windows.Forms.Panel();
+            chartTypeComboBox = new System.Windows.Forms.ComboBox();
+            gridButton = new System.Windows.Forms.Button();
+            crossButton = new System.Windows.Forms.Button();
+            zoomInButton = new System.Windows.Forms.Button();
+            zoomOutButton = new System.Windows.Forms.Button();
+            resetChartButton = new System.Windows.Forms.Button();
+            hideChartButton = new System.Windows.Forms.Button();
+            hideToolsButton = new System.Windows.Forms.Button();
+            printChartButton = new System.Windows.Forms.Button();
+            snapshotChartButton = new System.Windows.Forms.Button();
+            chartTabControl = new System.Windows.Forms.TabControl();
+            chartTabPage = new System.Windows.Forms.TabPage();
             chartPlaceholderLabel = new System.Windows.Forms.Label();
+
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
             mainSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
             mainMenuStrip.SuspendLayout();
+            chartPanel.SuspendLayout();
+            chartToolbarPanel.SuspendLayout();
+            chartTabControl.SuspendLayout();
+            chartTabPage.SuspendLayout();
             SuspendLayout();
 
-            // Real menu aligned to the left while keeping Persian text readable.
-            mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
+            // Main menu
+            mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.Size = new System.Drawing.Size(1200, 24);
@@ -84,17 +116,18 @@
             portfolioManagementMenuItem.Text = "مدیریت سبد";
             settingsMenuItem.Text = "تنظیمات";
 
+            // Main split: chart on the right, controls on the left.
             mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             mainSplitContainer.Location = new System.Drawing.Point(0, 24);
             mainSplitContainer.Name = "mainSplitContainer";
             mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Vertical;
-            // Panel1 = chart (right), Panel2 = controls/tabs (left).
             mainSplitContainer.Panel1.Controls.Add(chartPanel);
             mainSplitContainer.Panel2.Controls.Add(controlTabControl);
             mainSplitContainer.Size = new System.Drawing.Size(1200, 676);
             mainSplitContainer.SplitterDistance = 810;
             mainSplitContainer.TabIndex = 1;
 
+            // Left control area
             controlTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
@@ -168,13 +201,73 @@
             tabPage2.Text = "فیلترها";
             tabPage3.Text = "سایر";
 
+            // Shared chart toolbar. It sits above the chart tabs and is not duplicated per symbol.
             chartPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             chartPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            chartPanel.Controls.Add(chartTabControl);
+            chartPanel.Controls.Add(chartToolbarPanel);
+
+            chartToolbarPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            chartToolbarPanel.Height = 42;
+            chartToolbarPanel.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            chartToolbarPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            chartToolbarPanel.Controls.Add(chartTypeComboBox);
+            chartToolbarPanel.Controls.Add(gridButton);
+            chartToolbarPanel.Controls.Add(crossButton);
+            chartToolbarPanel.Controls.Add(zoomInButton);
+            chartToolbarPanel.Controls.Add(zoomOutButton);
+            chartToolbarPanel.Controls.Add(resetChartButton);
+            chartToolbarPanel.Controls.Add(hideChartButton);
+            chartToolbarPanel.Controls.Add(hideToolsButton);
+            chartToolbarPanel.Controls.Add(printChartButton);
+            chartToolbarPanel.Controls.Add(snapshotChartButton);
+
+            chartTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
+            chartTypeComboBox.SelectedIndex = 0;
+            chartTypeComboBox.Location = new System.Drawing.Point(6, 8);
+            chartTypeComboBox.Size = new System.Drawing.Size(100, 23);
+
+            gridButton.Text = "گرید";
+            gridButton.Location = new System.Drawing.Point(112, 7);
+            gridButton.Size = new System.Drawing.Size(58, 26);
+            crossButton.Text = "Cross";
+            crossButton.Location = new System.Drawing.Point(176, 7);
+            crossButton.Size = new System.Drawing.Size(62, 26);
+            zoomInButton.Text = "+";
+            zoomInButton.Location = new System.Drawing.Point(244, 7);
+            zoomInButton.Size = new System.Drawing.Size(32, 26);
+            zoomOutButton.Text = "−";
+            zoomOutButton.Location = new System.Drawing.Point(282, 7);
+            zoomOutButton.Size = new System.Drawing.Size(32, 26);
+            resetChartButton.Text = "Reset";
+            resetChartButton.Location = new System.Drawing.Point(320, 7);
+            resetChartButton.Size = new System.Drawing.Size(58, 26);
+            hideChartButton.Text = "مخفی چارت";
+            hideChartButton.Location = new System.Drawing.Point(384, 7);
+            hideChartButton.Size = new System.Drawing.Size(82, 26);
+            hideToolsButton.Text = "مخفی ابزار";
+            hideToolsButton.Location = new System.Drawing.Point(472, 7);
+            hideToolsButton.Size = new System.Drawing.Size(82, 26);
+            printChartButton.Text = "چاپ";
+            printChartButton.Location = new System.Drawing.Point(560, 7);
+            printChartButton.Size = new System.Drawing.Size(55, 26);
+            snapshotChartButton.Text = "عکس";
+            snapshotChartButton.Location = new System.Drawing.Point(621, 7);
+            snapshotChartButton.Size = new System.Drawing.Size(55, 26);
+
+            // One chart per tab. Additional tabs will be created later by functionality code.
+            chartTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            chartTabControl.Name = "chartTabControl";
+            chartTabControl.Controls.Add(chartTabPage);
+            chartTabControl.SelectedIndex = 0;
+            chartTabPage.Text = "نماد";
+            chartTabPage.Padding = new System.Windows.Forms.Padding(3);
+            chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartPlaceholderLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             chartPlaceholderLabel.Font = new System.Drawing.Font("Segoe UI", 14F);
-            chartPanel.Controls.Add(chartPlaceholderLabel);
 
             ClientSize = new System.Drawing.Size(1200, 700);
             Controls.Add(mainSplitContainer);
@@ -182,7 +275,6 @@
             MainMenuStrip = mainMenuStrip;
             MinimumSize = new System.Drawing.Size(900, 600);
             Name = "Form1";
-            // Do not mirror the complete form: chart must stay on the right and menu on the left.
             RightToLeft = System.Windows.Forms.RightToLeft.No;
             RightToLeftLayout = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -196,6 +288,10 @@
             mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
             mainSplitContainer.ResumeLayout(false);
+            chartTabPage.ResumeLayout(false);
+            chartTabControl.ResumeLayout(false);
+            chartToolbarPanel.ResumeLayout(false);
+            chartPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
