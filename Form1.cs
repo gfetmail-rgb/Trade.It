@@ -165,9 +165,9 @@ namespace Trade.It
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 78F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+                mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 54F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 320F));
-                mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 190F));
-                mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+                mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
                 mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
 
                 mainPanel.Controls.Add(CreateLabeledTextBox("نام سبد", 0), 0, 0);
@@ -192,6 +192,15 @@ namespace Trade.It
                 sourceGroup.Controls.Add(sourceFlow);
                 mainPanel.Controls.Add(sourceGroup, 0, 1);
 
+                var sourceDescription = new Label
+                {
+                    Text = "منبع داده: فایل‌های موجود در مسیر انتخاب شده",
+                    Dock = DockStyle.Fill,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Margin = new Padding(4)
+                };
+                mainPanel.Controls.Add(sourceDescription, 0, 2);
+
                 var pathPanel = new TableLayoutPanel
                 {
                     Dock = DockStyle.Fill,
@@ -202,10 +211,10 @@ namespace Trade.It
                 pathPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
                 pathPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
                 pathPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145F));
-                pathPanel.Controls.Add(CreateLabel("مسیر داده"), 0, 0);
+                pathPanel.Controls.Add(CreateLabel("مسیر داده:"), 0, 0);
                 pathPanel.Controls.Add(new TextBox { Dock = DockStyle.Fill, Margin = new Padding(4) }, 1, 0);
                 pathPanel.Controls.Add(CreateButton("انتخاب پوشه...", 135), 2, 0);
-                mainPanel.Controls.Add(pathPanel, 0, 2);
+                mainPanel.Controls.Add(pathPanel, 0, 3);
 
                 var optionsPanel = new TableLayoutPanel
                 {
@@ -220,27 +229,30 @@ namespace Trade.It
                 optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190F));
                 optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
                 optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-                optionsPanel.Controls.Add(CreateLabel("جداکننده"), 0, 0);
-                optionsPanel.Controls.Add(CreateCombo(new[] { ",", ";", "Tab", "|" }), 1, 0);
-                optionsPanel.Controls.Add(CreateLabel("تقویم"), 2, 0);
+                optionsPanel.Controls.Add(CreateLabel("جداکننده:"), 0, 0);
+                optionsPanel.Controls.Add(CreateCombo(new[] { "Comma (,)" , "Semicolon (;)" , "Tab" , "Pipe (|)" }), 1, 0);
+                optionsPanel.Controls.Add(CreateLabel("تقویم:"), 2, 0);
                 optionsPanel.Controls.Add(CreateCombo(new[] { "شمسی (Persian)", "لاتین (Gregorian)" }), 3, 0);
                 optionsPanel.Controls.Add(CreateCheck("سطر اول عنوان ستون‌ها"), 4, 0);
                 optionsPanel.Controls.Add(CreateCheck("داده فاقد تاریخ/زمان"), 5, 0);
-                mainPanel.Controls.Add(optionsPanel, 0, 3);
+                mainPanel.Controls.Add(optionsPanel, 0, 4);
 
-                var formatPanel = new FlowLayoutPanel
+                var formatPanel = new TableLayoutPanel
                 {
                     Dock = DockStyle.Fill,
-                    FlowDirection = FlowDirection.RightToLeft,
-                    WrapContents = false,
-                    RightToLeft = RightToLeft.Yes,
-                    Padding = new Padding(0, 2, 0, 0)
+                    ColumnCount = 4,
+                    RowCount = 1,
+                    RightToLeft = RightToLeft.Yes
                 };
-                formatPanel.Controls.Add(CreateCheck("فرمت زمان"));
-                formatPanel.Controls.Add(CreateCombo(new[] { "HHMMSS" }, 160));
-                formatPanel.Controls.Add(CreateCheck("فرمت تاریخ"));
-                formatPanel.Controls.Add(CreateCombo(new[] { "YYYYMMDD" }, 160));
-                mainPanel.Controls.Add(formatPanel, 0, 4);
+                formatPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 95F));
+                formatPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190F));
+                formatPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 95F));
+                formatPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 190F));
+                formatPanel.Controls.Add(CreateCheck("فرمت زمان:"), 0, 0);
+                formatPanel.Controls.Add(CreateCombo(new[] { "HHMMSS" }, 170), 1, 0);
+                formatPanel.Controls.Add(CreateCheck("فرمت تاریخ:"), 2, 0);
+                formatPanel.Controls.Add(CreateCombo(new[] { "YYYYMMDD" }, 170), 3, 0);
+                mainPanel.Controls.Add(formatPanel, 0, 5);
 
                 var workArea = new TableLayoutPanel
                 {
@@ -252,12 +264,9 @@ namespace Trade.It
                 };
                 workArea.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38F));
                 workArea.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62F));
-
-                var mappingGroup = CreateMappingGroup();
-                var symbolGroup = CreateSymbolSelectionGroup();
-                workArea.Controls.Add(mappingGroup, 0, 0);
-                workArea.Controls.Add(symbolGroup, 1, 0);
-                mainPanel.Controls.Add(workArea, 0, 5);
+                workArea.Controls.Add(CreateMappingGroup(), 0, 0);
+                workArea.Controls.Add(CreateSymbolSelectionGroup(), 1, 0);
+                mainPanel.Controls.Add(workArea, 0, 6);
 
                 var previewGroup = new GroupBox
                 {
@@ -282,11 +291,12 @@ namespace Trade.It
                 previewGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "نام فایل", Width = 220, Name = "previewFile" });
                 previewGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "ستون‌های موجود در فایل", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, Name = "previewColumns" });
                 previewGroup.Controls.Add(previewGrid);
-                mainPanel.Controls.Add(previewGroup, 0, 6);
+                mainPanel.Controls.Add(previewGroup, 0, 7);
 
                 var bottomPanel = new FlowLayoutPanel
                 {
-                    Dock = DockStyle.Fill,
+                    Dock = DockStyle.Bottom,
+                    Height = 52,
                     FlowDirection = FlowDirection.RightToLeft,
                     WrapContents = false,
                     RightToLeft = RightToLeft.Yes,
@@ -295,9 +305,9 @@ namespace Trade.It
                 bottomPanel.Controls.Add(CreateButton("ذخیره سبد", 125));
                 bottomPanel.Controls.Add(CreateButton("لغو", 90));
                 bottomPanel.Controls.Add(CreateButton("تست Mapping", 135));
-                mainPanel.Controls.Add(bottomPanel, 0, 7);
-
                 Controls.Add(mainPanel);
+                Controls.Add(bottomPanel);
+                bottomPanel.BringToFront();
             }
 
             private static GroupBox CreateSymbolSelectionGroup()
@@ -327,9 +337,9 @@ namespace Trade.It
                     ColumnCount = 3,
                     RightToLeft = RightToLeft.Yes
                 };
-                top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130F));
+                top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
                 top.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-                top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
+                top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
                 top.Controls.Add(CreateLabel("انتخاب شده: ۰ از ۰"), 0, 0);
                 top.Controls.Add(new TextBox { Dock = DockStyle.Fill, Margin = new Padding(4) }, 1, 0);
                 top.Controls.Add(CreateLabel("جستجوی نماد..."), 2, 0);
@@ -346,7 +356,7 @@ namespace Trade.It
                     RightToLeft = RightToLeft.Yes,
                     BackgroundColor = SystemColors.Window
                 };
-                grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "انتخاب", Width = 80, Name = "selectedColumn" });
+                grid.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "انتخاب", Width = 80, Name = "selectedColumn" });
                 grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "نماد", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, Name = "symbolColumn", ReadOnly = true });
                 layout.Controls.Add(grid, 0, 1);
 
@@ -384,8 +394,7 @@ namespace Trade.It
                     RowHeadersVisible = false,
                     SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                     RightToLeft = RightToLeft.Yes,
-                    BackgroundColor = SystemColors.Window,
-                    AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None
+                    BackgroundColor = SystemColors.Window
                 };
                 grid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "فیلد استاندارد", Width = 205, Name = "standardField", ReadOnly = true });
                 grid.Columns.Add(new DataGridViewComboBoxColumn { HeaderText = "ستون فایل", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, Name = "fileColumn" });
@@ -415,7 +424,7 @@ namespace Trade.It
                 };
                 panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
                 panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-                panel.Controls.Add(CreateLabel(text), 0, 0);
+                panel.Controls.Add(CreateLabel(text + ":"), 0, 0);
                 panel.Controls.Add(new TextBox { Dock = DockStyle.Fill, TabIndex = tabIndex, Margin = new Padding(4) }, 1, 0);
                 return panel;
             }
@@ -497,9 +506,10 @@ namespace Trade.It
                     Dock = DockStyle.Fill,
                     ColumnCount = 1,
                     RowCount = 4,
-                    Padding = new Padding(8),
+                    Padding = new Padding(6),
                     RightToLeft = RightToLeft.Yes
                 };
+                root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
                 root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78F));
                 root.RowStyles.Add(new RowStyle(SizeType.Absolute, 300F));
                 root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -516,7 +526,7 @@ namespace Trade.It
                     Dock = DockStyle.Right,
                     Width = 260,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Font = new Font("Segoe UI", 13F, FontStyle.Regular)
+                    Font = new Font("Segoe UI", 13F)
                 };
                 var reload = CreateButton("بازخوانی", 145);
                 reload.Location = new Point(14, 12);
@@ -528,6 +538,7 @@ namespace Trade.It
                 {
                     Dock = DockStyle.Fill,
                     ColumnCount = 2,
+                    RowCount = 1,
                     RightToLeft = RightToLeft.Yes
                 };
                 upper.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 72F));
@@ -553,7 +564,6 @@ namespace Trade.It
                 };
                 var close = CreateButton("بستن", 125);
                 close.Location = new Point(12, 10);
-                close.Click += (_, _) => Close();
                 footer.Controls.Add(status);
                 footer.Controls.Add(close);
                 root.Controls.Add(footer, 0, 3);
@@ -577,9 +587,9 @@ namespace Trade.It
                     RowCount = 6,
                     RightToLeft = RightToLeft.Yes
                 };
-                table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
                 table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-                table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
                 table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
                 for (int i = 0; i < 6; i++) table.RowStyles.Add(new RowStyle(SizeType.Percent, 16.66F));
 
@@ -625,7 +635,7 @@ namespace Trade.It
                     IntegralHeight = false
                 };
                 layout.Controls.Add(list, 0, 0);
-                var delete = CreateButton("حذف سبدهای انتخاب شده", 205);
+
                 var buttonPanel = new FlowLayoutPanel
                 {
                     Dock = DockStyle.Fill,
@@ -633,7 +643,7 @@ namespace Trade.It
                     WrapContents = false,
                     RightToLeft = RightToLeft.Yes
                 };
-                buttonPanel.Controls.Add(delete);
+                buttonPanel.Controls.Add(CreateButton("حذف سبدهای انتخاب شده", 205));
                 layout.Controls.Add(buttonPanel, 0, 1);
                 group.Controls.Add(layout);
                 return group;
@@ -703,19 +713,11 @@ namespace Trade.It
                     Margin = new Padding(4)
                 }, labelColumn, row);
 
-                var input = new TextBox
+                table.Controls.Add(new TextBox
                 {
                     Dock = DockStyle.Fill,
                     Margin = new Padding(4)
-                };
-                if (wide)
-                {
-                    table.Controls.Add(input, labelColumn + 1, row);
-                }
-                else
-                {
-                    table.Controls.Add(input, labelColumn + 1, row);
-                }
+                }, labelColumn + 1, row);
             }
 
             private static Button CreateButton(string text, int width)
