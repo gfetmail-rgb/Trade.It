@@ -3,12 +3,36 @@ namespace Trade.It
     partial class PortfolioManagementForm
     {
         private System.ComponentModel.IContainer components = null;
+
         private TableLayoutPanel rootTable;
         private Panel headerPanel;
         private Label titleLabel;
         private Button reloadButton;
+        private TableLayoutPanel upperTable;
         private GroupBox parametersGroup;
         private TableLayoutPanel parameterTable;
+        private Label portfolioNameLabel;
+        private TextBox portfolioNameTextBox;
+        private Label sourceTypeLabel;
+        private ComboBox sourceTypeComboBox;
+        private Label dataPathLabel;
+        private TextBox dataPathTextBox;
+        private Label dataTypeLabel;
+        private ComboBox dataTypeComboBox;
+        private Label symbolSourceLabel;
+        private ComboBox symbolSourceComboBox;
+        private Label separatorLabel;
+        private ComboBox separatorComboBox;
+        private Label timeFormatLabel;
+        private ComboBox timeFormatComboBox;
+        private Label dateFormatLabel;
+        private ComboBox dateFormatComboBox;
+        private Label headerLabel;
+        private CheckBox headerCheckBox;
+        private Label calendarLabel;
+        private ComboBox calendarComboBox;
+        private Label symbolCountLabel;
+        private TextBox symbolCountTextBox;
         private GroupBox existingGroup;
         private ListBox portfoliosListBox;
         private Button deletePortfoliosButton;
@@ -21,7 +45,8 @@ namespace Trade.It
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null)) components.Dispose();
+            if (disposing && (components != null))
+                components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -32,8 +57,31 @@ namespace Trade.It
             headerPanel = new Panel();
             titleLabel = new Label();
             reloadButton = new Button();
+            upperTable = new TableLayoutPanel();
             parametersGroup = new GroupBox();
             parameterTable = new TableLayoutPanel();
+            portfolioNameLabel = new Label();
+            portfolioNameTextBox = new TextBox();
+            sourceTypeLabel = new Label();
+            sourceTypeComboBox = new ComboBox();
+            dataPathLabel = new Label();
+            dataPathTextBox = new TextBox();
+            dataTypeLabel = new Label();
+            dataTypeComboBox = new ComboBox();
+            symbolSourceLabel = new Label();
+            symbolSourceComboBox = new ComboBox();
+            separatorLabel = new Label();
+            separatorComboBox = new ComboBox();
+            timeFormatLabel = new Label();
+            timeFormatComboBox = new ComboBox();
+            dateFormatLabel = new Label();
+            dateFormatComboBox = new ComboBox();
+            headerLabel = new Label();
+            headerCheckBox = new CheckBox();
+            calendarLabel = new Label();
+            calendarComboBox = new ComboBox();
+            symbolCountLabel = new Label();
+            symbolCountTextBox = new TextBox();
             existingGroup = new GroupBox();
             portfoliosListBox = new ListBox();
             deletePortfoliosButton = new Button();
@@ -49,19 +97,19 @@ namespace Trade.It
             StartPosition = FormStartPosition.CenterParent;
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
-            MinimumSize = new Size(1100, 700);
-            ClientSize = new Size(1500, 920);
+            MinimumSize = new Size(1150, 700);
+            ClientSize = new Size(1450, 850);
             Font = new Font("Segoe UI", 10F);
 
             rootTable.Dock = DockStyle.Fill;
-            rootTable.Padding = new Padding(6);
+            rootTable.Padding = new Padding(12);
             rootTable.ColumnCount = 1;
             rootTable.RowCount = 4;
             rootTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 78F));
-            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 300F));
+            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 290F));
             rootTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
+            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
 
             headerPanel.Dock = DockStyle.Fill;
             headerPanel.BorderStyle = BorderStyle.FixedSingle;
@@ -69,35 +117,32 @@ namespace Trade.It
             titleLabel.Dock = DockStyle.Right;
             titleLabel.Width = 260;
             titleLabel.TextAlign = ContentAlignment.MiddleCenter;
-            titleLabel.Font = new Font("Segoe UI", 13F);
+            titleLabel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             reloadButton.Text = "بازخوانی";
-            reloadButton.Width = 145;
-            reloadButton.Height = 36;
+            reloadButton.Size = new Size(120, 34);
             reloadButton.Location = new Point(14, 12);
             headerPanel.Controls.Add(titleLabel);
             headerPanel.Controls.Add(reloadButton);
             rootTable.Controls.Add(headerPanel, 0, 0);
 
-            var upper = new TableLayoutPanel();
-            upper.Dock = DockStyle.Fill;
-            upper.ColumnCount = 2;
-            upper.RowCount = 1;
-            upper.RightToLeft = RightToLeft.Yes;
-            upper.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 72F));
-            upper.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28F));
+            upperTable.Dock = DockStyle.Fill;
+            upperTable.ColumnCount = 2;
+            upperTable.RowCount = 1;
+            upperTable.RightToLeft = RightToLeft.Yes;
+            upperTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 72F));
+            upperTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28F));
+            rootTable.Controls.Add(upperTable, 0, 1);
 
             parametersGroup.Text = "پارامترهای سبد";
             parametersGroup.Dock = DockStyle.Fill;
             parametersGroup.Padding = new Padding(10);
-
             parameterTable.Dock = DockStyle.Fill;
             parameterTable.ColumnCount = 4;
             parameterTable.RowCount = 6;
             parameterTable.RightToLeft = RightToLeft.Yes;
-            parameterTable.Padding = new Padding(0);
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
             parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
             parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
             parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
@@ -106,58 +151,123 @@ namespace Trade.It
             parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
             parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
 
-            AddField(parameterTable, "نام سبد:", 0, 0);
-            AddField(parameterTable, "نوع منبع:", 2, 0);
-            AddField(parameterTable, "مسیر داده:", 0, 1);
-            AddField(parameterTable, "نوع داده:", 0, 2);
-            AddField(parameterTable, "منبع نام نماد:", 2, 2);
-            AddField(parameterTable, "جداکننده:", 0, 3);
-            AddField(parameterTable, "فرمت زمان:", 2, 3);
-            AddField(parameterTable, "فرمت تاریخ:", 0, 4);
-            AddField(parameterTable, "Header:", 2, 4);
-            AddField(parameterTable, "تقویم:", 0, 5);
-            AddField(parameterTable, "تعداد نماد:", 2, 5);
+            portfolioNameLabel.Text = "نام سبد:";
+            portfolioNameLabel.Dock = DockStyle.Fill;
+            portfolioNameLabel.TextAlign = ContentAlignment.MiddleRight;
+            portfolioNameTextBox.Dock = DockStyle.Fill;
+            portfolioNameTextBox.Margin = new Padding(4);
+            sourceTypeLabel.Text = "نوع منبع:";
+            sourceTypeLabel.Dock = DockStyle.Fill;
+            sourceTypeLabel.TextAlign = ContentAlignment.MiddleRight;
+            sourceTypeComboBox.Dock = DockStyle.Fill;
+            sourceTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            sourceTypeComboBox.Items.AddRange(new object[] { "فایل", "داخل فایل" });
+            sourceTypeComboBox.SelectedIndex = 0;
+
+            dataPathLabel.Text = "مسیر داده:";
+            dataPathLabel.Dock = DockStyle.Fill;
+            dataPathLabel.TextAlign = ContentAlignment.MiddleRight;
+            dataPathTextBox.Dock = DockStyle.Fill;
+            dataPathTextBox.Margin = new Padding(4);
+            dataTypeLabel.Text = "نوع داده:";
+            dataTypeLabel.Dock = DockStyle.Fill;
+            dataTypeLabel.TextAlign = ContentAlignment.MiddleRight;
+            dataTypeComboBox.Dock = DockStyle.Fill;
+            dataTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            dataTypeComboBox.Items.AddRange(new object[] { "CSV", "Excel", "متنی" });
+            dataTypeComboBox.SelectedIndex = 0;
+
+            symbolSourceLabel.Text = "منبع نام نماد:";
+            symbolSourceLabel.Dock = DockStyle.Fill;
+            symbolSourceLabel.TextAlign = ContentAlignment.MiddleRight;
+            symbolSourceComboBox.Dock = DockStyle.Fill;
+            symbolSourceComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            symbolSourceComboBox.Items.AddRange(new object[] { "نام فایل", "داخل فایل" });
+            symbolSourceComboBox.SelectedIndex = 0;
+
+            separatorLabel.Text = "جداکننده:";
+            separatorLabel.Dock = DockStyle.Fill;
+            separatorLabel.TextAlign = ContentAlignment.MiddleRight;
+            separatorComboBox.Dock = DockStyle.Fill;
+            separatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            separatorComboBox.Items.AddRange(new object[] { "Comma (,)", "Semicolon (;)", "Tab", "Pipe (|)" });
+            separatorComboBox.SelectedIndex = 0;
+
+            timeFormatLabel.Text = "فرمت زمان:";
+            timeFormatLabel.Dock = DockStyle.Fill;
+            timeFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            timeFormatComboBox.Dock = DockStyle.Fill;
+            timeFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            timeFormatComboBox.Items.AddRange(new object[] { "HHMMSS", "HH:MM:SS", "HHMM" });
+            timeFormatComboBox.SelectedIndex = 0;
+
+            dateFormatLabel.Text = "فرمت تاریخ:";
+            dateFormatLabel.Dock = DockStyle.Fill;
+            dateFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            dateFormatComboBox.Dock = DockStyle.Fill;
+            dateFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            dateFormatComboBox.Items.AddRange(new object[] { "YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD" });
+            dateFormatComboBox.SelectedIndex = 0;
+
+            headerLabel.Text = "Header:";
+            headerLabel.Dock = DockStyle.Fill;
+            headerLabel.TextAlign = ContentAlignment.MiddleRight;
+            headerCheckBox.Text = "سطر اول عنوان ستون‌ها";
+            headerCheckBox.Dock = DockStyle.Fill;
+            calendarLabel.Text = "تقویم:";
+            calendarLabel.Dock = DockStyle.Fill;
+            calendarLabel.TextAlign = ContentAlignment.MiddleRight;
+            calendarComboBox.Dock = DockStyle.Fill;
+            calendarComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            calendarComboBox.Items.AddRange(new object[] { "شمسی (Persian)", "لاتین (Gregorian)" });
+            calendarComboBox.SelectedIndex = 0;
+            symbolCountLabel.Text = "تعداد نماد:";
+            symbolCountLabel.Dock = DockStyle.Fill;
+            symbolCountLabel.TextAlign = ContentAlignment.MiddleRight;
+            symbolCountTextBox.Dock = DockStyle.Fill;
+            symbolCountTextBox.ReadOnly = true;
+
+            parameterTable.Controls.Add(portfolioNameLabel, 0, 0);
+            parameterTable.Controls.Add(portfolioNameTextBox, 1, 0);
+            parameterTable.Controls.Add(sourceTypeLabel, 2, 0);
+            parameterTable.Controls.Add(sourceTypeComboBox, 3, 0);
+            parameterTable.Controls.Add(dataPathLabel, 0, 1);
+            parameterTable.Controls.Add(dataPathTextBox, 1, 1);
+            parameterTable.Controls.Add(dataTypeLabel, 2, 1);
+            parameterTable.Controls.Add(dataTypeComboBox, 3, 1);
+            parameterTable.Controls.Add(symbolSourceLabel, 0, 2);
+            parameterTable.Controls.Add(symbolSourceComboBox, 1, 2);
+            parameterTable.Controls.Add(separatorLabel, 2, 2);
+            parameterTable.Controls.Add(separatorComboBox, 3, 2);
+            parameterTable.Controls.Add(timeFormatLabel, 0, 3);
+            parameterTable.Controls.Add(timeFormatComboBox, 1, 3);
+            parameterTable.Controls.Add(dateFormatLabel, 2, 3);
+            parameterTable.Controls.Add(dateFormatComboBox, 3, 3);
+            parameterTable.Controls.Add(headerLabel, 0, 4);
+            parameterTable.Controls.Add(headerCheckBox, 1, 4);
+            parameterTable.Controls.Add(calendarLabel, 2, 4);
+            parameterTable.Controls.Add(calendarComboBox, 3, 4);
+            parameterTable.Controls.Add(symbolCountLabel, 0, 5);
+            parameterTable.Controls.Add(symbolCountTextBox, 1, 5);
             parametersGroup.Controls.Add(parameterTable);
+            upperTable.Controls.Add(parametersGroup, 0, 0);
 
             existingGroup.Text = "سبدهای موجود";
             existingGroup.Dock = DockStyle.Fill;
             existingGroup.Padding = new Padding(10);
-            var existingLayout = new TableLayoutPanel();
-            existingLayout.Dock = DockStyle.Fill;
-            existingLayout.ColumnCount = 1;
-            existingLayout.RowCount = 2;
-            existingLayout.RightToLeft = RightToLeft.Yes;
-            existingLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            existingLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             portfoliosListBox.Dock = DockStyle.Fill;
             portfoliosListBox.IntegralHeight = false;
-            existingLayout.Controls.Add(portfoliosListBox, 0, 0);
-            deletePortfoliosButton.Text = "حذف سبدهای انتخاب شده";
-            deletePortfoliosButton.Width = 205;
+            deletePortfoliosButton.Text = "حذف سبد انتخاب شده";
+            deletePortfoliosButton.Dock = DockStyle.Bottom;
             deletePortfoliosButton.Height = 36;
             deletePortfoliosButton.Margin = new Padding(4);
-            var existingButtons = new FlowLayoutPanel();
-            existingButtons.Dock = DockStyle.Fill;
-            existingButtons.FlowDirection = FlowDirection.RightToLeft;
-            existingButtons.WrapContents = false;
-            existingButtons.RightToLeft = RightToLeft.Yes;
-            existingButtons.Controls.Add(deletePortfoliosButton);
-            existingLayout.Controls.Add(existingButtons, 0, 1);
-            existingGroup.Controls.Add(existingLayout);
-            upper.Controls.Add(parametersGroup, 0, 0);
-            upper.Controls.Add(existingGroup, 1, 0);
-            rootTable.Controls.Add(upper, 0, 1);
+            existingGroup.Controls.Add(portfoliosListBox);
+            existingGroup.Controls.Add(deletePortfoliosButton);
+            upperTable.Controls.Add(existingGroup, 1, 0);
 
             symbolsGroup.Text = "نمادهای سبد";
             symbolsGroup.Dock = DockStyle.Fill;
             symbolsGroup.Padding = new Padding(10);
-            var symbolLayout = new TableLayoutPanel();
-            symbolLayout.Dock = DockStyle.Fill;
-            symbolLayout.ColumnCount = 1;
-            symbolLayout.RowCount = 2;
-            symbolLayout.RightToLeft = RightToLeft.Yes;
-            symbolLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            symbolLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             symbolsGrid.Dock = DockStyle.Fill;
             symbolsGrid.AllowUserToAddRows = false;
             symbolsGrid.AllowUserToDeleteRows = false;
@@ -165,42 +275,34 @@ namespace Trade.It
             symbolsGrid.AutoGenerateColumns = false;
             symbolsGrid.RowHeadersVisible = false;
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            symbolsGrid.MultiSelect = true;
             symbolsGrid.RightToLeft = RightToLeft.Yes;
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.BorderStyle = BorderStyle.FixedSingle;
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "ردیف", Width = 75 });
-            symbolsGrid.Columns.Add(new DataGridViewCheckBoxColumn { HeaderText = "انتخاب", Width = 85 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "نماد", Width = 140 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "نام نمایشی", Width = 180 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "آخرین معامله", Width = 150 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "حجم", Width = 130 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "قیمت پایانی", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-            symbolLayout.Controls.Add(symbolsGrid, 0, 0);
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "rowColumn", HeaderText = "ردیف", Width = 70 });
+            symbolsGrid.Columns.Add(new DataGridViewCheckBoxColumn { Name = "selectedColumn", HeaderText = "انتخاب", Width = 80 });
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "symbolColumn", HeaderText = "نماد", Width = 140 });
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "displayNameColumn", HeaderText = "نام نمایشی", Width = 190 });
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "lastTradeColumn", HeaderText = "آخرین معامله", Width = 150 });
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "volumeColumn", HeaderText = "حجم", Width = 130 });
+            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "closeColumn", HeaderText = "قیمت پایانی", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
             deleteSymbolsButton.Text = "حذف نمادهای انتخاب شده";
-            deleteSymbolsButton.Width = 245;
+            deleteSymbolsButton.Dock = DockStyle.Bottom;
             deleteSymbolsButton.Height = 36;
             deleteSymbolsButton.Margin = new Padding(4);
-            var symbolButtons = new FlowLayoutPanel();
-            symbolButtons.Dock = DockStyle.Fill;
-            symbolButtons.FlowDirection = FlowDirection.RightToLeft;
-            symbolButtons.WrapContents = false;
-            symbolButtons.RightToLeft = RightToLeft.Yes;
-            symbolButtons.Controls.Add(deleteSymbolsButton);
-            symbolLayout.Controls.Add(symbolButtons, 0, 1);
-            symbolsGroup.Controls.Add(symbolLayout);
+            symbolsGroup.Controls.Add(symbolsGrid);
+            symbolsGroup.Controls.Add(deleteSymbolsButton);
             rootTable.Controls.Add(symbolsGroup, 0, 2);
 
             footerPanel.Dock = DockStyle.Fill;
             footerPanel.BorderStyle = BorderStyle.FixedSingle;
-            statusLabel.Text = "هیچ سبدی وجود ندارد.";
+            statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
             statusLabel.Dock = DockStyle.Right;
-            statusLabel.Width = 320;
+            statusLabel.Width = 420;
             statusLabel.TextAlign = ContentAlignment.MiddleRight;
-            statusLabel.Padding = new Padding(4);
             closeButton.Text = "بستن";
-            closeButton.Width = 125;
-            closeButton.Height = 36;
-            closeButton.Location = new Point(12, 10);
+            closeButton.Size = new Size(110, 34);
+            closeButton.Location = new Point(12, 8);
             footerPanel.Controls.Add(statusLabel);
             footerPanel.Controls.Add(closeButton);
             rootTable.Controls.Add(footerPanel, 0, 3);
@@ -208,22 +310,6 @@ namespace Trade.It
             Controls.Add(rootTable);
             ResumeLayout(false);
             PerformLayout();
-        }
-
-        private static void AddField(TableLayoutPanel table, string labelText, int labelColumn, int row)
-        {
-            var label = new Label();
-            label.Text = labelText;
-            label.Dock = DockStyle.Fill;
-            label.TextAlign = ContentAlignment.MiddleRight;
-            label.Margin = new Padding(4);
-
-            var textBox = new TextBox();
-            textBox.Dock = DockStyle.Fill;
-            textBox.Margin = new Padding(4);
-
-            table.Controls.Add(label, labelColumn, row);
-            table.Controls.Add(textBox, labelColumn + 1, row);
         }
     }
 }
