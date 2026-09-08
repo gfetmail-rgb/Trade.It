@@ -8,6 +8,7 @@ namespace Trade.It
         private Label titleLabel;
         private Button reloadButton;
         private GroupBox parametersGroup;
+        private TableLayoutPanel parameterTable;
         private GroupBox existingGroup;
         private ListBox portfoliosListBox;
         private Button deletePortfoliosButton;
@@ -29,7 +30,7 @@ namespace Trade.It
             components = new System.ComponentModel.Container();
             rootTable = new TableLayoutPanel();
             headerPanel = new Panel(); titleLabel = new Label(); reloadButton = new Button();
-            parametersGroup = new GroupBox(); existingGroup = new GroupBox(); portfoliosListBox = new ListBox(); deletePortfoliosButton = new Button();
+            parametersGroup = new GroupBox(); parameterTable = new TableLayoutPanel(); existingGroup = new GroupBox(); portfoliosListBox = new ListBox(); deletePortfoliosButton = new Button();
             symbolsGroup = new GroupBox(); symbolsGrid = new DataGridView(); deleteSymbolsButton = new Button();
             footerPanel = new Panel(); statusLabel = new Label(); closeButton = new Button();
             SuspendLayout();
@@ -62,9 +63,8 @@ namespace Trade.It
             upper.Controls.Add(parametersGroup, 0, 0); upper.Controls.Add(existingGroup, 1, 0);
 
             parametersGroup.Text = "پارامترهای سبد"; parametersGroup.Dock = DockStyle.Fill; parametersGroup.Padding = new Padding(10);
-            var parameterTable = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 6, RightToLeft = RightToLeft.Yes };
+            parameterTable.Dock = DockStyle.Fill; parameterTable.ColumnCount = 4; parameterTable.RowCount = 6; parameterTable.RightToLeft = RightToLeft.Yes;
             parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F)); parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F)); parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F)); parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            for (int i = 0; i < 6; i++) parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.66F));
             AddField(parameterTable, "نام سبد:", 0, 0); AddField(parameterTable, "نوع منبع:", 2, 0); AddField(parameterTable, "مسیر داده:", 0, 1); AddField(parameterTable, "نوع داده:", 0, 2); AddField(parameterTable, "منبع نام نماد:", 2, 2); AddField(parameterTable, "جداکننده:", 0, 3); AddField(parameterTable, "فرمت زمان:", 2, 3); AddField(parameterTable, "فرمت تاریخ:", 0, 4); AddField(parameterTable, "Header:", 2, 4); AddField(parameterTable, "تقویم:", 0, 5); AddField(parameterTable, "تعداد نماد:", 2, 5);
             parametersGroup.Controls.Add(parameterTable);
 
