@@ -19,12 +19,12 @@ namespace Trade.It
         private ComboBox separatorComboBox;
         private Label calendarLabel;
         private ComboBox calendarComboBox;
-        private CheckBox headerCheckBox;
-        private CheckBox noDateTimeCheckBox;
         private Label timeFormatLabel;
         private ComboBox timeFormatComboBox;
         private Label dateFormatLabel;
         private ComboBox dateFormatComboBox;
+        private CheckBox headerCheckBox;
+        private CheckBox noDateTimeCheckBox;
         private TableLayoutPanel middleTable;
         private GroupBox mappingGroup;
         private DataGridView mappingGrid;
@@ -68,12 +68,12 @@ namespace Trade.It
             separatorComboBox = new ComboBox();
             calendarLabel = new Label();
             calendarComboBox = new ComboBox();
-            headerCheckBox = new CheckBox();
-            noDateTimeCheckBox = new CheckBox();
             timeFormatLabel = new Label();
             timeFormatComboBox = new ComboBox();
             dateFormatLabel = new Label();
             dateFormatComboBox = new ComboBox();
+            headerCheckBox = new CheckBox();
+            noDateTimeCheckBox = new CheckBox();
             middleTable = new TableLayoutPanel();
             mappingGroup = new GroupBox();
             mappingGrid = new DataGridView();
@@ -101,17 +101,16 @@ namespace Trade.It
             Font = new Font("Segoe UI", 10F);
 
             mainTable.Dock = DockStyle.Fill;
-            mainTable.Padding = new Padding(12);
+            mainTable.Padding = new Padding(12, 12, 12, 64);
             mainTable.ColumnCount = 1;
-            mainTable.RowCount = 7;
+            mainTable.RowCount = 6;
             mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
-            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 68F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 155F));
-            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 145F));
 
             nameTable.Dock = DockStyle.Fill;
             nameTable.ColumnCount = 2;
@@ -121,7 +120,6 @@ namespace Trade.It
             portfolioNameLabel.Text = "نام سبد:";
             portfolioNameLabel.Dock = DockStyle.Fill;
             portfolioNameLabel.TextAlign = ContentAlignment.MiddleRight;
-            portfolioNameLabel.Margin = new Padding(4);
             portfolioNameTextBox.Dock = DockStyle.Fill;
             portfolioNameTextBox.Margin = new Padding(4);
             nameTable.Controls.Add(portfolioNameLabel, 0, 0);
@@ -134,10 +132,10 @@ namespace Trade.It
             fileNameRadioButton.Text = "نام فایل";
             fileNameRadioButton.AutoSize = true;
             fileNameRadioButton.Checked = true;
-            fileNameRadioButton.Location = new Point(760, 28);
+            fileNameRadioButton.Location = new Point(820, 27);
             insideFileRadioButton.Text = "داخل فایل";
             insideFileRadioButton.AutoSize = true;
-            insideFileRadioButton.Location = new Point(620, 28);
+            insideFileRadioButton.Location = new Point(680, 27);
             sourceGroup.Controls.Add(fileNameRadioButton);
             sourceGroup.Controls.Add(insideFileRadioButton);
             mainTable.Controls.Add(sourceGroup, 0, 1);
@@ -151,7 +149,6 @@ namespace Trade.It
             dataPathLabel.Text = "مسیر داده:";
             dataPathLabel.Dock = DockStyle.Fill;
             dataPathLabel.TextAlign = ContentAlignment.MiddleRight;
-            dataPathLabel.Margin = new Padding(4);
             dataPathTextBox.Dock = DockStyle.Fill;
             dataPathTextBox.Margin = new Padding(4);
             browseButton.Text = "انتخاب پوشه...";
@@ -163,13 +160,17 @@ namespace Trade.It
             mainTable.Controls.Add(pathTable, 0, 2);
 
             optionsTable.Dock = DockStyle.Fill;
-            optionsTable.ColumnCount = 6;
+            optionsTable.ColumnCount = 10;
             optionsTable.RowCount = 1;
-            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 85F));
-            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
-            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
-            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 175F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 55F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 145F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 78F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 78F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135F));
+            optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170F));
             optionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             separatorLabel.Text = "جداکننده:";
             separatorLabel.Dock = DockStyle.Fill;
@@ -185,6 +186,20 @@ namespace Trade.It
             calendarComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             calendarComboBox.Items.AddRange(new object[] { "شمسی (Persian)", "لاتین (Gregorian)" });
             calendarComboBox.SelectedIndex = 0;
+            timeFormatLabel.Text = "زمان:";
+            timeFormatLabel.Dock = DockStyle.Fill;
+            timeFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            timeFormatComboBox.Dock = DockStyle.Fill;
+            timeFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            timeFormatComboBox.Items.AddRange(new object[] { "HHMMSS", "HH:MM:SS", "HHMM" });
+            timeFormatComboBox.SelectedIndex = 0;
+            dateFormatLabel.Text = "تاریخ:";
+            dateFormatLabel.Dock = DockStyle.Fill;
+            dateFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            dateFormatComboBox.Dock = DockStyle.Fill;
+            dateFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            dateFormatComboBox.Items.AddRange(new object[] { "YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD" });
+            dateFormatComboBox.SelectedIndex = 0;
             headerCheckBox.Text = "سطر اول عنوان ستون‌ها";
             headerCheckBox.Dock = DockStyle.Fill;
             noDateTimeCheckBox.Text = "فاقد تاریخ/زمان";
@@ -193,28 +208,13 @@ namespace Trade.It
             optionsTable.Controls.Add(separatorComboBox, 1, 0);
             optionsTable.Controls.Add(calendarLabel, 2, 0);
             optionsTable.Controls.Add(calendarComboBox, 3, 0);
-            optionsTable.Controls.Add(headerCheckBox, 4, 0);
-            optionsTable.Controls.Add(noDateTimeCheckBox, 5, 0);
+            optionsTable.Controls.Add(timeFormatLabel, 4, 0);
+            optionsTable.Controls.Add(timeFormatComboBox, 5, 0);
+            optionsTable.Controls.Add(dateFormatLabel, 6, 0);
+            optionsTable.Controls.Add(dateFormatComboBox, 7, 0);
+            optionsTable.Controls.Add(headerCheckBox, 8, 0);
+            optionsTable.Controls.Add(noDateTimeCheckBox, 9, 0);
             mainTable.Controls.Add(optionsTable, 0, 3);
-
-            timeFormatLabel.Text = "فرمت زمان:";
-            timeFormatLabel.Dock = DockStyle.Fill;
-            timeFormatLabel.TextAlign = ContentAlignment.MiddleRight;
-            timeFormatComboBox.Dock = DockStyle.Fill;
-            timeFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            timeFormatComboBox.Items.AddRange(new object[] { "HHMMSS", "HH:MM:SS", "HHMM" });
-            timeFormatComboBox.SelectedIndex = 0;
-            dateFormatLabel.Text = "فرمت تاریخ:";
-            dateFormatLabel.Dock = DockStyle.Fill;
-            dateFormatLabel.TextAlign = ContentAlignment.MiddleRight;
-            dateFormatComboBox.Dock = DockStyle.Fill;
-            dateFormatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            dateFormatComboBox.Items.AddRange(new object[] { "YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD" });
-            dateFormatComboBox.SelectedIndex = 0;
-            mainTable.Controls.Add(timeFormatLabel, 0, 4);
-            mainTable.Controls.Add(timeFormatComboBox, 0, 4);
-            mainTable.Controls.Add(dateFormatLabel, 0, 4);
-            mainTable.Controls.Add(dateFormatComboBox, 0, 4);
 
             middleTable.Dock = DockStyle.Fill;
             middleTable.ColumnCount = 2;
@@ -233,8 +233,9 @@ namespace Trade.It
             mappingGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             mappingGrid.RightToLeft = RightToLeft.Yes;
             mappingGrid.BackgroundColor = SystemColors.Window;
-            mappingGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "standardField", HeaderText = "فیلد استاندارد", ReadOnly = true, Width = 170 });
-            mappingGrid.Columns.Add(new DataGridViewComboBoxColumn { Name = "fileColumn", HeaderText = "ستون فایل", Width = 190 });
+            mappingGrid.BorderStyle = BorderStyle.FixedSingle;
+            mappingGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "standardField", HeaderText = "فیلد استاندارد", ReadOnly = true, Width = 165 });
+            mappingGrid.Columns.Add(new DataGridViewComboBoxColumn { Name = "fileColumn", HeaderText = "ستون فایل", Width = 185 });
             mappingGrid.Rows.Add("نماد", "");
             mappingGrid.Rows.Add("تاریخ", "");
             mappingGrid.Rows.Add("زمان", "");
@@ -259,7 +260,7 @@ namespace Trade.It
             symbolTable.Dock = DockStyle.Fill;
             symbolTable.ColumnCount = 4;
             symbolTable.RowCount = 2;
-            symbolTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115F));
+            symbolTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105F));
             symbolTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 125F));
             symbolTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             symbolTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
@@ -289,13 +290,14 @@ namespace Trade.It
             symbolGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             symbolGrid.RightToLeft = RightToLeft.Yes;
             symbolGrid.BackgroundColor = SystemColors.Window;
+            symbolGrid.BorderStyle = BorderStyle.FixedSingle;
             symbolGrid.Columns.Add(new DataGridViewCheckBoxColumn { Name = "selectedColumn", HeaderText = "انتخاب", Width = 75 });
             symbolGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "symbolColumn", HeaderText = "نماد", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, ReadOnly = true });
             symbolTable.Controls.Add(symbolGrid, 0, 1);
             symbolTable.SetColumnSpan(symbolGrid, 4);
             symbolSelectionGroup.Controls.Add(symbolTable);
             middleTable.Controls.Add(symbolSelectionGroup, 1, 0);
-            mainTable.Controls.Add(middleTable, 0, 5);
+            mainTable.Controls.Add(middleTable, 0, 4);
 
             previewGroup.Text = "پیش‌نمایش داده";
             previewGroup.Dock = DockStyle.Fill;
@@ -308,11 +310,12 @@ namespace Trade.It
             previewGrid.RowHeadersVisible = false;
             previewGrid.RightToLeft = RightToLeft.Yes;
             previewGrid.BackgroundColor = SystemColors.Window;
+            previewGrid.BorderStyle = BorderStyle.FixedSingle;
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewSymbol", HeaderText = "نماد", Width = 120 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewFile", HeaderText = "نام فایل", Width = 220 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewColumns", HeaderText = "ستون‌های موجود در فایل", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
             previewGroup.Controls.Add(previewGrid);
-            mainTable.Controls.Add(previewGroup, 0, 6);
+            mainTable.Controls.Add(previewGroup, 0, 5);
 
             buttonPanel.Dock = DockStyle.Bottom;
             buttonPanel.Height = 52;
@@ -328,6 +331,7 @@ namespace Trade.It
             buttonPanel.Controls.Add(testMappingButton);
             buttonPanel.Controls.Add(cancelButton);
             buttonPanel.Controls.Add(saveButton);
+
             Controls.Add(mainTable);
             Controls.Add(buttonPanel);
             ResumeLayout(false);
