@@ -84,7 +84,7 @@ namespace Trade.It
             mainTable.Dock = DockStyle.Fill;
             mainTable.Padding = new Padding(14, 10, 14, 10);
             mainTable.ColumnCount = 1;
-            mainTable.RowCount = 8;
+            mainTable.RowCount = 9;
             mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 74F));
@@ -93,6 +93,7 @@ namespace Trade.It
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 180F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
 
             var namePanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, RightToLeft = RightToLeft.Yes, Padding = new Padding(0, 4, 0, 4) };
@@ -183,6 +184,15 @@ namespace Trade.It
             mappingGrid.Dock = DockStyle.Fill; mappingGrid.AllowUserToAddRows = false; mappingGrid.AllowUserToDeleteRows = false; mappingGrid.AutoGenerateColumns = false; mappingGrid.RowHeadersVisible = false; mappingGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect; mappingGrid.RightToLeft = RightToLeft.Yes; mappingGrid.BackgroundColor = SystemColors.Window; mappingGrid.BorderStyle = BorderStyle.FixedSingle; mappingGrid.ScrollBars = ScrollBars.Vertical;
             mappingGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "فیلد استاندارد", Width = 155, Name = "standardField", ReadOnly = true });
             mappingGrid.Columns.Add(new DataGridViewComboBoxColumn { HeaderText = "ستون فایل", Width = 155, Name = "fileColumn" });
+            foreach (var field in new[]
+            {
+                "نماد", "تاریخ", "زمان", "Open", "High", "Low", "Close", "حجم",
+                "قیمت پایانی امروز", "قیمت پایانی دیروز", "تعداد معامله", "ارزش معاملات",
+                "تعداد سهم", "ارزش بازار", "نماد انگلیسی"
+            })
+            {
+                mappingGrid.Rows.Add(field, "");
+            }
             mappingGroup.Controls.Add(mappingGrid);
             mainTable.Controls.Add(middle, 0, 6);
 
