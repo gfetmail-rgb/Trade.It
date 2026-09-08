@@ -184,15 +184,21 @@ namespace Trade.It
             mappingGrid.Dock = DockStyle.Fill; mappingGrid.AllowUserToAddRows = false; mappingGrid.AllowUserToDeleteRows = false; mappingGrid.AutoGenerateColumns = false; mappingGrid.RowHeadersVisible = false; mappingGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect; mappingGrid.RightToLeft = RightToLeft.Yes; mappingGrid.BackgroundColor = SystemColors.Window; mappingGrid.BorderStyle = BorderStyle.FixedSingle; mappingGrid.ScrollBars = ScrollBars.Vertical;
             mappingGrid.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "فیلد استاندارد", Width = 155, Name = "standardField", ReadOnly = true });
             mappingGrid.Columns.Add(new DataGridViewComboBoxColumn { HeaderText = "ستون فایل", Width = 155, Name = "fileColumn" });
-            foreach (var field in new[]
-            {
-                "نماد", "تاریخ", "زمان", "Open", "High", "Low", "Close", "حجم",
-                "قیمت پایانی امروز", "قیمت پایانی دیروز", "تعداد معامله", "ارزش معاملات",
-                "تعداد سهم", "ارزش بازار", "نماد انگلیسی"
-            })
-            {
-                mappingGrid.Rows.Add(field, "");
-            }
+            mappingGrid.Rows.Add("نماد", "");
+            mappingGrid.Rows.Add("تاریخ", "");
+            mappingGrid.Rows.Add("زمان", "");
+            mappingGrid.Rows.Add("Open", "");
+            mappingGrid.Rows.Add("High", "");
+            mappingGrid.Rows.Add("Low", "");
+            mappingGrid.Rows.Add("Close", "");
+            mappingGrid.Rows.Add("حجم", "");
+            mappingGrid.Rows.Add("قیمت پایانی امروز", "");
+            mappingGrid.Rows.Add("قیمت پایانی دیروز", "");
+            mappingGrid.Rows.Add("تعداد معامله", "");
+            mappingGrid.Rows.Add("ارزش معاملات", "");
+            mappingGrid.Rows.Add("تعداد سهم", "");
+            mappingGrid.Rows.Add("ارزش بازار", "");
+            mappingGrid.Rows.Add("نماد انگلیسی", "");
             mappingGroup.Controls.Add(mappingGrid);
             mainTable.Controls.Add(middle, 0, 6);
 
