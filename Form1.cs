@@ -11,8 +11,6 @@ namespace Trade.It
             mainSplitContainer.Panel2.Controls.Add(chartPanel);
             mainSplitContainer.SplitterDistance = 419;
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
-            var closeAllChartsMenuItem = new ToolStripMenuItem { Name = "closeAllChartsMenuItem", Text = "بستن همه چارتها" };
-            mainMenuStrip.Items.Add(closeAllChartsMenuItem);
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
             closeAllChartsButton.Click += closeAllChartsButton_Click;
