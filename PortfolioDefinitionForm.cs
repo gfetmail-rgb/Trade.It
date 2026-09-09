@@ -31,6 +31,7 @@ namespace Trade.It
             calendarComboBox.SelectedIndex = 0;
             dateFormatComboBox.SelectedIndex = 0;
             timeFormatComboBox.SelectedIndex = 0;
+            headerCheckBox.Checked = true;
 
             mappingGrid.EditMode = DataGridViewEditMode.EditOnEnter;
             mappingGrid.Columns["mappingFieldColumn"].ReadOnly = true;
@@ -55,6 +56,7 @@ namespace Trade.It
             symbolGrid.CurrentCellDirtyStateChanged += SymbolGrid_CurrentCellDirtyStateChanged;
             symbolGrid.CellValueChanged += SymbolGrid_CellValueChanged;
             symbolGrid.CellDoubleClick += SymbolGrid_CellDoubleClick;
+            mappingGrid.CellValidating += MappingGrid_CellValidating;
             testMappingButton.Click += TestMappingButton_Click;
             saveButton.Click += SaveButton_Click;
             cancelButton.Click += (_, _) => Close();
@@ -63,6 +65,38 @@ namespace Trade.It
             InitializeMappingRows();
             ClearPreviewAndMapping();
             UpdateControlState();
+        }
+
+        private void MappingGrid_CellValidating(object? sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != mappingGrid.Columns["mappingNumberColumn"].Index)
+                return;
+
+            var text = Convert.ToString(e.FormattedValue)?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            if (!text.All(char.IsDigit))
+            {
+                e.Cancel = true;
+                MessageBox.Show(this,
+                    "شماره ستون فقط باید عدد صحیح باشد.",
+                    "Mapping",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out var value) ||
+                value < 1 || value > MaxColumns)
+            {
+                e.Cancel = true;
+                MessageBox.Show(this,
+                    $"شماره ستون باید بین ۱ تا {MaxColumns} باشد.",
+                    "Mapping",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void InitializeMappingRows()
@@ -603,7 +637,7 @@ namespace Trade.It
                 var text = Convert.ToString(row.Cells["mappingNumberColumn"].Value)?.Trim() ?? string.Empty;
                 var column = string.IsNullOrWhiteSpace(text)
                     ? 0
-                    : int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : -1;
+                    : int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out var value) ? value : -1;
                 result.Add(new PortfolioMapping(field, column));
             }
             return result;
@@ -671,7 +705,7 @@ namespace Trade.It
                 calendarComboBox.SelectedIndex = 0;
                 dateFormatComboBox.SelectedIndex = 0;
                 timeFormatComboBox.SelectedIndex = 0;
-                headerCheckBox.Checked = false;
+                headerCheckBox.Checked = true;
                 noDateTimeCheckBox.Checked = false;
                 symbolSearchTextBox.Clear();
                 symbolGrid.Rows.Clear();
