@@ -3,18 +3,13 @@ namespace Trade.It
     partial class PortfolioManagementForm
     {
         private System.ComponentModel.IContainer components = null;
-
-        private Label titleLabel;
         private Button reloadButton;
-        private Label parametersTitleLabel;
         private Label portfolioNameCaption;
         private Label portfolioNameLabel;
         private Label sourceTypeCaption;
         private Label sourceTypeLabel;
         private Label dataPathCaption;
         private Label dataPathLabel;
-        private Label dataTypeCaption;
-        private Label dataTypeLabel;
         private Label symbolSourceCaption;
         private Label symbolSourceLabel;
         private Label separatorCaption;
@@ -47,18 +42,13 @@ namespace Trade.It
 
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            titleLabel = new Label();
             reloadButton = new Button();
-            parametersTitleLabel = new Label();
             portfolioNameCaption = new Label();
             portfolioNameLabel = new Label();
             sourceTypeCaption = new Label();
             sourceTypeLabel = new Label();
             dataPathCaption = new Label();
             dataPathLabel = new Label();
-            dataTypeCaption = new Label();
-            dataTypeLabel = new Label();
             symbolSourceCaption = new Label();
             symbolSourceLabel = new Label();
             separatorCaption = new Label();
@@ -81,261 +71,373 @@ namespace Trade.It
             deleteSymbolsButton = new Button();
             statusLabel = new Label();
             closeButton = new Button();
+            groupBox1 = new GroupBox();
+            NoDateTimeLabel = new Label();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).BeginInit();
+            groupBox1.SuspendLayout();
             SuspendLayout();
-            // Form
-            Text = "مدیریت سبدها";
-            StartPosition = FormStartPosition.CenterParent;
-            RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
-            MinimumSize = new Size(1100, 700);
-            ClientSize = new Size(1400, 820);
-            Font = new Font("Segoe UI", 10F);
-            // Header
-            titleLabel.Text = "مدیریت سبدها";
-            titleLabel.Location = new Point(250, 18);
-            titleLabel.Size = new Size(1120, 40);
-            titleLabel.Name = "titleLabel";
-            titleLabel.TextAlign = ContentAlignment.MiddleRight;
-            titleLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            reloadButton.Text = "بازخوانی";
-            reloadButton.Location = new Point(20, 21);
-            reloadButton.Size = new Size(110, 34);
+            // 
+            // reloadButton
+            // 
+            reloadButton.Location = new Point(581, 769);
             reloadButton.Name = "reloadButton";
-            // Parameters section - direct controls, no layout container
-            parametersTitleLabel.Text = "پارامترهای سبد";
-            parametersTitleLabel.Location = new Point(20, 70);
-            parametersTitleLabel.Size = new Size(1350, 34);
-            parametersTitleLabel.Name = "parametersTitleLabel";
-            parametersTitleLabel.TextAlign = ContentAlignment.MiddleRight;
-            parametersTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-
-            portfolioNameCaption.Text = "نام سبد:";
-            portfolioNameCaption.Location = new Point(1030, 110);
-            portfolioNameCaption.Size = new Size(100, 34);
+            reloadButton.Size = new Size(110, 41);
+            reloadButton.TabIndex = 1;
+            reloadButton.Text = "بازنشانی";
+            // 
+            // portfolioNameCaption
+            // 
+            portfolioNameCaption.Location = new Point(765, 51);
             portfolioNameCaption.Name = "portfolioNameCaption";
+            portfolioNameCaption.Size = new Size(100, 34);
+            portfolioNameCaption.TabIndex = 3;
+            portfolioNameCaption.Text = "نام سبد:";
             portfolioNameCaption.TextAlign = ContentAlignment.MiddleRight;
-            portfolioNameLabel.Text = "—";
-            portfolioNameLabel.Location = new Point(720, 110);
-            portfolioNameLabel.Size = new Size(300, 34);
-            portfolioNameLabel.Name = "portfolioNameLabel";
-            portfolioNameLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // portfolioNameLabel
+            // 
             portfolioNameLabel.BorderStyle = BorderStyle.FixedSingle;
-
-            sourceTypeCaption.Text = "نوع منبع:";
-            sourceTypeCaption.Location = new Point(610, 110);
-            sourceTypeCaption.Size = new Size(100, 34);
+            portfolioNameLabel.Location = new Point(459, 51);
+            portfolioNameLabel.Name = "portfolioNameLabel";
+            portfolioNameLabel.Size = new Size(300, 34);
+            portfolioNameLabel.TabIndex = 4;
+            portfolioNameLabel.Text = "—";
+            portfolioNameLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // sourceTypeCaption
+            // 
+            sourceTypeCaption.Location = new Point(765, 169);
             sourceTypeCaption.Name = "sourceTypeCaption";
+            sourceTypeCaption.Size = new Size(135, 34);
+            sourceTypeCaption.TabIndex = 5;
+            sourceTypeCaption.Text = "نوع فایل داده:";
             sourceTypeCaption.TextAlign = ContentAlignment.MiddleRight;
-            sourceTypeLabel.Text = "—";
-            sourceTypeLabel.Location = new Point(300, 110);
-            sourceTypeLabel.Size = new Size(300, 34);
-            sourceTypeLabel.Name = "sourceTypeLabel";
-            sourceTypeLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // sourceTypeLabel
+            // 
             sourceTypeLabel.BorderStyle = BorderStyle.FixedSingle;
-
-            dataPathCaption.Text = "مسیر داده:";
-            dataPathCaption.Location = new Point(1030, 150);
-            dataPathCaption.Size = new Size(100, 34);
+            sourceTypeLabel.Location = new Point(459, 169);
+            sourceTypeLabel.Name = "sourceTypeLabel";
+            sourceTypeLabel.Size = new Size(300, 34);
+            sourceTypeLabel.TabIndex = 6;
+            sourceTypeLabel.Text = "—";
+            sourceTypeLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dataPathCaption
+            // 
+            dataPathCaption.Location = new Point(765, 91);
             dataPathCaption.Name = "dataPathCaption";
+            dataPathCaption.Size = new Size(100, 34);
+            dataPathCaption.TabIndex = 7;
+            dataPathCaption.Text = "مسیر داده:";
             dataPathCaption.TextAlign = ContentAlignment.MiddleRight;
-            dataPathLabel.Text = "—";
-            dataPathLabel.Location = new Point(720, 150);
-            dataPathLabel.Size = new Size(300, 34);
-            dataPathLabel.Name = "dataPathLabel";
-            dataPathLabel.TextAlign = ContentAlignment.MiddleRight;
-            dataPathLabel.BorderStyle = BorderStyle.FixedSingle;
+            // 
+            // dataPathLabel
+            // 
             dataPathLabel.AutoEllipsis = true;
-            dataTypeCaption.Text = "نوع داده:";
-            dataTypeCaption.Location = new Point(610, 150);
-            dataTypeCaption.Size = new Size(100, 34);
-            dataTypeCaption.Name = "dataTypeCaption";
-            dataTypeCaption.TextAlign = ContentAlignment.MiddleRight;
-            dataTypeLabel.Text = "—";
-            dataTypeLabel.Location = new Point(300, 150);
-            dataTypeLabel.Size = new Size(300, 34);
-            dataTypeLabel.Name = "dataTypeLabel";
-            dataTypeLabel.TextAlign = ContentAlignment.MiddleRight;
-            dataTypeLabel.BorderStyle = BorderStyle.FixedSingle;
-
-            symbolSourceCaption.Text = "منبع نام نماد:";
-            symbolSourceCaption.Location = new Point(1030, 190);
-            symbolSourceCaption.Size = new Size(100, 34);
+            dataPathLabel.BorderStyle = BorderStyle.FixedSingle;
+            dataPathLabel.Location = new Point(459, 91);
+            dataPathLabel.Name = "dataPathLabel";
+            dataPathLabel.Size = new Size(300, 34);
+            dataPathLabel.TabIndex = 8;
+            dataPathLabel.Text = "—";
+            dataPathLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // symbolSourceCaption
+            // 
+            symbolSourceCaption.Location = new Point(764, 130);
             symbolSourceCaption.Name = "symbolSourceCaption";
+            symbolSourceCaption.Size = new Size(129, 34);
+            symbolSourceCaption.TabIndex = 11;
+            symbolSourceCaption.Text = "منبع نام نماد:";
             symbolSourceCaption.TextAlign = ContentAlignment.MiddleRight;
-            symbolSourceLabel.Text = "—";
-            symbolSourceLabel.Location = new Point(720, 190);
-            symbolSourceLabel.Size = new Size(300, 34);
-            symbolSourceLabel.Name = "symbolSourceLabel";
-            symbolSourceLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // symbolSourceLabel
+            // 
             symbolSourceLabel.BorderStyle = BorderStyle.FixedSingle;
-            separatorCaption.Text = "جداکننده:";
-            separatorCaption.Location = new Point(610, 190);
-            separatorCaption.Size = new Size(100, 34);
+            symbolSourceLabel.Location = new Point(459, 130);
+            symbolSourceLabel.Name = "symbolSourceLabel";
+            symbolSourceLabel.Size = new Size(300, 34);
+            symbolSourceLabel.TabIndex = 12;
+            symbolSourceLabel.Text = "—";
+            symbolSourceLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // separatorCaption
+            // 
+            separatorCaption.Location = new Point(272, 51);
             separatorCaption.Name = "separatorCaption";
+            separatorCaption.Size = new Size(100, 34);
+            separatorCaption.TabIndex = 13;
+            separatorCaption.Text = "جداکننده:";
             separatorCaption.TextAlign = ContentAlignment.MiddleRight;
-            separatorLabel.Text = "—";
-            separatorLabel.Location = new Point(300, 190);
-            separatorLabel.Size = new Size(300, 34);
-            separatorLabel.Name = "separatorLabel";
-            separatorLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // separatorLabel
+            // 
             separatorLabel.BorderStyle = BorderStyle.FixedSingle;
-
-            timeFormatCaption.Text = "فرمت زمان:";
-            timeFormatCaption.Location = new Point(1030, 230);
-            timeFormatCaption.Size = new Size(100, 34);
+            separatorLabel.Location = new Point(25, 51);
+            separatorLabel.Name = "separatorLabel";
+            separatorLabel.Size = new Size(233, 34);
+            separatorLabel.TabIndex = 14;
+            separatorLabel.Text = "—";
+            separatorLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // timeFormatCaption
+            // 
+            timeFormatCaption.Location = new Point(272, 208);
             timeFormatCaption.Name = "timeFormatCaption";
+            timeFormatCaption.Size = new Size(111, 34);
+            timeFormatCaption.TabIndex = 15;
+            timeFormatCaption.Text = "فرمت زمان:";
             timeFormatCaption.TextAlign = ContentAlignment.MiddleRight;
-            timeFormatLabel.Text = "—";
-            timeFormatLabel.Location = new Point(720, 230);
-            timeFormatLabel.Size = new Size(300, 34);
-            timeFormatLabel.Name = "timeFormatLabel";
-            timeFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // timeFormatLabel
+            // 
             timeFormatLabel.BorderStyle = BorderStyle.FixedSingle;
-            dateFormatCaption.Text = "فرمت تاریخ:";
-            dateFormatCaption.Location = new Point(610, 230);
-            dateFormatCaption.Size = new Size(100, 34);
+            timeFormatLabel.Location = new Point(25, 208);
+            timeFormatLabel.Name = "timeFormatLabel";
+            timeFormatLabel.Size = new Size(233, 34);
+            timeFormatLabel.TabIndex = 16;
+            timeFormatLabel.Text = "—";
+            timeFormatLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dateFormatCaption
+            // 
+            dateFormatCaption.Location = new Point(272, 168);
             dateFormatCaption.Name = "dateFormatCaption";
+            dateFormatCaption.Size = new Size(122, 34);
+            dateFormatCaption.TabIndex = 17;
+            dateFormatCaption.Text = "فرمت تاریخ:";
             dateFormatCaption.TextAlign = ContentAlignment.MiddleRight;
-            dateFormatLabel.Text = "—";
-            dateFormatLabel.Location = new Point(300, 230);
-            dateFormatLabel.Size = new Size(300, 34);
-            dateFormatLabel.Name = "dateFormatLabel";
-            dateFormatLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // dateFormatLabel
+            // 
             dateFormatLabel.BorderStyle = BorderStyle.FixedSingle;
-
-            headerCaption.Text = "Header:";
-            headerCaption.Location = new Point(1030, 270);
-            headerCaption.Size = new Size(100, 34);
+            dateFormatLabel.Location = new Point(25, 168);
+            dateFormatLabel.Name = "dateFormatLabel";
+            dateFormatLabel.Size = new Size(233, 34);
+            dateFormatLabel.TabIndex = 18;
+            dateFormatLabel.Text = "—";
+            dateFormatLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // headerCaption
+            // 
+            headerCaption.Location = new Point(765, 208);
             headerCaption.Name = "headerCaption";
+            headerCaption.Size = new Size(100, 34);
+            headerCaption.TabIndex = 19;
+            headerCaption.Text = "Header:";
             headerCaption.TextAlign = ContentAlignment.MiddleRight;
-            headerLabel.Text = "—";
-            headerLabel.Location = new Point(720, 270);
-            headerLabel.Size = new Size(300, 34);
-            headerLabel.Name = "headerLabel";
-            headerLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // headerLabel
+            // 
             headerLabel.BorderStyle = BorderStyle.FixedSingle;
-            calendarCaption.Text = "تقویم:";
-            calendarCaption.Location = new Point(610, 270);
-            calendarCaption.Size = new Size(100, 34);
+            headerLabel.Location = new Point(459, 208);
+            headerLabel.Name = "headerLabel";
+            headerLabel.Size = new Size(300, 34);
+            headerLabel.TabIndex = 20;
+            headerLabel.Text = "—";
+            headerLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // calendarCaption
+            // 
+            calendarCaption.Location = new Point(275, 128);
             calendarCaption.Name = "calendarCaption";
+            calendarCaption.Size = new Size(100, 34);
+            calendarCaption.TabIndex = 21;
+            calendarCaption.Text = "تقویم:";
             calendarCaption.TextAlign = ContentAlignment.MiddleRight;
-            calendarLabel.Text = "—";
-            calendarLabel.Location = new Point(300, 270);
-            calendarLabel.Size = new Size(300, 34);
-            calendarLabel.Name = "calendarLabel";
-            calendarLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // calendarLabel
+            // 
             calendarLabel.BorderStyle = BorderStyle.FixedSingle;
-            symbolCountCaption.Text = "تعداد نماد:";
-            symbolCountCaption.Location = new Point(1030, 310);
-            symbolCountCaption.Size = new Size(100, 34);
+            calendarLabel.Location = new Point(25, 128);
+            calendarLabel.Name = "calendarLabel";
+            calendarLabel.Size = new Size(233, 34);
+            calendarLabel.TabIndex = 22;
+            calendarLabel.Text = "—";
+            calendarLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // symbolCountCaption
+            // 
+            symbolCountCaption.Location = new Point(764, 251);
             symbolCountCaption.Name = "symbolCountCaption";
+            symbolCountCaption.Size = new Size(100, 34);
+            symbolCountCaption.TabIndex = 23;
+            symbolCountCaption.Text = "تعداد نماد:";
             symbolCountCaption.TextAlign = ContentAlignment.MiddleRight;
-            symbolCountLabel.Text = "۰";
-            symbolCountLabel.Location = new Point(720, 310);
-            symbolCountLabel.Size = new Size(300, 34);
-            symbolCountLabel.Name = "symbolCountLabel";
-            symbolCountLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // symbolCountLabel
+            // 
             symbolCountLabel.BorderStyle = BorderStyle.FixedSingle;
-            // Existing portfolios
-            existingTitleLabel.Text = "سبدهای موجود";
-            existingTitleLabel.Location = new Point(960, 365);
-            existingTitleLabel.Size = new Size(410, 34);
+            symbolCountLabel.Location = new Point(459, 251);
+            symbolCountLabel.Name = "symbolCountLabel";
+            symbolCountLabel.Size = new Size(300, 34);
+            symbolCountLabel.TabIndex = 24;
+            symbolCountLabel.Text = "۰";
+            symbolCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // existingTitleLabel
+            // 
+            existingTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            existingTitleLabel.Location = new Point(20, 12);
             existingTitleLabel.Name = "existingTitleLabel";
-            existingTitleLabel.TextAlign = ContentAlignment.MiddleRight;
-            existingTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            existingTitleLabel.Size = new Size(180, 34);
+            existingTitleLabel.TabIndex = 25;
+            existingTitleLabel.Text = "سبدهای موجود";
+            existingTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // portfoliosListBox
+            // 
             portfoliosListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             portfoliosListBox.IntegralHeight = false;
-            portfoliosListBox.Location = new Point(960, 402);
-            portfoliosListBox.Size = new Size(410, 280);
+            portfoliosListBox.ItemHeight = 28;
+            portfoliosListBox.Location = new Point(54, 49);
             portfoliosListBox.Name = "portfoliosListBox";
+            portfoliosListBox.Size = new Size(410, 269);
+            portfoliosListBox.TabIndex = 26;
+            // 
+            // deletePortfoliosButton
+            // 
             deletePortfoliosButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deletePortfoliosButton.Text = "حذف سبد انتخاب شده";
-            deletePortfoliosButton.Location = new Point(960, 690);
-            deletePortfoliosButton.Size = new Size(410, 40);
+            deletePortfoliosButton.Location = new Point(354, 323);
             deletePortfoliosButton.Name = "deletePortfoliosButton";
-            // Symbols
-            symbolsTitleLabel.Text = "نمادهای سبد";
-            symbolsTitleLabel.Location = new Point(20, 365);
-            symbolsTitleLabel.Size = new Size(910, 34);
+            deletePortfoliosButton.Size = new Size(110, 40);
+            deletePortfoliosButton.TabIndex = 27;
+            deletePortfoliosButton.Text = "حذف سبد";
+            // 
+            // symbolsTitleLabel
+            // 
+            symbolsTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            symbolsTitleLabel.Location = new Point(-13, 352);
             symbolsTitleLabel.Name = "symbolsTitleLabel";
+            symbolsTitleLabel.Size = new Size(136, 34);
+            symbolsTitleLabel.TabIndex = 28;
+            symbolsTitleLabel.Text = "نمادهای سبد";
             symbolsTitleLabel.TextAlign = ContentAlignment.MiddleRight;
-            symbolsTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            // 
+            // symbolsGrid
+            // 
             symbolsGrid.AllowUserToAddRows = false;
             symbolsGrid.AllowUserToDeleteRows = false;
-            symbolsGrid.ReadOnly = true;
-            symbolsGrid.AutoGenerateColumns = false;
-            symbolsGrid.RowHeadersVisible = false;
-            symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            symbolsGrid.MultiSelect = true;
-            symbolsGrid.RightToLeft = RightToLeft.Yes;
+            symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             symbolsGrid.BackgroundColor = SystemColors.Window;
-            symbolsGrid.BorderStyle = BorderStyle.FixedSingle;
-            symbolsGrid.Location = new Point(20, 402);
-            symbolsGrid.Size = new Size(910, 280);
+            symbolsGrid.ColumnHeadersHeight = 34;
+            symbolsGrid.Location = new Point(20, 390);
             symbolsGrid.Name = "symbolsGrid";
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "rowColumn", HeaderText = "ردیف", Width = 70 });
-            symbolsGrid.Columns.Add(new DataGridViewCheckBoxColumn { Name = "selectedColumn", HeaderText = "انتخاب", Width = 80 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "symbolColumn", HeaderText = "نماد", Width = 140 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "displayNameColumn", HeaderText = "نام نمایشی", Width = 190 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "lastTradeColumn", HeaderText = "آخرین معامله", Width = 150 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "volumeColumn", HeaderText = "حجم", Width = 130 });
-            symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "closeColumn", HeaderText = "قیمت پایانی", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+            symbolsGrid.ReadOnly = true;
+            symbolsGrid.RightToLeft = RightToLeft.Yes;
+            symbolsGrid.RowHeadersVisible = false;
+            symbolsGrid.RowHeadersWidth = 62;
+            symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            symbolsGrid.Size = new Size(1368, 373);
+            symbolsGrid.TabIndex = 29;
+            // 
+            // deleteSymbolsButton
+            // 
             deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteSymbolsButton.Text = "حذف نمادهای انتخاب شده";
-            deleteSymbolsButton.Location = new Point(20, 690);
-            deleteSymbolsButton.Size = new Size(910, 40);
+            deleteSymbolsButton.Location = new Point(1263, 766);
             deleteSymbolsButton.Name = "deleteSymbolsButton";
-            // Footer
-            statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
+            deleteSymbolsButton.Size = new Size(125, 40);
+            deleteSymbolsButton.TabIndex = 30;
+            deleteSymbolsButton.Text = "حذف نماد";
+            // 
+            // statusLabel
+            // 
             statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            statusLabel.Location = new Point(20, 745);
-            statusLabel.Size = new Size(1250, 34);
+            statusLabel.Font = new Font("Segoe UI", 9F);
+            statusLabel.Location = new Point(54, 322);
             statusLabel.Name = "statusLabel";
-            statusLabel.TextAlign = ContentAlignment.MiddleRight;
+            statusLabel.Size = new Size(294, 34);
+            statusLabel.TabIndex = 31;
+            statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
+            statusLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // closeButton
+            // 
             closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            closeButton.Text = "بستن";
-            closeButton.Location = new Point(1270, 745);
-            closeButton.Size = new Size(100, 34);
+            closeButton.Location = new Point(715, 769);
             closeButton.Name = "closeButton";
-            // Direct form children
-            Controls.Add(titleLabel);
+            closeButton.Size = new Size(125, 41);
+            closeButton.TabIndex = 32;
+            closeButton.Text = "بستن";
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(NoDateTimeLabel);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(dataPathCaption);
+            groupBox1.Controls.Add(symbolCountCaption);
+            groupBox1.Controls.Add(headerCaption);
+            groupBox1.Controls.Add(timeFormatCaption);
+            groupBox1.Controls.Add(dateFormatLabel);
+            groupBox1.Controls.Add(dateFormatCaption);
+            groupBox1.Controls.Add(separatorLabel);
+            groupBox1.Controls.Add(separatorCaption);
+            groupBox1.Controls.Add(calendarLabel);
+            groupBox1.Controls.Add(calendarCaption);
+            groupBox1.Controls.Add(sourceTypeLabel);
+            groupBox1.Controls.Add(sourceTypeCaption);
+            groupBox1.Controls.Add(portfolioNameLabel);
+            groupBox1.Controls.Add(portfolioNameCaption);
+            groupBox1.Controls.Add(symbolSourceCaption);
+            groupBox1.Controls.Add(dataPathLabel);
+            groupBox1.Controls.Add(symbolCountLabel);
+            groupBox1.Controls.Add(headerLabel);
+            groupBox1.Controls.Add(timeFormatLabel);
+            groupBox1.Controls.Add(symbolSourceLabel);
+            groupBox1.Location = new Point(478, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(910, 306);
+            groupBox1.TabIndex = 33;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "پارامترهای سبد:";
+            // 
+            // NoDateTimeLabel
+            // 
+            NoDateTimeLabel.BorderStyle = BorderStyle.FixedSingle;
+            NoDateTimeLabel.Location = new Point(25, 91);
+            NoDateTimeLabel.Name = "NoDateTimeLabel";
+            NoDateTimeLabel.Size = new Size(233, 34);
+            NoDateTimeLabel.TabIndex = 26;
+            NoDateTimeLabel.Text = "—";
+            NoDateTimeLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            label2.Location = new Point(272, 91);
+            label2.Name = "label2";
+            label2.Size = new Size(176, 34);
+            label2.TabIndex = 25;
+            label2.Text = "فاقد تاریخ و زمان؟:";
+            label2.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // PortfolioManagementForm
+            // 
+            ClientSize = new Size(1400, 820);
+            Controls.Add(groupBox1);
             Controls.Add(reloadButton);
-            Controls.Add(parametersTitleLabel);
-            Controls.Add(portfolioNameCaption);
-            Controls.Add(portfolioNameLabel);
-            Controls.Add(sourceTypeCaption);
-            Controls.Add(sourceTypeLabel);
-            Controls.Add(dataPathCaption);
-            Controls.Add(dataPathLabel);
-            Controls.Add(dataTypeCaption);
-            Controls.Add(dataTypeLabel);
-            Controls.Add(symbolSourceCaption);
-            Controls.Add(symbolSourceLabel);
-            Controls.Add(separatorCaption);
-            Controls.Add(separatorLabel);
-            Controls.Add(timeFormatCaption);
-            Controls.Add(timeFormatLabel);
-            Controls.Add(dateFormatCaption);
-            Controls.Add(dateFormatLabel);
-            Controls.Add(headerCaption);
-            Controls.Add(headerLabel);
-            Controls.Add(calendarCaption);
-            Controls.Add(calendarLabel);
-            Controls.Add(symbolCountCaption);
-            Controls.Add(symbolCountLabel);
-            Controls.Add(existingTitleLabel);
             Controls.Add(portfoliosListBox);
+            Controls.Add(existingTitleLabel);
             Controls.Add(deletePortfoliosButton);
             Controls.Add(symbolsTitleLabel);
             Controls.Add(symbolsGrid);
             Controls.Add(deleteSymbolsButton);
             Controls.Add(statusLabel);
             Controls.Add(closeButton);
+            Font = new Font("Segoe UI", 10F);
+            MinimumSize = new Size(1100, 700);
+            Name = "PortfolioManagementForm";
+            RightToLeft = RightToLeft.Yes;
+            RightToLeftLayout = true;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "مدیریت سبدها";
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).EndInit();
+            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
+        private GroupBox groupBox1;
+        private Label NoDateTimeLabel;
+        private Label label2;
     }
 }
