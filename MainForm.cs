@@ -7,7 +7,7 @@ namespace Trade.It
             InitializeComponent();
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
-           
+
 
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
@@ -39,6 +39,11 @@ namespace Trade.It
         private void pastDaysStatusComboBox_SelectedIndexChanged(object sender, EventArgs e) { }
 
         private void identifierMainGroup_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
         {
 
         }
