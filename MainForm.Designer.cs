@@ -1272,14 +1272,11 @@ namespace Trade.It
             ResumeLayout(false);
             PerformLayout();
         }
-
         private Label label4;
         private Label label3;
         private Label label2;
         private Label label1;
         private TextBox textBox1;
-        private ComboBox nameComboBox;
-        private TextBox nameTextBox;
         private GroupBox groupBox1;
     }
 }
