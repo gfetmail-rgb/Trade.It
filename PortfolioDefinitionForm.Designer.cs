@@ -111,13 +111,14 @@ namespace Trade.It
             mainTable.Dock = DockStyle.Fill;
             mainTable.Padding = new Padding(12);
             mainTable.ColumnCount = 1;
-            mainTable.RowCount = 7;
+            mainTable.RowCount = 8;
             mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 64F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 145F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 54F));
             Controls.Add(mainTable);
@@ -143,12 +144,10 @@ namespace Trade.It
             fileNameRadioButton.AutoSize = true;
             fileNameRadioButton.Text = "نام فایل";
             fileNameRadioButton.Checked = true;
-            fileNameRadioButton.Anchor = AnchorStyles.Right;
-            fileNameRadioButton.Location = new Point(1160, 48);
+            fileNameRadioButton.Location = new Point(1160, 54);
             insideFileRadioButton.AutoSize = true;
             insideFileRadioButton.Text = "داخل فایل";
-            insideFileRadioButton.Anchor = AnchorStyles.Right;
-            insideFileRadioButton.Location = new Point(1020, 48);
+            insideFileRadioButton.Location = new Point(1020, 54);
             Controls.Add(fileNameRadioButton);
             Controls.Add(insideFileRadioButton);
 
@@ -214,10 +213,8 @@ namespace Trade.It
             dateFormatComboBox.SelectedIndex = 0;
             headerCheckBox.AutoSize = true;
             headerCheckBox.Text = "سطر اول عنوان ستون‌ها";
-            headerCheckBox.Anchor = AnchorStyles.Right;
             noDateTimeCheckBox.AutoSize = true;
             noDateTimeCheckBox.Text = "فاقد تاریخ/زمان";
-            noDateTimeCheckBox.Anchor = AnchorStyles.Right;
             optionsTable.Controls.Add(separatorLabel, 0, 0);
             optionsTable.Controls.Add(separatorComboBox, 1, 0);
             optionsTable.Controls.Add(calendarLabel, 2, 0);
@@ -351,7 +348,7 @@ namespace Trade.It
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewSymbol", HeaderText = "نماد", Width = 130 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewFile", HeaderText = "نام فایل", Width = 240 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewColumns", HeaderText = "ستون‌های موجود در فایل", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-            mainTable.Controls.Add(previewGrid, 0, 5);
+            mainTable.Controls.Add(previewGrid, 0, 6);
 
             footerTable.Dock = DockStyle.Fill;
             footerTable.ColumnCount = 3;
@@ -371,7 +368,7 @@ namespace Trade.It
             footerTable.Controls.Add(testMappingButton, 0, 0);
             footerTable.Controls.Add(cancelButton, 1, 0);
             footerTable.Controls.Add(saveButton, 2, 0);
-            mainTable.Controls.Add(footerTable, 0, 6);
+            mainTable.Controls.Add(footerTable, 0, 7);
 
             ((System.ComponentModel.ISupportInitialize)(mappingGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(symbolGrid)).EndInit();
