@@ -11,6 +11,23 @@ namespace Trade.It
             mainSplitContainer.Panel2.Controls.Add(chartPanel);
             mainSplitContainer.SplitterDistance = 419;
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
+
+            var closeAllChartsButton = new Button
+            {
+                Name = "closeAllChartsButton",
+                Text = "بستن همه چارتها",
+                Size = new Size(110, 34),
+                Location = new Point(fullScreenChartButton.Right + 6, 7),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left,
+                TabIndex = fullScreenChartButton.TabIndex + 1
+            };
+            closeAllChartsButton.Click += (_, _) =>
+            {
+                while (chartTabControl.TabPages.Count > 0)
+                    chartTabControl.TabPages.RemoveAt(chartTabControl.TabPages.Count - 1);
+            };
+            chartToolbarPanel.Controls.Add(closeAllChartsButton);
+
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
 
