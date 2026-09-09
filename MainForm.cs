@@ -5,11 +5,6 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
-            mainSplitContainer.Panel1.Controls.Clear();
-            mainSplitContainer.Panel2.Controls.Clear();
-            mainSplitContainer.Panel1.Controls.Add(controlTabControl);
-            mainSplitContainer.Panel2.Controls.Add(chartPanel);
-            mainSplitContainer.SplitterDistance = 419;
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
            
