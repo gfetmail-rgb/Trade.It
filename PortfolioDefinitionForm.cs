@@ -649,8 +649,7 @@ namespace Trade.It
                 var json = JsonSerializer.Serialize(definition, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(file, json, new UTF8Encoding(false));
 
-                DialogResult = DialogResult.OK;
-                Close();
+                MessageBox.Show(this, "سبد با موفقیت ذخیره شد.", "ذخیره سبد", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
