@@ -7,6 +7,7 @@ namespace Trade.It
         private TableLayoutPanel nameTable;
         private Label portfolioNameLabel;
         private TextBox portfolioNameTextBox;
+        private TableLayoutPanel sourceTable;
         private Label sourceLabel;
         private RadioButton fileNameRadioButton;
         private RadioButton insideFileRadioButton;
@@ -58,6 +59,7 @@ namespace Trade.It
             nameTable = new TableLayoutPanel();
             portfolioNameLabel = new Label();
             portfolioNameTextBox = new TextBox();
+            sourceTable = new TableLayoutPanel();
             sourceLabel = new Label();
             fileNameRadioButton = new RadioButton();
             insideFileRadioButton = new RadioButton();
@@ -137,19 +139,26 @@ namespace Trade.It
             nameTable.Controls.Add(portfolioNameTextBox, 1, 0);
             mainTable.Controls.Add(nameTable, 0, 0);
 
+            sourceTable.Dock = DockStyle.Fill;
+            sourceTable.ColumnCount = 3;
+            sourceTable.RowCount = 1;
+            sourceTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
+            sourceTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
+            sourceTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             sourceLabel.Dock = DockStyle.Fill;
-            sourceLabel.Text = "منبع اطلاعات:";
+            sourceLabel.Text = "منبع نام نماد:";
             sourceLabel.TextAlign = ContentAlignment.MiddleRight;
-            mainTable.Controls.Add(sourceLabel, 0, 1);
             fileNameRadioButton.AutoSize = true;
             fileNameRadioButton.Text = "نام فایل";
             fileNameRadioButton.Checked = true;
-            fileNameRadioButton.Location = new Point(1160, 54);
+            fileNameRadioButton.Anchor = AnchorStyles.Left;
             insideFileRadioButton.AutoSize = true;
             insideFileRadioButton.Text = "داخل فایل";
-            insideFileRadioButton.Location = new Point(1020, 54);
-            Controls.Add(fileNameRadioButton);
-            Controls.Add(insideFileRadioButton);
+            insideFileRadioButton.Anchor = AnchorStyles.Left;
+            sourceTable.Controls.Add(sourceLabel, 0, 0);
+            sourceTable.Controls.Add(fileNameRadioButton, 1, 0);
+            sourceTable.Controls.Add(insideFileRadioButton, 2, 0);
+            mainTable.Controls.Add(sourceTable, 0, 1);
 
             pathTable.Dock = DockStyle.Fill;
             pathTable.ColumnCount = 3;
@@ -376,6 +385,8 @@ namespace Trade.It
             mainTable.ResumeLayout(false);
             nameTable.ResumeLayout(false);
             nameTable.PerformLayout();
+            sourceTable.ResumeLayout(false);
+            sourceTable.PerformLayout();
             pathTable.ResumeLayout(false);
             pathTable.PerformLayout();
             optionsTable.ResumeLayout(false);
