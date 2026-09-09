@@ -7,13 +7,12 @@ namespace Trade.It
             InitializeComponent();
             mainSplitContainer.Panel1.Controls.Clear();
             mainSplitContainer.Panel2.Controls.Clear();
-            mainSplitContainer.Panel1.Controls.Add(controlTabControl);
-            mainSplitContainer.Panel2.Controls.Add(chartPanel);
-            mainSplitContainer.SplitterDistance = 419;
+            mainSplitContainer.Panel1.Controls.Add(chartPanel);
+            mainSplitContainer.Panel2.Controls.Add(controlTabControl);
+            mainSplitContainer.SplitterDistance = 869;
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
-            closeAllChartsButton.Click += closeAllChartsButton_Click;
 
             tabPage3.Controls.Clear();
             tabPage3.AutoScroll = true;
