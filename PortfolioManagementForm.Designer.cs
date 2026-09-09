@@ -31,6 +31,9 @@ namespace Trade.It
         private Label calendarLabel;
         private Label symbolCountCaption;
         private Label symbolCountLabel;
+        private TableLayoutPanel lowerTable;
+        private TableLayoutPanel portfoliosTable;
+        private TableLayoutPanel symbolsTable;
         private Label existingTitleLabel;
         private ListBox portfoliosListBox;
         private Button deletePortfoliosButton;
@@ -77,6 +80,9 @@ namespace Trade.It
             calendarLabel = new Label();
             symbolCountCaption = new Label();
             symbolCountLabel = new Label();
+            lowerTable = new TableLayoutPanel();
+            portfoliosTable = new TableLayoutPanel();
+            symbolsTable = new TableLayoutPanel();
             existingTitleLabel = new Label();
             portfoliosListBox = new ListBox();
             deletePortfoliosButton = new Button();
@@ -104,8 +110,8 @@ namespace Trade.It
             rootTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28F));
             rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 250F));
-            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             rootTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             rootTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
 
             titleLabel.Text = "مدیریت سبدها";
@@ -120,26 +126,26 @@ namespace Trade.It
             reloadButton.Margin = new Padding(4, 8, 4, 4);
             rootTable.Controls.Add(reloadButton, 1, 0);
 
+            parameterTable.Dock = DockStyle.Fill;
+            parameterTable.ColumnCount = 4;
+            parameterTable.RowCount = 7;
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115F));
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115F));
+            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
             parametersTitleLabel.Text = "پارامترهای سبد";
             parametersTitleLabel.Dock = DockStyle.Fill;
             parametersTitleLabel.TextAlign = ContentAlignment.MiddleRight;
             parametersTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            rootTable.Controls.Add(parametersTitleLabel, 0, 1);
-
-            parameterTable.Dock = DockStyle.Fill;
-            parameterTable.ColumnCount = 4;
-            parameterTable.RowCount = 6;
-            parameterTable.Margin = new Padding(0, 34, 8, 0);
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115F));
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115F));
-            parameterTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
-            parameterTable.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6667F));
+            parameterTable.Controls.Add(parametersTitleLabel, 0, 0);
+            parameterTable.SetColumnSpan(parametersTitleLabel, 4);
 
             portfolioNameCaption.Text = "نام سبد:";
             portfolioNameCaption.Dock = DockStyle.Fill;
@@ -230,53 +236,74 @@ namespace Trade.It
             symbolCountLabel.TextAlign = ContentAlignment.MiddleRight;
             symbolCountLabel.BorderStyle = BorderStyle.FixedSingle;
 
-            parameterTable.Controls.Add(portfolioNameCaption, 0, 0);
-            parameterTable.Controls.Add(portfolioNameLabel, 1, 0);
-            parameterTable.Controls.Add(sourceTypeCaption, 2, 0);
-            parameterTable.Controls.Add(sourceTypeLabel, 3, 0);
-            parameterTable.Controls.Add(dataPathCaption, 0, 1);
-            parameterTable.Controls.Add(dataPathLabel, 1, 1);
-            parameterTable.Controls.Add(dataTypeCaption, 2, 1);
-            parameterTable.Controls.Add(dataTypeLabel, 3, 1);
-            parameterTable.Controls.Add(symbolSourceCaption, 0, 2);
-            parameterTable.Controls.Add(symbolSourceLabel, 1, 2);
-            parameterTable.Controls.Add(separatorCaption, 2, 2);
-            parameterTable.Controls.Add(separatorLabel, 3, 2);
-            parameterTable.Controls.Add(timeFormatCaption, 0, 3);
-            parameterTable.Controls.Add(timeFormatLabel, 1, 3);
-            parameterTable.Controls.Add(dateFormatCaption, 2, 3);
-            parameterTable.Controls.Add(dateFormatLabel, 3, 3);
-            parameterTable.Controls.Add(headerCaption, 0, 4);
-            parameterTable.Controls.Add(headerLabel, 1, 4);
-            parameterTable.Controls.Add(calendarCaption, 2, 4);
-            parameterTable.Controls.Add(calendarLabel, 3, 4);
-            parameterTable.Controls.Add(symbolCountCaption, 0, 5);
-            parameterTable.Controls.Add(symbolCountLabel, 1, 5);
+            parameterTable.Controls.Add(portfolioNameCaption, 0, 1);
+            parameterTable.Controls.Add(portfolioNameLabel, 1, 1);
+            parameterTable.Controls.Add(sourceTypeCaption, 2, 1);
+            parameterTable.Controls.Add(sourceTypeLabel, 3, 1);
+            parameterTable.Controls.Add(dataPathCaption, 0, 2);
+            parameterTable.Controls.Add(dataPathLabel, 1, 2);
+            parameterTable.Controls.Add(dataTypeCaption, 2, 2);
+            parameterTable.Controls.Add(dataTypeLabel, 3, 2);
+            parameterTable.Controls.Add(symbolSourceCaption, 0, 3);
+            parameterTable.Controls.Add(symbolSourceLabel, 1, 3);
+            parameterTable.Controls.Add(separatorCaption, 2, 3);
+            parameterTable.Controls.Add(separatorLabel, 3, 3);
+            parameterTable.Controls.Add(timeFormatCaption, 0, 4);
+            parameterTable.Controls.Add(timeFormatLabel, 1, 4);
+            parameterTable.Controls.Add(dateFormatCaption, 2, 4);
+            parameterTable.Controls.Add(dateFormatLabel, 3, 4);
+            parameterTable.Controls.Add(headerCaption, 0, 5);
+            parameterTable.Controls.Add(headerLabel, 1, 5);
+            parameterTable.Controls.Add(calendarCaption, 2, 5);
+            parameterTable.Controls.Add(calendarLabel, 3, 5);
+            parameterTable.Controls.Add(symbolCountCaption, 0, 6);
+            parameterTable.Controls.Add(symbolCountLabel, 1, 6);
             rootTable.Controls.Add(parameterTable, 0, 1);
+            rootTable.SetColumnSpan(parameterTable, 2);
 
+            lowerTable.Dock = DockStyle.Fill;
+            lowerTable.ColumnCount = 2;
+            lowerTable.RowCount = 1;
+            lowerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28F));
+            lowerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 72F));
+            lowerTable.Padding = new Padding(0, 6, 0, 6);
+            rootTable.Controls.Add(lowerTable, 0, 2);
+            rootTable.SetColumnSpan(lowerTable, 2);
+
+            portfoliosTable.Dock = DockStyle.Fill;
+            portfoliosTable.ColumnCount = 1;
+            portfoliosTable.RowCount = 3;
+            portfoliosTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            portfoliosTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            portfoliosTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            portfoliosTable.Margin = new Padding(0, 0, 8, 0);
             existingTitleLabel.Text = "سبدهای موجود";
             existingTitleLabel.Dock = DockStyle.Fill;
             existingTitleLabel.TextAlign = ContentAlignment.MiddleRight;
             existingTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            rootTable.Controls.Add(existingTitleLabel, 1, 1);
-
+            portfoliosTable.Controls.Add(existingTitleLabel, 0, 0);
             portfoliosListBox.Dock = DockStyle.Fill;
             portfoliosListBox.IntegralHeight = false;
-            portfoliosListBox.Margin = new Padding(0, 0, 8, 0);
-            rootTable.Controls.Add(portfoliosListBox, 1, 2);
-
+            portfoliosListBox.Margin = new Padding(0);
+            portfoliosTable.Controls.Add(portfoliosListBox, 0, 1);
             deletePortfoliosButton.Text = "حذف سبد انتخاب شده";
             deletePortfoliosButton.Dock = DockStyle.Fill;
-            deletePortfoliosButton.Margin = new Padding(0, 4, 8, 4);
-            rootTable.Controls.Add(deletePortfoliosButton, 1, 3);
+            deletePortfoliosButton.Margin = new Padding(0, 4, 0, 0);
+            portfoliosTable.Controls.Add(deletePortfoliosButton, 0, 2);
+            lowerTable.Controls.Add(portfoliosTable, 0, 0);
 
+            symbolsTable.Dock = DockStyle.Fill;
+            symbolsTable.ColumnCount = 1;
+            symbolsTable.RowCount = 3;
+            symbolsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            symbolsTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            symbolsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            symbolsTable.Margin = new Padding(8, 0, 0, 0);
             symbolsTitleLabel.Text = "نمادهای سبد";
             symbolsTitleLabel.Dock = DockStyle.Fill;
             symbolsTitleLabel.TextAlign = ContentAlignment.MiddleRight;
             symbolsTitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            rootTable.Controls.Add(symbolsTitleLabel, 0, 2);
-            rootTable.SetColumnSpan(symbolsTitleLabel, 2);
-
+            symbolsTable.Controls.Add(symbolsTitleLabel, 0, 0);
             symbolsGrid.Dock = DockStyle.Fill;
             symbolsGrid.AllowUserToAddRows = false;
             symbolsGrid.AllowUserToDeleteRows = false;
@@ -295,28 +322,30 @@ namespace Trade.It
             symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "lastTradeColumn", HeaderText = "آخرین معامله", Width = 150 });
             symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "volumeColumn", HeaderText = "حجم", Width = 130 });
             symbolsGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "closeColumn", HeaderText = "قیمت پایانی", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-            rootTable.Controls.Add(symbolsGrid, 0, 3);
-            rootTable.SetColumnSpan(symbolsGrid, 2);
-
+            symbolsTable.Controls.Add(symbolsGrid, 0, 1);
             deleteSymbolsButton.Text = "حذف نمادهای انتخاب شده";
-            deleteSymbolsButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-            deleteSymbolsButton.Size = new Size(180, 34);
-            deleteSymbolsButton.Margin = new Padding(4, 5, 4, 4);
-            rootTable.Controls.Add(deleteSymbolsButton, 1, 2);
+            deleteSymbolsButton.Dock = DockStyle.Fill;
+            deleteSymbolsButton.Margin = new Padding(0, 4, 0, 0);
+            symbolsTable.Controls.Add(deleteSymbolsButton, 0, 2);
+            lowerTable.Controls.Add(symbolsTable, 1, 0);
 
             statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
             statusLabel.Dock = DockStyle.Fill;
             statusLabel.TextAlign = ContentAlignment.MiddleRight;
-            rootTable.Controls.Add(statusLabel, 0, 4);
-
+            rootTable.Controls.Add(statusLabel, 0, 3);
             closeButton.Text = "بستن";
             closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
             closeButton.Size = new Size(100, 34);
-            closeButton.Margin = new Padding(4, 5, 4, 4);
-            rootTable.Controls.Add(closeButton, 1, 4);
+            closeButton.Margin = new Padding(4, 4, 4, 4);
+            rootTable.Controls.Add(closeButton, 1, 3);
 
             Controls.Add(rootTable);
             ((System.ComponentModel.ISupportInitialize)(symbolsGrid)).EndInit();
+            rootTable.ResumeLayout(false);
+            parameterTable.ResumeLayout(false);
+            lowerTable.ResumeLayout(false);
+            portfoliosTable.ResumeLayout(false);
+            symbolsTable.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
