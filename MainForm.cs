@@ -56,5 +56,10 @@ namespace Trade.It
 
         private void nameTextBox_TextChanged(object sender, EventArgs e) { }
         private void pastDaysStatusComboBox_SelectedIndexChanged(object sender, EventArgs e) { }
+
+        private void identifierMainGroup_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
