@@ -183,12 +183,13 @@ namespace Trade.It
             try
             {
                 symbolGrid.Rows.Clear();
+                var rowNumber = 1;
 
                 if (fileNameRadioButton.Checked)
                 {
                     foreach (var file in files)
                     {
-                        var rowIndex = symbolGrid.Rows.Add(false, Path.GetFileNameWithoutExtension(file));
+                        var rowIndex = symbolGrid.Rows.Add(rowNumber++, false, Path.GetFileNameWithoutExtension(file));
                         symbolGrid.Rows[rowIndex].Tag = file;
                     }
                 }
@@ -202,7 +203,7 @@ namespace Trade.It
                             if (!seen.Add(symbol))
                                 continue;
 
-                            var rowIndex = symbolGrid.Rows.Add(false, symbol);
+                            var rowIndex = symbolGrid.Rows.Add(rowNumber++, false, symbol);
                             symbolGrid.Rows[rowIndex].Tag = file;
                         }
                     }
