@@ -7,7 +7,6 @@ namespace Trade.It
     public partial class PortfolioDefinitionForm : Form
     {
         private const int MaxColumns = 18;
-        private readonly List<DetectedColumn> detectedColumns = new();
         private List<string[]> previewRows = new();
         private string[]? previewHeader;
         private bool internalUpdate;
@@ -27,25 +26,17 @@ namespace Trade.It
 
         private void InitializeFormLogic()
         {
-            fileTypeComboBox.Items.Clear();
-            fileTypeComboBox.Items.AddRange(new object[] { "TXT", "CSV", "PRN" });
             fileTypeComboBox.SelectedIndex = 0;
-
             separatorComboBox.SelectedIndex = 0;
             calendarComboBox.SelectedIndex = 0;
             dateFormatComboBox.SelectedIndex = 0;
             timeFormatComboBox.SelectedIndex = 0;
 
-            mappingGrid.Columns.Clear();
-            mappingGrid.Columns.Add("fieldColumn", "داده");
-            mappingGrid.Columns.Add("columnNumberColumn", "شماره ستون");
-            mappingGrid.Columns.Add("confidenceColumn", "تشخیص خودکار");
-            mappingGrid.Columns[0].Width = 220;
-            mappingGrid.Columns[1].Width = 130;
-            mappingGrid.Columns[2].Width = 260;
-            mappingGrid.Columns[0].ReadOnly = true;
-            mappingGrid.Columns[2].ReadOnly = true;
             mappingGrid.EditMode = DataGridViewEditMode.EditOnEnter;
+            mappingGrid.Columns["mappingFieldColumn"].ReadOnly = true;
+
+            previewGrid.AutoGenerateColumns = false;
+            previewGrid.ReadOnly = true;
 
             browseButton.Click += BrowseButton_Click;
             dataPathTextBox.TextChanged += DataSettingsChanged;
@@ -63,44 +54,22 @@ namespace Trade.It
             deselectAllButton.Click += (_, _) => SetAllSymbols(false);
             symbolGrid.CurrentCellDirtyStateChanged += SymbolGrid_CurrentCellDirtyStateChanged;
             symbolGrid.CellValueChanged += SymbolGrid_CellValueChanged;
+            symbolGrid.CellDoubleClick += SymbolGrid_CellDoubleClick;
             testMappingButton.Click += TestMappingButton_Click;
             saveButton.Click += SaveButton_Click;
             cancelButton.Click += (_, _) => Close();
             resetButton.Click += ResetButton_Click;
 
-            ConfigureSymbolGrid();
-            ConfigurePreviewGrid();
-            UpdateMappingGrid(Array.Empty<string>());
+            InitializeMappingRows();
+            ClearPreviewAndMapping();
             UpdateControlState();
         }
 
-        private void ConfigureSymbolGrid()
+        private void InitializeMappingRows()
         {
-            symbolGrid.Columns.Clear();
-            var selected = new DataGridViewCheckBoxColumn
-            {
-                Name = "selectedColumn",
-                HeaderText = "انتخاب",
-                Width = 110,
-                FalseValue = false,
-                TrueValue = true
-            };
-            var symbol = new DataGridViewTextBoxColumn
-            {
-                Name = "symbolColumn",
-                HeaderText = "نماد / فایل",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                ReadOnly = true
-            };
-            symbolGrid.Columns.Add(selected);
-            symbolGrid.Columns.Add(symbol);
-        }
-
-        private void ConfigurePreviewGrid()
-        {
-            previewGrid.Columns.Clear();
-            previewGrid.AllowUserToResizeColumns = true;
-            previewGrid.AutoGenerateColumns = false;
+            mappingGrid.Rows.Clear();
+            foreach (var field in MappingFields)
+                mappingGrid.Rows.Add(field, string.Empty);
         }
 
         private void BrowseButton_Click(object? sender, EventArgs e)
@@ -115,10 +84,7 @@ namespace Trade.It
                 dialog.SelectedPath = dataPathTextBox.Text;
 
             if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
                 dataPathTextBox.Text = dialog.SelectedPath;
-                LoadSymbolsAndPreview();
-            }
         }
 
         private void DataSettingsChanged(object? sender, EventArgs e)
@@ -140,26 +106,6 @@ namespace Trade.It
                 LoadSymbolsAndPreview();
         }
 
-        private void LoadSymbolsAndPreview()
-        {
-            try
-            {
-                var files = GetDataFiles().ToList();
-                PopulateSymbolGrid(files);
-
-                var firstSelectedOrFirst = files.FirstOrDefault();
-                if (firstSelectedOrFirst != null)
-                    LoadPreview(firstSelectedOrFirst);
-                else
-                    ClearPreviewAndMapping();
-            }
-            catch (Exception ex)
-            {
-                ClearPreviewAndMapping();
-                MessageBox.Show(this, $"خواندن پوشه داده‌ها انجام نشد:\n{ex.Message}", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private IEnumerable<string> GetDataFiles()
         {
             if (!Directory.Exists(dataPathTextBox.Text))
@@ -177,17 +123,57 @@ namespace Trade.It
                 yield return file;
         }
 
+        private void LoadSymbolsAndPreview()
+        {
+            try
+            {
+                var files = GetDataFiles().ToList();
+                PopulateSymbolGrid(files);
+
+                var firstFile = files.FirstOrDefault();
+                if (firstFile == null)
+                    ClearPreviewAndMapping();
+                else
+                    LoadPreview(firstFile);
+            }
+            catch (Exception ex)
+            {
+                ClearPreviewAndMapping();
+                MessageBox.Show(this, $"خواندن پوشه داده‌ها انجام نشد:\n{ex.Message}", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void PopulateSymbolGrid(IReadOnlyList<string> files)
         {
             internalUpdate = true;
             try
             {
                 symbolGrid.Rows.Clear();
-                foreach (var file in files)
+
+                if (fileNameRadioButton.Checked)
                 {
-                    var name = Path.GetFileNameWithoutExtension(file);
-                    symbolGrid.Rows.Add(false, name);
+                    foreach (var file in files)
+                    {
+                        var rowIndex = symbolGrid.Rows.Add(false, Path.GetFileNameWithoutExtension(file));
+                        symbolGrid.Rows[rowIndex].Tag = file;
+                    }
                 }
+                else
+                {
+                    var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var file in files)
+                    {
+                        foreach (var symbol in ExtractSymbolsFromFile(file))
+                        {
+                            if (!seen.Add(symbol))
+                                continue;
+
+                            var rowIndex = symbolGrid.Rows.Add(false, symbol);
+                            symbolGrid.Rows[rowIndex].Tag = file;
+                        }
+                    }
+                }
+
                 UpdateSelectedCount();
             }
             finally
@@ -198,6 +184,45 @@ namespace Trade.It
             ApplySymbolFilter();
         }
 
+        private IEnumerable<string> ExtractSymbolsFromFile(string filePath)
+        {
+            var lines = File.ReadLines(filePath, DetectEncoding(filePath))
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Take(101)
+                .ToList();
+
+            if (lines.Count == 0)
+                yield break;
+
+            var rows = lines.Select(line => SplitLine(line, GetSeparator())).ToList();
+            var header = headerCheckBox.Checked ? rows[0] : null;
+            var dataRows = rows.Skip(headerCheckBox.Checked ? 1 : 0).ToList();
+            var symbolColumn = FindMappingColumn("نماد", header, dataRows);
+
+            if (symbolColumn <= 0)
+                yield break;
+
+            foreach (var row in dataRows)
+            {
+                if (symbolColumn > row.Length)
+                    continue;
+
+                var value = row[symbolColumn - 1].Trim();
+                if (!string.IsNullOrWhiteSpace(value))
+                    yield return value;
+            }
+        }
+
+        private void SymbolGrid_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= symbolGrid.Rows.Count)
+                return;
+
+            var file = symbolGrid.Rows[e.RowIndex].Tag as string;
+            if (!string.IsNullOrWhiteSpace(file) && File.Exists(file))
+                LoadPreview(file);
+        }
+
         private void SymbolSearchTextBox_TextChanged(object? sender, EventArgs e) => ApplySymbolFilter();
 
         private void ApplySymbolFilter()
@@ -205,7 +230,9 @@ namespace Trade.It
             var query = symbolSearchTextBox.Text.Trim();
             foreach (DataGridViewRow row in symbolGrid.Rows)
             {
-                if (row.IsNewRow) continue;
+                if (row.IsNewRow)
+                    continue;
+
                 var value = Convert.ToString(row.Cells["symbolColumn"].Value) ?? string.Empty;
                 row.Visible = query.Length == 0 || value.Contains(query, StringComparison.OrdinalIgnoreCase);
             }
@@ -226,6 +253,7 @@ namespace Trade.It
             {
                 internalUpdate = false;
             }
+
             UpdateSelectedCount();
         }
 
@@ -244,7 +272,8 @@ namespace Trade.It
         private void UpdateSelectedCount()
         {
             var total = symbolGrid.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow);
-            var selected = symbolGrid.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow && Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false));
+            var selected = symbolGrid.Rows.Cast<DataGridViewRow>()
+                .Count(r => !r.IsNewRow && Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false));
             selectedCountLabel.Text = $"انتخاب شده: {selected:N0} از {total:N0}";
         }
 
@@ -261,10 +290,9 @@ namespace Trade.It
                 return;
             }
 
-            var separator = GetSeparator();
-            var rows = lines.Select(line => SplitLine(line, separator)).ToList();
+            var rows = lines.Select(line => SplitLine(line, GetSeparator())).ToList();
             var width = Math.Min(MaxColumns, rows.Max(r => r.Length));
-            if (width == 0)
+            if (width <= 0)
             {
                 ClearPreviewAndMapping();
                 return;
@@ -272,17 +300,146 @@ namespace Trade.It
 
             previewHeader = headerCheckBox.Checked ? NormalizeWidth(rows[0], width) : null;
             var dataStart = headerCheckBox.Checked ? 1 : 0;
-            previewRows = rows.Skip(dataStart).Take(100).Select(r => NormalizeWidth(r, width)).ToList();
-            if (previewRows.Count == 0)
-                previewRows.Add(new string[width]);
+            previewRows = rows.Skip(dataStart).Take(100)
+                .Select(r => NormalizeWidth(r, width))
+                .ToList();
 
             BuildPreviewGrid(width);
-            detectedColumns.Clear();
-            detectedColumns.AddRange(DetectColumns(width));
-            UpdateMappingGrid(previewHeader ?? Array.Empty<string>());
+            AutoMap(width);
         }
 
-        private Encoding DetectEncoding(string filePath)
+        private void BuildPreviewGrid(int width)
+        {
+            previewGrid.Rows.Clear();
+
+            foreach (var sourceRow in previewRows)
+            {
+                var values = new object[MaxColumns];
+                for (var column = 0; column < MaxColumns; column++)
+                    values[column] = column < width ? sourceRow[column] : string.Empty;
+                previewGrid.Rows.Add(values);
+            }
+
+            for (var column = 0; column < MaxColumns; column++)
+            {
+                var title = previewHeader != null && column < previewHeader.Length
+                    ? previewHeader[column]
+                    : string.Empty;
+                previewGrid.Columns[column].HeaderText = string.IsNullOrWhiteSpace(title)
+                    ? $"ستون {column + 1}"
+                    : $"{column + 1}: {title}";
+                previewGrid.Columns[column].Visible = column < width;
+            }
+        }
+
+        private void AutoMap(int width)
+        {
+            var suggestions = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            for (var column = 0; column < width; column++)
+            {
+                var header = previewHeader != null && column < previewHeader.Length
+                    ? previewHeader[column]
+                    : string.Empty;
+                var values = previewRows.Select(r => r[column])
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Take(50)
+                    .ToList();
+
+                var field = DetectField(header, values);
+                if (field != null && !suggestions.ContainsKey(field))
+                    suggestions[field] = column + 1;
+            }
+
+            for (var rowIndex = 0; rowIndex < MappingFields.Length; rowIndex++)
+            {
+                var field = MappingFields[rowIndex];
+                mappingGrid.Rows[rowIndex].Cells["mappingNumberColumn"].Value =
+                    suggestions.TryGetValue(field, out var column)
+                        ? column.ToString(CultureInfo.InvariantCulture)
+                        : string.Empty;
+            }
+        }
+
+        private static string? DetectField(string header, IReadOnlyList<string> values)
+        {
+            var normalized = NormalizeHeader(header);
+
+            if (ContainsAny(normalized, "tickerfa", "symbol", "ticker", "نماد")) return "نماد";
+            if (ContainsAny(normalized, "ticker en", "ticker_en", "symbolen")) return "نماد لاتین";
+            if (ContainsAny(normalized, "date-en", "dateen")) return "تاریخ لاتین";
+            if (ContainsAny(normalized, "date-fa", "date", "تاریخ")) return "تاریخ";
+            if (ContainsAny(normalized, "time", "زمان")) return "زمان";
+            if (ContainsAny(normalized, "open", "باز")) return "باز";
+            if (ContainsAny(normalized, "high", "بیشترین")) return "بیشترین";
+            if (ContainsAny(normalized, "low", "کمترین")) return "کمترین";
+            if (ContainsAny(normalized, "close", "پایانی")) return "پایانی";
+            if (ContainsAny(normalized, "vol", "volume", "حجم")) return "حجم";
+            if (ContainsAny(normalized, "tseclose")) return "قیمت پایانی بورس";
+            if (ContainsAny(normalized, "previous")) return "قیمت قبلی";
+            if (ContainsAny(normalized, "count")) return "تعداد معاملات";
+            if (ContainsAny(normalized, "val")) return "ارزش معاملات";
+            if (ContainsAny(normalized, "sharecount")) return "تعداد سهام";
+            if (ContainsAny(normalized, "marketvalue")) return "ارزش بازار";
+            if (ContainsAny(normalized, "per", "period", "دوره")) return "دوره";
+
+            if (values.Count == 0)
+                return null;
+
+            var dateLike = values.Count(LooksLikeDate);
+            if (dateLike >= 2 && dateLike * 2 >= values.Count)
+                return "تاریخ";
+
+            var timeLike = values.Count(LooksLikeTime);
+            if (timeLike >= 2 && timeLike * 2 >= values.Count)
+                return "زمان";
+
+            return null;
+        }
+
+        private static bool ContainsAny(string value, params string[] tokens) =>
+            tokens.Any(token => value.Contains(NormalizeHeader(token), StringComparison.OrdinalIgnoreCase));
+
+        private static string NormalizeHeader(string value) => value.Trim().Trim('<', '>')
+            .Replace("_", string.Empty)
+            .Replace("-", string.Empty)
+            .Replace(" ", string.Empty)
+            .ToLowerInvariant();
+
+        private static bool LooksLikeDate(string value)
+        {
+            var digits = new string(value.Where(char.IsDigit).ToArray());
+            return digits.Length == 8 && int.TryParse(digits[..4], out var year) && year is >= 1200 and <= 2500;
+        }
+
+        private static bool LooksLikeTime(string value)
+        {
+            var digits = new string(value.Where(char.IsDigit).ToArray());
+            if (digits.Length != 6)
+                return false;
+
+            return int.TryParse(digits[..2], out var h) &&
+                   int.TryParse(digits.Substring(2, 2), out var m) &&
+                   int.TryParse(digits.Substring(4, 2), out var s) &&
+                   h is >= 0 and <= 23 && m is >= 0 and <= 59 && s is >= 0 and <= 59;
+        }
+
+        private int FindMappingColumn(string field, string[]? header, IReadOnlyList<string[]> dataRows)
+        {
+            var width = Math.Min(MaxColumns, Math.Max(header?.Length ?? 0,
+                dataRows.Count == 0 ? 0 : dataRows.Max(r => r.Length)));
+
+            for (var column = 0; column < width; column++)
+            {
+                var headerValue = header != null && column < header.Length ? header[column] : string.Empty;
+                if (string.Equals(DetectField(headerValue, Array.Empty<string>()), field, StringComparison.Ordinal))
+                    return column + 1;
+            }
+
+            return 0;
+        }
+
+        private static Encoding DetectEncoding(string filePath)
         {
             using var stream = File.OpenRead(filePath);
             Span<byte> bom = stackalloc byte[4];
@@ -306,13 +463,13 @@ namespace Trade.It
 
         private static string[] SplitLine(string line, string separator)
         {
-            // The supplied formats are delimited text. Quoted fields are handled for CSV-style files.
             if (separator != ",")
                 return line.Split(new[] { separator }, StringSplitOptions.None);
 
             var result = new List<string>();
             var current = new StringBuilder();
             var quoted = false;
+
             for (var i = 0; i < line.Length; i++)
             {
                 var c = line[i];
@@ -334,6 +491,7 @@ namespace Trade.It
                 else
                     current.Append(c);
             }
+
             result.Add(current.ToString());
             return result.ToArray();
         }
@@ -345,130 +503,19 @@ namespace Trade.It
             return result;
         }
 
-        private void BuildPreviewGrid(int width)
-        {
-            previewGrid.Columns.Clear();
-            for (var i = 0; i < width; i++)
-            {
-                var title = previewHeader != null && i < previewHeader.Length && !string.IsNullOrWhiteSpace(previewHeader[i])
-                    ? previewHeader[i]
-                    : $"ستون {i + 1}";
-                var column = new DataGridViewTextBoxColumn
-                {
-                    Name = $"preview_{i + 1}",
-                    HeaderText = $"{i + 1}: {title}",
-                    ReadOnly = true,
-                    Width = 150,
-                    SortMode = DataGridViewColumnSortMode.NotSortable
-                };
-                previewGrid.Columns.Add(column);
-            }
-
-            previewGrid.Rows.Clear();
-            foreach (var row in previewRows)
-                previewGrid.Rows.Add(row.Cast<object>().ToArray());
-        }
-
-        private List<DetectedColumn> DetectColumns(int width)
-        {
-            var result = new List<DetectedColumn>();
-            for (var i = 0; i < width; i++)
-            {
-                var header = previewHeader != null && i < previewHeader.Length ? previewHeader[i] : string.Empty;
-                var values = previewRows.Select(r => r[i]).Where(v => !string.IsNullOrWhiteSpace(v)).Take(50).ToList();
-                result.Add(DetectColumn(i + 1, header, values));
-            }
-            return result;
-        }
-
-        private DetectedColumn DetectColumn(int number, string header, IReadOnlyList<string> values)
-        {
-            var normalized = NormalizeHeader(header);
-            var matches = new List<(string field, int score)>();
-            void Add(string field, params string[] tokens)
-            {
-                var score = tokens.Any(t => normalized.Contains(NormalizeHeader(t), StringComparison.OrdinalIgnoreCase)) ? 100 : 0;
-                if (score > 0) matches.Add((field, score));
-            }
-
-            Add("نماد", "TickerFa", "نماد", "Symbol", "Ticker");
-            Add("نماد لاتین", "TickerEn", "SymbolEn");
-            Add("تاریخ", "DATE-Fa", "Date", "DATE");
-            Add("تاریخ لاتین", "Date-En", "DateEn");
-            Add("زمان", "TIME", "Time");
-            Add("باز", "OPEN", "Open");
-            Add("بیشترین", "HIGH", "High");
-            Add("کمترین", "LOW", "Low");
-            Add("پایانی", "CLOSE", "Close");
-            Add("حجم", "VOL", "Volume");
-            Add("قیمت پایانی بورس", "TSEClose");
-            Add("قیمت قبلی", "PREVIOUS", "Previous");
-            Add("تعداد معاملات", "COUNT", "Count");
-            Add("ارزش معاملات", "VAL", "Value");
-            Add("تعداد سهام", "ShareCount");
-            Add("ارزش بازار", "MarketValue");
-            Add("دوره", "Per", "Period");
-
-            if (matches.Count > 0)
-                return new DetectedColumn(number, matches[0].field, 100, header);
-
-            if (values.Count > 0)
-            {
-                var numeric = values.Count(IsNumeric);
-                var dateLike = values.Count(v => LooksLikeDate(v));
-                var timeLike = values.Count(LooksLikeTime);
-                var textLike = values.Count(v => !IsNumeric(v));
-                if (dateLike * 2 >= values.Count && dateLike >= 2)
-                    return new DetectedColumn(number, "تاریخ", 75, header);
-                if (timeLike * 2 >= values.Count && timeLike >= 2)
-                    return new DetectedColumn(number, "زمان", 75, header);
-                if (textLike * 2 >= values.Count)
-                    return new DetectedColumn(number, "نماد", 55, header);
-                if (numeric == values.Count)
-                    return new DetectedColumn(number, "عددی", 35, header);
-            }
-
-            return new DetectedColumn(number, "نامشخص", 0, header);
-        }
-
-        private static string NormalizeHeader(string value) => value.Trim().Trim('<', '>').Replace("_", string.Empty).Replace("-", string.Empty).Replace(" ", string.Empty).ToLowerInvariant();
-
-        private static bool IsNumeric(string value) => double.TryParse(value.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out _)
-            || double.TryParse(value.Trim(), NumberStyles.Float, CultureInfo.CurrentCulture, out _);
-
-        private static bool LooksLikeDate(string value)
-        {
-            var digits = new string(value.Where(char.IsDigit).ToArray());
-            return digits.Length == 8 && int.TryParse(digits[..4], out var year) && year is >= 1200 and <= 2500;
-        }
-
-        private static bool LooksLikeTime(string value)
-        {
-            var digits = new string(value.Where(char.IsDigit).ToArray());
-            if (digits.Length != 6) return false;
-            return int.TryParse(digits[..2], out var h) && int.TryParse(digits.Substring(2, 2), out var m) && int.TryParse(digits.Substring(4, 2), out var s)
-                   && h is >= 0 and <= 23 && m is >= 0 and <= 59 && s is >= 0 and <= 59;
-        }
-
-        private void UpdateMappingGrid(string[] header)
-        {
-            mappingGrid.Rows.Clear();
-            foreach (var field in MappingFields)
-            {
-                var detected = detectedColumns.FirstOrDefault(d => string.Equals(d.Field, field, StringComparison.Ordinal));
-                var confidence = detected == null ? "" : $"{detected.Confidence}%";
-                mappingGrid.Rows.Add(field, detected?.ColumnNumber.ToString(CultureInfo.InvariantCulture) ?? "", confidence);
-            }
-        }
-
         private void ClearPreviewAndMapping()
         {
             previewRows.Clear();
             previewHeader = null;
-            detectedColumns.Clear();
-            previewGrid.Columns.Clear();
             previewGrid.Rows.Clear();
-            UpdateMappingGrid(Array.Empty<string>());
+
+            for (var column = 0; column < MaxColumns; column++)
+            {
+                previewGrid.Columns[column].HeaderText = $"ستون {column + 1}";
+                previewGrid.Columns[column].Visible = false;
+            }
+
+            InitializeMappingRows();
         }
 
         private void UpdateControlState()
@@ -488,10 +535,27 @@ namespace Trade.It
             }
 
             var mappings = ReadMappings();
-            var duplicate = mappings.Where(x => x.Column > 0).GroupBy(x => x.Column).FirstOrDefault(g => g.Count() > 1);
+            var invalid = mappings.FirstOrDefault(x => x.Column < 0 || x.Column > MaxColumns);
+            if (invalid != null)
+            {
+                MessageBox.Show(this,
+                    $"شماره ستون برای «{invalid.Field}» معتبر نیست. مقدار را خالی یا عددی بین ۱ تا {MaxColumns} وارد کنید.",
+                    "خطا در Mapping",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            var duplicate = mappings.Where(x => x.Column > 0)
+                .GroupBy(x => x.Column)
+                .FirstOrDefault(g => g.Count() > 1);
             if (duplicate != null)
             {
-                MessageBox.Show(this, $"ستون {duplicate.Key} برای چند داده انتخاب شده است. اگر این کار عمدی نیست، Mapping را اصلاح کنید.", "هشدار Mapping", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this,
+                    $"ستون {duplicate.Key} برای چند داده انتخاب شده است.",
+                    "هشدار Mapping",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
@@ -505,21 +569,27 @@ namespace Trade.It
                 error = "نام سبد را وارد کنید.";
                 return false;
             }
+
             if (!Directory.Exists(dataPathTextBox.Text))
             {
                 error = "مسیر پوشه داده معتبر نیست.";
                 return false;
             }
-            if (symbolGrid.Rows.Cast<DataGridViewRow>().All(r => r.IsNewRow || !Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false)))
+
+            if (!symbolGrid.Rows.Cast<DataGridViewRow>().Any(r =>
+                    !r.IsNewRow && Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false)))
             {
                 error = "حداقل یک نماد را انتخاب کنید.";
                 return false;
             }
-            if (!noDateTimeCheckBox.Checked && string.IsNullOrWhiteSpace(dateFormatComboBox.Text))
+
+            var mappings = ReadMappings();
+            if (mappings.Any(x => x.Column < 0 || x.Column > MaxColumns))
             {
-                error = "فرمت تاریخ را مشخص کنید.";
+                error = $"شماره ستون Mapping باید خالی یا بین ۱ تا {MaxColumns} باشد.";
                 return false;
             }
+
             error = string.Empty;
             return true;
         }
@@ -529,9 +599,11 @@ namespace Trade.It
             var result = new List<PortfolioMapping>();
             foreach (DataGridViewRow row in mappingGrid.Rows)
             {
-                var field = Convert.ToString(row.Cells["fieldColumn"].Value) ?? string.Empty;
-                var text = Convert.ToString(row.Cells["columnNumberColumn"].Value) ?? string.Empty;
-                var column = int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0;
+                var field = Convert.ToString(row.Cells["mappingFieldColumn"].Value) ?? string.Empty;
+                var text = Convert.ToString(row.Cells["mappingNumberColumn"].Value)?.Trim() ?? string.Empty;
+                var column = string.IsNullOrWhiteSpace(text)
+                    ? 0
+                    : int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : -1;
                 result.Add(new PortfolioMapping(field, column));
             }
             return result;
@@ -562,16 +634,21 @@ namespace Trade.It
                     .Where(r => !r.IsNewRow && Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false))
                     .Select(r => Convert.ToString(r.Cells["symbolColumn"].Value) ?? string.Empty)
                     .Where(s => s.Length > 0)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList()
             };
 
             try
             {
-                var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Trade.It", "Portfolios");
+                var folder = Path.Combine(AppContext.BaseDirectory, "Portfolios");
                 Directory.CreateDirectory(folder);
-                var file = Path.Combine(folder, definition.Name + ".json");
+
+                var safeName = string.Concat(definition.Name.Select(c =>
+                    Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
+                var file = Path.Combine(folder, safeName + ".json");
                 var json = JsonSerializer.Serialize(definition, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(file, json, new UTF8Encoding(false));
+
                 DialogResult = DialogResult.OK;
                 Close();
             }
@@ -605,10 +682,9 @@ namespace Trade.It
             {
                 internalUpdate = false;
             }
+
             UpdateSelectedCount();
             UpdateControlState();
         }
     }
-
-    internal sealed record DetectedColumn(int ColumnNumber, string Field, int Confidence, string Header);
 }
