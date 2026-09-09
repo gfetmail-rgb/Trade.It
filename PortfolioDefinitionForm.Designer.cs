@@ -7,7 +7,7 @@ namespace Trade.It
         private TableLayoutPanel nameTable;
         private Label portfolioNameLabel;
         private TextBox portfolioNameTextBox;
-        private GroupBox sourceGroup;
+        private Label sourceLabel;
         private RadioButton fileNameRadioButton;
         private RadioButton insideFileRadioButton;
         private TableLayoutPanel pathTable;
@@ -26,16 +26,18 @@ namespace Trade.It
         private CheckBox headerCheckBox;
         private CheckBox noDateTimeCheckBox;
         private TableLayoutPanel middleTable;
-        private GroupBox mappingGroup;
+        private TableLayoutPanel mappingTable;
+        private Label mappingTitleLabel;
         private DataGridView mappingGrid;
-        private GroupBox symbolSelectionGroup;
+        private TableLayoutPanel symbolSelectionTable;
+        private Label symbolSelectionTitleLabel;
         private TableLayoutPanel symbolTable;
         private TextBox symbolSearchTextBox;
         private Button selectAllButton;
         private Button deselectAllButton;
         private Label selectedCountLabel;
         private DataGridView symbolGrid;
-        private GroupBox previewGroup;
+        private Label previewTitleLabel;
         private DataGridView previewGrid;
         private TableLayoutPanel footerTable;
         private Button testMappingButton;
@@ -56,7 +58,7 @@ namespace Trade.It
             nameTable = new TableLayoutPanel();
             portfolioNameLabel = new Label();
             portfolioNameTextBox = new TextBox();
-            sourceGroup = new GroupBox();
+            sourceLabel = new Label();
             fileNameRadioButton = new RadioButton();
             insideFileRadioButton = new RadioButton();
             pathTable = new TableLayoutPanel();
@@ -75,16 +77,18 @@ namespace Trade.It
             headerCheckBox = new CheckBox();
             noDateTimeCheckBox = new CheckBox();
             middleTable = new TableLayoutPanel();
-            mappingGroup = new GroupBox();
+            mappingTable = new TableLayoutPanel();
+            mappingTitleLabel = new Label();
             mappingGrid = new DataGridView();
-            symbolSelectionGroup = new GroupBox();
+            symbolSelectionTable = new TableLayoutPanel();
+            symbolSelectionTitleLabel = new Label();
             symbolTable = new TableLayoutPanel();
             selectAllButton = new Button();
             deselectAllButton = new Button();
             symbolSearchTextBox = new TextBox();
             selectedCountLabel = new Label();
             symbolGrid = new DataGridView();
-            previewGroup = new GroupBox();
+            previewTitleLabel = new Label();
             previewGrid = new DataGridView();
             footerTable = new TableLayoutPanel();
             testMappingButton = new Button();
@@ -110,7 +114,7 @@ namespace Trade.It
             mainTable.RowCount = 7;
             mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 64F));
+            mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 64F));
             mainTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -132,21 +136,21 @@ namespace Trade.It
             nameTable.Controls.Add(portfolioNameTextBox, 1, 0);
             mainTable.Controls.Add(nameTable, 0, 0);
 
-            sourceGroup.Dock = DockStyle.Fill;
-            sourceGroup.Text = "منبع اطلاعات";
-            sourceGroup.Padding = new Padding(12, 10, 12, 8);
+            sourceLabel.Dock = DockStyle.Fill;
+            sourceLabel.Text = "منبع اطلاعات:";
+            sourceLabel.TextAlign = ContentAlignment.MiddleRight;
+            mainTable.Controls.Add(sourceLabel, 0, 1);
             fileNameRadioButton.AutoSize = true;
             fileNameRadioButton.Text = "نام فایل";
             fileNameRadioButton.Checked = true;
             fileNameRadioButton.Anchor = AnchorStyles.Right;
-            fileNameRadioButton.Location = new Point(1160, 25);
+            fileNameRadioButton.Location = new Point(1160, 48);
             insideFileRadioButton.AutoSize = true;
             insideFileRadioButton.Text = "داخل فایل";
             insideFileRadioButton.Anchor = AnchorStyles.Right;
-            insideFileRadioButton.Location = new Point(1020, 25);
-            sourceGroup.Controls.Add(fileNameRadioButton);
-            sourceGroup.Controls.Add(insideFileRadioButton);
-            mainTable.Controls.Add(sourceGroup, 0, 1);
+            insideFileRadioButton.Location = new Point(1020, 48);
+            Controls.Add(fileNameRadioButton);
+            Controls.Add(insideFileRadioButton);
 
             pathTable.Dock = DockStyle.Fill;
             pathTable.ColumnCount = 3;
@@ -233,9 +237,16 @@ namespace Trade.It
             middleTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58F));
             mainTable.Controls.Add(middleTable, 0, 4);
 
-            mappingGroup.Dock = DockStyle.Fill;
-            mappingGroup.Text = "Mapping ستون‌های فایل";
-            mappingGroup.Padding = new Padding(8);
+            mappingTable.Dock = DockStyle.Fill;
+            mappingTable.ColumnCount = 1;
+            mappingTable.RowCount = 2;
+            mappingTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            mappingTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            mappingTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            mappingTitleLabel.Dock = DockStyle.Fill;
+            mappingTitleLabel.Text = "Mapping ستون‌های فایل";
+            mappingTitleLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            mappingTitleLabel.TextAlign = ContentAlignment.MiddleRight;
             mappingGrid.Dock = DockStyle.Fill;
             mappingGrid.AllowUserToAddRows = false;
             mappingGrid.AllowUserToDeleteRows = false;
@@ -264,12 +275,20 @@ namespace Trade.It
             mappingGrid.Rows.Add("تعداد سهم", "");
             mappingGrid.Rows.Add("ارزش بازار", "");
             mappingGrid.Rows.Add("نماد انگلیسی", "");
-            mappingGroup.Controls.Add(mappingGrid);
-            middleTable.Controls.Add(mappingGroup, 0, 0);
+            mappingTable.Controls.Add(mappingTitleLabel, 0, 0);
+            mappingTable.Controls.Add(mappingGrid, 0, 1);
+            middleTable.Controls.Add(mappingTable, 0, 0);
 
-            symbolSelectionGroup.Dock = DockStyle.Fill;
-            symbolSelectionGroup.Text = "انتخاب سهام";
-            symbolSelectionGroup.Padding = new Padding(8);
+            symbolSelectionTable.Dock = DockStyle.Fill;
+            symbolSelectionTable.ColumnCount = 1;
+            symbolSelectionTable.RowCount = 2;
+            symbolSelectionTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            symbolSelectionTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            symbolSelectionTitleLabel.Dock = DockStyle.Fill;
+            symbolSelectionTitleLabel.Text = "انتخاب سهام";
+            symbolSelectionTitleLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            symbolSelectionTitleLabel.TextAlign = ContentAlignment.MiddleRight;
+            symbolSelectionTable.Controls.Add(symbolSelectionTitleLabel, 0, 0);
             symbolTable.Dock = DockStyle.Fill;
             symbolTable.ColumnCount = 4;
             symbolTable.RowCount = 2;
@@ -310,12 +329,15 @@ namespace Trade.It
             symbolGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "symbolColumn", HeaderText = "نماد", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
             symbolTable.Controls.Add(symbolGrid, 0, 1);
             symbolTable.SetColumnSpan(symbolGrid, 4);
-            symbolSelectionGroup.Controls.Add(symbolTable);
-            middleTable.Controls.Add(symbolSelectionGroup, 1, 0);
+            symbolSelectionTable.Controls.Add(symbolTable, 0, 1);
+            middleTable.Controls.Add(symbolSelectionTable, 1, 0);
 
-            previewGroup.Dock = DockStyle.Fill;
-            previewGroup.Text = "پیش‌نمایش داده";
-            previewGroup.Padding = new Padding(8);
+            previewTitleLabel.Dock = DockStyle.Fill;
+            previewTitleLabel.Text = "پیش‌نمایش داده";
+            previewTitleLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            previewTitleLabel.TextAlign = ContentAlignment.MiddleRight;
+            mainTable.Controls.Add(previewTitleLabel, 0, 5);
+
             previewGrid.Dock = DockStyle.Fill;
             previewGrid.AllowUserToAddRows = false;
             previewGrid.AllowUserToDeleteRows = false;
@@ -329,8 +351,7 @@ namespace Trade.It
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewSymbol", HeaderText = "نماد", Width = 130 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewFile", HeaderText = "نام فایل", Width = 240 });
             previewGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "previewColumns", HeaderText = "ستون‌های موجود در فایل", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-            previewGroup.Controls.Add(previewGrid);
-            mainTable.Controls.Add(previewGroup, 0, 5);
+            mainTable.Controls.Add(previewGrid, 0, 5);
 
             footerTable.Dock = DockStyle.Fill;
             footerTable.ColumnCount = 3;
@@ -338,9 +359,6 @@ namespace Trade.It
             footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135F));
             footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90F));
             footerTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135F));
-            footerTable.Controls.Add(testMappingButton, 0, 0);
-            footerTable.Controls.Add(cancelButton, 1, 0);
-            footerTable.Controls.Add(saveButton, 2, 0);
             testMappingButton.Dock = DockStyle.Fill;
             testMappingButton.Margin = new Padding(3);
             testMappingButton.Text = "تست Mapping";
@@ -350,6 +368,9 @@ namespace Trade.It
             saveButton.Dock = DockStyle.Fill;
             saveButton.Margin = new Padding(3);
             saveButton.Text = "ذخیره سبد";
+            footerTable.Controls.Add(testMappingButton, 0, 0);
+            footerTable.Controls.Add(cancelButton, 1, 0);
+            footerTable.Controls.Add(saveButton, 2, 0);
             mainTable.Controls.Add(footerTable, 0, 6);
 
             ((System.ComponentModel.ISupportInitialize)(mappingGrid)).EndInit();
@@ -358,18 +379,15 @@ namespace Trade.It
             mainTable.ResumeLayout(false);
             nameTable.ResumeLayout(false);
             nameTable.PerformLayout();
-            sourceGroup.ResumeLayout(false);
-            sourceGroup.PerformLayout();
             pathTable.ResumeLayout(false);
             pathTable.PerformLayout();
             optionsTable.ResumeLayout(false);
             optionsTable.PerformLayout();
             middleTable.ResumeLayout(false);
-            mappingGroup.ResumeLayout(false);
-            symbolSelectionGroup.ResumeLayout(false);
+            mappingTable.ResumeLayout(false);
+            symbolSelectionTable.ResumeLayout(false);
             symbolTable.ResumeLayout(false);
             symbolTable.PerformLayout();
-            previewGroup.ResumeLayout(false);
             footerTable.ResumeLayout(false);
             ResumeLayout(false);
         }
