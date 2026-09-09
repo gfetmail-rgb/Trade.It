@@ -12,11 +12,7 @@ namespace Trade.It
             mainSplitContainer.SplitterDistance = 419;
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
-            closeAllChartsMenuItem.Click += (_, _) =>
-            {
-                while (chartTabControl.TabPages.Count > 0)
-                    chartTabControl.TabPages.RemoveAt(chartTabControl.TabPages.Count - 1);
-            };
+           
 
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
