@@ -5,7 +5,7 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
-            mainMenuStrip.RightToLeft = RightToLeft.Yes;
+            mainMenuStrip.RightToLeft = RightToLeft.No;
 
 
 
