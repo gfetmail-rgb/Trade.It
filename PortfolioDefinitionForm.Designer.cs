@@ -30,6 +30,7 @@ namespace Trade.It
         private Button deselectAllButton;
         private Label selectedCountLabel;
         private DataGridView symbolGrid;
+        private DataGridViewTextBoxColumn symbolRowNumberColumn;
         private DataGridViewCheckBoxColumn selectedColumn;
         private DataGridViewTextBoxColumn symbolColumn;
         private Label previewTitleLabel;
@@ -101,6 +102,7 @@ namespace Trade.It
             deselectAllButton = new Button();
             selectedCountLabel = new Label();
             symbolGrid = new DataGridView();
+            symbolRowNumberColumn = new DataGridViewTextBoxColumn();
             selectedColumn = new DataGridViewCheckBoxColumn();
             symbolColumn = new DataGridViewTextBoxColumn();
             previewTitleLabel = new Label();
@@ -247,6 +249,8 @@ namespace Trade.It
             dateFormatComboBox.TabIndex = 15;
 
             headerCheckBox.AutoSize = true;
+            headerCheckBox.Checked = true;
+            headerCheckBox.CheckState = CheckState.Checked;
             headerCheckBox.Location = new Point(26, 160);
             headerCheckBox.Name = "headerCheckBox";
             headerCheckBox.Size = new Size(235, 32);
@@ -332,7 +336,7 @@ namespace Trade.It
             symbolGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             symbolGrid.BackgroundColor = SystemColors.Window;
             symbolGrid.ColumnHeadersHeight = 32;
-            symbolGrid.Columns.AddRange(new DataGridViewColumn[] { selectedColumn, symbolColumn });
+            symbolGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowNumberColumn, selectedColumn, symbolColumn });
             symbolGrid.Location = new Point(26, 254);
             symbolGrid.Name = "symbolGrid";
             symbolGrid.RightToLeft = RightToLeft.Yes;
@@ -340,6 +344,11 @@ namespace Trade.It
             symbolGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             symbolGrid.Size = new Size(750, 317);
             symbolGrid.TabIndex = 25;
+
+            symbolRowNumberColumn.HeaderText = "ردیف";
+            symbolRowNumberColumn.Name = "symbolRowNumberColumn";
+            symbolRowNumberColumn.ReadOnly = true;
+            symbolRowNumberColumn.Width = 70;
 
             selectedColumn.HeaderText = "انتخاب";
             selectedColumn.Name = "selectedColumn";
