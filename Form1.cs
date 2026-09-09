@@ -15,6 +15,7 @@ namespace Trade.It
             mainMenuStrip.Items.Add(closeAllChartsMenuItem);
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
             portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
+            closeAllChartsButton.Click += closeAllChartsButton_Click;
 
             tabPage3.Controls.Clear();
             tabPage3.AutoScroll = true;
@@ -37,6 +38,12 @@ namespace Trade.It
             tabPage3.Controls.Add(identifierGroup);
             tabPage3.Controls.Add(identifierButtonsPanel);
             identifierButtonsPanel.BringToFront();
+        }
+
+        private void closeAllChartsButton_Click(object? sender, EventArgs e)
+        {
+            while (chartTabControl.TabPages.Count > 0)
+                chartTabControl.TabPages.RemoveAt(chartTabControl.TabPages.Count - 1);
         }
 
         private void nameTextBox_TextChanged(object sender, EventArgs e) { }
