@@ -19,6 +19,7 @@ namespace Trade.It
 
             settingsMenuInitialized = true;
             settingsMenuItem.Click += SettingsMenuItem_Click;
+            navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
             InitializeChartRuntime();
         }
