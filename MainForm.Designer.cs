@@ -680,7 +680,7 @@ namespace Trade.It
             comparisonFirstTextBox8.Text = "5";
             comparisonFirstTextBox8.TextAlign = HorizontalAlignment.Center;
             label5_8.AutoSize = true;
-            label5_8.Location = new Point(319, 36);
+            label5_8.Location = new Point(250, 36);
             label5_8.Name = "label5_8";
             label5_8.Size = new Size(55, 25);
             label5_8.TabIndex = 5;
