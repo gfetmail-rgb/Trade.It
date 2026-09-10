@@ -3,9 +3,16 @@ namespace Trade.It
     public partial class MainForm
     {
         private ChartDisplayMode chartDisplayMode = ChartDisplayMode.SeparateTabs;
+        private bool settingsMenuInitialized;
 
-        private void InitializeSettingsMenu()
+        protected override void OnShown(EventArgs e)
         {
+            base.OnShown(e);
+
+            if (settingsMenuInitialized)
+                return;
+
+            settingsMenuInitialized = true;
             settingsMenuItem.Click += SettingsMenuItem_Click;
         }
 
