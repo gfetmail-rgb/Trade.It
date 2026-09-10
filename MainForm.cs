@@ -778,7 +778,8 @@ namespace Trade.It
             if (string.IsNullOrWhiteSpace(phrase))
                 return symbols;
             var mode = nameComboBox.SelectedIndex;
-            if (mode < 0) mode = 0;
+            if (mode < 0)
+                return symbols;
             return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
         }
 
