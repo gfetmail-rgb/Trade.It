@@ -465,7 +465,7 @@ namespace Trade.It
             stocksDataGridView.ReadOnly = true;
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
-            stocksDataGridView.Size = new Size(373, 672);
+            stocksDataGridView.Size = new Size(373, 620);
             stocksDataGridView.TabIndex = 0;
             // 
             // rowColumn
