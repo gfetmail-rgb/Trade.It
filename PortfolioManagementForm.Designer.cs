@@ -119,13 +119,14 @@ namespace Trade.It
             NoDateTimeLabel = new Label();
             label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).BeginInit();
+            previewGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)previewGrid).BeginInit();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // reloadButton
             // 
-            reloadButton.Location = new Point(581, 939);
+            reloadButton.Location = new Point(650, 939);
             reloadButton.Name = "reloadButton";
             reloadButton.Size = new Size(110, 41);
             reloadButton.TabIndex = 1;
@@ -133,7 +134,7 @@ namespace Trade.It
             // 
             // portfolioNameCaption
             // 
-            portfolioNameCaption.Location = new Point(765, 51);
+            portfolioNameCaption.Location = new Point(727, 51);
             portfolioNameCaption.Name = "portfolioNameCaption";
             portfolioNameCaption.Size = new Size(100, 34);
             portfolioNameCaption.TabIndex = 3;
@@ -143,7 +144,7 @@ namespace Trade.It
             // portfolioNameLabel
             // 
             portfolioNameLabel.BorderStyle = BorderStyle.FixedSingle;
-            portfolioNameLabel.Location = new Point(459, 51);
+            portfolioNameLabel.Location = new Point(421, 51);
             portfolioNameLabel.Name = "portfolioNameLabel";
             portfolioNameLabel.Size = new Size(300, 34);
             portfolioNameLabel.TabIndex = 4;
@@ -152,7 +153,7 @@ namespace Trade.It
             // 
             // sourceTypeCaption
             // 
-            sourceTypeCaption.Location = new Point(765, 169);
+            sourceTypeCaption.Location = new Point(727, 169);
             sourceTypeCaption.Name = "sourceTypeCaption";
             sourceTypeCaption.Size = new Size(135, 34);
             sourceTypeCaption.TabIndex = 5;
@@ -162,7 +163,7 @@ namespace Trade.It
             // sourceTypeLabel
             // 
             sourceTypeLabel.BorderStyle = BorderStyle.FixedSingle;
-            sourceTypeLabel.Location = new Point(459, 169);
+            sourceTypeLabel.Location = new Point(421, 169);
             sourceTypeLabel.Name = "sourceTypeLabel";
             sourceTypeLabel.Size = new Size(300, 34);
             sourceTypeLabel.TabIndex = 6;
@@ -171,7 +172,7 @@ namespace Trade.It
             // 
             // dataPathCaption
             // 
-            dataPathCaption.Location = new Point(765, 91);
+            dataPathCaption.Location = new Point(727, 91);
             dataPathCaption.Name = "dataPathCaption";
             dataPathCaption.Size = new Size(100, 34);
             dataPathCaption.TabIndex = 7;
@@ -182,7 +183,7 @@ namespace Trade.It
             // 
             dataPathLabel.AutoEllipsis = true;
             dataPathLabel.BorderStyle = BorderStyle.FixedSingle;
-            dataPathLabel.Location = new Point(459, 91);
+            dataPathLabel.Location = new Point(421, 91);
             dataPathLabel.Name = "dataPathLabel";
             dataPathLabel.Size = new Size(300, 34);
             dataPathLabel.TabIndex = 8;
@@ -191,7 +192,7 @@ namespace Trade.It
             // 
             // symbolSourceCaption
             // 
-            symbolSourceCaption.Location = new Point(764, 130);
+            symbolSourceCaption.Location = new Point(726, 130);
             symbolSourceCaption.Name = "symbolSourceCaption";
             symbolSourceCaption.Size = new Size(129, 34);
             symbolSourceCaption.TabIndex = 11;
@@ -201,7 +202,7 @@ namespace Trade.It
             // symbolSourceLabel
             // 
             symbolSourceLabel.BorderStyle = BorderStyle.FixedSingle;
-            symbolSourceLabel.Location = new Point(459, 130);
+            symbolSourceLabel.Location = new Point(421, 130);
             symbolSourceLabel.Name = "symbolSourceLabel";
             symbolSourceLabel.Size = new Size(300, 34);
             symbolSourceLabel.TabIndex = 12;
@@ -210,7 +211,7 @@ namespace Trade.It
             // 
             // separatorCaption
             // 
-            separatorCaption.Location = new Point(272, 51);
+            separatorCaption.Location = new Point(229, 51);
             separatorCaption.Name = "separatorCaption";
             separatorCaption.Size = new Size(100, 34);
             separatorCaption.TabIndex = 13;
@@ -220,16 +221,16 @@ namespace Trade.It
             // separatorLabel
             // 
             separatorLabel.BorderStyle = BorderStyle.FixedSingle;
-            separatorLabel.Location = new Point(25, 51);
+            separatorLabel.Location = new Point(11, 51);
             separatorLabel.Name = "separatorLabel";
-            separatorLabel.Size = new Size(233, 34);
+            separatorLabel.Size = new Size(204, 34);
             separatorLabel.TabIndex = 14;
             separatorLabel.Text = "—";
             separatorLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // timeFormatCaption
             // 
-            timeFormatCaption.Location = new Point(272, 208);
+            timeFormatCaption.Location = new Point(229, 208);
             timeFormatCaption.Name = "timeFormatCaption";
             timeFormatCaption.Size = new Size(111, 34);
             timeFormatCaption.TabIndex = 15;
@@ -239,16 +240,16 @@ namespace Trade.It
             // timeFormatLabel
             // 
             timeFormatLabel.BorderStyle = BorderStyle.FixedSingle;
-            timeFormatLabel.Location = new Point(25, 208);
+            timeFormatLabel.Location = new Point(11, 208);
             timeFormatLabel.Name = "timeFormatLabel";
-            timeFormatLabel.Size = new Size(233, 34);
+            timeFormatLabel.Size = new Size(204, 34);
             timeFormatLabel.TabIndex = 16;
             timeFormatLabel.Text = "—";
             timeFormatLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dateFormatCaption
             // 
-            dateFormatCaption.Location = new Point(272, 168);
+            dateFormatCaption.Location = new Point(229, 168);
             dateFormatCaption.Name = "dateFormatCaption";
             dateFormatCaption.Size = new Size(122, 34);
             dateFormatCaption.TabIndex = 17;
@@ -258,16 +259,16 @@ namespace Trade.It
             // dateFormatLabel
             // 
             dateFormatLabel.BorderStyle = BorderStyle.FixedSingle;
-            dateFormatLabel.Location = new Point(25, 168);
+            dateFormatLabel.Location = new Point(11, 168);
             dateFormatLabel.Name = "dateFormatLabel";
-            dateFormatLabel.Size = new Size(233, 34);
+            dateFormatLabel.Size = new Size(204, 34);
             dateFormatLabel.TabIndex = 18;
             dateFormatLabel.Text = "—";
             dateFormatLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // headerCaption
             // 
-            headerCaption.Location = new Point(765, 208);
+            headerCaption.Location = new Point(727, 208);
             headerCaption.Name = "headerCaption";
             headerCaption.Size = new Size(100, 34);
             headerCaption.TabIndex = 19;
@@ -277,7 +278,7 @@ namespace Trade.It
             // headerLabel
             // 
             headerLabel.BorderStyle = BorderStyle.FixedSingle;
-            headerLabel.Location = new Point(459, 208);
+            headerLabel.Location = new Point(421, 208);
             headerLabel.Name = "headerLabel";
             headerLabel.Size = new Size(300, 34);
             headerLabel.TabIndex = 20;
@@ -286,7 +287,7 @@ namespace Trade.It
             // 
             // calendarCaption
             // 
-            calendarCaption.Location = new Point(275, 128);
+            calendarCaption.Location = new Point(232, 128);
             calendarCaption.Name = "calendarCaption";
             calendarCaption.Size = new Size(100, 34);
             calendarCaption.TabIndex = 21;
@@ -296,16 +297,16 @@ namespace Trade.It
             // calendarLabel
             // 
             calendarLabel.BorderStyle = BorderStyle.FixedSingle;
-            calendarLabel.Location = new Point(25, 128);
+            calendarLabel.Location = new Point(11, 128);
             calendarLabel.Name = "calendarLabel";
-            calendarLabel.Size = new Size(233, 34);
+            calendarLabel.Size = new Size(204, 34);
             calendarLabel.TabIndex = 22;
             calendarLabel.Text = "—";
             calendarLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // symbolCountCaption
             // 
-            symbolCountCaption.Location = new Point(764, 251);
+            symbolCountCaption.Location = new Point(726, 251);
             symbolCountCaption.Name = "symbolCountCaption";
             symbolCountCaption.Size = new Size(100, 34);
             symbolCountCaption.TabIndex = 23;
@@ -315,7 +316,7 @@ namespace Trade.It
             // symbolCountLabel
             // 
             symbolCountLabel.BorderStyle = BorderStyle.FixedSingle;
-            symbolCountLabel.Location = new Point(459, 251);
+            symbolCountLabel.Location = new Point(421, 251);
             symbolCountLabel.Name = "symbolCountLabel";
             symbolCountLabel.Size = new Size(300, 34);
             symbolCountLabel.TabIndex = 24;
@@ -325,7 +326,7 @@ namespace Trade.It
             // existingTitleLabel
             // 
             existingTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            existingTitleLabel.Location = new Point(20, 12);
+            existingTitleLabel.Location = new Point(368, 12);
             existingTitleLabel.Name = "existingTitleLabel";
             existingTitleLabel.Size = new Size(180, 34);
             existingTitleLabel.TabIndex = 25;
@@ -337,15 +338,15 @@ namespace Trade.It
             portfoliosListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             portfoliosListBox.IntegralHeight = false;
             portfoliosListBox.ItemHeight = 28;
-            portfoliosListBox.Location = new Point(54, 49);
+            portfoliosListBox.Location = new Point(177, 49);
             portfoliosListBox.Name = "portfoliosListBox";
-            portfoliosListBox.Size = new Size(410, 269);
+            portfoliosListBox.Size = new Size(337, 269);
             portfoliosListBox.TabIndex = 26;
             // 
             // deletePortfoliosButton
             // 
             deletePortfoliosButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deletePortfoliosButton.Location = new Point(354, 323);
+            deletePortfoliosButton.Location = new Point(47, 159);
             deletePortfoliosButton.Name = "deletePortfoliosButton";
             deletePortfoliosButton.Size = new Size(110, 40);
             deletePortfoliosButton.TabIndex = 27;
@@ -354,34 +355,34 @@ namespace Trade.It
             // symbolsTitleLabel
             // 
             symbolsTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            symbolsTitleLabel.Location = new Point(20, 352);
+            symbolsTitleLabel.Location = new Point(1271, 353);
             symbolsTitleLabel.Name = "symbolsTitleLabel";
-            symbolsTitleLabel.Size = new Size(1368, 34);
+            symbolsTitleLabel.Size = new Size(127, 34);
             symbolsTitleLabel.TabIndex = 28;
             symbolsTitleLabel.Text = "نمادهای سبد";
-            symbolsTitleLabel.TextAlign = ContentAlignment.MiddleRight;
+            symbolsTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // symbolsGrid
             // 
             symbolsGrid.AllowUserToAddRows = false;
             symbolsGrid.AllowUserToDeleteRows = false;
-            symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.ColumnHeadersHeight = 34;
             symbolsGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowColumn, symbolNameColumn });
-            symbolsGrid.Location = new Point(20, 390);
+            symbolsGrid.Location = new Point(177, 390);
             symbolsGrid.Name = "symbolsGrid";
             symbolsGrid.ReadOnly = true;
             symbolsGrid.RightToLeft = RightToLeft.Yes;
             symbolsGrid.RowHeadersVisible = false;
             symbolsGrid.RowHeadersWidth = 62;
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            symbolsGrid.Size = new Size(1368, 250);
+            symbolsGrid.Size = new Size(1211, 250);
             symbolsGrid.TabIndex = 29;
             // 
             // symbolRowColumn
             // 
             symbolRowColumn.HeaderText = "ردیف";
+            symbolRowColumn.MinimumWidth = 8;
             symbolRowColumn.Name = "symbolRowColumn";
             symbolRowColumn.ReadOnly = true;
             symbolRowColumn.Width = 90;
@@ -390,8 +391,38 @@ namespace Trade.It
             // 
             symbolNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             symbolNameColumn.HeaderText = "نماد";
+            symbolNameColumn.MinimumWidth = 8;
             symbolNameColumn.Name = "symbolNameColumn";
             symbolNameColumn.ReadOnly = true;
+            // 
+            // deleteSymbolsButton
+            // 
+            deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            deleteSymbolsButton.Location = new Point(32, 498);
+            deleteSymbolsButton.Name = "deleteSymbolsButton";
+            deleteSymbolsButton.Size = new Size(125, 40);
+            deleteSymbolsButton.TabIndex = 30;
+            deleteSymbolsButton.Text = "حذف نماد";
+            // 
+            // statusLabel
+            // 
+            statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            statusLabel.Font = new Font("Segoe UI", 9F);
+            statusLabel.Location = new Point(202, 321);
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new Size(294, 34);
+            statusLabel.TabIndex = 31;
+            statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
+            statusLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // closeButton
+            // 
+            closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            closeButton.Location = new Point(508, 939);
+            closeButton.Name = "closeButton";
+            closeButton.Size = new Size(125, 41);
+            closeButton.TabIndex = 32;
+            closeButton.Text = "بستن";
             // 
             // previewGroup
             // 
@@ -409,118 +440,161 @@ namespace Trade.It
             previewGrid.AllowUserToDeleteRows = false;
             previewGrid.BackgroundColor = SystemColors.Window;
             previewGrid.ColumnHeadersHeight = 34;
-            previewGrid.Columns.AddRange(new DataGridViewColumn[]
-            {
-                previewColumn1, previewColumn2, previewColumn3, previewColumn4, previewColumn5, previewColumn6, previewColumn7, previewColumn8, previewColumn9, previewColumn10, previewColumn11, previewColumn12, previewColumn13, previewColumn14, previewColumn15, previewColumn16, previewColumn17, previewColumn18,
-            });
+            previewGrid.Columns.AddRange(new DataGridViewColumn[] { previewColumn1, previewColumn2, previewColumn3, previewColumn4, previewColumn5, previewColumn6, previewColumn7, previewColumn8, previewColumn9, previewColumn10, previewColumn11, previewColumn12, previewColumn13, previewColumn14, previewColumn15, previewColumn16, previewColumn17, previewColumn18 });
             previewGrid.Dock = DockStyle.Fill;
+            previewGrid.Location = new Point(3, 30);
             previewGrid.Name = "previewGrid";
             previewGrid.ReadOnly = true;
             previewGrid.RightToLeft = RightToLeft.Yes;
             previewGrid.RowHeadersVisible = false;
+            previewGrid.RowHeadersWidth = 62;
             previewGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            previewGrid.Size = new Size(1362, 237);
             previewGrid.TabIndex = 0;
+            // 
+            // previewColumn1
+            // 
             previewColumn1.HeaderText = "ستون 1";
+            previewColumn1.MinimumWidth = 8;
             previewColumn1.Name = "previewColumn1";
             previewColumn1.ReadOnly = true;
             previewColumn1.Width = 120;
+            // 
+            // previewColumn2
+            // 
             previewColumn2.HeaderText = "ستون 2";
+            previewColumn2.MinimumWidth = 8;
             previewColumn2.Name = "previewColumn2";
             previewColumn2.ReadOnly = true;
             previewColumn2.Width = 120;
+            // 
+            // previewColumn3
+            // 
             previewColumn3.HeaderText = "ستون 3";
+            previewColumn3.MinimumWidth = 8;
             previewColumn3.Name = "previewColumn3";
             previewColumn3.ReadOnly = true;
             previewColumn3.Width = 120;
+            // 
+            // previewColumn4
+            // 
             previewColumn4.HeaderText = "ستون 4";
+            previewColumn4.MinimumWidth = 8;
             previewColumn4.Name = "previewColumn4";
             previewColumn4.ReadOnly = true;
             previewColumn4.Width = 120;
+            // 
+            // previewColumn5
+            // 
             previewColumn5.HeaderText = "ستون 5";
+            previewColumn5.MinimumWidth = 8;
             previewColumn5.Name = "previewColumn5";
             previewColumn5.ReadOnly = true;
             previewColumn5.Width = 120;
+            // 
+            // previewColumn6
+            // 
             previewColumn6.HeaderText = "ستون 6";
+            previewColumn6.MinimumWidth = 8;
             previewColumn6.Name = "previewColumn6";
             previewColumn6.ReadOnly = true;
             previewColumn6.Width = 120;
+            // 
+            // previewColumn7
+            // 
             previewColumn7.HeaderText = "ستون 7";
+            previewColumn7.MinimumWidth = 8;
             previewColumn7.Name = "previewColumn7";
             previewColumn7.ReadOnly = true;
             previewColumn7.Width = 120;
+            // 
+            // previewColumn8
+            // 
             previewColumn8.HeaderText = "ستون 8";
+            previewColumn8.MinimumWidth = 8;
             previewColumn8.Name = "previewColumn8";
             previewColumn8.ReadOnly = true;
             previewColumn8.Width = 120;
+            // 
+            // previewColumn9
+            // 
             previewColumn9.HeaderText = "ستون 9";
+            previewColumn9.MinimumWidth = 8;
             previewColumn9.Name = "previewColumn9";
             previewColumn9.ReadOnly = true;
             previewColumn9.Width = 120;
+            // 
+            // previewColumn10
+            // 
             previewColumn10.HeaderText = "ستون 10";
+            previewColumn10.MinimumWidth = 8;
             previewColumn10.Name = "previewColumn10";
             previewColumn10.ReadOnly = true;
             previewColumn10.Width = 120;
+            // 
+            // previewColumn11
+            // 
             previewColumn11.HeaderText = "ستون 11";
+            previewColumn11.MinimumWidth = 8;
             previewColumn11.Name = "previewColumn11";
             previewColumn11.ReadOnly = true;
             previewColumn11.Width = 120;
+            // 
+            // previewColumn12
+            // 
             previewColumn12.HeaderText = "ستون 12";
+            previewColumn12.MinimumWidth = 8;
             previewColumn12.Name = "previewColumn12";
             previewColumn12.ReadOnly = true;
             previewColumn12.Width = 120;
+            // 
+            // previewColumn13
+            // 
             previewColumn13.HeaderText = "ستون 13";
+            previewColumn13.MinimumWidth = 8;
             previewColumn13.Name = "previewColumn13";
             previewColumn13.ReadOnly = true;
             previewColumn13.Width = 120;
+            // 
+            // previewColumn14
+            // 
             previewColumn14.HeaderText = "ستون 14";
+            previewColumn14.MinimumWidth = 8;
             previewColumn14.Name = "previewColumn14";
             previewColumn14.ReadOnly = true;
             previewColumn14.Width = 120;
+            // 
+            // previewColumn15
+            // 
             previewColumn15.HeaderText = "ستون 15";
+            previewColumn15.MinimumWidth = 8;
             previewColumn15.Name = "previewColumn15";
             previewColumn15.ReadOnly = true;
             previewColumn15.Width = 120;
+            // 
+            // previewColumn16
+            // 
             previewColumn16.HeaderText = "ستون 16";
+            previewColumn16.MinimumWidth = 8;
             previewColumn16.Name = "previewColumn16";
             previewColumn16.ReadOnly = true;
             previewColumn16.Width = 120;
+            // 
+            // previewColumn17
+            // 
             previewColumn17.HeaderText = "ستون 17";
+            previewColumn17.MinimumWidth = 8;
             previewColumn17.Name = "previewColumn17";
             previewColumn17.ReadOnly = true;
             previewColumn17.Width = 120;
+            // 
+            // previewColumn18
+            // 
             previewColumn18.HeaderText = "ستون 18";
+            previewColumn18.MinimumWidth = 8;
             previewColumn18.Name = "previewColumn18";
             previewColumn18.ReadOnly = true;
             previewColumn18.Width = 120;
-            // 
-            // deleteSymbolsButton
-            // 
-            deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteSymbolsButton.Location = new Point(1263, 936);
-            deleteSymbolsButton.Name = "deleteSymbolsButton";
-            deleteSymbolsButton.Size = new Size(125, 40);
-            deleteSymbolsButton.TabIndex = 30;
-            deleteSymbolsButton.Text = "حذف نماد";
-            // 
-            // statusLabel
-            // 
-            statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            statusLabel.Font = new Font("Segoe UI", 9F);
-            statusLabel.Location = new Point(54, 322);
-            statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(294, 34);
-            statusLabel.TabIndex = 31;
-            statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
-            statusLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // closeButton
-            // 
-            closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            closeButton.Location = new Point(715, 939);
-            closeButton.Name = "closeButton";
-            closeButton.Size = new Size(125, 41);
-            closeButton.TabIndex = 32;
-            closeButton.Text = "بستن";
             // 
             // groupBox1
             // 
@@ -546,9 +620,9 @@ namespace Trade.It
             groupBox1.Controls.Add(headerLabel);
             groupBox1.Controls.Add(timeFormatLabel);
             groupBox1.Controls.Add(symbolSourceLabel);
-            groupBox1.Location = new Point(478, 12);
+            groupBox1.Location = new Point(520, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(910, 306);
+            groupBox1.Size = new Size(868, 306);
             groupBox1.TabIndex = 33;
             groupBox1.TabStop = false;
             groupBox1.Text = "پارامترهای سبد:";
@@ -556,16 +630,16 @@ namespace Trade.It
             // NoDateTimeLabel
             // 
             NoDateTimeLabel.BorderStyle = BorderStyle.FixedSingle;
-            NoDateTimeLabel.Location = new Point(25, 91);
+            NoDateTimeLabel.Location = new Point(11, 91);
             NoDateTimeLabel.Name = "NoDateTimeLabel";
-            NoDateTimeLabel.Size = new Size(233, 34);
+            NoDateTimeLabel.Size = new Size(204, 34);
             NoDateTimeLabel.TabIndex = 26;
             NoDateTimeLabel.Text = "—";
             NoDateTimeLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
-            label2.Location = new Point(272, 91);
+            label2.Location = new Point(229, 91);
             label2.Name = "label2";
             label2.Size = new Size(176, 34);
             label2.TabIndex = 25;
@@ -590,11 +664,11 @@ namespace Trade.It
             MinimumSize = new Size(1100, 700);
             Name = "PortfolioManagementForm";
             RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "مدیریت سبدها";
-            ((System.ComponentModel.ISupportInitialize)previewGrid).EndInit();
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).EndInit();
+            previewGroup.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)previewGrid).EndInit();
             groupBox1.ResumeLayout(false);
             ResumeLayout(false);
         }
