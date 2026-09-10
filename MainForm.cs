@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -14,6 +14,7 @@ namespace Trade.It
         private bool comparisonFiltersInitialized;
         private bool comparisonFilterEventsAttached;
         private bool ohlcChangeFilterEventsAttached;
+        private int latestTradeDateLoadVersion;
         private TextBox textBox1;
 
         public MainForm()
@@ -70,6 +71,8 @@ namespace Trade.It
             deleteButton.Click += DeleteButton_Click;
             selectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged;
             selectNoneCheckBox.CheckedChanged += SelectNoneCheckBox_CheckedChanged;
+            stocksDataGridView.CurrentCellDirtyStateChanged += StocksDataGridView_CurrentCellDirtyStateChanged;
+            stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             Load += MainForm_Portfolios_Load;
 
             AttachOhlcChangeFilterEvents();
@@ -251,13 +254,17 @@ namespace Trade.It
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
         {
+            var symbols = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToList();
+            var loadVersion = ++latestTradeDateLoadVersion;
+
             internalPortfolioUpdate = true;
             try
             {
                 stocksDataGridView.Rows.Clear();
-                var symbols = definition.Symbols ?? new List<string>();
                 for (var i = 0; i < symbols.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, symbols[i], GetLatestTradeDateText(definition, symbols[i]), false);
+                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false);
             }
             finally
             {
@@ -266,6 +273,51 @@ namespace Trade.It
 
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = true;
+            UpdateSelectionControls();
+            _ = LoadLatestTradeDatesAsync(definition, symbols, loadVersion);
+        }
+
+        private async Task LoadLatestTradeDatesAsync(PortfolioDefinition definition, List<string> symbols, int loadVersion)
+        {
+            if (!HasDateColumn(definition) || symbols.Count == 0)
+                return;
+
+            const int batchSize = 25;
+            for (var start = 0; start < symbols.Count; start += batchSize)
+            {
+                if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
+                    return;
+
+                var batchStart = start;
+                var batch = await Task.Run(() =>
+                {
+                    var values = new string[Math.Min(batchSize, symbols.Count - batchStart)];
+                    for (var i = 0; i < values.Length; i++)
+                        values[i] = GetLatestTradeDateText(definition, symbols[batchStart + i]);
+                    return values;
+                });
+
+                if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
+                    return;
+
+                for (var i = 0; i < batch.Length && batchStart + i < stocksDataGridView.Rows.Count; i++)
+                    stocksDataGridView.Rows[batchStart + i].Cells[lastTradeColumn.Index].Value = batch[i];
+
+                await Task.Yield();
+            }
+        }
+
+        private void StocksDataGridView_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+        {
+            if (stocksDataGridView.IsCurrentCellDirty && stocksDataGridView.CurrentCell is DataGridViewCheckBoxCell)
+                stocksDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void StocksDataGridView_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (internalPortfolioUpdate || e.RowIndex < 0 || e.ColumnIndex != selectColumn.Index)
+                return;
+
             UpdateSelectionControls();
         }
 
@@ -695,7 +747,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], GetLatestTradeDateText(definition, result[i]), false);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
             }
             finally
             {
@@ -705,6 +757,7 @@ namespace Trade.It
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
+            _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
