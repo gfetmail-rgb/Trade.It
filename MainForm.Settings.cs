@@ -51,8 +51,6 @@ namespace Trade.It
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            // If nothing is selected, navigation starts from the first symbol
-            // and continues through the complete portfolio.
             if (symbols.Count == 0)
             {
                 symbols = stocksDataGridView.Rows.Cast<DataGridViewRow>()
@@ -126,7 +124,8 @@ namespace Trade.It
                 chart.SetChartType(GetSelectedChartType());
                 chart.Visible = true;
 
-                chart.ToggleCrosshairIfNeeded();
+                if (!chart.CrosshairVisible)
+                    chart.ToggleCrosshair();
 
                 if (navigationTabPage == null || navigationTabPage.IsDisposed)
                 {
