@@ -475,7 +475,6 @@ namespace Trade.It
             controlTabControl.Location = new Point(0, 0);
             controlTabControl.Name = "controlTabControl";
             controlTabControl.RightToLeft = RightToLeft.Yes;
-            controlTabControl.RightToLeftLayout = false;
             controlTabControl.SelectedIndex = 0;
             controlTabControl.Size = new Size(368, 825);
             controlTabControl.TabIndex = 0;
@@ -484,7 +483,6 @@ namespace Trade.It
             stocksTabPage.Location = new Point(4, 34);
             stocksTabPage.Name = "stocksTabPage";
             stocksTabPage.RightToLeft = RightToLeft.Yes;
-            stocksTabPage.RightToLeftLayout = false;
             stocksTabPage.Padding = new Padding(8);
             stocksTabPage.Size = new Size(360, 787);
             stocksTabPage.TabIndex = 0;
@@ -544,7 +542,6 @@ namespace Trade.It
             tabPage2.Location = new Point(4, 34);
             tabPage2.Name = "tabPage2";
             tabPage2.RightToLeft = RightToLeft.Yes;
-            tabPage2.RightToLeftLayout = false;
             tabPage2.Padding = new Padding(8);
             tabPage2.Size = new Size(356, 787);
             tabPage2.TabIndex = 1;
