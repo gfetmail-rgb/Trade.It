@@ -1,0 +1,100 @@
+name: Apply UI feedback
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-ui-feedback.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply focused changes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          if 'private System.Windows.Forms.ToolStripProgressBar' not in Path('MainForm.Designer.cs').read_text(encoding='utf-8-sig'):
+              s = s.replace('mainMenuStrip.RightToLeft = RightToLeft.No;', 'mainMenuStrip.RightToLeft = RightToLeft.Yes;\n            mainMenuStrip.RightToLeftLayout = true;', 1)
+          else:
+              s = s.replace('mainMenuStrip.RightToLeft = RightToLeft.No;', 'mainMenuStrip.RightToLeft = RightToLeft.Yes;\n            mainMenuStrip.RightToLeftLayout = true;', 1)
+
+          pattern = r'        private void PortfolioComboBox_SelectedIndexChanged\(object\? sender, EventArgs e\)\s*\{.*?\n        \}\n\n        private void PopulateStocksGrid'
+          replacement = '''        private void PortfolioComboBox_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (internalPortfolioUpdate)
+                return;
+
+            if (portfolioComboBox.SelectedItem is not string name || !loadedPortfolios.TryGetValue(name, out var definition))
+            {
+                stocksDataGridView.Rows.Clear();
+                displayedPortfolioName = null;
+                UpdateSelectionControls();
+                HidePortfolioLoadingIndicator();
+                return;
+            }
+
+            displayedPortfolioName = name;
+            ShowPortfolioLoadingIndicator();
+            Application.DoEvents();
+            try
+            {
+                PopulateStocksGrid(definition);
+            }
+            finally
+            {
+                BeginInvoke(new Action(HidePortfolioLoadingIndicator));
+            }
+        }
+
+        private void ShowPortfolioLoadingIndicator()
+        {
+            UseWaitCursor = true;
+            Cursor.Current = Cursors.WaitCursor;
+            loadingProgressBar.Visible = true;
+            loadingProgressBar.Style = ProgressBarStyle.Marquee;
+            loadingProgressBar.MarqueeAnimationSpeed = 30;
+        }
+
+        private void HidePortfolioLoadingIndicator()
+        {
+            if (IsDisposed) return;
+            loadingProgressBar.Visible = false;
+            UseWaitCursor = false;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void PopulateStocksGrid'''
+          s, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit('Portfolio selection handler not found')
+          p.write_text(s, encoding='utf-8-sig')
+
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          if 'loadingProgressBar' not in s:
+              s = s.replace('private System.Windows.Forms.ToolStripMenuItem closeAllChartsMenuItem;\n', 'private System.Windows.Forms.ToolStripMenuItem closeAllChartsMenuItem;\n        private System.Windows.Forms.ToolStripProgressBar loadingProgressBar;\n', 1)
+              s = s.replace('closeAllChartsMenuItem = new ToolStripMenuItem();\n', 'closeAllChartsMenuItem = new ToolStripMenuItem();\n            loadingProgressBar = new ToolStripProgressBar();\n', 1)
+              s = s.replace('mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, resetMenuItem, closeAllChartsMenuItem });', 'mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, resetMenuItem, closeAllChartsMenuItem, loadingProgressBar });', 1)
+              s = s.replace('mainMenuStrip.RightToLeft = RightToLeft.No;', 'mainMenuStrip.RightToLeft = RightToLeft.Yes;\n            mainMenuStrip.RightToLeftLayout = true;', 1)
+              marker = '            // \n            // portfolioDefinitionMenuItem\n'
+              insert = '            // \n            // loadingProgressBar\n            // \n            loadingProgressBar.Name = "loadingProgressBar";\n            loadingProgressBar.Size = new Size(100, 23);\n            loadingProgressBar.Style = ProgressBarStyle.Marquee;\n            loadingProgressBar.MarqueeAnimationSpeed = 30;\n            loadingProgressBar.Visible = false;\n            // \n            // portfolioDefinitionMenuItem\n'
+              if marker not in s:
+                  raise SystemExit('Menu designer marker not found')
+              s = s.replace(marker, insert, 1)
+          p.write_text(s, encoding='utf-8-sig')
+          PY
+      - name: Build
+        run: dotnet build Trade.It.csproj --configuration Release --no-restore
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs MainForm.Designer.cs
+          git diff --cached --quiet || git commit -m "Add RTL menu and portfolio loading feedback"
+          git push
