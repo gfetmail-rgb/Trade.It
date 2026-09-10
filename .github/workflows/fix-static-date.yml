@@ -1,0 +1,29 @@
+name: Temporary date fix
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-static-date.yml'
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix instance method
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8')
+          old = 'private static string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)'
+          new = 'private string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)'
+          if old not in s:
+              raise SystemExit('target signature not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add MainForm.cs
+          git commit -m 'Fix latest trade date instance call'
+          git push
