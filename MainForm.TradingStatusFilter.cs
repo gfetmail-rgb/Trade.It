@@ -35,6 +35,8 @@ namespace Trade.It
             if (parent == null)
                 return;
 
+            ConfigureFilterComboBoxes();
+
             clearFiltersButton.Width = 100;
             clearFiltersButton.Location = new Point(8, clearFiltersButton.Top);
 
@@ -54,6 +56,29 @@ namespace Trade.It
             parent.Controls.Add(filterCountLabel);
             filterCountLabel.BringToFront();
             clearFiltersButton.BringToFront();
+        }
+
+        private void ConfigureFilterComboBoxes()
+        {
+            nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            comparisonFirstComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            comparisonFirstComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            comparisonFirstComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            comparisonFirstComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void FilterTabSelected(object? sender, EventArgs e)
