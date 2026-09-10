@@ -1,0 +1,34 @@
+name: Fix filter availability
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix filter availability after empty result'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch MainForm.cs and remove temporary workflow
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          old = '            var hasStocks = stocksDataGridView.Rows.Count > 0;'
+          new = '            var hasStocks = definition?.Symbols?.Any(s => !string.IsNullOrWhiteSpace(s)) == true;'
+          if old not in s:
+              raise SystemExit('Expected filter availability line was not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          rm -f .github/workflows/fix-filter-availability.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add MainForm.cs .github/workflows/fix-filter-availability.yml
+          git commit -m 'Fix filter availability after empty result'
+          git push
