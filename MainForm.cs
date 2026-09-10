@@ -10,7 +10,6 @@ namespace Trade.It
         private bool internalPortfolioUpdate;
         private string? displayedPortfolioName;
         private bool tradingStatusFilterInitialized;
-        private Label? filterCountLabel;
         private bool resettingFilters;
         private bool comparisonFiltersInitialized;
         private bool comparisonFilterEventsAttached;
@@ -440,31 +439,7 @@ namespace Trade.It
 
         private void InitializeFilterStatusDisplay()
         {
-            var parent = clearFiltersButton.Parent;
-            if (parent == null)
-                return;
-
             ConfigureFilterComboBoxes();
-
-            clearFiltersButton.Width = 100;
-            clearFiltersButton.Location = new Point(8, clearFiltersButton.Top);
-
-            filterCountLabel = new Label
-            {
-                AutoSize = false,
-                Width = 205,
-                Height = 36,
-                Text = "کل: ۰    پیدا شده: ۰",
-                TextAlign = ContentAlignment.MiddleCenter,
-                BorderStyle = BorderStyle.None,
-                RightToLeft = RightToLeft.Yes,
-                Font = new Font("Segoe UI", 9F)
-            };
-
-            filterCountLabel.Location = new Point(clearFiltersButton.Right + 4, clearFiltersButton.Top);
-            parent.Controls.Add(filterCountLabel);
-            filterCountLabel.BringToFront();
-            clearFiltersButton.BringToFront();
         }
 
         private void ConfigureFilterComboBoxes()

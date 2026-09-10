@@ -47,6 +47,7 @@ namespace Trade.It
         private System.Windows.Forms.Label chartInfoLabel;
         private System.Windows.Forms.Label chartPlaceholderLabel;
         private System.Windows.Forms.Button refreshButtonPortfolio;
+        private System.Windows.Forms.Label filterCountLabel;
 
         private System.Windows.Forms.GroupBox tradingStatusGroup;
         private System.Windows.Forms.RadioButton statusAllRadio;
@@ -151,6 +152,7 @@ namespace Trade.It
             comparisonOperatorComboBox3 = new ComboBox();
             comparisonSecondComboBox3 = new ComboBox();
             clearFiltersButton = new Button();
+            filterCountLabel = new Label();
             ohlcChangeFilterGroup = new GroupBox();
             ohlcChangeFieldLabel = new Label();
             ohlcChangeFieldComboBox = new ComboBox();
@@ -454,9 +456,10 @@ namespace Trade.It
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
             stocksDataGridView.AllowUserToOrderColumns = true;
+            stocksDataGridView.AllowUserToResizeColumns = true;
             stocksDataGridView.AllowUserToResizeRows = false;
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            stocksDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            stocksDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             stocksDataGridView.ColumnHeadersHeight = 34;
             stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             stocksDataGridView.Location = new Point(11, 47);
@@ -524,6 +527,7 @@ namespace Trade.It
             tabPage2.AutoScroll = true;
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(clearFiltersButton);
+            tabPage2.Controls.Add(filterCountLabel);
             tabPage2.Controls.Add(ohlcChangeFilterGroup);
             tabPage2.Controls.Add(comparisonGroup8);
             tabPage2.Controls.Add(comparisonGroup7);
@@ -642,6 +646,20 @@ namespace Trade.It
             clearFiltersButton.TabIndex = 9;
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
+            // 
+            // filterCountLabel
+            // 
+            filterCountLabel.AutoSize = false;
+            filterCountLabel.BorderStyle = BorderStyle.None;
+            filterCountLabel.Font = new Font("Segoe UI", 9F);
+            filterCountLabel.Location = new Point(150, 858);
+            filterCountLabel.Name = "filterCountLabel";
+            filterCountLabel.RightToLeft = RightToLeft.Yes;
+            filterCountLabel.Size = new Size(205, 36);
+            filterCountLabel.TabIndex = 11;
+            filterCountLabel.Text = "کل: ۰    پیدا شده: ۰";
+            filterCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // 
             // ohlcChangeFilterGroup
             // 
