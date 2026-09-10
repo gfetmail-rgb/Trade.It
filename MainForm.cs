@@ -739,6 +739,18 @@ namespace Trade.It
             filtered = ApplyNameFilter(filtered);
             filtered = ApplyVolumeRatioFilter(filtered, definition);
             filtered = ApplyPastDaysFilter(filtered, definition);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+            if (IsOhlcChangeFilterActive())
+            {
+                var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
+                var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();
+                var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();
+                var op = GetOhlcChangeOperator();
+                if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && !string.IsNullOrWhiteSpace(op))
+                    filtered = filtered.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op));
+            }
             var result = filtered.ToList();
             UpdateFilterCounts(result.Count, symbols.Count);
 
@@ -1141,19 +1153,18 @@ namespace Trade.It
 
         private void ApplyComparisonFiltersToGridWithWaitCursor()
         {
-            if (!HasAnyActiveComparisonFilter()) return;
-            UseWaitCursor = true;
-            Cursor.Current = Cursors.WaitCursor;
-            try { Application.DoEvents(); ApplyComparisonFiltersToGrid(); }
-            finally { UseWaitCursor = false; Cursor.Current = Cursors.Default; Application.DoEvents(); }
+            ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private void ApplyComparisonFiltersToGrid()
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
-            IEnumerable<string> filtered = GetDisplayedGridSymbols();
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            IEnumerable<string> filtered = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts(result.Count, totalCount);
@@ -1180,8 +1191,9 @@ namespace Trade.It
         }
 
         private bool HasAnyActiveComparisonFilter() =>
-            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
-            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
+            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2) ||
+            IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
 
         private static bool IsComparisonFilterActive(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox) =>
             TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out _, out _, out _, out _, out _);
@@ -1296,10 +1308,7 @@ namespace Trade.It
 
         private void ApplyOhlcChangeFilterToGridWithWaitCursor()
         {
-            if (!IsOhlcChangeFilterActive()) return;
-            UseWaitCursor = true; Cursor.Current = Cursors.WaitCursor;
-            try { Application.DoEvents(); ApplyOhlcChangeFilterToGrid(); }
-            finally { UseWaitCursor = false; Cursor.Current = Cursors.Default; Application.DoEvents(); }
+            ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private bool IsOhlcChangeFilterActive()
@@ -1307,7 +1316,7 @@ namespace Trade.It
             if (ohlcChangeFieldComboBox.SelectedItem == null || ohlcChangeDirectionComboBox.SelectedItem == null) return false;
             if (string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem.ToString()))) return false;
             if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return false;
-            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return false;
+            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent)) return false;
             return !string.IsNullOrWhiteSpace(GetOhlcChangeOperator());
         }
 
@@ -1325,7 +1334,10 @@ namespace Trade.It
             if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return;
             var op = GetOhlcChangeOperator();
             if (string.IsNullOrWhiteSpace(op)) return;
-            var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();
+            var symbols = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
             var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts(result.Count, totalCount);
