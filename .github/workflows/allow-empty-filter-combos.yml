@@ -1,0 +1,56 @@
+name: Allow empty filter combos
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  modify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply code change
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8-sig')
+
+          old = '''            AttachOhlcChangeFilterEvents();\n            InitializeIndividualFilterClearButtons();'''
+          new = '''            AttachOhlcChangeFilterEvents();\n            InitializeFilterComboEmptyOptions();\n            InitializeIndividualFilterClearButtons();'''
+          if old not in s:
+              raise SystemExit('constructor anchor not found')
+          s = s.replace(old, new, 1)
+
+          old = '''        private void InitializeIndividualFilterClearButtons()\n        {'''
+          new = '''        private void InitializeFilterComboEmptyOptions()\n        {\n            var filterCombos = new[]\n            {\n                nameComboBox,\n                volumeRatioOperatorComboBox,\n                pastDaysStatusComboBox,\n                comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1,\n                comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2,\n                comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3,\n                ohlcChangeFieldComboBox, ohlcChangeDirectionComboBox\n            };\n\n            foreach (var comboBox in filterCombos)\n            {\n                if (comboBox.Items.Count == 0 || !string.IsNullOrEmpty(comboBox.Items[0]?.ToString()))\n                    comboBox.Items.Insert(0, string.Empty);\n                comboBox.SelectedIndex = -1;\n            }\n        }\n\n        private void InitializeIndividualFilterClearButtons()\n        {'''
+          if old not in s:
+              raise SystemExit('method anchor not found')
+          s = s.replace(old, new, 1)
+
+          old = '''            var mode = nameComboBox.SelectedIndex;\n            if (mode < 0)\n                return symbols;\n            return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));'''
+          new = '''            var mode = nameComboBox.SelectedIndex - 1;\n            if (mode < 0)\n                return symbols;\n            return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));'''
+          if old not in s:
+              raise SystemExit('name filter anchor not found')
+          s = s.replace(old, new, 1)
+
+          old = '''            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset < 0) return false;\n            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset < 0) return false;'''
+          new = '''            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset <= 0) return false;\n            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset <= 0) return false;'''
+          if old not in s:
+              raise SystemExit('comparison validation anchor not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s, encoding='utf-8-sig')
+          PY
+      - name: Commit code change and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs
+          git commit -m "Allow clearing filter combo selections" || true
+          git rm .github/workflows/allow-empty-filter-combos.yml
+          git commit -m "Remove temporary empty-combo workflow"
+          git push
