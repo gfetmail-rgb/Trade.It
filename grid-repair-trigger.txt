@@ -1,1 +1,1 @@
-filter repair trigger
+chart fullscreen toggle trigger
