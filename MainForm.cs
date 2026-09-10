@@ -732,12 +732,7 @@ namespace Trade.It
 
             if (HasDateColumn(definition) && !statusAllRadio.Checked)
             {
-                var todaySymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var symbol in symbols)
-                {
-                    if (HasTradeOnToday(definition, symbol))
-                        todaySymbols.Add(symbol);
-                }
+                var todaySymbols = GetSymbolsTradedOnDate(definition, symbols, DateTime.Today.Date);
                 var showTraded = statusPositiveRadio.Checked;
                 filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
             }
@@ -901,6 +896,56 @@ namespace Trade.It
                 if (dateColumn <= row.Length && TryParseSourceDate(row[dateColumn - 1], definition, out var date) && date.Date == targetDate) return true;
             }
             return false;
+        }
+
+        private HashSet<string> GetSymbolsTradedOnDate(PortfolioDefinition definition, IEnumerable<string> symbols, DateTime targetDate)
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return result;
+
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            if (dateColumn <= 0) return result;
+
+            var wanted = new HashSet<string>(symbols.Where(s => !string.IsNullOrWhiteSpace(s)), StringComparer.OrdinalIgnoreCase);
+            if (wanted.Count == 0) return result;
+
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            var extension = definition.FileType?.Trim().ToUpperInvariant() switch { "CSV" => ".csv", "PRN" => ".prn", _ => ".txt" };
+
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
+                {
+                    if (result.Count == wanted.Count) break;
+
+                    var fileSymbol = Path.GetFileNameWithoutExtension(file);
+                    if (definition.SymbolSource == SymbolSource.FileName && !wanted.Contains(fileSymbol))
+                        continue;
+
+                    var firstLine = true;
+                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        var row = SplitTradingDataLine(line, definition.Separator);
+                        if (firstLine && definition.HasHeader) { firstLine = false; continue; }
+                        firstLine = false;
+
+                        if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date) || date.Date != targetDate)
+                            continue;
+
+                        var symbol = definition.SymbolSource == SymbolSource.FileName
+                            ? fileSymbol
+                            : (symbolColumn > 0 && symbolColumn <= row.Length ? row[symbolColumn - 1].Trim() : string.Empty);
+                        if (wanted.Contains(symbol))
+                            result.Add(symbol);
+                    }
+                }
+            }
+            catch { }
+
+            return result;
         }
 
         private bool HasTradeOnToday(PortfolioDefinition definition, string symbol) => HasTradeOnDate(definition, symbol, DateTime.Today.Date);
