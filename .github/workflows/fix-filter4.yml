@@ -1,0 +1,38 @@
+name: Fix filter 4
+
+on:
+  push:
+    branches:
+      - fix-filter4-past-days
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix filter 4
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8')
+          old = '''        private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)\n        {\n            if (!HasDateColumn(definition)) return symbols;\n            var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();\n            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0) return symbols;\n            if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null) return symbols;\n            var targetDate = DateTime.Today.AddDays(-n).Date;\n            var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;\n            var showTraded = !IsNegativePastDaysOption(op);\n            return symbols.Where(symbol => showTraded == HasTradeOnDate(definition, symbol, targetDate));\n        }'''
+          new = '''        private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)\n        {\n            if (!HasDateColumn(definition)) return symbols;\n            var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();\n            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return symbols;\n            if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null) return symbols;\n\n            var fromDate = DateTime.Today.Date.AddDays(-(n - 1));\n            var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;\n            var showTraded = !IsNegativePastDaysOption(op);\n            return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date));\n        }\n\n        private bool HasTradeInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)\n        {\n            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;\n            var dateColumn = GetMappingColumn(definition, "تاریخ");\n            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");\n            if (dateColumn <= 0) return false;\n            var symbolColumn = GetMappingColumn(definition, "نماد");\n            try\n            {\n                foreach (var file in GetSymbolFiles(definition, symbol))\n                    if (FileContainsDateRange(definition, file, symbol, symbolColumn, dateColumn, fromDate, toDate)) return true;\n            }\n            catch { }\n            return false;\n        }\n\n        private bool FileContainsDateRange(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn, DateTime fromDate, DateTime toDate)\n        {\n            var firstLine = true;\n            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))\n            {\n                if (string.IsNullOrWhiteSpace(line)) continue;\n                var row = SplitTradingDataLine(line, definition.Separator);\n                if (firstLine && definition.HasHeader) { firstLine = false; continue; }\n                firstLine = false;\n                if (definition.SymbolSource == SymbolSource.InsideFile &&\n                    (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;\n                if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date)) continue;\n                if (date.Date >= fromDate && date.Date <= toDate) return true;\n            }\n            return false;\n        }'''
+          if old not in s:
+              raise SystemExit('Expected filter 4 block not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit fix and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs
+          git commit -m "Fix filter 4 past days range"
+          git rm .github/workflows/fix-filter4.yml
+          git commit -m "Remove temporary filter 4 workflow"
+          git push
