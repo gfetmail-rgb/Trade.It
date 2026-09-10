@@ -292,9 +292,11 @@ namespace Trade.It
                 return;
 
             var left = 55;
-            var right = 15;
             var top = 15;
             var bottom = 35;
+            // Keep 25% of the usable horizontal area empty on the right side of the chart.
+            var availableWidth = Math.Max(1, Width - left - 15);
+            var right = 15 + (int)Math.Round(availableWidth * 0.25);
             var plot = new Rectangle(left, top, Math.Max(1, Width - left - right), Math.Max(1, Height - top - bottom));
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
