@@ -25,7 +25,7 @@ namespace Trade.It
             if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
 
-            mainMenuStrip.RightToLeft = RightToLeft.No;
+            mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
             portfolioDefinitionMenuItem.Click += (_, _) =>
             {
@@ -235,7 +235,18 @@ namespace Trade.It
             }
 
             displayedPortfolioName = name;
-            PopulateStocksGrid(definition);
+            UseWaitCursor = true;
+            Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
+            try
+            {
+                PopulateStocksGrid(definition);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+                Cursor.Current = Cursors.Default;
+            }
         }
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
