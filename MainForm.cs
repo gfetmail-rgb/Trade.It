@@ -77,7 +77,29 @@ namespace Trade.It
             fullScreenChartButton.Click += FullScreenChartButton_Click;
 
             AttachOhlcChangeFilterEvents();
+            InitializeFilterComboEmptyOptions();
             InitializeIndividualFilterClearButtons();
+        }
+
+        private void InitializeFilterComboEmptyOptions()
+        {
+            var filterCombos = new[]
+            {
+                nameComboBox,
+                volumeRatioOperatorComboBox,
+                pastDaysStatusComboBox,
+                comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1,
+                comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2,
+                comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3,
+                ohlcChangeFieldComboBox, ohlcChangeDirectionComboBox
+            };
+
+            foreach (var comboBox in filterCombos)
+            {
+                if (comboBox.Items.Count == 0 || !string.IsNullOrEmpty(comboBox.Items[0]?.ToString()))
+                    comboBox.Items.Insert(0, string.Empty);
+                comboBox.SelectedIndex = -1;
+            }
         }
 
         private void InitializeIndividualFilterClearButtons()
@@ -867,7 +889,7 @@ namespace Trade.It
             var phrase = NormalizeSymbolName(nameTextBox.Text);
             if (string.IsNullOrWhiteSpace(phrase))
                 return symbols;
-            var mode = nameComboBox.SelectedIndex;
+            var mode = nameComboBox.SelectedIndex - 1;
             if (mode < 0)
                 return symbols;
             return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
@@ -1299,8 +1321,8 @@ namespace Trade.It
         {
             firstField = string.Empty; op = string.Empty; secondField = string.Empty; firstOffset = 0; relativeOffset = 0;
             if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null) return false;
-            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset < 0) return false;
-            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset < 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset <= 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset <= 0) return false;
             firstField = NormalizeComparisonField(firstFieldComboBox.SelectedItem.ToString());
             secondField = NormalizeComparisonField(secondFieldComboBox.SelectedItem.ToString());
             op = operatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
