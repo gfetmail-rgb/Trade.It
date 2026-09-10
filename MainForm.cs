@@ -786,10 +786,10 @@ namespace Trade.It
             var found = index >= 0;
             return mode switch
             {
-                0 => found,
-                1 => found && index == 0,
-                2 => found && index + phrase.Length == name.Length,
-                3 => found && index > 0 && index + phrase.Length < name.Length,
+                0 => found && index == 0,
+                1 => found && index + phrase.Length == name.Length,
+                2 => found && index > 0 && index + phrase.Length < name.Length,
+                3 => found,
                 4 => !found,
                 _ => found
             };
