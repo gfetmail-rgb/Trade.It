@@ -38,32 +38,5 @@ namespace Trade.It
             base.OnLoad(e);
             AttachSelectionStateFix();
         }
-
-        private void UpdateSelectionControls()
-        {
-            if (stocksDataGridView.Rows.Count == 0)
-            {
-                selectAllCheckBox.Checked = false;
-                selectNoneCheckBox.Checked = false;
-                return;
-            }
-
-            var selected = stocksDataGridView.Rows.Cast<DataGridViewRow>()
-                .Count(row => Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false));
-
-            var allSelected = selected == stocksDataGridView.Rows.Count;
-            var noneSelected = selected == 0;
-
-            internalPortfolioUpdate = true;
-            try
-            {
-                selectAllCheckBox.Checked = allSelected;
-                selectNoneCheckBox.Checked = noneSelected;
-            }
-            finally
-            {
-                internalPortfolioUpdate = false;
-            }
-        }
     }
 }
