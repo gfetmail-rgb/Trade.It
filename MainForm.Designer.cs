@@ -338,12 +338,12 @@ namespace Trade.It
             mainSplitContainer.Dock = DockStyle.Fill;
             mainSplitContainer.Location = new Point(0, 33);
             mainSplitContainer.Name = "mainSplitContainer";
-            mainSplitContainer.Panel1.Controls.Add(chartPanel);
-            mainSplitContainer.Panel1MinSize = 500;
-            mainSplitContainer.Panel2.Controls.Add(controlTabControl);
-            mainSplitContainer.Panel2MinSize = 300;
+            mainSplitContainer.Panel1.Controls.Add(controlTabControl);
+            mainSplitContainer.Panel1MinSize = 300;
+            mainSplitContainer.Panel2.Controls.Add(chartPanel);
+            mainSplitContainer.Panel2MinSize = 500;
             mainSplitContainer.Size = new Size(1452, 825);
-            mainSplitContainer.SplitterDistance = 1084;
+            mainSplitContainer.SplitterDistance = 368;
             mainSplitContainer.TabIndex = 1;
             chartPanel.BorderStyle = BorderStyle.FixedSingle;
             chartPanel.Controls.Add(chartTabControl);
