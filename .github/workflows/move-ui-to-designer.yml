@@ -1,0 +1,170 @@
+name: Move UI controls to Designer
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  move-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Move runtime UI creation into Designer
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          designer = Path('MainForm.Designer.cs')
+          main = Path('MainForm.cs')
+          d = designer.read_text(encoding='utf-8-sig')
+          m = main.read_text(encoding='utf-8-sig')
+
+          # ---------- Designer fields ----------
+          d = d.replace(
+              '        private System.Windows.Forms.Label filterCountLabel;\n',
+              '''        private System.Windows.Forms.Label filterCountLabel;\n\n        private System.Windows.Forms.Button filterTradingClearButton;\n        private System.Windows.Forms.Button filterNameClearButton;\n        private System.Windows.Forms.Button filterVolumeClearButton;\n        private System.Windows.Forms.Button filterPastDaysClearButton;\n        private System.Windows.Forms.Button filterComparison7ClearButton;\n        private System.Windows.Forms.Button filterComparison8ClearButton;\n        private System.Windows.Forms.Button filterComparison9ClearButton;\n        private System.Windows.Forms.Button filterOhlcChangeClearButton;\n''', 1)
+
+          d = d.replace(
+              '        private System.Windows.Forms.TextBox identifierDescriptionTextBox;\n',
+              '''        private System.Windows.Forms.TextBox identifierDescriptionTextBox;\n        private System.Windows.Forms.Label identifierPersianSymbolLabel;\n        private System.Windows.Forms.TextBox identifierPersianSymbolTextBox;\n        private System.Windows.Forms.Label identifierPersian30SymbolLabel;\n        private System.Windows.Forms.TextBox identifierPersian30SymbolTextBox;\n        private System.Windows.Forms.Label identifierCompanyCode12Label;\n        private System.Windows.Forms.TextBox identifierCompanyCode12TextBox;\n        private System.Windows.Forms.Label identifierBoardCodeLabel;\n        private System.Windows.Forms.TextBox identifierBoardCodeTextBox;\n        private System.Windows.Forms.Label identifierIndustryCodeLabel;\n        private System.Windows.Forms.TextBox identifierIndustryCodeTextBox;\n        private System.Windows.Forms.Label identifierIndustryLabel;\n        private System.Windows.Forms.TextBox identifierIndustryTextBox;\n        private System.Windows.Forms.Label identifierSubIndustryCodeLabel;\n        private System.Windows.Forms.TextBox identifierSubIndustryCodeTextBox;\n        private System.Windows.Forms.Label identifierSubIndustryLabel;\n        private System.Windows.Forms.TextBox identifierSubIndustryTextBox;\n        private System.Windows.Forms.FlowLayoutPanel identifierButtonsPanel;\n        private System.Windows.Forms.Button identifierNewButton;\n        private System.Windows.Forms.Button identifierSaveButton;\n        private System.Windows.Forms.Button identifierDeleteButton;\n        private System.Windows.Forms.Button identifierDeleteAllButton;\n        private System.Windows.Forms.Button identifierImportExcelButton;\n''', 1)
+
+          d = d.replace(
+              '        private System.Windows.Forms.TextBox marketSubIndustryGroupTextBox;\n',
+              '''        private System.Windows.Forms.TextBox marketSubIndustryGroupTextBox;\n        private System.Windows.Forms.GroupBox marketsMainGroup;\n        private System.Windows.Forms.TableLayoutPanel marketsLayout;\n''', 1)
+
+          # ---------- Designer instantiation ----------
+          d = d.replace(
+              '            filterCountLabel = new Label();\n',
+              '''            filterCountLabel = new Label();\n            filterTradingClearButton = new Button();\n            filterNameClearButton = new Button();\n            filterVolumeClearButton = new Button();\n            filterPastDaysClearButton = new Button();\n            filterComparison7ClearButton = new Button();\n            filterComparison8ClearButton = new Button();\n            filterComparison9ClearButton = new Button();\n            filterOhlcChangeClearButton = new Button();\n''', 1)
+
+          d = d.replace(
+              '            identifierDescriptionTextBox = new TextBox();\n',
+              '''            identifierDescriptionTextBox = new TextBox();\n            identifierPersianSymbolLabel = new Label();\n            identifierPersianSymbolTextBox = new TextBox();\n            identifierPersian30SymbolLabel = new Label();\n            identifierPersian30SymbolTextBox = new TextBox();\n            identifierCompanyCode12Label = new Label();\n            identifierCompanyCode12TextBox = new TextBox();\n            identifierBoardCodeLabel = new Label();\n            identifierBoardCodeTextBox = new TextBox();\n            identifierIndustryCodeLabel = new Label();\n            identifierIndustryCodeTextBox = new TextBox();\n            identifierIndustryLabel = new Label();\n            identifierIndustryTextBox = new TextBox();\n            identifierSubIndustryCodeLabel = new Label();\n            identifierSubIndustryCodeTextBox = new TextBox();\n            identifierSubIndustryLabel = new Label();\n            identifierSubIndustryTextBox = new TextBox();\n            identifierButtonsPanel = new FlowLayoutPanel();\n            identifierNewButton = new Button();\n            identifierSaveButton = new Button();\n            identifierDeleteButton = new Button();\n            identifierDeleteAllButton = new Button();\n            identifierImportExcelButton = new Button();\n''', 1)
+
+          d = d.replace(
+              '            marketSubIndustryGroupTextBox = new TextBox();\n',
+              '''            marketSubIndustryGroupTextBox = new TextBox();\n            marketsMainGroup = new GroupBox();\n            marketsLayout = new TableLayoutPanel();\n''', 1)
+
+          # ---------- Designer suspend ----------
+          d = d.replace('            identifierMainGroup.SuspendLayout();\n', '            identifierMainGroup.SuspendLayout();\n            identifierButtonsPanel.SuspendLayout();\n            marketsMainGroup.SuspendLayout();\n            marketsLayout.SuspendLayout();\n', 1)
+
+          # ---------- Individual filter clear buttons ----------
+          clear_buttons = [
+              ('tradingStatusGroup', 'filterTradingClearButton', 'trading'),
+              ('nameFilterGroup', 'filterNameClearButton', 'name'),
+              ('volumeRatioGroup', 'filterVolumeClearButton', 'volume'),
+              ('pastDaysGroup', 'filterPastDaysClearButton', 'pastDays'),
+              ('comparisonGroup7', 'filterComparison7ClearButton', 'comparison7'),
+              ('comparisonGroup8', 'filterComparison8ClearButton', 'comparison8'),
+              ('groupBox3', 'filterComparison9ClearButton', 'comparison9'),
+              ('ohlcChangeFilterGroup', 'filterOhlcChangeClearButton', 'ohlcChange'),
+          ]
+          for group, btn, key in clear_buttons:
+              marker = f'            // {group}\n'
+              # Insert the Controls.Add immediately after the group's existing section header if not already present.
+              pattern = re.escape(marker)
+              if btn not in d:
+                  d = d.replace(marker, marker + f'            {group}.Controls.Add({btn});\n', 1)
+
+              init_marker = f'            // {group}\n'
+              # Add property block just after the group header comment, before its existing properties.
+              block = f'''            // {btn}\n            //\n            {btn}.Anchor = AnchorStyles.Top | AnchorStyles.Left;\n            {btn}.Font = new Font("Segoe UI", 8.5F);\n            {btn}.Location = new Point(8, 2);\n            {btn}.Name = "{btn}";\n            {btn}.RightToLeft = RightToLeft.Yes;\n            {btn}.Size = new Size(42, 24);\n            {btn}.TabIndex = 0;\n            {btn}.TabStop = false;\n            {btn}.Tag = "{key}";\n            {btn}.Text = "پاک";\n            {btn}.UseVisualStyleBackColor = true;\n            {btn}.Click += IndividualFilterClearButton_Click;\n'''
+              # Place immediately before the group's own section block.
+              if f'{btn}.Click += IndividualFilterClearButton_Click;' not in d:
+                  d = d.replace(marker, block + marker, 1)
+
+          # ---------- Identifier tab ----------
+          old_identifier_section = '''            // tabPage3\n            // \n            tabPage3.Location = new Point(4, 34);\n            tabPage3.Name = "tabPage3";\n            tabPage3.Padding = new Padding(8);\n            tabPage3.RightToLeft = RightToLeft.Yes;\n            tabPage3.Size = new Size(392, 895);\n            tabPage3.TabIndex = 2;\n            tabPage3.Text = "شناسه";\n'''
+          new_identifier_section = '''            // tabPage3\n            // \n            tabPage3.AutoScroll = true;\n            tabPage3.Controls.Add(identifierMainGroup);\n            tabPage3.Controls.Add(identifierButtonsPanel);\n            tabPage3.Location = new Point(4, 34);\n            tabPage3.Name = "tabPage3";\n            tabPage3.Padding = new Padding(8);\n            tabPage3.RightToLeft = RightToLeft.Yes;\n            tabPage3.Size = new Size(392, 895);\n            tabPage3.TabIndex = 2;\n            tabPage3.Text = "شناسه";\n'''
+          if old_identifier_section in d:
+              d = d.replace(old_identifier_section, new_identifier_section, 1)
+
+          # Replace the current identifier group/layout configuration and add all 14 runtime fields.
+          start = d.index('            // identifierMainGroup\n')
+          end = d.index('            // marketTypeLabel\n', start)
+          identifier_block = '''            // identifierMainGroup\n            // \n            identifierMainGroup.AutoSize = true;\n            identifierMainGroup.Controls.Add(identifierLayout);\n            identifierMainGroup.Dock = DockStyle.Top;\n            identifierMainGroup.Location = new Point(8, 60);\n            identifierMainGroup.Name = "identifierMainGroup";\n            identifierMainGroup.Padding = new Padding(10);\n            identifierMainGroup.RightToLeft = RightToLeft.Yes;\n            identifierMainGroup.Size = new Size(360, 620);\n            identifierMainGroup.TabIndex = 0;\n            identifierMainGroup.TabStop = false;\n            identifierMainGroup.Text = "اطلاعات شناسه";\n            // \n            // identifierLayout\n            // \n            identifierLayout.AutoSize = true;\n            identifierLayout.ColumnCount = 2;\n            identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));\n            identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));\n            identifierLayout.Dock = DockStyle.Top;\n            identifierLayout.Location = new Point(13, 30);\n            identifierLayout.Name = "identifierLayout";\n            identifierLayout.Padding = new Padding(6);\n            identifierLayout.RightToLeft = RightToLeft.Yes;\n            identifierLayout.RowCount = 14;\n            identifierLayout.Size = new Size(334, 600);\n            identifierLayout.TabIndex = 0;\n'''
+          fields = [
+              ('identifierSymbolLabel','identifierSymbolTextBox','کد ۱۲ رقمی نماد',False),
+              ('identifierNameLabel','identifierNameTextBox','کد ۵ رقمی نماد',False),
+              ('identifierTsetmcLabel','identifierTsetmcTextBox','نام لاتین شرکت',False),
+              ('identifierGroupLabel','identifierGroupTextBox','کد ۴ رقمی شرکت',False),
+              ('identifierDescriptionLabel','identifierDescriptionTextBox','نام شرکت',False),
+              ('identifierPersianSymbolLabel','identifierPersianSymbolTextBox','نماد فارسی',False),
+              ('identifierPersian30SymbolLabel','identifierPersian30SymbolTextBox','نماد ۳۰ رقمی فارسی',False),
+              ('identifierCompanyCode12Label','identifierCompanyCode12TextBox','کد ۱۲ رقمی شرکت',False),
+              ('identifierMarketLabel','identifierMarketComboBox','بازار',True),
+              ('identifierBoardCodeLabel','identifierBoardCodeTextBox','کد تابلو',False),
+              ('identifierIndustryCodeLabel','identifierIndustryCodeTextBox','کد گروه صنعت',False),
+              ('identifierIndustryLabel','identifierIndustryTextBox','گروه صنعت',False),
+              ('identifierSubIndustryCodeLabel','identifierSubIndustryCodeTextBox','کد زیر گروه صنعت',False),
+              ('identifierSubIndustryLabel','identifierSubIndustryTextBox','زیر گروه صنعت',False),
+          ]
+          for idx,(lab,inp,text,iscombo) in enumerate(fields):
+              identifier_block += f'''            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));\n            {lab}.Dock = DockStyle.Fill;\n            {lab}.Font = new Font("Segoe UI", 10F);\n            {lab}.Margin = new Padding(4);\n            {lab}.Name = "{lab}";\n            {lab}.RightToLeft = RightToLeft.Yes;\n            {lab}.Size = new Size(155, 32);\n            {lab}.TabIndex = {idx};\n            {lab}.Text = "{text}";\n            {lab}.TextAlign = ContentAlignment.MiddleRight;\n            identifierLayout.Controls.Add({lab}, 0, {idx});\n'''
+              if iscombo:
+                  identifier_block += f'''            {inp}.Dock = DockStyle.Fill;\n            {inp}.DropDownStyle = ComboBoxStyle.DropDownList;\n            {inp}.Margin = new Padding(4);\n            {inp}.Name = "{inp}";\n            {inp}.RightToLeft = RightToLeft.Yes;\n            {inp}.Size = new Size(159, 31);\n            {inp}.TabIndex = {idx};\n            identifierLayout.Controls.Add({inp}, 1, {idx});\n'''
+              else:
+                  identifier_block += f'''            {inp}.Dock = DockStyle.Fill;\n            {inp}.Margin = new Padding(4);\n            {inp}.Name = "{inp}";\n            {inp}.RightToLeft = RightToLeft.Yes;\n            {inp}.Size = new Size(159, 31);\n            {inp}.TabIndex = {idx};\n            identifierLayout.Controls.Add({inp}, 1, {idx});\n'''
+          identifier_block += '''            // \n            // identifierButtonsPanel\n            // \n            identifierButtonsPanel.Dock = DockStyle.Top;\n            identifierButtonsPanel.FlowDirection = FlowDirection.RightToLeft;\n            identifierButtonsPanel.Height = 52;\n            identifierButtonsPanel.Location = new Point(8, 8);\n            identifierButtonsPanel.Margin = new Padding(0);\n            identifierButtonsPanel.Name = "identifierButtonsPanel";\n            identifierButtonsPanel.Padding = new Padding(4);\n            identifierButtonsPanel.RightToLeft = RightToLeft.Yes;\n            identifierButtonsPanel.Size = new Size(376, 52);\n            identifierButtonsPanel.TabIndex = 0;\n            identifierButtonsPanel.WrapContents = false;\n            identifierButtonsPanel.Controls.Add(identifierImportExcelButton);\n            identifierButtonsPanel.Controls.Add(identifierDeleteAllButton);\n            identifierButtonsPanel.Controls.Add(identifierDeleteButton);\n            identifierButtonsPanel.Controls.Add(identifierSaveButton);\n            identifierButtonsPanel.Controls.Add(identifierNewButton);\n            // identifierNewButton\n            identifierNewButton.Margin = new Padding(3);\n            identifierNewButton.Name = "identifierNewButton";\n            identifierNewButton.Size = new Size(62, 36);\n            identifierNewButton.TabIndex = 0;\n            identifierNewButton.Text = "جدید";\n            identifierNewButton.UseVisualStyleBackColor = true;\n            // identifierSaveButton\n            identifierSaveButton.Margin = new Padding(3);\n            identifierSaveButton.Name = "identifierSaveButton";\n            identifierSaveButton.Size = new Size(70, 36);\n            identifierSaveButton.TabIndex = 1;\n            identifierSaveButton.Text = "ذخیره";\n            identifierSaveButton.UseVisualStyleBackColor = true;\n            // identifierDeleteButton\n            identifierDeleteButton.Margin = new Padding(3);\n            identifierDeleteButton.Name = "identifierDeleteButton";\n            identifierDeleteButton.Size = new Size(62, 36);\n            identifierDeleteButton.TabIndex = 2;\n            identifierDeleteButton.Text = "حذف";\n            identifierDeleteButton.UseVisualStyleBackColor = true;\n            // identifierDeleteAllButton\n            identifierDeleteAllButton.Margin = new Padding(3);\n            identifierDeleteAllButton.Name = "identifierDeleteAllButton";\n            identifierDeleteAllButton.Size = new Size(80, 36);\n            identifierDeleteAllButton.TabIndex = 3;\n            identifierDeleteAllButton.Text = "حذف همه";\n            identifierDeleteAllButton.UseVisualStyleBackColor = true;\n            // identifierImportExcelButton\n            identifierImportExcelButton.Margin = new Padding(3);\n            identifierImportExcelButton.Name = "identifierImportExcelButton";\n            identifierImportExcelButton.Size = new Size(105, 36);\n            identifierImportExcelButton.TabIndex = 4;\n            identifierImportExcelButton.Text = "ورود از اکسل";\n            identifierImportExcelButton.UseVisualStyleBackColor = true;\n'''
+          d = d[:start] + identifier_block + d[end:]
+
+          # ---------- Markets tab ----------
+          market_marker = '''            // marketsTabPage\n            // \n            marketsTabPage.Location = new Point(4, 34);\n            marketsTabPage.Name = "marketsTabPage";\n            marketsTabPage.Padding = new Padding(8);\n            marketsTabPage.RightToLeft = RightToLeft.Yes;\n            marketsTabPage.Size = new Size(392, 895);\n            marketsTabPage.TabIndex = 3;\n            marketsTabPage.Text = "بازارها";\n'''
+          market_new = '''            // marketsTabPage\n            // \n            marketsTabPage.AutoScroll = true;\n            marketsTabPage.Controls.Add(marketsMainGroup);\n            marketsTabPage.Location = new Point(4, 34);\n            marketsTabPage.Name = "marketsTabPage";\n            marketsTabPage.Padding = new Padding(8);\n            marketsTabPage.RightToLeft = RightToLeft.Yes;\n            marketsTabPage.Size = new Size(392, 895);\n            marketsTabPage.TabIndex = 3;\n            marketsTabPage.Text = "بازارها";\n            // \n            // marketsMainGroup\n            // \n            marketsMainGroup.AutoSize = true;\n            marketsMainGroup.Controls.Add(marketsLayout);\n            marketsMainGroup.Dock = DockStyle.Top;\n            marketsMainGroup.Location = new Point(8, 8);\n            marketsMainGroup.Name = "marketsMainGroup";\n            marketsMainGroup.Padding = new Padding(10);\n            marketsMainGroup.RightToLeft = RightToLeft.Yes;\n            marketsMainGroup.Size = new Size(360, 242);\n            marketsMainGroup.TabIndex = 0;\n            marketsMainGroup.TabStop = false;\n            marketsMainGroup.Text = "اطلاعات بازار";\n            // \n            // marketsLayout\n            // \n            marketsLayout.AutoSize = true;\n            marketsLayout.ColumnCount = 2;\n            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));\n            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));\n            marketsLayout.Dock = DockStyle.Top;\n            marketsLayout.Location = new Point(13, 30);\n            marketsLayout.Name = "marketsLayout";\n            marketsLayout.Padding = new Padding(6);\n            marketsLayout.RightToLeft = RightToLeft.Yes;\n            marketsLayout.RowCount = 5;\n            marketsLayout.Size = new Size(334, 210);\n            marketsLayout.TabIndex = 0;\n'''
+          if market_marker in d:
+              d=d.replace(market_marker,market_new,1)
+
+          market_fields=[
+              ('marketTypeLabel','marketTypeTextBox','نوع بازار'),
+              ('marketNameLabel','marketNameTextBox','نام بازار'),
+              ('marketBoardLabel','marketBoardTextBox','تابلو'),
+              ('marketIndustryGroupLabel','marketIndustryGroupTextBox','گروه صنعت'),
+              ('marketSubIndustryGroupLabel','marketSubIndustryGroupTextBox','زیرگروه صنعت'),
+          ]
+          market_props=''
+          for i,(lab,inp,text) in enumerate(market_fields):
+              market_props += f'''            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));\n            {lab}.Dock = DockStyle.Fill;\n            {lab}.Font = new Font("Segoe UI", 10F);\n            {lab}.Margin = new Padding(4);\n            {lab}.Name = "{lab}";\n            {lab}.RightToLeft = RightToLeft.Yes;\n            {lab}.Size = new Size(155, 32);\n            {lab}.TabIndex = {i};\n            {lab}.Text = "{text}";\n            {lab}.TextAlign = ContentAlignment.MiddleRight;\n            marketsLayout.Controls.Add({lab}, 0, {i});\n            {inp}.Dock = DockStyle.Fill;\n            {inp}.Margin = new Padding(4);\n            {inp}.Name = "{inp}";\n            {inp}.RightToLeft = RightToLeft.Yes;\n            {inp}.Size = new Size(159, 31);\n            {inp}.TabIndex = {i};\n            marketsLayout.Controls.Add({inp}, 1, {i});\n'''
+          # Insert after marketsLayout configuration.
+          anchor='            marketsLayout.TabIndex = 0;\n'
+          d=d.replace(anchor,anchor+market_props,1)
+
+          # ---------- Resume/Dispose ----------
+          d=d.replace('            identifierMainGroup.ResumeLayout(false);\n','            identifierMainGroup.ResumeLayout(false);\n            identifierButtonsPanel.ResumeLayout(false);\n            marketsLayout.ResumeLayout(false);\n            marketsMainGroup.ResumeLayout(false);\n',1)
+
+          designer.write_text(d,encoding='utf-8-sig')
+
+          # ---------- MainForm.cs: remove runtime UI creation ----------
+          m = re.sub(r'\n            tabPage3\.Controls\.Clear\(\);.*?identifierButtonsPanel\.BringToFront\(\);\n', '\n', m, count=1, flags=re.S)
+          m = m.replace('            InitializeIndividualFilterClearButtons();\n','')
+          m = re.sub(r'\n        private void InitializeIndividualFilterClearButtons\(\).*?\n        private void ClearIndividualFilter\(', '\n        private void ClearIndividualFilter(', m, count=1, flags=re.S)
+          # The regex above leaves the ClearIndividualFilter signature intact.
+          m = re.sub(r'\n        private void AddIndividualFilterClearButton\(Control parent, string filterKey\).*?\n        private void ClearIndividualFilter\(', '\n        private void ClearIndividualFilter(', m, count=1, flags=re.S)
+
+          # Add the single event handler immediately before ClearIndividualFilter.
+          handler='''\n        private void IndividualFilterClearButton_Click(object? sender, EventArgs e)\n        {\n            if (sender is Button button && button.Tag is string filterKey)\n                ClearIndividualFilter(filterKey);\n        }\n'''
+          if 'private void IndividualFilterClearButton_Click' not in m:
+              m=m.replace('        private void ClearIndividualFilter(string filterKey)\n',handler+'\n        private void ClearIndividualFilter(string filterKey)\n',1)
+
+          main.write_text(m,encoding='utf-8-sig')
+
+      - name: Build
+        run: dotnet build Trade.It.sln --configuration Release --no-restore
+
+      - name: Commit generated changes and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/move-ui-to-designer.yml
+          git add MainForm.Designer.cs MainForm.cs
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m "Move MainForm UI controls into Designer"
+          git push origin HEAD:main
