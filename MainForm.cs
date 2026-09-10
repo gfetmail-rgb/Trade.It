@@ -74,8 +74,15 @@ namespace Trade.It
             stocksDataGridView.CurrentCellDirtyStateChanged += StocksDataGridView_CurrentCellDirtyStateChanged;
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             Load += MainForm_Portfolios_Load;
+            fullScreenChartButton.Click += FullScreenChartButton_Click;
 
             AttachOhlcChangeFilterEvents();
+        }
+
+        private void FullScreenChartButton_Click(object? sender, EventArgs e)
+        {
+            mainSplitContainer.Panel1Collapsed = !mainSplitContainer.Panel1Collapsed;
+            fullScreenChartButton.Text = mainSplitContainer.Panel1Collapsed ? "بازگشت" : "تمام صفحه";
         }
 
         protected override void OnHandleCreated(EventArgs e)
