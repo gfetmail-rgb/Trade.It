@@ -25,8 +25,14 @@ namespace Trade.It
             refreshButton.Click += TradingStatusRefreshChanged;
             nameComboBox.SelectedIndexChanged += NameFilterChanged;
             nameTextBox.TextChanged += NameFilterChanged;
+            volumeRatioTextBox.TextChanged += AdditionalFilterChanged;
+            volumeRatioOperatorComboBox.SelectedIndexChanged += AdditionalFilterChanged;
+            textBox1.TextChanged += AdditionalFilterChanged;
+            pastDaysTextBox.TextChanged += AdditionalFilterChanged;
+            pastDaysStatusComboBox.SelectedIndexChanged += AdditionalFilterChanged;
             clearFiltersButton.Click += ClearFiltersButton_Click;
             controlTabControl.SelectedIndexChanged += FilterTabSelected;
+            UpdateFilterControlAvailability();
         }
 
         private void InitializeFilterStatusDisplay()
@@ -84,7 +90,10 @@ namespace Trade.It
         private void FilterTabSelected(object? sender, EventArgs e)
         {
             if (controlTabControl.SelectedTab == tabPage2)
+            {
                 nameComboBox.SelectedIndex = -1;
+                UpdateFilterControlAvailability();
+            }
         }
 
         private void ClearFiltersButton_Click(object? sender, EventArgs e)
@@ -106,6 +115,7 @@ namespace Trade.It
                 resettingFilters = false;
             }
 
+            UpdateFilterControlAvailability();
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
@@ -136,6 +146,7 @@ namespace Trade.It
         {
             if (resettingFilters)
                 return;
+            UpdateFilterControlAvailability();
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
@@ -143,6 +154,7 @@ namespace Trade.It
         {
             if (resettingFilters)
                 return;
+            UpdateFilterControlAvailability();
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
@@ -151,6 +163,51 @@ namespace Trade.It
             if (resettingFilters)
                 return;
             ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private void AdditionalFilterChanged(object? sender, EventArgs e)
+        {
+            if (resettingFilters)
+                return;
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private void UpdateFilterControlAvailability()
+        {
+            PortfolioDefinition? definition = null;
+            if (!string.IsNullOrWhiteSpace(displayedPortfolioName))
+                loadedPortfolios.TryGetValue(displayedPortfolioName, out definition);
+
+            var hasDate = HasDateColumn(definition);
+            var hasVolume = HasVolumeColumn(definition);
+
+            tradingStatusGroup.Enabled = hasDate;
+            pastDaysGroup.Enabled = hasDate;
+            volumeRatioGroup.Enabled = hasVolume;
+
+            if (!hasDate)
+            {
+                statusAllRadio.Checked = true;
+                pastDaysStatusComboBox.SelectedIndex = -1;
+            }
+        }
+
+        private static bool HasDateColumn(PortfolioDefinition? definition)
+        {
+            if (definition == null || definition.NoDateTime)
+                return false;
+
+            return GetMappingColumn(definition, "تاریخ") > 0 ||
+                   GetMappingColumn(definition, "تاریخ لاتین") > 0;
+        }
+
+        private static bool HasVolumeColumn(PortfolioDefinition? definition)
+        {
+            if (definition == null)
+                return false;
+
+            return GetMappingColumn(definition, "حجم") > 0 ||
+                   GetMappingColumn(definition, "حجم معاملات") > 0;
         }
 
         private void ApplyTradingStatusFilterWithWaitCursor()
@@ -179,6 +236,8 @@ namespace Trade.It
                 return;
             }
 
+            UpdateFilterControlAvailability();
+
             var symbols = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -186,7 +245,7 @@ namespace Trade.It
 
             IEnumerable<string> filtered = symbols;
 
-            if (!statusAllRadio.Checked)
+            if (HasDateColumn(definition) && !statusAllRadio.Checked)
             {
                 var todaySymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var symbol in symbols)
@@ -200,6 +259,8 @@ namespace Trade.It
             }
 
             filtered = ApplyNameFilter(filtered);
+            filtered = ApplyVolumeRatioFilter(filtered, definition);
+            filtered = ApplyPastDaysFilter(filtered, definition);
 
             var result = filtered.ToList();
             UpdateFilterCounts(result.Count, symbols.Count);
@@ -269,9 +330,127 @@ namespace Trade.It
                 filterCountLabel.Text = $"کل: {ToPersianDigits(totalCount.ToString())}    پیدا شده: {ToPersianDigits(foundCount.ToString())}";
         }
 
-        private bool HasTradeOnToday(PortfolioDefinition definition, string symbol)
+        private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
         {
-            if (definition.NoDateTime || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+            if (!HasVolumeColumn(definition))
+                return symbols;
+
+            var ratioText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
+            var nText = NormalizeTradingDigits(textBox1.Text).Trim();
+            if (!double.TryParse(ratioText, NumberStyles.Float, CultureInfo.InvariantCulture, out var threshold) ||
+                !int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0)
+                return symbols;
+
+            if (volumeRatioOperatorComboBox.SelectedIndex < 0 || volumeRatioOperatorComboBox.SelectedItem == null)
+                return symbols;
+
+            var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
+            return symbols.Where(symbol =>
+            {
+                if (!TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
+                    return false;
+                return CompareNumeric(ratio, threshold, op);
+            });
+        }
+
+        private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, out double ratio)
+        {
+            ratio = 0;
+            var volumeColumn = GetMappingColumn(definition, "حجم");
+            if (volumeColumn <= 0)
+                volumeColumn = GetMappingColumn(definition, "حجم معاملات");
+            if (volumeColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return false;
+
+            var volumes = new List<double>();
+            try
+            {
+                foreach (var file in GetSymbolFiles(definition, symbol))
+                    ReadVolumesFromFile(definition, file, symbol, volumeColumn, volumes);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (volumes.Count < n + 1)
+                return false;
+
+            var last = volumes[^1];
+            var average = volumes.Skip(volumes.Count - n - 1).Take(n).Average();
+            if (average <= 0 || double.IsNaN(last) || double.IsInfinity(last))
+                return false;
+
+            ratio = last / average;
+            return !double.IsNaN(ratio) && !double.IsInfinity(ratio);
+        }
+
+        private void ReadVolumesFromFile(PortfolioDefinition definition, string filePath, string symbol, int volumeColumn, List<double> volumes)
+        {
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            var firstLine = true;
+            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var row = SplitTradingDataLine(line, definition.Separator);
+                if (firstLine && definition.HasHeader)
+                {
+                    firstLine = false;
+                    continue;
+                }
+                firstLine = false;
+
+                if (definition.SymbolSource == SymbolSource.InsideFile)
+                {
+                    if (symbolColumn <= 0 || symbolColumn > row.Length ||
+                        !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                }
+
+                if (volumeColumn > row.Length)
+                    continue;
+
+                if (TryParseTradingNumber(row[volumeColumn - 1], out var volume))
+                    volumes.Add(volume);
+            }
+        }
+
+        private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
+        {
+            if (!HasDateColumn(definition))
+                return symbols;
+
+            var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();
+            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0)
+                return symbols;
+
+            if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null)
+                return symbols;
+
+            var targetDate = DateTime.Today.AddDays(-n).Date;
+            var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
+            var showTraded = !IsNegativePastDaysOption(op);
+
+            return symbols.Where(symbol =>
+            {
+                var traded = HasTradeOnDate(definition, symbol, targetDate);
+                return showTraded == traded;
+            });
+        }
+
+        private static bool IsNegativePastDaysOption(string value)
+        {
+            var normalized = NormalizeSymbolName(value);
+            return normalized.Contains("نداشته", StringComparison.OrdinalIgnoreCase) ||
+                   normalized.Contains("خیر", StringComparison.OrdinalIgnoreCase) ||
+                   normalized.Contains("عدم", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool HasTradeOnDate(PortfolioDefinition definition, string symbol, DateTime targetDate)
+        {
+            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
                 return false;
 
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -286,7 +465,7 @@ namespace Trade.It
             {
                 foreach (var file in GetSymbolFiles(definition, symbol))
                 {
-                    if (FileContainsToday(definition, file, symbol, symbolColumn, dateColumn))
+                    if (FileContainsDate(definition, file, symbol, symbolColumn, dateColumn, targetDate))
                         return true;
                 }
             }
@@ -295,6 +474,118 @@ namespace Trade.It
             }
 
             return false;
+        }
+
+        private bool FileContainsDate(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn, DateTime targetDate)
+        {
+            var firstLine = true;
+            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var row = SplitTradingDataLine(line, definition.Separator);
+                if (firstLine && definition.HasHeader)
+                {
+                    firstLine = false;
+                    continue;
+                }
+                firstLine = false;
+
+                if (definition.SymbolSource == SymbolSource.InsideFile)
+                {
+                    if (symbolColumn <= 0 || symbolColumn > row.Length ||
+                        !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                }
+
+                if (dateColumn <= row.Length && TryParseSourceDate(row[dateColumn - 1], definition, out var date) && date.Date == targetDate)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool HasTradeOnToday(PortfolioDefinition definition, string symbol)
+        {
+            return HasTradeOnDate(definition, symbol, DateTime.Today.Date);
+        }
+
+        private static bool TryParseSourceDate(string value, PortfolioDefinition definition, out DateTime date)
+        {
+            date = default;
+            var normalized = NormalizeTradingDigits(value).Trim();
+            if (string.IsNullOrWhiteSpace(normalized))
+                return false;
+
+            var parts = normalized.Split(new[] { '/', '-', '.', '\\', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            int year;
+            int month;
+            int day;
+
+            if (parts.Length >= 3 &&
+                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) &&
+                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out month) &&
+                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+            {
+            }
+            else
+            {
+                var digits = new string(normalized.Where(char.IsDigit).ToArray());
+                if (digits.Length < 8)
+                    return false;
+
+                if (!int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) ||
+                    !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) ||
+                    !int.TryParse(digits.Substring(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+                    return false;
+            }
+
+            try
+            {
+                if (definition.Calendar == InputCalendar.Gregorian)
+                {
+                    date = new DateTime(year, month, day);
+                    return true;
+                }
+
+                date = new PersianCalendar().ToDateTime(year, month, day, 0, 0, 0, 0).Date;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool CompareNumeric(double left, double right, string op)
+        {
+            return op switch
+            {
+                ">" => left > right,
+                ">=" => left >= right,
+                "<" => left < right,
+                "<=" => left <= right,
+                "=" => Math.Abs(left - right) < 1e-12,
+                "==" => Math.Abs(left - right) < 1e-12,
+                "مساوی" => Math.Abs(left - right) < 1e-12,
+                "بزرگتر" => left > right,
+                "بزرگتر مساوی" => left >= right,
+                "کوچکتر" => left < right,
+                "کوچکتر مساوی" => left <= right,
+                _ => false
+            };
+        }
+
+        private static bool TryParseTradingNumber(string value, out double number)
+        {
+            var normalized = NormalizeTradingDigits(value)
+                .Trim()
+                .Replace(",", string.Empty)
+                .Replace("٬", string.Empty)
+                .Replace(" ", string.Empty);
+
+            return double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out number);
         }
 
         private IEnumerable<string> GetSymbolFiles(PortfolioDefinition definition, string symbol)
@@ -328,95 +619,11 @@ namespace Trade.It
                 yield return file;
         }
 
-        private bool FileContainsToday(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn)
-        {
-            var lines = File.ReadLines(filePath, DetectTradingDataEncoding(filePath))
-                .Where(line => !string.IsNullOrWhiteSpace(line));
-
-            var firstLine = true;
-            foreach (var line in lines)
-            {
-                var row = SplitTradingDataLine(line, definition.Separator);
-
-                if (firstLine && definition.HasHeader)
-                {
-                    firstLine = false;
-                    continue;
-                }
-                firstLine = false;
-
-                if (definition.SymbolSource == SymbolSource.InsideFile)
-                {
-                    if (symbolColumn <= 0 || symbolColumn > row.Length ||
-                        !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))
-                        continue;
-                }
-
-                if (dateColumn <= row.Length && IsSourceDateToday(row[dateColumn - 1], definition))
-                    return true;
-            }
-
-            return false;
-        }
-
         private static int GetMappingColumn(PortfolioDefinition definition, string field)
         {
             var mapping = definition.Mappings?.FirstOrDefault(m =>
                 string.Equals(m.Field?.Trim(), field, StringComparison.OrdinalIgnoreCase));
             return mapping?.Column ?? 0;
-        }
-
-        private static bool IsSourceDateToday(string value, PortfolioDefinition definition)
-        {
-            var normalized = NormalizeTradingDigits(value).Trim();
-            if (string.IsNullOrWhiteSpace(normalized))
-                return false;
-
-            var parts = normalized.Split(new[] { '/', '-', '.', '\\', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            int year;
-            int month;
-            int day;
-
-            if (parts.Length >= 3 &&
-                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) &&
-                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out month) &&
-                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
-            {
-            }
-            else
-            {
-                var digits = new string(normalized.Where(char.IsDigit).ToArray());
-                if (digits.Length < 8)
-                    return false;
-
-                if (!int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) ||
-                    !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) ||
-                    !int.TryParse(digits.Substring(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
-                    return false;
-            }
-
-            try
-            {
-                var today = DateTime.Today;
-                var persian = new PersianCalendar();
-
-                if (definition.Calendar == InputCalendar.Gregorian)
-                {
-                    var sourceGregorian = new DateTime(year, month, day);
-                    return persian.GetYear(sourceGregorian) == persian.GetYear(today) &&
-                           persian.GetMonth(sourceGregorian) == persian.GetMonth(today) &&
-                           persian.GetDayOfMonth(sourceGregorian) == persian.GetDayOfMonth(today);
-                }
-
-                var sourcePersian = persian.ToDateTime(year, month, day, 0, 0, 0, 0);
-                return persian.GetYear(sourcePersian) == persian.GetYear(today) &&
-                       persian.GetMonth(sourcePersian) == persian.GetMonth(today) &&
-                       persian.GetDayOfMonth(sourcePersian) == persian.GetDayOfMonth(today);
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         private static string NormalizeTradingDigits(string value)
