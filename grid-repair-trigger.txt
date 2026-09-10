@@ -1,1 +1,1 @@
-name filter order trigger
+chart fullscreen toggle trigger
