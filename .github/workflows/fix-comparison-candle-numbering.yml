@@ -29,25 +29,23 @@ jobs:
           new_tuples = '''(comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
                 (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
                 (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)'''
+          count = text.count(old_tuple + ',\n                ' + old_tuple)
+          if count == 0:
+              raise SystemExit('Duplicate comparison filter tuple block not found')
           text = text.replace(old_tuple + ',\n                ' + old_tuple, new_tuples)
 
-          old_apply = '''            int totalOffset;
-            try { totalOffset = checked(firstOffset + relativeOffset); } catch (OverflowException) { return Enumerable.Empty<string>(); }
-            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, totalOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));'''
-          new_apply = '''            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));'''
-          if old_apply not in text:
-              raise SystemExit('ApplyComparisonFilter block not found')
-          text = text.replace(old_apply, new_apply, 1)
+          old_apply_pattern = re.compile(r'(?P<indent>\s*)int totalOffset;\s*\n\s*try \{ totalOffset = checked\(firstOffset \+ relativeOffset\); \} catch \(OverflowException\) \{ return Enumerable\.Empty<string>\(\); \}\s*\n\s*return symbols\.Where\(symbol => TryGetComparisonValues\(definition, symbol, firstField, secondField, firstOffset, totalOffset, out var left, out var right\) && CompareComparisonOperator\(left, right, op\)\);')
+          text, count = old_apply_pattern.subn(r'\g<indent>return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));', text, count=1)
+          if count != 1:
+              raise SystemExit(f'ApplyComparisonFilter replacement count={count}')
 
-          old_indices = '''            var firstIndex = rows.Count - 1 - firstOffset;
-            var secondIndex = rows.Count - 1 - secondOffset;
-            if (firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;'''
-          new_indices = '''            var firstIndex = rows.Count - firstOffset;
+          old_indices_pattern = re.compile(r'var firstIndex = rows\.Count - 1 - firstOffset;\s*\n\s*var secondIndex = rows\.Count - 1 - secondOffset;\s*\n\s*if \(firstIndex < 0 \|\| secondIndex < 0 \|\| firstIndex >= rows\.Count \|\| secondIndex >= rows\.Count\) return false;')
+          new_indices = '''var firstIndex = rows.Count - firstOffset;
             var secondIndex = rows.Count - secondOffset;
             if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;'''
-          if old_indices not in text:
-              raise SystemExit('Comparison index block not found')
-          text = text.replace(old_indices, new_indices, 1)
+          text, count = old_indices_pattern.subn(new_indices, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Comparison index replacement count={count}')
 
           path.write_text(text, encoding='utf-8')
           PY
