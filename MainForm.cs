@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -77,7 +77,29 @@ namespace Trade.It
             fullScreenChartButton.Click += FullScreenChartButton_Click;
 
             AttachOhlcChangeFilterEvents();
+            InitializeFilterComboEmptyOptions();
             InitializeIndividualFilterClearButtons();
+        }
+
+        private void InitializeFilterComboEmptyOptions()
+        {
+            var filterCombos = new[]
+            {
+                nameComboBox,
+                volumeRatioOperatorComboBox,
+                pastDaysStatusComboBox,
+                comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1,
+                comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2,
+                comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3,
+                ohlcChangeFieldComboBox, ohlcChangeDirectionComboBox
+            };
+
+            foreach (var comboBox in filterCombos)
+            {
+                if (comboBox.Items.Count == 0 || !string.IsNullOrEmpty(comboBox.Items[0]?.ToString()))
+                    comboBox.Items.Insert(0, string.Empty);
+                comboBox.SelectedIndex = -1;
+            }
         }
 
         private void InitializeIndividualFilterClearButtons()
@@ -135,10 +157,10 @@ namespace Trade.It
                         pastDaysStatusComboBox.SelectedIndex = -1;
                         break;
                     case "comparison7":
-                        ClearComparisonFilterControls(comparisonFirstComboBox1, comparisonFirstTextBox2, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonSecondTextBox2);
+                        ClearComparisonFilterControls(comparisonFirstComboBox1, comparisonFirstTextBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonSecondTextBox1);
                         break;
                     case "comparison8":
-                        ClearComparisonFilterControls(comparisonFirstComboBox2, comparisonFirstTextBox1, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonSecondTextBox1);
+                        ClearComparisonFilterControls(comparisonFirstComboBox2, comparisonFirstTextBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonSecondTextBox2);
                         break;
                     case "comparison9":
                         ClearComparisonFilterControls(comparisonFirstComboBox3, comparisonFirstTextBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonSecondTextBox3);
@@ -867,7 +889,7 @@ namespace Trade.It
             var phrase = NormalizeSymbolName(nameTextBox.Text);
             if (string.IsNullOrWhiteSpace(phrase))
                 return symbols;
-            var mode = nameComboBox.SelectedIndex;
+            var mode = nameComboBox.SelectedIndex - 1;
             if (mode < 0)
                 return symbols;
             return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
@@ -1299,8 +1321,8 @@ namespace Trade.It
         {
             firstField = string.Empty; op = string.Empty; secondField = string.Empty; firstOffset = 0; relativeOffset = 0;
             if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null) return false;
-            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset < 0) return false;
-            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset < 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset <= 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset <= 0) return false;
             firstField = NormalizeComparisonField(firstFieldComboBox.SelectedItem.ToString());
             secondField = NormalizeComparisonField(secondFieldComboBox.SelectedItem.ToString());
             op = operatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
