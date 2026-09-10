@@ -127,7 +127,9 @@ namespace Trade.It
                 if (!chart.CrosshairVisible)
                     chart.ToggleCrosshair();
 
-                if (navigationTabPage == null || navigationTabPage.IsDisposed)
+                if (navigationTabPage == null ||
+                    navigationTabPage.IsDisposed ||
+                    !chartTabControl.TabPages.Contains(navigationTabPage))
                 {
                     navigationTabPage = new TabPage("__AUTO_SCROLL__")
                     {
