@@ -1,0 +1,54 @@
+name: Fix identifier designer parent
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Add identifier controls to tabPage3
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          old = '''            // tabPage3
+            //
+            tabPage3.Location = new Point(4, 34);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(8);
+            tabPage3.Size = new Size(392, 895);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "شناسه";
+'''
+          new = '''            // tabPage3
+            //
+            tabPage3.Controls.Add(identifierMainGroup);
+            tabPage3.Controls.Add(identifierButtonsPanel);
+            tabPage3.Location = new Point(4, 34);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(8);
+            tabPage3.Size = new Size(392, 895);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "شناسه";
+'''
+          if old not in s:
+              raise SystemExit('Expected tabPage3 block was not found; no changes made.')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8-sig')
+      - name: Commit fix and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.Designer.cs
+          git rm .github/workflows/fix-identifier-designer.yml
+          git diff --cached --check
+          git commit -m "Show identifier controls in Designer"
+          git push origin HEAD:main
