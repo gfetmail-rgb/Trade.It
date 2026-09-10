@@ -19,10 +19,7 @@ namespace Trade.It
 
             settingsMenuInitialized = true;
             settingsMenuItem.Click += SettingsMenuItem_Click;
-
-            navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
-
             InitializeChartRuntime();
         }
 
@@ -45,7 +42,7 @@ namespace Trade.It
             }
 
             var symbols = stocksDataGridView.Rows.Cast<DataGridViewRow>()
-                .Where(row => !row.IsNewRow && Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false))
+                .Where(row => !row.IsNewRow && row.Cells[selectColumn.Index].Value is true)
                 .Select(row => Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim())
                 .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
