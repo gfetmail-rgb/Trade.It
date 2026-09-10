@@ -50,15 +50,8 @@ namespace Trade.It
 
         private void UpdateOhlcChangeFilterAvailability()
         {
-            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
-                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
-            {
-                ohlcChangeFilterGroup.Enabled = false;
-                return;
-            }
-
-            var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
-            ohlcChangeFilterGroup.Enabled = !string.IsNullOrEmpty(field) && GetMappingColumn(definition, field) > 0;
+            // Filter 9 must always remain enabled in the UI.
+            ohlcChangeFilterGroup.Enabled = true;
         }
 
         private void ApplyOhlcChangeFilterToGridWithWaitCursor()
