@@ -1,0 +1,76 @@
+name: Repair filter options
+
+on:
+  push:
+    paths:
+      - grid-repair-trigger.txt
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply precise filter changes
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+
+          replacements = [
+              ('            nameComboBox.Location = new Point(20, 28);\n            nameComboBox.Name = "nameComboBox";',
+               '            nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;\n            nameComboBox.Items.AddRange(new object[] { "در ابتدا", "در انتها", "در میانه", "در هرجا", "در هیچ جا" });\n            nameComboBox.Location = new Point(20, 28);\n            nameComboBox.Name = "nameComboBox";'),
+              ('            volumeRatioOperatorComboBox.Location = new Point(104, 30);\n            volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";',
+               '            volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;\n            volumeRatioOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });\n            volumeRatioOperatorComboBox.Location = new Point(104, 30);\n            volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";'),
+              ('            pastDaysStatusComboBox.Location = new Point(28, 42);\n            pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";',
+               '            pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;\n            pastDaysStatusComboBox.Items.AddRange(new object[] { "داشته", "نداشته" });\n            pastDaysStatusComboBox.Location = new Point(28, 42);\n            pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";'),
+              ('            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { "رشد حداقل", "افت حداقل" });',
+               '            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });')
+          ]
+          for old, new in replacements:
+              if old not in s:
+                  raise SystemExit(f'Designer target not found: {old[:80]}')
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8-sig')
+
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8-sig')
+
+          old = '            return GetOhlcChangeDirection() >= 0;'
+          new = '            return !string.IsNullOrWhiteSpace(GetOhlcChangeOperator());'
+          if old not in s:
+              raise SystemExit('Ohlc active target not found')
+          s = s.replace(old, new, 1)
+
+          old = '''        private int GetOhlcChangeDirection()\n        {\n            var value = ohlcChangeDirectionComboBox.SelectedItem?.ToString()?.Trim() ?? string.Empty;\n            return value.Contains("رشد", StringComparison.Ordinal) ? 1 : value.Contains("افت", StringComparison.Ordinal) ? -1 : -1;\n        }'''
+          new = '''        private string GetOhlcChangeOperator()\n        {\n            return ohlcChangeDirectionComboBox.SelectedItem?.ToString()?.Trim() ?? string.Empty;\n        }'''
+          if old not in s:
+              raise SystemExit('Ohlc direction method target not found')
+          s = s.replace(old, new, 1)
+
+          old = '''            var direction = GetOhlcChangeDirection();\n            if (direction < 0) return;\n            var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();\n            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && (direction > 0 ? changePercent >= percent : changePercent <= -percent)).ToList();'''
+          new = '''            var op = GetOhlcChangeOperator();\n            if (string.IsNullOrWhiteSpace(op)) return;\n            var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();\n            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();'''
+          if old not in s:
+              raise SystemExit('Ohlc apply target not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s, encoding='utf-8-sig')
+
+      - name: Commit changes and remove workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs MainForm.Designer.cs
+          git commit -m "Fix filter combo options and comparison logic"
+          git rm .github/workflows/repair-filter-options.yml
+          printf '%s' 'chart fullscreen toggle trigger' > grid-repair-trigger.txt
+          git add grid-repair-trigger.txt
+          git commit -m "Remove temporary filter repair workflow"
+          git push origin repair-filters
