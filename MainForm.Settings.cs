@@ -14,13 +14,17 @@ namespace Trade.It
 
             settingsMenuInitialized = true;
             settingsMenuItem.Click += SettingsMenuItem_Click;
+            InitializeChartRuntime();
         }
 
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
         {
             using var form = new SettingsForm(chartDisplayMode);
             if (form.ShowDialog(this) == DialogResult.OK)
+            {
                 chartDisplayMode = form.ChartDisplayMode;
+                ApplyChartDisplayMode();
+            }
         }
     }
 }
