@@ -530,7 +530,6 @@ namespace Trade.It
         {
             if (controlTabControl.SelectedTab == tabPage2)
             {
-                nameComboBox.SelectedIndex = -1;
                 UpdateFilterControlAvailability();
             }
         }
