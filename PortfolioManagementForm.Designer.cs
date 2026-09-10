@@ -29,6 +29,8 @@ namespace Trade.It
         private Button deletePortfoliosButton;
         private Label symbolsTitleLabel;
         private DataGridView symbolsGrid;
+        private DataGridViewTextBoxColumn symbolRowColumn;
+        private DataGridViewTextBoxColumn symbolNameColumn;
         private Button deleteSymbolsButton;
         private Label statusLabel;
         private Button closeButton;
@@ -68,6 +70,8 @@ namespace Trade.It
             deletePortfoliosButton = new Button();
             symbolsTitleLabel = new Label();
             symbolsGrid = new DataGridView();
+            symbolRowColumn = new DataGridViewTextBoxColumn();
+            symbolNameColumn = new DataGridViewTextBoxColumn();
             deleteSymbolsButton = new Button();
             statusLabel = new Label();
             closeButton = new Button();
@@ -323,6 +327,7 @@ namespace Trade.It
             symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.ColumnHeadersHeight = 34;
+            symbolsGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowColumn, symbolNameColumn });
             symbolsGrid.Location = new Point(20, 390);
             symbolsGrid.Name = "symbolsGrid";
             symbolsGrid.ReadOnly = true;
@@ -332,6 +337,20 @@ namespace Trade.It
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             symbolsGrid.Size = new Size(1368, 373);
             symbolsGrid.TabIndex = 29;
+            // 
+            // symbolRowColumn
+            // 
+            symbolRowColumn.HeaderText = "ردیف";
+            symbolRowColumn.Name = "symbolRowColumn";
+            symbolRowColumn.ReadOnly = true;
+            symbolRowColumn.Width = 90;
+            // 
+            // symbolNameColumn
+            // 
+            symbolNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            symbolNameColumn.HeaderText = "نماد";
+            symbolNameColumn.Name = "symbolNameColumn";
+            symbolNameColumn.ReadOnly = true;
             // 
             // deleteSymbolsButton
             // 
