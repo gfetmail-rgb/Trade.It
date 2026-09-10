@@ -1,6 +1,7 @@
 name: Fix stock grid columns
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 permissions:
   contents: write
 jobs:
@@ -28,7 +29,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add MainForm.Designer.cs
-          git commit -m "Restore four stock grid columns"
+          git commit -m "Restore four stock grid columns" || true
           git rm .github/workflows/fix-stock-grid-columns.yml
           git commit -m "Remove temporary grid repair workflow"
           git push origin HEAD:main
