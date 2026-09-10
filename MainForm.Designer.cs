@@ -105,6 +105,15 @@ namespace Trade.It
         private System.Windows.Forms.Label label6_8;
         private System.Windows.Forms.Label label8_8;
 
+        private System.Windows.Forms.GroupBox ohlcChangeFilterGroup;
+        private System.Windows.Forms.ComboBox ohlcChangeFieldComboBox;
+        private System.Windows.Forms.TextBox ohlcChangeDaysTextBox;
+        private System.Windows.Forms.TextBox ohlcChangePercentTextBox;
+        private System.Windows.Forms.ComboBox ohlcChangeDirectionComboBox;
+        private System.Windows.Forms.Label ohlcChangeFieldLabel;
+        private System.Windows.Forms.Label ohlcChangeDaysLabel;
+        private System.Windows.Forms.Label ohlcChangePercentLabel;
+
         private System.Windows.Forms.Button clearFiltersButton;
 
         private System.Windows.Forms.GroupBox identifierMainGroup;
@@ -187,6 +196,14 @@ namespace Trade.It
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
             clearFiltersButton = new Button();
+            ohlcChangeFilterGroup = new GroupBox();
+            ohlcChangeFieldComboBox = new ComboBox();
+            ohlcChangeDaysTextBox = new TextBox();
+            ohlcChangePercentTextBox = new TextBox();
+            ohlcChangeDirectionComboBox = new ComboBox();
+            ohlcChangeFieldLabel = new Label();
+            ohlcChangeDaysLabel = new Label();
+            ohlcChangePercentLabel = new Label();
             comparisonGroup8 = new GroupBox();
             label8_8 = new Label();
             comparisonSecondTextBox8 = new TextBox();
@@ -282,6 +299,7 @@ namespace Trade.It
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
             tabPage2.SuspendLayout();
+            ohlcChangeFilterGroup.SuspendLayout();
             comparisonGroup8.SuspendLayout();
             comparisonGroup7.SuspendLayout();
             comparisonGroup6.SuspendLayout();
@@ -295,9 +313,6 @@ namespace Trade.It
             identifierLayout.SuspendLayout();
             marketsTabPage.SuspendLayout();
             SuspendLayout();
-            // 
-            // mainMenuStrip
-            // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
             mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, resetMenuItem, closeAllChartsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
@@ -305,39 +320,21 @@ namespace Trade.It
             mainMenuStrip.RightToLeft = RightToLeft.No;
             mainMenuStrip.Size = new Size(1452, 33);
             mainMenuStrip.TabIndex = 0;
-            // 
-            // portfolioDefinitionMenuItem
-            // 
             portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
             portfolioDefinitionMenuItem.Size = new Size(114, 29);
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
-            // 
-            // portfolioManagementMenuItem
-            // 
             portfolioManagementMenuItem.Name = "portfolioManagementMenuItem";
             portfolioManagementMenuItem.Size = new Size(122, 29);
             portfolioManagementMenuItem.Text = "مدیریت سبد";
-            // 
-            // settingsMenuItem
-            // 
             settingsMenuItem.Name = "settingsMenuItem";
             settingsMenuItem.Size = new Size(94, 29);
             settingsMenuItem.Text = "تنظیمات";
-            // 
-            // resetMenuItem
-            // 
             resetMenuItem.Name = "resetMenuItem";
             resetMenuItem.Size = new Size(92, 29);
             resetMenuItem.Text = "بازنشانی";
-            // 
-            // closeAllChartsMenuItem
-            // 
             closeAllChartsMenuItem.Name = "closeAllChartsMenuItem";
             closeAllChartsMenuItem.Size = new Size(104, 29);
             closeAllChartsMenuItem.Text = "بستن همه";
-            // 
-            // mainSplitContainer
-            // 
             mainSplitContainer.Dock = DockStyle.Fill;
             mainSplitContainer.Location = new Point(0, 33);
             mainSplitContainer.Name = "mainSplitContainer";
@@ -348,9 +345,6 @@ namespace Trade.It
             mainSplitContainer.Size = new Size(1452, 825);
             mainSplitContainer.SplitterDistance = 1084;
             mainSplitContainer.TabIndex = 1;
-            // 
-            // chartPanel
-            // 
             chartPanel.BorderStyle = BorderStyle.FixedSingle;
             chartPanel.Controls.Add(chartTabControl);
             chartPanel.Controls.Add(chartToolbarPanel);
@@ -359,9 +353,6 @@ namespace Trade.It
             chartPanel.Name = "chartPanel";
             chartPanel.Size = new Size(1084, 825);
             chartPanel.TabIndex = 0;
-            // 
-            // chartTabControl
-            // 
             chartTabControl.Controls.Add(chartTabPage);
             chartTabControl.Dock = DockStyle.Fill;
             chartTabControl.Location = new Point(0, 51);
@@ -369,9 +360,6 @@ namespace Trade.It
             chartTabControl.SelectedIndex = 0;
             chartTabControl.Size = new Size(1082, 772);
             chartTabControl.TabIndex = 0;
-            // 
-            // chartTabPage
-            // 
             chartTabPage.Controls.Add(chartInfoPanel);
             chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartTabPage.Location = new Point(4, 34);
@@ -623,6 +611,7 @@ namespace Trade.It
             portfolioLabel.Text = "سبد:";
             tabPage2.AutoScroll = true;
             tabPage2.Controls.Add(clearFiltersButton);
+            tabPage2.Controls.Add(ohlcChangeFilterGroup);
             tabPage2.Controls.Add(comparisonGroup8);
             tabPage2.Controls.Add(comparisonGroup7);
             tabPage2.Controls.Add(comparisonGroup6);
@@ -637,12 +626,68 @@ namespace Trade.It
             tabPage2.Size = new Size(356, 787);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "فیلترها";
-            clearFiltersButton.Location = new Point(8, 884);
+            clearFiltersButton.Location = new Point(8, 981);
             clearFiltersButton.Name = "clearFiltersButton";
             clearFiltersButton.Size = new Size(314, 36);
-            clearFiltersButton.TabIndex = 8;
+            clearFiltersButton.TabIndex = 9;
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangeFieldLabel);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangeFieldComboBox);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangeDaysLabel);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangeDaysTextBox);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangePercentLabel);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangePercentTextBox);
+            ohlcChangeFilterGroup.Controls.Add(ohlcChangeDirectionComboBox);
+            ohlcChangeFilterGroup.Dock = DockStyle.Top;
+            ohlcChangeFilterGroup.Location = new Point(8, 876);
+            ohlcChangeFilterGroup.Name = "ohlcChangeFilterGroup";
+            ohlcChangeFilterGroup.Size = new Size(314, 105);
+            ohlcChangeFilterGroup.TabIndex = 8;
+            ohlcChangeFilterGroup.TabStop = false;
+            ohlcChangeFilterGroup.Text = "9. رشد/افت OHLC:";
+            ohlcChangeFieldLabel.AutoSize = true;
+            ohlcChangeFieldLabel.Location = new Point(274, 38);
+            ohlcChangeFieldLabel.Name = "ohlcChangeFieldLabel";
+            ohlcChangeFieldLabel.Size = new Size(35, 25);
+            ohlcChangeFieldLabel.TabIndex = 0;
+            ohlcChangeFieldLabel.Text = "قیمت";
+            ohlcChangeFieldComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C" });
+            ohlcChangeFieldComboBox.Location = new Point(210, 34);
+            ohlcChangeFieldComboBox.Name = "ohlcChangeFieldComboBox";
+            ohlcChangeFieldComboBox.Size = new Size(60, 33);
+            ohlcChangeFieldComboBox.TabIndex = 1;
+            ohlcChangeDaysLabel.AutoSize = true;
+            ohlcChangeDaysLabel.Location = new Point(119, 38);
+            ohlcChangeDaysLabel.Name = "ohlcChangeDaysLabel";
+            ohlcChangeDaysLabel.Size = new Size(81, 25);
+            ohlcChangeDaysLabel.TabIndex = 2;
+            ohlcChangeDaysLabel.Text = "کندل قبل";
+            ohlcChangeDaysTextBox.Location = new Point(62, 34);
+            ohlcChangeDaysTextBox.Name = "ohlcChangeDaysTextBox";
+            ohlcChangeDaysTextBox.Size = new Size(57, 31);
+            ohlcChangeDaysTextBox.TabIndex = 3;
+            ohlcChangeDaysTextBox.Text = "5";
+            ohlcChangeDaysTextBox.TextAlign = HorizontalAlignment.Center;
+            ohlcChangePercentLabel.AutoSize = true;
+            ohlcChangePercentLabel.Location = new Point(274, 73);
+            ohlcChangePercentLabel.Name = "ohlcChangePercentLabel";
+            ohlcChangePercentLabel.Size = new Size(22, 25);
+            ohlcChangePercentLabel.TabIndex = 4;
+            ohlcChangePercentLabel.Text = "%";
+            ohlcChangePercentTextBox.Location = new Point(210, 70);
+            ohlcChangePercentTextBox.Name = "ohlcChangePercentTextBox";
+            ohlcChangePercentTextBox.Size = new Size(60, 31);
+            ohlcChangePercentTextBox.TabIndex = 5;
+            ohlcChangePercentTextBox.Text = "5";
+            ohlcChangePercentTextBox.TextAlign = HorizontalAlignment.Center;
+            ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { "رشد حداقل", "افت حداقل" });
+            ohlcChangeDirectionComboBox.Location = new Point(62, 69);
+            ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
+            ohlcChangeDirectionComboBox.Size = new Size(142, 33);
+            ohlcChangeDirectionComboBox.TabIndex = 6;
             comparisonGroup8.Controls.Add(label8_8);
             comparisonGroup8.Controls.Add(comparisonSecondTextBox8);
             comparisonGroup8.Controls.Add(label6_8);
@@ -1145,9 +1190,6 @@ namespace Trade.It
             identifierDescriptionTextBox.Name = "identifierDescriptionTextBox";
             identifierDescriptionTextBox.Size = new Size(165, 170);
             identifierDescriptionTextBox.TabIndex = 11;
-            // 
-            // marketsTabPage
-            // 
             marketsTabPage.Controls.Add(marketSubIndustryGroupTextBox);
             marketsTabPage.Controls.Add(marketSubIndustryGroupLabel);
             marketsTabPage.Controls.Add(marketIndustryGroupTextBox);
@@ -1215,9 +1257,6 @@ namespace Trade.It
             marketSubIndustryGroupTextBox.Name = "marketSubIndustryGroupTextBox";
             marketSubIndustryGroupTextBox.Size = new Size(136, 31);
             marketSubIndustryGroupTextBox.TabIndex = 9;
-            // 
-            // MainForm
-            // 
             ClientSize = new Size(1452, 858);
             Controls.Add(mainSplitContainer);
             Controls.Add(mainMenuStrip);
@@ -1247,6 +1286,8 @@ namespace Trade.It
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
             tabPage2.ResumeLayout(false);
+            ohlcChangeFilterGroup.ResumeLayout(false);
+            ohlcChangeFilterGroup.PerformLayout();
             comparisonGroup8.ResumeLayout(false);
             comparisonGroup8.PerformLayout();
             comparisonGroup7.ResumeLayout(false);
