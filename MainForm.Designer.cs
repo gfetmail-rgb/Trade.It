@@ -462,7 +462,7 @@ namespace Trade.It
             stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             stocksDataGridView.Location = new Point(11, 47);
             stocksDataGridView.Name = "stocksDataGridView";
-            stocksDataGridView.ReadOnly = true;
+            stocksDataGridView.ReadOnly = false;
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
             stocksDataGridView.Size = new Size(373, 620);
