@@ -5,6 +5,7 @@ on:
     paths:
       - 'MainForm.cs'
       - 'MainForm.Designer.cs'
+      - '.github/workflows/one-time-stock-grid-fix.yml'
 
 permissions:
   contents: write
@@ -23,21 +24,18 @@ jobs:
           text = designer.read_text(encoding='utf-8')
           old = '''            selectColumn.HeaderText = "انتخاب";\n            selectColumn.MinimumWidth = 8;\n            selectColumn.Name = "selectColumn";\n            selectColumn.ReadOnly = true;\n            selectColumn.Width = 68;'''
           new = '''            selectColumn.HeaderText = "انتخاب";\n            selectColumn.MinimumWidth = 8;\n            selectColumn.Name = "selectColumn";\n            selectColumn.ReadOnly = false;\n            selectColumn.Width = 68;'''
-          if old not in text:
-              raise SystemExit('selectColumn block not found')
-          text = text.replace(old, new, 1)
+          if old in text:
+              text = text.replace(old, new, 1)
 
           old = '''            rowColumn.HeaderText = "ردیف";\n            rowColumn.MinimumWidth = 8;\n            rowColumn.Name = "rowColumn";\n            rowColumn.Width = 87;'''
           new = '''            rowColumn.HeaderText = "ردیف";\n            rowColumn.MinimumWidth = 8;\n            rowColumn.Name = "rowColumn";\n            rowColumn.ReadOnly = true;\n            rowColumn.Width = 87;'''
-          if old not in text:
-              raise SystemExit('rowColumn block not found')
-          text = text.replace(old, new, 1)
+          if old in text:
+              text = text.replace(old, new, 1)
 
           old = '''            symbolColumn.HeaderText = "نماد";\n            symbolColumn.MinimumWidth = 8;\n            symbolColumn.Name = "symbolColumn";\n            symbolColumn.Width = 79;'''
           new = '''            symbolColumn.HeaderText = "نماد";\n            symbolColumn.MinimumWidth = 8;\n            symbolColumn.Name = "symbolColumn";\n            symbolColumn.ReadOnly = true;\n            symbolColumn.Width = 79;'''
-          if old not in text:
-              raise SystemExit('symbolColumn block not found')
-          text = text.replace(old, new, 1)
+          if old in text:
+              text = text.replace(old, new, 1)
           designer.write_text(text, encoding='utf-8')
 
           main = Path('MainForm.cs')
@@ -45,22 +43,22 @@ jobs:
 
           old = '''                var symbols = definition.Symbols ?? new List<string>();\n                for (var i = 0; i < symbols.Count; i++)\n                    stocksDataGridView.Rows.Add(i + 1, symbols[i], "", false);'''
           new = '''                var symbols = definition.Symbols ?? new List<string>();\n                for (var i = 0; i < symbols.Count; i++)\n                    stocksDataGridView.Rows.Add(i + 1, symbols[i], GetLatestTradeDateText(definition, symbols[i]), false);'''
-          if old not in text:
-              raise SystemExit('PopulateStocksGrid block not found')
-          text = text.replace(old, new, 1)
+          if old in text:
+              text = text.replace(old, new, 1)
 
           old = '''                stocksDataGridView.Rows.Clear();\n                for (var i = 0; i < result.Count; i++)\n                    stocksDataGridView.Rows.Add(i + 1, result[i], "", false);'''
           new = '''                stocksDataGridView.Rows.Clear();\n                for (var i = 0; i < result.Count; i++)\n                    stocksDataGridView.Rows.Add(i + 1, result[i], GetLatestTradeDateText(definition, result[i]), false);'''
-          if old not in text:
-              raise SystemExit('filter grid block not found')
-          text = text.replace(old, new, 1)
+          if old in text:
+              text = text.replace(old, new, 1)
 
           marker = '''        private static bool HasDateColumn(PortfolioDefinition? definition)\n'''
           method = '''        private static string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)\n        {\n            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))\n                return string.Empty;\n\n            var dateColumn = GetMappingColumn(definition, "تاریخ");\n            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");\n            if (dateColumn <= 0) return string.Empty;\n\n            var symbolColumn = GetMappingColumn(definition, "نماد");\n            DateTime? latest = null;\n\n            try\n            {\n                foreach (var file in GetSymbolFiles(definition, symbol))\n                {\n                    var firstLine = true;\n                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))\n                    {\n                        if (string.IsNullOrWhiteSpace(line)) continue;\n                        var row = SplitTradingDataLine(line, definition.Separator);\n                        if (firstLine && definition.HasHeader) { firstLine = false; continue; }\n                        firstLine = false;\n\n                        if (definition.SymbolSource == SymbolSource.InsideFile &&\n                            (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))\n                            continue;\n\n                        if (dateColumn > row.Length) continue;\n                        if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) && (!latest.HasValue || date > latest.Value))\n                            latest = date;\n                    }\n                }\n            }\n            catch\n            {\n                return string.Empty;\n            }\n\n            if (!latest.HasValue) return string.Empty;\n\n            if (definition.Calendar == InputCalendar.Gregorian)\n                return ToPersianDigits(latest.Value.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));\n\n            var calendar = new PersianCalendar();\n            var value = $"{calendar.GetYear(latest.Value):0000}/{calendar.GetMonth(latest.Value):00}/{calendar.GetDayOfMonth(latest.Value):00}";\n            return ToPersianDigits(value);\n        }\n\n'''
-          if marker not in text:
-              raise SystemExit('date marker not found')
-          text = text.replace(marker, method + marker, 1)
+          if marker in text and 'private static string GetLatestTradeDateText' not in text:
+              text = text.replace(marker, method + marker, 1)
           main.write_text(text, encoding='utf-8')
+
+          if not Path('MainForm.cs').exists() or not Path('MainForm.Designer.cs').exists():
+              raise SystemExit('Required source file missing')
       - name: Commit focused fixes
         run: |
           git config user.name "github-actions[bot]"
