@@ -257,7 +257,7 @@ namespace Trade.It
                 stocksDataGridView.Rows.Clear();
                 var symbols = definition.Symbols ?? new List<string>();
                 for (var i = 0; i < symbols.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, symbols[i], "", false);
+                    stocksDataGridView.Rows.Add(i + 1, symbols[i], GetLatestTradeDateText(definition, symbols[i]), false);
             }
             finally
             {
@@ -577,6 +577,55 @@ namespace Trade.It
             }
         }
 
+        private static string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)
+        {
+            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return string.Empty;
+
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            if (dateColumn <= 0) return string.Empty;
+
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            DateTime? latest = null;
+
+            try
+            {
+                foreach (var file in GetSymbolFiles(definition, symbol))
+                {
+                    var firstLine = true;
+                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        var row = SplitTradingDataLine(line, definition.Separator);
+                        if (firstLine && definition.HasHeader) { firstLine = false; continue; }
+                        firstLine = false;
+
+                        if (definition.SymbolSource == SymbolSource.InsideFile &&
+                            (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                            continue;
+
+                        if (dateColumn > row.Length) continue;
+                        if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) && (!latest.HasValue || date > latest.Value))
+                            latest = date;
+                    }
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+
+            if (!latest.HasValue) return string.Empty;
+
+            if (definition.Calendar == InputCalendar.Gregorian)
+                return ToPersianDigits(latest.Value.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));
+
+            var calendar = new PersianCalendar();
+            var value = $"{calendar.GetYear(latest.Value):0000}/{calendar.GetMonth(latest.Value):00}/{calendar.GetDayOfMonth(latest.Value):00}";
+            return ToPersianDigits(value);
+        }
+
         private static bool HasDateColumn(PortfolioDefinition? definition)
         {
             if (definition == null || definition.NoDateTime)
@@ -646,7 +695,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], GetLatestTradeDateText(definition, result[i]), false);
             }
             finally
             {
