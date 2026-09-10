@@ -15,7 +15,6 @@ namespace Trade.It
                 return;
 
             tradingStatusFilterInitialized = true;
-
             statusAllRadio.CheckedChanged += TradingStatusFilterChanged;
             statusPositiveRadio.CheckedChanged += TradingStatusFilterChanged;
             statusNegativeRadio.CheckedChanged += TradingStatusFilterChanged;
@@ -27,25 +26,15 @@ namespace Trade.It
         {
             if (sender is RadioButton radio && !radio.Checked)
                 return;
-
             ApplyTradingStatusFilter();
         }
 
-        private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
-        {
-            ApplyTradingStatusFilter();
-        }
+        private void TradingStatusPortfolioChanged(object? sender, EventArgs e) => ApplyTradingStatusFilter();
 
-        private void TradingStatusRefreshChanged(object? sender, EventArgs e)
-        {
-            ApplyTradingStatusFilter();
-        }
+        private void TradingStatusRefreshChanged(object? sender, EventArgs e) => ApplyTradingStatusFilter();
 
         private void ApplyTradingStatusFilter()
         {
-            if (statusAllRadio.Checked)
-                return;
-
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
                 !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 return;
@@ -55,24 +44,29 @@ namespace Trade.It
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var todaySymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var symbol in symbols)
+            IEnumerable<string> filtered = symbols;
+
+            if (!statusAllRadio.Checked)
             {
-                if (HasTradeOnToday(definition, symbol))
-                    todaySymbols.Add(symbol);
+                var todaySymbols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var symbol in symbols)
+                {
+                    if (HasTradeOnToday(definition, symbol))
+                        todaySymbols.Add(symbol);
+                }
+
+                var showTraded = statusPositiveRadio.Checked;
+                filtered = symbols.Where(symbol => showTraded == todaySymbols.Contains(symbol));
             }
 
-            var showTraded = statusPositiveRadio.Checked;
-            var filtered = symbols
-                .Where(symbol => showTraded == todaySymbols.Contains(symbol))
-                .ToList();
+            var result = filtered.ToList();
 
             internalPortfolioUpdate = true;
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < filtered.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, filtered[i], "", false);
+                for (var i = 0; i < result.Count; i++)
+                    stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
             }
             finally
             {
@@ -80,7 +74,7 @@ namespace Trade.It
             }
 
             selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = filtered.Count > 0;
+            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
         }
 
@@ -92,7 +86,6 @@ namespace Trade.It
             var dateColumn = GetMappingColumn(definition, "تاریخ");
             if (dateColumn <= 0)
                 dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-
             if (dateColumn <= 0)
                 return false;
 
@@ -150,12 +143,17 @@ namespace Trade.It
             var lines = File.ReadLines(filePath, DetectTradingDataEncoding(filePath))
                 .Where(line => !string.IsNullOrWhiteSpace(line));
 
+            var firstLine = true;
             foreach (var line in lines)
             {
                 var row = SplitTradingDataLine(line, definition.Separator);
 
-                if (definition.HasHeader && IsHeaderRow(row, definition, symbolColumn, dateColumn))
+                if (firstLine && definition.HasHeader)
+                {
+                    firstLine = false;
                     continue;
+                }
+                firstLine = false;
 
                 if (definition.SymbolSource == SymbolSource.InsideFile)
                 {
@@ -167,22 +165,6 @@ namespace Trade.It
                 if (dateColumn <= row.Length && IsSourceDateToday(row[dateColumn - 1], definition))
                     return true;
             }
-
-            return false;
-        }
-
-        private static bool IsHeaderRow(string[] row, PortfolioDefinition definition, int symbolColumn, int dateColumn)
-        {
-            if (!definition.HasHeader)
-                return false;
-
-            if (dateColumn > 0 && dateColumn <= row.Length &&
-                string.Equals(row[dateColumn - 1].Trim(), "تاریخ", StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            if (symbolColumn > 0 && symbolColumn <= row.Length &&
-                string.Equals(row[symbolColumn - 1].Trim(), "نماد", StringComparison.OrdinalIgnoreCase))
-                return true;
 
             return false;
         }
@@ -226,20 +208,22 @@ namespace Trade.It
             try
             {
                 var today = DateTime.Today;
-                var todayPersian = new PersianCalendar();
+                var persian = new PersianCalendar();
 
                 if (definition.Calendar == InputCalendar.Gregorian)
                 {
-                    var sourceDate = new DateTime(year, month, day);
-                    return todayPersian.GetYear(sourceDate) == todayPersian.GetYear(today) &&
-                           todayPersian.GetMonth(sourceDate) == todayPersian.GetMonth(today) &&
-                           todayPersian.GetDayOfMonth(sourceDate) == todayPersian.GetDayOfMonth(today);
+                    // Convert the source Gregorian date to Persian before comparison,
+                    // so both sides of the comparison use the application's Persian date.
+                    var sourceGregorian = new DateTime(year, month, day);
+                    return persian.GetYear(sourceGregorian) == persian.GetYear(today) &&
+                           persian.GetMonth(sourceGregorian) == persian.GetMonth(today) &&
+                           persian.GetDayOfMonth(sourceGregorian) == persian.GetDayOfMonth(today);
                 }
 
-                var sourcePersianDate = todayPersian.ToDateTime(year, month, day, 0, 0, 0, 0);
-                return todayPersian.GetYear(sourcePersianDate) == todayPersian.GetYear(today) &&
-                       todayPersian.GetMonth(sourcePersianDate) == todayPersian.GetMonth(today) &&
-                       todayPersian.GetDayOfMonth(sourcePersianDate) == todayPersian.GetDayOfMonth(today);
+                var sourcePersian = persian.ToDateTime(year, month, day, 0, 0, 0, 0);
+                return persian.GetYear(sourcePersian) == persian.GetYear(today) &&
+                       persian.GetMonth(sourcePersian) == persian.GetMonth(today) &&
+                       persian.GetDayOfMonth(sourcePersian) == persian.GetDayOfMonth(today);
             }
             catch
             {
