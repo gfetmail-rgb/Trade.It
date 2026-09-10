@@ -70,3 +70,6 @@ namespace Trade.It
         private void MainForm_Portfolios_Load(object? sender, EventArgs e)
         {
             RefreshPortfolioListAndClearSelection();
+        }
+    }
+}
