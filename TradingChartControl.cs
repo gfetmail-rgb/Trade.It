@@ -235,9 +235,10 @@ namespace Trade.It
 
             if (verticalAxisDrag && Capture && points.Count > 1)
             {
+                // Moving the price axis upward zooms in; moving it downward zooms out.
                 var delta = verticalAxisStartPoint.Y - e.Y;
                 verticalZoom = Math.Clamp(
-                    verticalZoom * Math.Exp(-delta / 260.0),
+                    verticalZoom * Math.Exp(delta / 260.0),
                     0.15,
                     8.0);
                 Invalidate();
@@ -256,8 +257,8 @@ namespace Trade.It
                     0,
                     Math.Max(0, points.Count - visibleCount));
 
-                // Vertical movement translates the price range; it does not change zoom.
-                var verticalDelta = panStartPoint.Y - e.Y;
+                // Vertical movement translates the price range in the same direction as the mouse.
+                var verticalDelta = e.Y - panStartPoint.Y;
                 if (Math.Abs(verticalDelta) >= 0.5)
                 {
                     var plotHeight = Math.Max(1, Height - 50);
