@@ -1077,8 +1077,9 @@ namespace Trade.It
         {
             var filters = new[]
             {
-                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
-                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1)
+                (comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
+      (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
+      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
             };
             foreach (var filter in filters)
             {
@@ -1096,8 +1097,9 @@ namespace Trade.It
             comparisonFilterEventsAttached = true;
             var filters = new[]
             {
-                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
-                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1)
+                (comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
+      (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
+      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
             };
             foreach (var filter in filters)
             {
@@ -1187,9 +1189,7 @@ namespace Trade.It
         private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
         {
             if (!TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out var firstField, out var op, out var secondField, out var firstOffset, out var relativeOffset)) return symbols;
-            int totalOffset;
-            try { totalOffset = checked(firstOffset + relativeOffset); } catch (OverflowException) { return Enumerable.Empty<string>(); }
-            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, totalOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));
+            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));
         }
 
         private static bool TryGetComparisonSettings(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox, out string firstField, out string op, out string secondField, out int firstOffset, out int relativeOffset)
@@ -1222,9 +1222,9 @@ namespace Trade.It
                 foreach (var file in GetSymbolFiles(definition, symbol)) ReadComparisonRows(definition, file, symbol, symbolColumn, firstColumn, secondColumn, rows);
             }
             catch { return false; }
-            var firstIndex = rows.Count - 1 - firstOffset;
-            var secondIndex = rows.Count - 1 - secondOffset;
-            if (firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
+            var firstIndex = rows.Count - firstOffset;
+  var secondIndex = rows.Count - secondOffset;
+  if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
             var first = rows[firstIndex].First; var second = rows[secondIndex].Second;
             if (!first.HasValue || !second.HasValue) return false;
             left = first.Value; right = second.Value;
