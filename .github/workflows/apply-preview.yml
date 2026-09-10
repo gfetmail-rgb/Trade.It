@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Apply migration
-        run: python3 scripts/move_preview.py
+        run: python3 scripts/move_preview2.py
       - name: Build
         run: dotnet build Trade.It.csproj --configuration Release --no-restore
       - name: Commit and push
@@ -21,6 +21,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add MainForm.cs MainForm.Designer.cs PortfolioManagementForm.cs PortfolioManagementForm.Designer.cs
-          git rm .github/workflows/apply-preview.yml .github/workflows/move-stock-preview.yml scripts/move_preview.py
+          git rm .github/workflows/apply-preview.yml .github/workflows/move-stock-preview.yml scripts/move_preview.py scripts/move_preview2.py
           git commit -m "Move stock preview to portfolio management form"
           git push origin HEAD:main
