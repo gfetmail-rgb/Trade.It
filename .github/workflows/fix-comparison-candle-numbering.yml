@@ -1,0 +1,68 @@
+name: Fix comparison candle numbering
+
+on:
+  push:
+    branches:
+      - fix-comparison-candle-numbering
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch comparison filters
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('MainForm.cs')
+          text = path.read_text(encoding='utf-8')
+
+          old_tuple = '(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1)'
+          new_tuples = '''(comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
+                (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
+                (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)'''
+          text = text.replace(old_tuple + ',\n                ' + old_tuple, new_tuples)
+
+          old_apply = '''            int totalOffset;
+            try { totalOffset = checked(firstOffset + relativeOffset); } catch (OverflowException) { return Enumerable.Empty<string>(); }
+            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, totalOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));'''
+          new_apply = '''            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));'''
+          if old_apply not in text:
+              raise SystemExit('ApplyComparisonFilter block not found')
+          text = text.replace(old_apply, new_apply, 1)
+
+          old_indices = '''            var firstIndex = rows.Count - 1 - firstOffset;
+            var secondIndex = rows.Count - 1 - secondOffset;
+            if (firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;'''
+          new_indices = '''            var firstIndex = rows.Count - firstOffset;
+            var secondIndex = rows.Count - secondOffset;
+            if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;'''
+          if old_indices not in text:
+              raise SystemExit('Comparison index block not found')
+          text = text.replace(old_indices, new_indices, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs
+          git diff --cached --check
+          git commit -m "Fix comparison filters to use 1-based candle numbers"
+          git push
+
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/fix-comparison-candle-numbering.yml
+          git commit -m "Remove temporary comparison filter workflow"
+          git push
