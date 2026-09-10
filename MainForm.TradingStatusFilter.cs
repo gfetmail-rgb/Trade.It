@@ -6,8 +6,7 @@ namespace Trade.It
     public partial class MainForm
     {
         private bool tradingStatusFilterInitialized;
-        private Label? filterFoundCountLabel;
-        private Label? filterTotalCountLabel;
+        private Label? filterCountLabel;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -31,37 +30,25 @@ namespace Trade.It
             if (parent == null)
                 return;
 
-            // Keep the three items on the same bottom row of the Filters tab:
-            // clear button + found count + total portfolio count.
             clearFiltersButton.Width = 100;
             clearFiltersButton.Location = new Point(8, clearFiltersButton.Top);
 
-            filterFoundCountLabel = CreateFilterCountLabel("پیدا شده: ۰");
-            filterTotalCountLabel = CreateFilterCountLabel("کل سهام: ۰");
-
-            filterFoundCountLabel.Location = new Point(clearFiltersButton.Right + 4, clearFiltersButton.Top);
-            filterTotalCountLabel.Location = new Point(filterFoundCountLabel.Right + 4, clearFiltersButton.Top);
-
-            parent.Controls.Add(filterFoundCountLabel);
-            parent.Controls.Add(filterTotalCountLabel);
-            filterFoundCountLabel.BringToFront();
-            filterTotalCountLabel.BringToFront();
-            clearFiltersButton.BringToFront();
-        }
-
-        private static Label CreateFilterCountLabel(string text)
-        {
-            return new Label
+            filterCountLabel = new Label
             {
                 AutoSize = false,
-                Width = 100,
+                Width = 205,
                 Height = 36,
-                Text = text,
+                Text = "کل: ۰    پیدا شده: ۰",
                 TextAlign = ContentAlignment.MiddleCenter,
-                BorderStyle = BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.None,
                 RightToLeft = RightToLeft.Yes,
                 Font = new Font("Segoe UI", 9F)
             };
+
+            filterCountLabel.Location = new Point(clearFiltersButton.Right + 4, clearFiltersButton.Top);
+            parent.Controls.Add(filterCountLabel);
+            filterCountLabel.BringToFront();
+            clearFiltersButton.BringToFront();
         }
 
         private void TradingStatusFilterChanged(object? sender, EventArgs e)
@@ -149,11 +136,8 @@ namespace Trade.It
 
         private void UpdateFilterCounts(int foundCount, int totalCount)
         {
-            if (filterFoundCountLabel != null)
-                filterFoundCountLabel.Text = $"پیدا شده: {ToPersianDigits(foundCount.ToString())}";
-
-            if (filterTotalCountLabel != null)
-                filterTotalCountLabel.Text = $"کل سهام: {ToPersianDigits(totalCount.ToString())}";
+            if (filterCountLabel != null)
+                filterCountLabel.Text = $"کل: {ToPersianDigits(totalCount.ToString())}    پیدا شده: {ToPersianDigits(foundCount.ToString())}";
         }
 
         private bool HasTradeOnToday(PortfolioDefinition definition, string symbol)
@@ -179,7 +163,6 @@ namespace Trade.It
             }
             catch
             {
-                // Invalid or unreadable source data is not considered a trade today.
             }
 
             return false;
@@ -290,8 +273,6 @@ namespace Trade.It
 
                 if (definition.Calendar == InputCalendar.Gregorian)
                 {
-                    // Convert the source Gregorian date to Persian before comparison,
-                    // so both sides of the comparison use the application's Persian date.
                     var sourceGregorian = new DateTime(year, month, day);
                     return persian.GetYear(sourceGregorian) == persian.GetYear(today) &&
                            persian.GetMonth(sourceGregorian) == persian.GetMonth(today) &&
