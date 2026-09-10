@@ -313,9 +313,9 @@ namespace Trade.It
             // symbolsTitleLabel
             // 
             symbolsTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            symbolsTitleLabel.Location = new Point(-13, 352);
+            symbolsTitleLabel.Location = new Point(20, 352);
             symbolsTitleLabel.Name = "symbolsTitleLabel";
-            symbolsTitleLabel.Size = new Size(136, 34);
+            symbolsTitleLabel.Size = new Size(1368, 34);
             symbolsTitleLabel.TabIndex = 28;
             symbolsTitleLabel.Text = "نمادهای سبد";
             symbolsTitleLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -448,7 +448,7 @@ namespace Trade.It
             MinimumSize = new Size(1100, 700);
             Name = "PortfolioManagementForm";
             RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
+            RightToLeftLayout = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "مدیریت سبدها";
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).EndInit();
