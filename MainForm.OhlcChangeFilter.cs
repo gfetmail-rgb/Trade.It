@@ -143,6 +143,7 @@ namespace Trade.It
             if (resettingFilters)
                 return;
 
+            UpdateOhlcChangeFilterAvailability();
             ApplyOhlcChangeFilterToGridWithWaitCursor();
         }
 
@@ -151,6 +152,7 @@ namespace Trade.It
             if (resettingFilters)
                 return;
 
+            UpdateOhlcChangeFilterAvailability();
             ApplyOhlcChangeFilterToGridWithWaitCursor();
         }
 
