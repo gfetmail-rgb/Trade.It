@@ -19,8 +19,19 @@ namespace Trade.It
 
             mainMenuStrip.RightToLeft = RightToLeft.No;
 
-            portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
-            portfolioManagementMenuItem.Click += (_, _) => new PortfolioManagementForm().ShowDialog(this);
+            portfolioDefinitionMenuItem.Click += (_, _) =>
+            {
+                using var form = new PortfolioDefinitionForm();
+                form.ShowDialog(this);
+                RefreshPortfolioListAndClearSelection();
+            };
+
+            portfolioManagementMenuItem.Click += (_, _) =>
+            {
+                using var form = new PortfolioManagementForm();
+                form.ShowDialog(this);
+                RefreshPortfolioListAndClearSelection();
+            };
 
             tabPage3.Controls.Clear();
             tabPage3.AutoScroll = true;
@@ -54,7 +65,16 @@ namespace Trade.It
 
         private void MainForm_Portfolios_Load(object? sender, EventArgs e)
         {
+            RefreshPortfolioListAndClearSelection();
+        }
+
+        private void RefreshPortfolioListAndClearSelection()
+        {
             LoadPortfoliosIntoGrid();
+            portfolioComboBox.SelectedIndex = -1;
+            stocksDataGridView.Rows.Clear();
+            displayedPortfolioName = null;
+            UpdateSelectionControls();
         }
 
         private void LoadPortfoliosIntoGrid()
@@ -91,15 +111,6 @@ namespace Trade.It
                     catch
                     {
                     }
-                }
-
-                if (portfolioComboBox.Items.Count > 0)
-                {
-                    portfolioComboBox.SelectedIndex = 0;
-                }
-                else
-                {
-                    UpdateSelectionControls();
                 }
             }
             finally
@@ -234,11 +245,12 @@ namespace Trade.It
             {
                 var json = JsonSerializer.Serialize(newDefinition, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(file, json, new System.Text.UTF8Encoding(false));
-                LoadPortfoliosIntoGrid();
-
+                RefreshPortfolioListAndClearSelection();
                 var index = portfolioComboBox.Items.IndexOf(newName);
                 if (index >= 0)
+                {
                     portfolioComboBox.SelectedIndex = index;
+                }
             }
             catch (Exception ex)
             {
@@ -309,9 +321,13 @@ namespace Trade.It
 
                 var json = JsonSerializer.Serialize(current, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(file, json, new System.Text.UTF8Encoding(false));
-                LoadPortfoliosIntoGrid();
-                if (portfolioComboBox.Items.Contains(current.Name))
-                    portfolioComboBox.SelectedItem = current.Name;
+
+                // After deletion the grid is cleared, the portfolio list is rebuilt,
+                // and the current portfolio is selected again so its remaining symbols are reloaded.
+                RefreshPortfolioListAndClearSelection();
+                var index = portfolioComboBox.Items.IndexOf(current.Name);
+                if (index >= 0)
+                    portfolioComboBox.SelectedIndex = index;
             }
             catch (Exception ex)
             {
