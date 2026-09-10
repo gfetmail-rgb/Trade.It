@@ -851,12 +851,46 @@ namespace Trade.It
         {
             if (!HasDateColumn(definition)) return symbols;
             var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();
-            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0) return symbols;
+            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return symbols;
             if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null) return symbols;
-            var targetDate = DateTime.Today.AddDays(-n).Date;
+
+            var fromDate = DateTime.Today.Date.AddDays(-(n - 1));
             var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var showTraded = !IsNegativePastDaysOption(op);
-            return symbols.Where(symbol => showTraded == HasTradeOnDate(definition, symbol, targetDate));
+            return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date));
+        }
+
+        private bool HasTradeInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)
+        {
+            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            if (dateColumn <= 0) return false;
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            try
+            {
+                foreach (var file in GetSymbolFiles(definition, symbol))
+                    if (FileContainsDateRange(definition, file, symbol, symbolColumn, dateColumn, fromDate, toDate)) return true;
+            }
+            catch { }
+            return false;
+        }
+
+        private bool FileContainsDateRange(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn, DateTime fromDate, DateTime toDate)
+        {
+            var firstLine = true;
+            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                var row = SplitTradingDataLine(line, definition.Separator);
+                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
+                firstLine = false;
+                if (definition.SymbolSource == SymbolSource.InsideFile &&
+                    (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
+                if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date)) continue;
+                if (date.Date >= fromDate && date.Date <= toDate) return true;
+            }
+            return false;
         }
 
         private static bool IsNegativePastDaysOption(string value)
