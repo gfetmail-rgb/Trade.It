@@ -577,7 +577,7 @@ namespace Trade.It
             }
         }
 
-        private static string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)
+        private string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)
         {
             if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
                 return string.Empty;
