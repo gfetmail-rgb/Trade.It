@@ -4,65 +4,21 @@ namespace Trade.It
 {
     public partial class MainForm
     {
-        private GroupBox? ohlcChangeFilterGroup;
-        private ComboBox? ohlcChangeFieldComboBox;
-        private TextBox? ohlcChangeDaysTextBox;
-        private TextBox? ohlcChangePercentTextBox;
-        private ComboBox? ohlcChangeDirectionComboBox;
-        private bool ohlcChangeFilterInitialized;
         private bool ohlcChangeFilterEventsAttached;
 
-        private void InitializeOhlcChangeFilter()
+        protected override void OnCreateControl()
         {
-            if (ohlcChangeFilterInitialized || tabPage2 == null)
+            base.OnCreateControl();
+
+            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
-
-            ohlcChangeFilterInitialized = true;
-
-            ohlcChangeFilterGroup = new GroupBox
-            {
-                Name = "ohlcChangeFilterGroup",
-                Text = "9. رشد/افت OHLC",
-                Dock = DockStyle.Top,
-                Height = 105,
-                TabStop = false,
-                RightToLeft = RightToLeft.Yes,
-                Padding = new Padding(6)
-            };
-
-            ohlcChangeFieldComboBox = new ComboBox
-            {
-                Name = "ohlcChangeFieldComboBox",
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Location = new Point(220, 34),
-                Size = new Size(82, 33)
-            };
-            ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C" });
-
-            var fieldLabel = new Label { AutoSize = true, Text = "قیمت", Location = new Point(306, 38) };
-            ohlcChangeDaysTextBox = new TextBox { Name = "ohlcChangeDaysTextBox", Location = new Point(135, 34), Size = new Size(57, 31), Text = "5", TextAlign = HorizontalAlignment.Center };
-            var daysLabel = new Label { AutoSize = true, Text = "کندل قبل", Location = new Point(68, 38) };
-            ohlcChangePercentTextBox = new TextBox { Name = "ohlcChangePercentTextBox", Location = new Point(8, 70), Size = new Size(57, 31), Text = "5", TextAlign = HorizontalAlignment.Center };
-            var percentLabel = new Label { AutoSize = true, Text = "%", Location = new Point(69, 73) };
-            ohlcChangeDirectionComboBox = new ComboBox { Name = "ohlcChangeDirectionComboBox", DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(135, 70), Size = new Size(167, 33) };
-            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { "رشد حداقل", "افت حداقل" });
-
-            ohlcChangeFilterGroup.Controls.Add(ohlcChangeFieldComboBox);
-            ohlcChangeFilterGroup.Controls.Add(fieldLabel);
-            ohlcChangeFilterGroup.Controls.Add(ohlcChangeDaysTextBox);
-            ohlcChangeFilterGroup.Controls.Add(daysLabel);
-            ohlcChangeFilterGroup.Controls.Add(ohlcChangePercentTextBox);
-            ohlcChangeFilterGroup.Controls.Add(percentLabel);
-            ohlcChangeFilterGroup.Controls.Add(ohlcChangeDirectionComboBox);
-            tabPage2.Controls.Add(ohlcChangeFilterGroup);
-            ohlcChangeFilterGroup.BringToFront();
 
             AttachOhlcChangeFilterEvents();
         }
 
         private void AttachOhlcChangeFilterEvents()
         {
-            if (ohlcChangeFilterEventsAttached || IsDisposed || ohlcChangeFieldComboBox == null || ohlcChangeDaysTextBox == null || ohlcChangePercentTextBox == null || ohlcChangeDirectionComboBox == null)
+            if (ohlcChangeFilterEventsAttached || IsDisposed)
                 return;
 
             ohlcChangeFilterEventsAttached = true;
@@ -70,6 +26,7 @@ namespace Trade.It
             ohlcChangeDaysTextBox.TextChanged += OhlcChangeFilterChanged;
             ohlcChangePercentTextBox.TextChanged += OhlcChangeFilterChanged;
             ohlcChangeDirectionComboBox.SelectedIndexChanged += OhlcChangeFilterChanged;
+
             nameComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
             nameTextBox.TextChanged += OhlcBaseFilterChanged;
             volumeRatioTextBox.TextChanged += OhlcBaseFilterChanged;
@@ -83,6 +40,7 @@ namespace Trade.It
             portfolioComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
             refreshButton.Click += OhlcBaseFilterChanged;
             clearFiltersButton.Click += OhlcBaseFilterChanged;
+
             UpdateOhlcChangeFilterAvailability();
         }
 
@@ -102,12 +60,13 @@ namespace Trade.It
 
         private void UpdateOhlcChangeFilterAvailability()
         {
-            if (ohlcChangeFilterGroup == null || ohlcChangeFieldComboBox == null) return;
-            if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
             {
                 ohlcChangeFilterGroup.Enabled = false;
                 return;
             }
+
             var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
             ohlcChangeFilterGroup.Enabled = !string.IsNullOrEmpty(field) && GetMappingColumn(definition, field) > 0;
         }
@@ -117,46 +76,74 @@ namespace Trade.It
             if (!IsOhlcChangeFilterActive()) return;
             UseWaitCursor = true;
             Cursor.Current = Cursors.WaitCursor;
-            try { Application.DoEvents(); ApplyOhlcChangeFilterToGrid(); }
-            finally { UseWaitCursor = false; Cursor.Current = Cursors.Default; Application.DoEvents(); }
+            try
+            {
+                Application.DoEvents();
+                ApplyOhlcChangeFilterToGrid();
+            }
+            finally
+            {
+                UseWaitCursor = false;
+                Cursor.Current = Cursors.Default;
+                Application.DoEvents();
+            }
         }
 
         private bool IsOhlcChangeFilterActive()
         {
-            if (ohlcChangeFieldComboBox == null || ohlcChangeDaysTextBox == null || ohlcChangePercentTextBox == null || ohlcChangeDirectionComboBox == null) return false;
-            if (ohlcChangeFieldComboBox.SelectedItem == null || ohlcChangeDirectionComboBox.SelectedItem == null) return false;
-            if (string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem.ToString()))) return false;
-            if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return false;
-            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return false;
+            if (ohlcChangeFieldComboBox.SelectedItem == null || ohlcChangeDirectionComboBox.SelectedItem == null)
+                return false;
+            if (string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem.ToString())))
+                return false;
+            if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0)
+                return false;
+            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0)
+                return false;
             return GetOhlcChangeDirection() >= 0;
         }
 
         private int GetOhlcChangeDirection()
         {
-            var value = ohlcChangeDirectionComboBox?.SelectedItem?.ToString()?.Trim() ?? string.Empty;
+            var value = ohlcChangeDirectionComboBox.SelectedItem?.ToString()?.Trim() ?? string.Empty;
             return value.Contains("رشد", StringComparison.Ordinal) ? 1 : value.Contains("افت", StringComparison.Ordinal) ? -1 : -1;
         }
 
         private void ApplyOhlcChangeFilterToGrid()
         {
-            if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition) || ohlcChangeFieldComboBox == null || ohlcChangeDaysTextBox == null || ohlcChangePercentTextBox == null) return;
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
+
             var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
             if (string.IsNullOrEmpty(field)) return;
             if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return;
             if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return;
+
             var direction = GetOhlcChangeDirection();
             if (direction < 0) return;
+
             var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();
-            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && (direction > 0 ? changePercent >= percent : changePercent <= -percent)).ToList();
-            var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+            var result = symbols.Where(symbol =>
+                TryGetOhlcChange(definition, symbol, field, n, out var changePercent) &&
+                (direction > 0 ? changePercent >= percent : changePercent <= -percent)).ToList();
+
+            var totalCount = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count();
             UpdateFilterCounts(result.Count, totalCount);
+
             internalPortfolioUpdate = true;
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
+                for (var i = 0; i < result.Count; i++)
+                    stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
             }
-            finally { internalPortfolioUpdate = false; }
+            finally
+            {
+                internalPortfolioUpdate = false;
+            }
+
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
@@ -177,17 +164,21 @@ namespace Trade.It
             changePercent = 0;
             var column = GetMappingColumn(definition, field);
             if (column <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
+
             var values = new List<double>();
             var symbolColumn = GetMappingColumn(definition, "نماد");
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol)) ReadOhlcValues(definition, file, symbol, symbolColumn, column, values);
+                foreach (var file in GetSymbolFiles(definition, symbol))
+                    ReadOhlcValues(definition, file, symbol, symbolColumn, column, values);
             }
             catch { return false; }
+
             if (values.Count <= n) return false;
             var latest = values[^1];
             var previous = values[values.Count - 1 - n];
             if (previous == 0 || double.IsNaN(latest) || double.IsInfinity(latest) || double.IsNaN(previous) || double.IsInfinity(previous)) return false;
+
             changePercent = (latest - previous) / Math.Abs(previous) * 100.0;
             return !double.IsNaN(changePercent) && !double.IsInfinity(changePercent);
         }
@@ -201,9 +192,15 @@ namespace Trade.It
                 var row = SplitTradingDataLine(line, definition.Separator);
                 if (firstLine && definition.HasHeader) { firstLine = false; continue; }
                 firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile && (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
+
+                if (definition.SymbolSource == SymbolSource.InsideFile &&
+                    (symbolColumn <= 0 || symbolColumn > row.Length ||
+                     !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+
                 if (valueColumn > row.Length) continue;
-                if (TryParseTradingNumber(row[valueColumn - 1], out var value)) values.Add(value);
+                if (TryParseTradingNumber(row[valueColumn - 1], out var value))
+                    values.Add(value);
             }
         }
 
