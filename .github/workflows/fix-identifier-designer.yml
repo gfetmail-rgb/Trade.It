@@ -1,7 +1,8 @@
 name: Fix identifier designer parent
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 permissions:
   contents: write
