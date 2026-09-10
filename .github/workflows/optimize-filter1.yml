@@ -2,6 +2,8 @@ name: optimize-filter1
 on:
   push:
     branches: [optimize-filter1]
+permissions:
+  contents: write
 jobs:
   patch:
     runs-on: ubuntu-latest
