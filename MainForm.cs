@@ -544,11 +544,20 @@ namespace Trade.It
             if (!string.IsNullOrWhiteSpace(displayedPortfolioName))
                 loadedPortfolios.TryGetValue(displayedPortfolioName, out definition);
 
-            var hasDate = HasDateColumn(definition);
-            var hasVolume = HasVolumeColumn(definition);
-            tradingStatusGroup.Enabled = hasDate;
-            pastDaysGroup.Enabled = hasDate;
-            volumeRatioGroup.Enabled = hasVolume;
+            var hasStocks = stocksDataGridView.Rows.Count > 0;
+            var hasDate = hasStocks && HasDateColumn(definition);
+            var hasVolume = hasStocks && HasVolumeColumn(definition);
+
+            // When no portfolio is selected or its stock grid is empty, all filters are disabled.
+            // Once stocks exist, date/volume-dependent filters are enabled only when their data exists.
+            tradingStatusGroup.Enabled = hasStocks && hasDate;
+            pastDaysGroup.Enabled = hasStocks && hasDate;
+            volumeRatioGroup.Enabled = hasStocks && hasVolume;
+            nameFilterGroup.Enabled = hasStocks;
+            comparisonGroup7.Enabled = hasStocks;
+            comparisonGroup8.Enabled = hasStocks;
+            groupBox3.Enabled = hasStocks;
+            ohlcChangeFilterGroup.Enabled = hasStocks;
 
             if (!hasDate)
             {
