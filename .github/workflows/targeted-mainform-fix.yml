@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.github/workflows/targeted-mainform-fix.yml'
+      - 'grid-repair-trigger.txt'
 permissions:
   contents: write
 jobs:
