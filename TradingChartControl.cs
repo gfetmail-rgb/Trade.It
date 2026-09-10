@@ -39,6 +39,7 @@ namespace Trade.It
 
         private bool verticalAxisDrag;
         private Point verticalAxisStartPoint;
+        private double verticalAxisStartZoom;
 
         private bool showGrid;
         private bool showCrosshair = true;
@@ -177,6 +178,7 @@ namespace Trade.It
             {
                 panning = false;
                 verticalAxisStartPoint = e.Location;
+                verticalAxisStartZoom = verticalZoom;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
@@ -241,9 +243,11 @@ namespace Trade.It
             if (verticalAxisDrag && Capture && points.Count > 1)
             {
                 // Moving the price axis upward zooms in; moving it downward zooms out.
+                // Calculate from the zoom level at mouse-down so sensitivity is stable
+                // and does not compound on every mouse-move event.
                 var delta = verticalAxisStartPoint.Y - e.Y;
                 verticalZoom = Math.Clamp(
-                    verticalZoom * Math.Exp(delta / 700.0),
+                    verticalAxisStartZoom * Math.Exp(delta / 700.0),
                     0.15,
                     8.0);
                 Invalidate();
