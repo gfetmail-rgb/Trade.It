@@ -1,0 +1,78 @@
+name: Fix filter chain
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-filter-chain.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch MainForm.cs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('MainForm.cs')
+          text = path.read_text(encoding='utf-8')
+
+          old = '''            filtered = ApplyNameFilter(filtered);\n            filtered = ApplyVolumeRatioFilter(filtered, definition);\n            filtered = ApplyPastDaysFilter(filtered, definition);\n            var result = filtered.ToList();'''
+          new = '''            filtered = ApplyNameFilter(filtered);\n            filtered = ApplyVolumeRatioFilter(filtered, definition);\n            filtered = ApplyPastDaysFilter(filtered, definition);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);\n            if (IsOhlcChangeFilterActive())\n            {\n                var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());\n                var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();\n                var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();\n                var op = GetOhlcChangeOperator();\n                if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && !string.IsNullOrWhiteSpace(op))\n                    filtered = filtered.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op));\n            }\n            var result = filtered.ToList();'''
+          if old not in text:
+              raise SystemExit('MASTER_FILTER_BLOCK_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''        private void ApplyComparisonFiltersToGridWithWaitCursor()\n        {\n            if (!HasAnyActiveComparisonFilter()) return;\n            UseWaitCursor = true;\n            Cursor.Current = Cursors.WaitCursor;\n            try { Application.DoEvents(); ApplyComparisonFiltersToGrid(); }\n            finally { UseWaitCursor = false; Cursor.Current = Cursors.Default; Application.DoEvents(); }\n        }'''
+          new = '''        private void ApplyComparisonFiltersToGridWithWaitCursor()\n        {\n            ApplyTradingStatusFilterWithWaitCursor();\n        }'''
+          if old not in text:
+              raise SystemExit('COMPARISON_WRAPPER_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''        private void ApplyOhlcChangeFilterToGridWithWaitCursor()\n        {\n            if (!IsOhlcChangeFilterActive()) return;\n            UseWaitCursor = true; Cursor.Current = Cursors.WaitCursor;\n            try { Application.DoEvents(); ApplyOhlcChangeFilterToGrid(); }\n            finally { UseWaitCursor = false; Cursor.Current = Cursors.Default; Application.DoEvents(); }\n        }'''
+          new = '''        private void ApplyOhlcChangeFilterToGridWithWaitCursor()\n        {\n            ApplyTradingStatusFilterWithWaitCursor();\n        }'''
+          if old not in text:
+              raise SystemExit('OHLC_WRAPPER_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return false;'''
+          new = '''            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent)) return false;'''
+          if old not in text:
+              raise SystemExit('OHLC_PERCENT_VALIDATION_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''            var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();\n            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();'''
+          new = '''            var symbols = (definition.Symbols ?? new List<string>())\n                .Where(s => !string.IsNullOrWhiteSpace(s))\n                .Distinct(StringComparer.OrdinalIgnoreCase)\n                .ToList();\n            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();'''
+          if old not in text:
+              raise SystemExit('OHLC_GRID_SOURCE_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''            IEnumerable<string> filtered = GetDisplayedGridSymbols();\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);'''
+          new = '''            IEnumerable<string> filtered = (definition.Symbols ?? new List<string>())\n                .Where(s => !string.IsNullOrWhiteSpace(s))\n                .Distinct(StringComparer.OrdinalIgnoreCase);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);\n            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);'''
+          if old not in text:
+              raise SystemExit('COMPARISON_METHOD_BLOCK_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          old = '''        private bool HasAnyActiveComparisonFilter() =>\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);'''
+          new = '''        private bool HasAnyActiveComparisonFilter() =>\n            IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1) ||\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2) ||\n            IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);'''
+          if old not in text:
+              raise SystemExit('ACTIVE_COMPARISON_BLOCK_NOT_FOUND')
+          text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.cs
+          git diff --cached --exit-code && exit 0 || true
+          git commit -m "Fix filter chain and comparison filters"
+          git push
