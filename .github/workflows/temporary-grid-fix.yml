@@ -1,0 +1,33 @@
+name: Temporary Grid Fix
+on:
+  push:
+    branches: [ main ]
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix checkbox editability
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8')
+          old = 'stocksDataGridView.ReadOnly = true;'
+          if old not in s:
+              raise SystemExit('Expected DataGridView ReadOnly setting was not found')
+          s = s.replace(old, 'stocksDataGridView.ReadOnly = false;', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.Designer.cs .github/workflows/temporary-grid-fix.yml
+          git diff --cached --quiet && exit 1
+          git commit -m "Enable stock grid checkbox editing"
+          git push
