@@ -7,6 +7,7 @@ namespace Trade.It
     {
         private bool tradingStatusFilterInitialized;
         private Label? filterCountLabel;
+        private bool resettingFilters;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -24,6 +25,8 @@ namespace Trade.It
             refreshButton.Click += TradingStatusRefreshChanged;
             nameComboBox.SelectedIndexChanged += NameFilterChanged;
             nameTextBox.TextChanged += NameFilterChanged;
+            clearFiltersButton.Click += ClearFiltersButton_Click;
+            controlTabControl.SelectedIndexChanged += FilterTabSelected;
         }
 
         private void InitializeFilterStatusDisplay()
@@ -53,8 +56,52 @@ namespace Trade.It
             clearFiltersButton.BringToFront();
         }
 
+        private void FilterTabSelected(object? sender, EventArgs e)
+        {
+            if (controlTabControl.SelectedTab == tabPage2)
+                nameComboBox.SelectedIndex = -1;
+        }
+
+        private void ClearFiltersButton_Click(object? sender, EventArgs e)
+        {
+            resettingFilters = true;
+            try
+            {
+                statusAllRadio.Checked = true;
+                statusPositiveRadio.Checked = false;
+                statusNegativeRadio.Checked = false;
+
+                ResetFilterControls(tabPage2);
+
+                statusAllRadio.Checked = true;
+                nameComboBox.SelectedIndex = -1;
+            }
+            finally
+            {
+                resettingFilters = false;
+            }
+
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private static void ResetFilterControls(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                if (control is TextBox textBox)
+                    textBox.Clear();
+                else if (control is ComboBox comboBox)
+                    comboBox.SelectedIndex = -1;
+                else if (control is GroupBox || control is Panel)
+                    ResetFilterControls(control);
+            }
+        }
+
         private void TradingStatusFilterChanged(object? sender, EventArgs e)
         {
+            if (resettingFilters)
+                return;
+
             if (sender is RadioButton radio && !radio.Checked)
                 return;
             ApplyTradingStatusFilterWithWaitCursor();
@@ -62,16 +109,22 @@ namespace Trade.It
 
         private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
         {
+            if (resettingFilters)
+                return;
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private void TradingStatusRefreshChanged(object? sender, EventArgs e)
         {
+            if (resettingFilters)
+                return;
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private void NameFilterChanged(object? sender, EventArgs e)
         {
+            if (resettingFilters)
+                return;
             ApplyTradingStatusFilterWithWaitCursor();
         }
 
