@@ -21,11 +21,9 @@ jobs:
 
           main = Path('MainForm.cs')
           text = main.read_text(encoding='utf-8-sig')
-
           old = '''        private void ApplyTradingStatusFilter()\n        {\n            if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))\n            {\n                UpdateFilterCounts(0, 0);\n                return;\n            }\n\n            var symbols = (definition.Symbols ?? new List<string>())\n                .Where(s => !string.IsNullOrWhiteSpace(s))\n                .Distinct(StringComparer.OrdinalIgnoreCase)\n                .ToList();\n            IEnumerable<string> filtered = symbols;\n\n            if (HasDateColumn(definition) && !statusAllRadio.Checked)\n            {\n                var todaySymbols = GetSymbolsTradedOnDate(definition, symbols, DateTime.Today.Date);\n                var showTraded = statusPositiveRadio.Checked;\n                filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));\n            }\n\n            filtered = ApplyNameFilter(filtered);\n            filtered = ApplyVolumeRatioFilter(filtered, definition);\n            filtered = ApplyPastDaysFilter(filtered, definition);\n            var result = filtered.ToList();\n            UpdateFilterCounts(result.Count, symbols.Count);\n\n            internalPortfolioUpdate = true;\n            try\n            {\n                stocksDataGridView.Rows.Clear();\n                for (var i = 0; i < result.Count; i++)\n                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);\n            }\n            finally\n            {\n                internalPortfolioUpdate = false;\n            }\n\n            selectAllCheckBox.Checked = false;\n            selectNoneCheckBox.Checked = result.Count > 0;\n            UpdateSelectionControls();\n            _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);\n        }'''
           new = '''        private void ApplyTradingStatusFilter() => ApplyAllFiltersToGrid();'''
-          if old not in text:
-              raise SystemExit('ApplyTradingStatusFilter block not found')
+          if old not in text: raise SystemExit('ApplyTradingStatusFilter block not found')
           text = text.replace(old, new, 1)
 
           start = text.index('        private void ApplyComparisonFiltersToGrid()')
@@ -40,27 +38,20 @@ jobs:
                 return;
             }
 
-            var symbols = (definition.Symbols ?? new List<string>())
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            var symbols = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             IEnumerable<string> filtered = symbols;
-
             if (HasDateColumn(definition) && !statusAllRadio.Checked)
             {
                 var todaySymbols = GetSymbolsTradedOnDate(definition, symbols, DateTime.Today.Date);
                 var showTraded = statusPositiveRadio.Checked;
                 filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
             }
-
             filtered = ApplyNameFilter(filtered);
             filtered = ApplyVolumeRatioFilter(filtered, definition);
             filtered = ApplyPastDaysFilter(filtered, definition);
-
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
-
             if (IsOhlcChangeFilterActive())
             {
                 var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
@@ -69,22 +60,15 @@ jobs:
                 var op = GetOhlcChangeOperator();
                 filtered = filtered.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op));
             }
-
             var result = filtered.ToList();
             UpdateFilterCounts(result.Count, symbols.Count);
-
             internalPortfolioUpdate = true;
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
             }
-            finally
-            {
-                internalPortfolioUpdate = false;
-            }
-
+            finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
@@ -95,26 +79,22 @@ jobs:
 
           old_active = '''        private bool HasAnyActiveComparisonFilter() =>\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);'''
           new_active = '''        private bool HasAnyActiveComparisonFilter() =>\n            IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2) ||\n            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||\n            IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3) ||\n            IsOhlcChangeFilterActive();'''
-          if old_active not in text:
-              raise SystemExit('HasAnyActiveComparisonFilter block not found')
+          if old_active not in text: raise SystemExit('HasAnyActiveComparisonFilter block not found')
           text = text.replace(old_active, new_active, 1)
 
           old_ohlc = '''        private void ApplyOhlcChangeFilterToGrid()\n        {\n            if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;\n            var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());\n            if (string.IsNullOrEmpty(field)) return;\n            if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return;\n            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return;\n            var op = GetOhlcChangeOperator();\n            if (string.IsNullOrWhiteSpace(op)) return;\n            var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();\n            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();\n            var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();\n            UpdateFilterCounts(result.Count, totalCount);\n            internalPortfolioUpdate = true;\n            try\n            {\n                stocksDataGridView.Rows.Clear();\n                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false);\n            }\n            finally { internalPortfolioUpdate = false; }\n            selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();\n        }'''
           new_ohlc = '''        private void ApplyOhlcChangeFilterToGrid() => ApplyAllFiltersToGrid();'''
-          if old_ohlc not in text:
-              raise SystemExit('ApplyOhlcChangeFilterToGrid block not found')
+          if old_ohlc not in text: raise SystemExit('ApplyOhlcChangeFilterToGrid block not found')
           text = text.replace(old_ohlc, new_ohlc, 1)
-
           main.write_text(text, encoding='utf-8-sig')
 
           designer = Path('PortfolioDefinitionForm.Designer.cs')
           dtext = designer.read_text(encoding='utf-8-sig')
           old_items = 'dateFormatComboBox.Items.AddRange(new object[] { "YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD" });'
           new_items = 'dateFormatComboBox.Items.AddRange(new object[] { "YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD" });'
-          if old_items not in dtext:
-              raise SystemExit('Date format items not found')
-          dtext = dtext.replace(old_items, new_items, 1)
-          designer.write_text(dtext, encoding='utf-8-sig')
+          if old_items not in dtext: raise SystemExit('Date format items not found')
+          designer.write_text(dtext.replace(old_items, new_items, 1), encoding='utf-8-sig')
+
       - name: Commit changes and remove workflow
         shell: bash
         run: |
