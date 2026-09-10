@@ -30,6 +30,7 @@ namespace Trade.It
         private int panStartFirstIndex;
         private double panStartVerticalPanOffset;
         private double panStartVerticalRange;
+        private double panStartHorizontalOffset;
 
         private bool horizontalAxisDrag;
         private Point horizontalAxisStartPoint;
@@ -44,6 +45,7 @@ namespace Trade.It
         private Point crosshairPoint;
         private double verticalZoom = 1.0;
         private double verticalPanOffset;
+        private double horizontalPanOffset;
 
         public TradingChartControl()
         {
@@ -63,6 +65,7 @@ namespace Trade.It
             firstIndex = Math.Max(0, points.Count - visibleCount);
             verticalZoom = 1.0;
             verticalPanOffset = 0.0;
+            horizontalPanOffset = 0.0;
             showCrosshair = true;
             Invalidate();
         }
@@ -95,6 +98,7 @@ namespace Trade.It
             firstIndex = Math.Max(0, points.Count - visibleCount);
             verticalZoom = 1.0;
             verticalPanOffset = 0.0;
+            horizontalPanOffset = 0.0;
             Invalidate();
         }
 
@@ -184,6 +188,7 @@ namespace Trade.It
                 panStartPoint = e.Location;
                 panStartFirstIndex = firstIndex;
                 panStartVerticalPanOffset = verticalPanOffset;
+                panStartHorizontalOffset = horizontalPanOffset;
 
                 var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
                 var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
@@ -238,7 +243,7 @@ namespace Trade.It
                 // Moving the price axis upward zooms in; moving it downward zooms out.
                 var delta = verticalAxisStartPoint.Y - e.Y;
                 verticalZoom = Math.Clamp(
-                    verticalZoom * Math.Exp(delta / 260.0),
+                    verticalZoom * Math.Exp(delta / 700.0),
                     0.15,
                     8.0);
                 Invalidate();
@@ -247,15 +252,15 @@ namespace Trade.It
 
             if (panning && Capture && points.Count > 1)
             {
-                // Horizontal movement pans through the candles; it does not zoom.
+                // Horizontal movement moves the chart itself. The initial chart is shifted
+                // 25% to the left, but the full chart area remains available for panning/zooming.
                 var horizontalDelta = e.X - panStartPoint.X;
-                var step = (int)Math.Round(
-                    horizontalDelta * visibleCount /
-                    (double)Math.Max(1, Width - 70));
-                firstIndex = Math.Clamp(
-                    panStartFirstIndex - step,
-                    0,
-                    Math.Max(0, points.Count - visibleCount));
+                horizontalPanOffset = panStartHorizontalOffset + horizontalDelta;
+
+                // Keep the chart inside a reasonable movable range. In particular, the user
+                // can move it back to the right edge instead of having a permanent 25% gap.
+                var plotWidth = Math.Max(1, Width - 70);
+                horizontalPanOffset = Math.Clamp(horizontalPanOffset, -plotWidth, plotWidth);
 
                 // Vertical movement translates the price range in the same direction as the mouse.
                 var verticalDelta = e.Y - panStartPoint.Y;
@@ -295,9 +300,9 @@ namespace Trade.It
             var left = 55;
             var top = 15;
             var bottom = 35;
-            // Keep 25% of the usable horizontal area empty on the right side of the chart.
-            var availableWidth = Math.Max(1, Width - left - 15);
-            var right = 15 + (int)Math.Round(availableWidth * 0.25);
+            // The full horizontal chart area remains available. The 25% offset is only
+            // the initial position of the chart, not a permanent reduction of its width.
+            var right = 15;
             var plot = new Rectangle(left, top, Math.Max(1, Width - left - right), Math.Max(1, Height - top - bottom));
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
@@ -354,7 +359,8 @@ namespace Trade.It
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
 
             var step = plot.Width / (double)Math.Max(1, visible.Count);
-            double X(int index) => plot.Left + step * (index + 0.5);
+            var initialOffset = -plot.Width * 0.25;
+            double X(int index) => plot.Left + step * (index + 0.5) + initialOffset + horizontalPanOffset;
             double Y(double value) => plot.Bottom - (value - min) / (max - min) * plot.Height;
 
             if (chartType == TradingChartType.Line)
