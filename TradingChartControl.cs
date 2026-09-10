@@ -44,6 +44,7 @@ namespace Trade.It
         private bool showGrid;
         private bool showCrosshair = true;
         private Point crosshairPoint;
+        private int crosshairIndex = -1;
         private double verticalZoom = 1.0;
         private double verticalPanOffset;
         private double horizontalPanOffset;
@@ -68,6 +69,7 @@ namespace Trade.It
             verticalPanOffset = 0.0;
             horizontalPanOffset = 0.0;
             showCrosshair = true;
+            crosshairIndex = -1;
             Invalidate();
         }
 
@@ -100,6 +102,7 @@ namespace Trade.It
             verticalZoom = 1.0;
             verticalPanOffset = 0.0;
             horizontalPanOffset = 0.0;
+            crosshairIndex = -1;
             Invalidate();
         }
 
@@ -116,6 +119,7 @@ namespace Trade.It
 
             visibleCount = newCount;
             firstIndex = Math.Max(0, points.Count - newCount);
+            crosshairIndex = -1;
             Invalidate();
         }
 
@@ -216,6 +220,20 @@ namespace Trade.It
             if (showCrosshair)
             {
                 crosshairPoint = e.Location;
+
+                var plotLeft = 55;
+                var plotRight = Math.Max(plotLeft, Width - 15);
+                var plotTop = 15;
+                var plotBottom = Math.Max(plotTop, Height - 35);
+                var plotWidth = Math.Max(1, plotRight - plotLeft);
+                var step = plotWidth / (double)Math.Max(1, visibleCount);
+                var initialOffset = -plotWidth * 0.25;
+                var relativeX = e.X - plotLeft - initialOffset - horizontalPanOffset;
+                var nearest = (int)Math.Round(relativeX / step - 0.5);
+                crosshairIndex = Math.Clamp(nearest, 0, Math.Max(0, visibleCount - 1));
+                crosshairPoint = new Point(
+                    (int)Math.Round(plotLeft + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset),
+                    Math.Clamp(e.Y, plotTop, plotBottom));
                 Invalidate();
             }
 
@@ -236,6 +254,7 @@ namespace Trade.It
                     0,
                     Math.Max(0, points.Count - newCount));
 
+                crosshairIndex = -1;
                 Invalidate();
                 return;
             }
@@ -335,6 +354,7 @@ namespace Trade.It
             using var risingBrush = new SolidBrush(Color.FromArgb(35, 150, 80));
             using var fallingBrush = new SolidBrush(Color.FromArgb(205, 70, 70));
             using var linePen = new Pen(Color.FromArgb(35, 90, 160), 1.6f);
+            using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
 
             if (showGrid)
             {
@@ -356,7 +376,9 @@ namespace Trade.It
             {
                 var y = plot.Top + plot.Height * i / 5f;
                 var value = max - (max - min) * i / 5.0;
-                e.Graphics.DrawString(value.ToString("0.##"), Font, textBrush, 4, y - Font.Height / 2f);
+                var text = value.ToString("0.##");
+                var size = e.Graphics.MeasureString(text, axisTextFont);
+                e.Graphics.DrawString(text, axisTextFont, textBrush, 4, y - size.Height / 2f);
             }
 
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
@@ -415,18 +437,34 @@ namespace Trade.It
             {
                 var index = labelCount == 1 ? 0 : (int)Math.Round(i * (visible.Count - 1.0) / (labelCount - 1));
                 var x = (float)X(index);
-                var text = visible[index].Date.ToString("yyyy/MM/dd");
-                var size = e.Graphics.MeasureString(text, Font);
-                e.Graphics.DrawString(text, Font, textBrush, x - size.Width / 2, plot.Bottom + 7);
+                var text = visible[index].Date == default ? string.Empty : visible[index].Date.ToString("yyyy/MM/dd");
+                if (string.IsNullOrEmpty(text))
+                    continue;
+                var size = e.Graphics.MeasureString(text, axisTextFont);
+                e.Graphics.DrawString(text, axisTextFont, textBrush, x - size.Width / 2, plot.Bottom + 7);
             }
 
-            if (showCrosshair)
+            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
-                using var crossPen = new Pen(Color.FromArgb(100, 80, 80, 80), 1) { DashStyle = DashStyle.Dash };
-                var x = Math.Clamp(crosshairPoint.X, plot.Left, plot.Right);
+                var p = visible[crosshairIndex];
+                var x = (float)X(crosshairIndex);
                 var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
+                var price = min + (plot.Bottom - y) / plot.Height * (max - min);
+
+                using var crossPen = new Pen(Color.FromArgb(100, 80, 80, 80), 1) { DashStyle = DashStyle.Dash };
                 e.Graphics.DrawLine(crossPen, plot.Left, y, plot.Right, y);
                 e.Graphics.DrawLine(crossPen, x, plot.Top, x, plot.Bottom);
+
+                var priceText = price.ToString("0.##");
+                var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
+                e.Graphics.DrawString(priceText, axisTextFont, textBrush, 4, y - priceSize.Height / 2f);
+
+                if (p.Date != default)
+                {
+                    var dateText = p.Date.ToString("yyyy/MM/dd");
+                    var dateSize = e.Graphics.MeasureString(dateText, axisTextFont);
+                    e.Graphics.DrawString(dateText, axisTextFont, textBrush, x - dateSize.Width / 2f, plot.Bottom + 7);
+                }
             }
         }
     }
