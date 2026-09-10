@@ -1,6 +1,8 @@
 name: Targeted MainForm Fix
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/targeted-mainform-fix.yml'
 permissions:
   contents: write
 jobs:
