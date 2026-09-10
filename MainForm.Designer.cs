@@ -1910,6 +1910,130 @@
             comparisonGroup8.Controls.Add(filterComparison8ClearButton);
             groupBox3.Controls.Add(filterComparison9ClearButton);
             ohlcChangeFilterGroup.Controls.Add(filterOhlcChangeClearButton);
+            // marketsMainGroup
+            //
+            marketsMainGroup.AutoSize = true;
+            marketsMainGroup.Controls.Add(marketsLayout);
+            marketsMainGroup.Dock = DockStyle.Top;
+            marketsMainGroup.Location = new Point(8, 8);
+            marketsMainGroup.Name = "marketsMainGroup";
+            marketsMainGroup.Padding = new Padding(10);
+            marketsMainGroup.RightToLeft = RightToLeft.Yes;
+            marketsMainGroup.Size = new Size(360, 250);
+            marketsMainGroup.TabIndex = 0;
+            marketsMainGroup.TabStop = false;
+            marketsMainGroup.Text = "اطلاعات بازار";
+            //
+            // marketsLayout
+            //
+            marketsLayout.AutoSize = true;
+            marketsLayout.ColumnCount = 2;
+            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
+            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            marketsLayout.Dock = DockStyle.Top;
+            marketsLayout.Location = new Point(13, 30);
+            marketsLayout.Name = "marketsLayout";
+            marketsLayout.Padding = new Padding(6);
+            marketsLayout.RightToLeft = RightToLeft.Yes;
+            marketsLayout.RowCount = 5;
+            marketsLayout.Size = new Size(334, 222);
+            marketsLayout.TabIndex = 0;
+
+            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            marketTypeLabel.Dock = DockStyle.Fill;
+            marketTypeLabel.Font = new Font("Segoe UI", 10F);
+            marketTypeLabel.Margin = new Padding(4);
+            marketTypeLabel.Name = "marketTypeLabel";
+            marketTypeLabel.RightToLeft = RightToLeft.Yes;
+            marketTypeLabel.Size = new Size(155, 32);
+            marketTypeLabel.TabIndex = 0;
+            marketTypeLabel.Text = "نوع بازار";
+            marketTypeLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketsLayout.Controls.Add(marketTypeLabel, 0, 0);
+            marketTypeTextBox.Dock = DockStyle.Fill;
+            marketTypeTextBox.Margin = new Padding(4);
+            marketTypeTextBox.Name = "marketTypeTextBox";
+            marketTypeTextBox.RightToLeft = RightToLeft.Yes;
+            marketTypeTextBox.Size = new Size(159, 31);
+            marketTypeTextBox.TabIndex = 0;
+            marketsLayout.Controls.Add(marketTypeTextBox, 1, 0);
+
+            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            marketNameLabel.Dock = DockStyle.Fill;
+            marketNameLabel.Font = new Font("Segoe UI", 10F);
+            marketNameLabel.Margin = new Padding(4);
+            marketNameLabel.Name = "marketNameLabel";
+            marketNameLabel.RightToLeft = RightToLeft.Yes;
+            marketNameLabel.Size = new Size(155, 32);
+            marketNameLabel.TabIndex = 1;
+            marketNameLabel.Text = "نام بازار";
+            marketNameLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketsLayout.Controls.Add(marketNameLabel, 0, 1);
+            marketNameTextBox.Dock = DockStyle.Fill;
+            marketNameTextBox.Margin = new Padding(4);
+            marketNameTextBox.Name = "marketNameTextBox";
+            marketNameTextBox.RightToLeft = RightToLeft.Yes;
+            marketNameTextBox.Size = new Size(159, 31);
+            marketNameTextBox.TabIndex = 1;
+            marketsLayout.Controls.Add(marketNameTextBox, 1, 1);
+
+            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            marketBoardLabel.Dock = DockStyle.Fill;
+            marketBoardLabel.Font = new Font("Segoe UI", 10F);
+            marketBoardLabel.Margin = new Padding(4);
+            marketBoardLabel.Name = "marketBoardLabel";
+            marketBoardLabel.RightToLeft = RightToLeft.Yes;
+            marketBoardLabel.Size = new Size(155, 32);
+            marketBoardLabel.TabIndex = 2;
+            marketBoardLabel.Text = "تابلو";
+            marketBoardLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketsLayout.Controls.Add(marketBoardLabel, 0, 2);
+            marketBoardTextBox.Dock = DockStyle.Fill;
+            marketBoardTextBox.Margin = new Padding(4);
+            marketBoardTextBox.Name = "marketBoardTextBox";
+            marketBoardTextBox.RightToLeft = RightToLeft.Yes;
+            marketBoardTextBox.Size = new Size(159, 31);
+            marketBoardTextBox.TabIndex = 2;
+            marketsLayout.Controls.Add(marketBoardTextBox, 1, 2);
+
+            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            marketIndustryGroupLabel.Dock = DockStyle.Fill;
+            marketIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
+            marketIndustryGroupLabel.Margin = new Padding(4);
+            marketIndustryGroupLabel.Name = "marketIndustryGroupLabel";
+            marketIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
+            marketIndustryGroupLabel.Size = new Size(155, 32);
+            marketIndustryGroupLabel.TabIndex = 3;
+            marketIndustryGroupLabel.Text = "گروه صنعت";
+            marketIndustryGroupLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketsLayout.Controls.Add(marketIndustryGroupLabel, 0, 3);
+            marketIndustryGroupTextBox.Dock = DockStyle.Fill;
+            marketIndustryGroupTextBox.Margin = new Padding(4);
+            marketIndustryGroupTextBox.Name = "marketIndustryGroupTextBox";
+            marketIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
+            marketIndustryGroupTextBox.Size = new Size(159, 31);
+            marketIndustryGroupTextBox.TabIndex = 3;
+            marketsLayout.Controls.Add(marketIndustryGroupTextBox, 1, 3);
+
+            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            marketSubIndustryGroupLabel.Dock = DockStyle.Fill;
+            marketSubIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
+            marketSubIndustryGroupLabel.Margin = new Padding(4);
+            marketSubIndustryGroupLabel.Name = "marketSubIndustryGroupLabel";
+            marketSubIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
+            marketSubIndustryGroupLabel.Size = new Size(155, 32);
+            marketSubIndustryGroupLabel.TabIndex = 4;
+            marketSubIndustryGroupLabel.Text = "زیر گروه صنعت";
+            marketSubIndustryGroupLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketsLayout.Controls.Add(marketSubIndustryGroupLabel, 0, 4);
+            marketSubIndustryGroupTextBox.Dock = DockStyle.Fill;
+            marketSubIndustryGroupTextBox.Margin = new Padding(4);
+            marketSubIndustryGroupTextBox.Name = "marketSubIndustryGroupTextBox";
+            marketSubIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
+            marketSubIndustryGroupTextBox.Size = new Size(159, 31);
+            marketSubIndustryGroupTextBox.TabIndex = 4;
+            marketsLayout.Controls.Add(marketSubIndustryGroupTextBox, 1, 4);
+            marketsTabPage.Controls.Add(marketsMainGroup);
             // MainForm
             //
             ClientSize = new Size(1643, 966);
