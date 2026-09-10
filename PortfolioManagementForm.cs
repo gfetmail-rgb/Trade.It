@@ -226,16 +226,6 @@ namespace Trade.It
 
         private void DeleteSymbolsButton_Click(object? sender, EventArgs e)
         {
-            if (portfoliosListBox.SelectedItems.Count == 0)
-            {
-                MessageBox.Show(this,
-                    "ابتدا یک سبد را انتخاب کنید.",
-                    "حذف نماد",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
-
             // Symbol deletion always applies to the portfolio whose details are currently displayed.
             var portfolioName = portfolioNameLabel.Text.Trim();
             if (string.IsNullOrWhiteSpace(portfolioName) ||
