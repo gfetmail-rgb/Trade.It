@@ -5,6 +5,7 @@ namespace Trade.It
     public partial class MainForm
     {
         private bool comparisonFiltersInitialized;
+        private bool comparisonFilterEventsAttached;
 
         protected override void OnHandleCreated(EventArgs e)
         {
@@ -15,6 +16,10 @@ namespace Trade.It
 
             comparisonFiltersInitialized = true;
             ConfigureComparisonFilterControls();
+
+            // Attach after MainForm.OnLoad has installed filters 1-4 so that
+            // comparison filters are always applied after the existing pipeline.
+            BeginInvoke(new Action(AttachComparisonFilterEvents));
         }
 
         private void ConfigureComparisonFilterControls()
@@ -39,13 +44,53 @@ namespace Trade.It
                 filter.Item1.DropDownStyle = ComboBoxStyle.DropDownList;
                 filter.Item2.DropDownStyle = ComboBoxStyle.DropDownList;
                 filter.Item3.DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+        }
 
+        private void AttachComparisonFilterEvents()
+        {
+            if (comparisonFilterEventsAttached || IsDisposed)
+                return;
+
+            comparisonFilterEventsAttached = true;
+
+            var filters = new[]
+            {
+                (comparisonFirstComboBox, comparisonOperatorComboBox, comparisonSecondComboBox,
+                    comparisonFirstTextBox, comparisonSecondTextBox),
+                (comparisonFirstComboBox6, comparisonOperatorComboBox6, comparisonSecondComboBox6,
+                    comparisonFirstTextBox6, comparisonSecondTextBox6),
+                (comparisonFirstComboBox7, comparisonOperatorComboBox7, comparisonSecondComboBox7,
+                    comparisonFirstTextBox7, comparisonSecondTextBox7),
+                (comparisonFirstComboBox8, comparisonOperatorComboBox8, comparisonSecondComboBox8,
+                    comparisonFirstTextBox8, comparisonSecondTextBox8)
+            };
+
+            foreach (var filter in filters)
+            {
                 filter.Item1.SelectedIndexChanged += ComparisonFilterChanged;
                 filter.Item2.SelectedIndexChanged += ComparisonFilterChanged;
                 filter.Item3.SelectedIndexChanged += ComparisonFilterChanged;
                 filter.Item4.TextChanged += ComparisonFilterChanged;
                 filter.Item5.TextChanged += ComparisonFilterChanged;
             }
+
+            // Re-apply filters 5-8 after filters 1-4 whenever their input changes.
+            nameComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
+            nameTextBox.TextChanged += ComparisonBaseFilterChanged;
+            volumeRatioTextBox.TextChanged += ComparisonBaseFilterChanged;
+            volumeRatioOperatorComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
+            textBox1.TextChanged += ComparisonBaseFilterChanged;
+            pastDaysTextBox.TextChanged += ComparisonBaseFilterChanged;
+            pastDaysStatusComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
+            statusAllRadio.CheckedChanged += ComparisonBaseFilterChanged;
+            statusPositiveRadio.CheckedChanged += ComparisonBaseFilterChanged;
+            statusNegativeRadio.CheckedChanged += ComparisonBaseFilterChanged;
+            portfolioComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
+            refreshButton.Click += ComparisonBaseFilterChanged;
+            clearFiltersButton.Click += ComparisonBaseFilterChanged;
+
+            ApplyComparisonFiltersToGridWithWaitCursor();
         }
 
         private static void ReplaceFinalFeeWithFinal(ComboBox comboBox)
@@ -59,7 +104,122 @@ namespace Trade.It
 
         private void ComparisonFilterChanged(object? sender, EventArgs e)
         {
-            ApplyTradingStatusFilterWithWaitCursor();
+            ApplyComparisonFiltersToGridWithWaitCursor();
+        }
+
+        private void ComparisonBaseFilterChanged(object? sender, EventArgs e)
+        {
+            if (resettingFilters)
+                return;
+
+            ApplyComparisonFiltersToGridWithWaitCursor();
+        }
+
+        private void ApplyComparisonFiltersToGridWithWaitCursor()
+        {
+            if (!HasAnyActiveComparisonFilter())
+                return;
+
+            UseWaitCursor = true;
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                Application.DoEvents();
+                ApplyComparisonFiltersToGrid();
+            }
+            finally
+            {
+                UseWaitCursor = false;
+                Cursor.Current = Cursors.Default;
+                Application.DoEvents();
+            }
+        }
+
+        private void ApplyComparisonFiltersToGrid()
+        {
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                return;
+
+            var symbols = GetDisplayedGridSymbols();
+            IEnumerable<string> filtered = symbols;
+
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox,
+                comparisonOperatorComboBox, comparisonSecondComboBox,
+                comparisonFirstTextBox, comparisonSecondTextBox);
+
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox6,
+                comparisonOperatorComboBox6, comparisonSecondComboBox6,
+                comparisonFirstTextBox6, comparisonSecondTextBox6);
+
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox7,
+                comparisonOperatorComboBox7, comparisonSecondComboBox7,
+                comparisonFirstTextBox7, comparisonSecondTextBox7);
+
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox8,
+                comparisonOperatorComboBox8, comparisonSecondComboBox8,
+                comparisonFirstTextBox8, comparisonSecondTextBox8);
+
+            var result = filtered.ToList();
+            var totalCount = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count();
+
+            UpdateFilterCounts(result.Count, totalCount);
+
+            internalPortfolioUpdate = true;
+            try
+            {
+                stocksDataGridView.Rows.Clear();
+                for (var i = 0; i < result.Count; i++)
+                    stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
+            }
+            finally
+            {
+                internalPortfolioUpdate = false;
+            }
+
+            selectAllCheckBox.Checked = false;
+            selectNoneCheckBox.Checked = result.Count > 0;
+            UpdateSelectionControls();
+        }
+
+        private IEnumerable<string> GetDisplayedGridSymbols()
+        {
+            foreach (DataGridViewRow row in stocksDataGridView.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                var symbol = Convert.ToString(row.Cells.Count > 1 ? row.Cells[1].Value : null)?.Trim();
+                if (!string.IsNullOrWhiteSpace(symbol))
+                    yield return symbol;
+            }
+        }
+
+        private bool HasAnyActiveComparisonFilter()
+        {
+            return IsComparisonFilterActive(comparisonFirstComboBox, comparisonOperatorComboBox,
+                       comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox) ||
+                   IsComparisonFilterActive(comparisonFirstComboBox6, comparisonOperatorComboBox6,
+                       comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6) ||
+                   IsComparisonFilterActive(comparisonFirstComboBox7, comparisonOperatorComboBox7,
+                       comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7) ||
+                   IsComparisonFilterActive(comparisonFirstComboBox8, comparisonOperatorComboBox8,
+                       comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8);
+        }
+
+        private static bool IsComparisonFilterActive(
+            ComboBox firstFieldComboBox,
+            ComboBox operatorComboBox,
+            ComboBox secondFieldComboBox,
+            TextBox firstOffsetTextBox,
+            TextBox secondOffsetTextBox)
+        {
+            return TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox,
+                firstOffsetTextBox, secondOffsetTextBox,
+                out _, out _, out _, out _, out _);
         }
 
         private IEnumerable<string> ApplyComparisonFilter(
@@ -84,7 +244,16 @@ namespace Trade.It
                     out var relativeOffset))
                 return symbols;
 
-            var totalOffset = checked(firstOffset + relativeOffset);
+            int totalOffset;
+            try
+            {
+                totalOffset = checked(firstOffset + relativeOffset);
+            }
+            catch (OverflowException)
+            {
+                return Enumerable.Empty<string>();
+            }
+
             return symbols.Where(symbol =>
                 TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, totalOffset,
                     out var left, out var right) &&
@@ -262,30 +431,6 @@ namespace Trade.It
                 "!=" => Math.Abs(left - right) >= 1e-12,
                 _ => false
             };
-        }
-
-        private IEnumerable<string> ApplyComparisonFilter5(IEnumerable<string> symbols, PortfolioDefinition definition)
-        {
-            return ApplyComparisonFilter(symbols, definition, comparisonFirstComboBox, comparisonOperatorComboBox,
-                comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox);
-        }
-
-        private IEnumerable<string> ApplyComparisonFilter6(IEnumerable<string> symbols, PortfolioDefinition definition)
-        {
-            return ApplyComparisonFilter(symbols, definition, comparisonFirstComboBox6, comparisonOperatorComboBox6,
-                comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6);
-        }
-
-        private IEnumerable<string> ApplyComparisonFilter7(IEnumerable<string> symbols, PortfolioDefinition definition)
-        {
-            return ApplyComparisonFilter(symbols, definition, comparisonFirstComboBox7, comparisonOperatorComboBox7,
-                comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7);
-        }
-
-        private IEnumerable<string> ApplyComparisonFilter8(IEnumerable<string> symbols, PortfolioDefinition definition)
-        {
-            return ApplyComparisonFilter(symbols, definition, comparisonFirstComboBox8, comparisonOperatorComboBox8,
-                comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8);
         }
     }
 }
