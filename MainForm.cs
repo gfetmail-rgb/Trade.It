@@ -473,18 +473,12 @@ namespace Trade.It
             volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            comparisonFirstComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox7.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox8.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonOperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void FilterTabSelected(object? sender, EventArgs e)
@@ -902,10 +896,8 @@ namespace Trade.It
         {
             var filters = new[]
             {
-                (comparisonFirstComboBox, comparisonOperatorComboBox, comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox),
-                (comparisonFirstComboBox6, comparisonOperatorComboBox6, comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6),
-                (comparisonFirstComboBox7, comparisonOperatorComboBox7, comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7),
-                (comparisonFirstComboBox8, comparisonOperatorComboBox8, comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8)
+                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
+                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1)
             };
             foreach (var filter in filters)
             {
@@ -923,10 +915,8 @@ namespace Trade.It
             comparisonFilterEventsAttached = true;
             var filters = new[]
             {
-                (comparisonFirstComboBox, comparisonOperatorComboBox, comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox),
-                (comparisonFirstComboBox6, comparisonOperatorComboBox6, comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6),
-                (comparisonFirstComboBox7, comparisonOperatorComboBox7, comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7),
-                (comparisonFirstComboBox8, comparisonOperatorComboBox8, comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8)
+                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
+                (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1)
             };
             foreach (var filter in filters)
             {
@@ -979,10 +969,8 @@ namespace Trade.It
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
             IEnumerable<string> filtered = GetDisplayedGridSymbols();
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox, comparisonOperatorComboBox, comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox6, comparisonOperatorComboBox6, comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox7, comparisonOperatorComboBox7, comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox8, comparisonOperatorComboBox8, comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts(result.Count, totalCount);
@@ -1009,10 +997,8 @@ namespace Trade.It
         }
 
         private bool HasAnyActiveComparisonFilter() =>
-            IsComparisonFilterActive(comparisonFirstComboBox, comparisonOperatorComboBox, comparisonSecondComboBox, comparisonFirstTextBox, comparisonSecondTextBox) ||
-            IsComparisonFilterActive(comparisonFirstComboBox6, comparisonOperatorComboBox6, comparisonSecondComboBox6, comparisonFirstTextBox6, comparisonSecondTextBox6) ||
-            IsComparisonFilterActive(comparisonFirstComboBox7, comparisonOperatorComboBox7, comparisonSecondComboBox7, comparisonFirstTextBox7, comparisonSecondTextBox7) ||
-            IsComparisonFilterActive(comparisonFirstComboBox8, comparisonOperatorComboBox8, comparisonSecondComboBox8, comparisonFirstTextBox8, comparisonSecondTextBox8);
+            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
+            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
 
         private static bool IsComparisonFilterActive(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox) =>
             TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out _, out _, out _, out _, out _);
