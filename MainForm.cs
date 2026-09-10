@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -157,10 +157,10 @@ namespace Trade.It
                         pastDaysStatusComboBox.SelectedIndex = -1;
                         break;
                     case "comparison7":
-                        ClearComparisonFilterControls(comparisonFirstComboBox1, comparisonFirstTextBox2, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonSecondTextBox2);
+                        ClearComparisonFilterControls(comparisonFirstComboBox1, comparisonFirstTextBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonSecondTextBox1);
                         break;
                     case "comparison8":
-                        ClearComparisonFilterControls(comparisonFirstComboBox2, comparisonFirstTextBox1, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonSecondTextBox1);
+                        ClearComparisonFilterControls(comparisonFirstComboBox2, comparisonFirstTextBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonSecondTextBox2);
                         break;
                     case "comparison9":
                         ClearComparisonFilterControls(comparisonFirstComboBox3, comparisonFirstTextBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonSecondTextBox3);
