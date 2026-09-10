@@ -24,17 +24,26 @@ namespace Trade.It
         private TradingChartType chartType = TradingChartType.Candlestick;
         private int visibleCount;
         private int firstIndex;
+
         private bool panning;
         private Point panStartPoint;
         private int panStartFirstIndex;
-        private double panStartVerticalCenter;
+        private double panStartVerticalPanOffset;
         private double panStartVerticalRange;
+
         private bool horizontalAxisDrag;
+        private Point horizontalAxisStartPoint;
+        private int horizontalAxisStartVisibleCount;
+        private double horizontalAxisCenterIndex;
+
         private bool verticalAxisDrag;
+        private Point verticalAxisStartPoint;
+
         private bool showGrid;
         private bool showCrosshair = true;
         private Point crosshairPoint;
         private double verticalZoom = 1.0;
+        private double verticalPanOffset;
 
         public TradingChartControl()
         {
@@ -53,6 +62,7 @@ namespace Trade.It
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
             verticalZoom = 1.0;
+            verticalPanOffset = 0.0;
             showCrosshair = true;
             Invalidate();
         }
@@ -84,6 +94,7 @@ namespace Trade.It
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
             verticalZoom = 1.0;
+            verticalPanOffset = 0.0;
             Invalidate();
         }
 
@@ -132,6 +143,7 @@ namespace Trade.It
                 return;
 
             verticalZoom = 1.0;
+            verticalPanOffset = 0.0;
             Invalidate();
         }
 
@@ -146,17 +158,48 @@ namespace Trade.It
             horizontalAxisDrag = e.Y >= plotBottom && e.X >= plotLeft;
             verticalAxisDrag = e.X <= plotLeft && e.Y <= plotBottom;
 
-            if (horizontalAxisDrag || verticalAxisDrag)
+            if (horizontalAxisDrag)
             {
                 panning = false;
-                Cursor = horizontalAxisDrag ? Cursors.SizeWE : Cursors.SizeNS;
+                horizontalAxisStartPoint = e.Location;
+                horizontalAxisStartVisibleCount = Math.Max(2, visibleCount);
+                horizontalAxisCenterIndex = firstIndex + horizontalAxisStartVisibleCount / 2.0;
+                Capture = true;
+                Cursor = Cursors.SizeWE;
                 return;
             }
 
-            panning = true;
-            panStartPoint = e.Location;
-            panStartFirstIndex = firstIndex;
-            Cursor = Cursors.SizeAll;
+            if (verticalAxisDrag)
+            {
+                panning = false;
+                verticalAxisStartPoint = e.Location;
+                Capture = true;
+                Cursor = Cursors.SizeNS;
+                return;
+            }
+
+            if (points.Count > 1)
+            {
+                panning = true;
+                panStartPoint = e.Location;
+                panStartFirstIndex = firstIndex;
+                panStartVerticalPanOffset = verticalPanOffset;
+
+                var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+                var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
+                if (visible.Count > 0)
+                {
+                    var rawRange = visible.Max(x => x.High) - visible.Min(x => x.Low);
+                    panStartVerticalRange = Math.Max(rawRange, 1e-9) / verticalZoom * 1.10;
+                }
+                else
+                {
+                    panStartVerticalRange = 1.0;
+                }
+
+                Capture = true;
+                Cursor = Cursors.SizeAll;
+            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -169,38 +212,57 @@ namespace Trade.It
                 Invalidate();
             }
 
-            if (horizontalAxisDrag && e.Button == MouseButtons.Left && points.Count > 1)
+            if (horizontalAxisDrag && Capture && points.Count > 1)
             {
-                var delta = e.X - panStartPoint.X;
-                var factor = Math.Exp(-delta / 180.0);
-                var newCount = Math.Clamp((int)Math.Round(visibleCount * factor), 2, points.Count);
-                var center = panStartFirstIndex + visibleCount / 2.0;
+                // Horizontal-axis drag zooms around the exact middle of the view.
+                // The center stays fixed while the visible range opens/closes in both directions.
+                var delta = e.X - horizontalAxisStartPoint.X;
+                var factor = Math.Exp(-delta / 300.0);
+                var newCount = Math.Clamp(
+                    (int)Math.Round(horizontalAxisStartVisibleCount * factor),
+                    2,
+                    points.Count);
+
                 visibleCount = newCount;
-                firstIndex = Math.Clamp((int)Math.Round(center - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
+                firstIndex = Math.Clamp(
+                    (int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0),
+                    0,
+                    Math.Max(0, points.Count - newCount));
+
                 Invalidate();
                 return;
             }
 
-            if (verticalAxisDrag && e.Button == MouseButtons.Left && points.Count > 1)
+            if (verticalAxisDrag && Capture && points.Count > 1)
             {
-                var delta = panStartPoint.Y - e.Y;
-                verticalZoom = Math.Clamp(verticalZoom * Math.Exp(-delta / 260.0), 0.15, 8.0);
-                panStartPoint = e.Location;
+                var delta = verticalAxisStartPoint.Y - e.Y;
+                verticalZoom = Math.Clamp(
+                    verticalZoom * Math.Exp(-delta / 260.0),
+                    0.15,
+                    8.0);
                 Invalidate();
                 return;
             }
 
-            if (panning && e.Button == MouseButtons.Left && points.Count > 1)
+            if (panning && Capture && points.Count > 1)
             {
-                var step = Math.Max(1, (int)Math.Round((e.X - panStartPoint.X) * visibleCount / (double)Math.Max(1, Width - 70)));
-                firstIndex = Math.Clamp(panStartFirstIndex - step, 0, Math.Max(0, points.Count - visibleCount));
+                // Horizontal movement pans through the candles; it does not zoom.
+                var horizontalDelta = e.X - panStartPoint.X;
+                var step = (int)Math.Round(
+                    horizontalDelta * visibleCount /
+                    (double)Math.Max(1, Width - 70));
+                firstIndex = Math.Clamp(
+                    panStartFirstIndex - step,
+                    0,
+                    Math.Max(0, points.Count - visibleCount));
 
+                // Vertical movement translates the price range; it does not change zoom.
                 var verticalDelta = panStartPoint.Y - e.Y;
-                if (Math.Abs(verticalDelta) >= 1)
+                if (Math.Abs(verticalDelta) >= 0.5)
                 {
-                    var factor = Math.Exp(verticalDelta / 260.0);
-                    verticalZoom = Math.Clamp(verticalZoom * factor, 0.15, 8.0);
-                    panStartPoint = new Point(panStartPoint.X, e.Y);
+                    var plotHeight = Math.Max(1, Height - 50);
+                    verticalPanOffset = panStartVerticalPanOffset +
+                        verticalDelta * panStartVerticalRange / plotHeight;
                 }
 
                 Invalidate();
@@ -215,6 +277,7 @@ namespace Trade.It
                 panning = false;
                 horizontalAxisDrag = false;
                 verticalAxisDrag = false;
+                Capture = false;
                 Cursor = Cursors.Default;
             }
         }
@@ -246,7 +309,7 @@ namespace Trade.It
                 min -= 1;
             }
 
-            var center = (max + min) / 2.0;
+            var center = (max + min) / 2.0 + verticalPanOffset;
             var halfRange = (max - min) / 2.0 / verticalZoom;
             min = center - halfRange;
             max = center + halfRange;
