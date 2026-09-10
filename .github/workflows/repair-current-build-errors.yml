@@ -38,7 +38,6 @@ jobs:
               start = i + len(marker)
           if len(positions) == 2:
               s = s[:positions[1]].rstrip()
-              # The first implementation already closes MainForm; close only the namespace here.
               s += '\n}\n'
               p.write_text(s, encoding='utf-8')
           elif len(positions) != 1:
@@ -64,3 +63,5 @@ jobs:
           git rm -f --ignore-unmatch MainForm.TextBox1Fix.cs
           git commit -m 'Fix duplicated OHLC code and form braces' || exit 0
           git push origin HEAD:main
+
+# Trigger repair after source consolidation.
