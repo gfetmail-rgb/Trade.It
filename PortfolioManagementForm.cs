@@ -14,7 +14,11 @@ namespace Trade.It
             portfoliosListBox.SelectedIndexChanged += PortfoliosListBox_SelectedIndexChanged;
             reloadButton.Click += ReloadButton_Click;
             deletePortfoliosButton.Click += DeletePortfoliosButton_Click;
+            deleteSymbolsButton.Click += DeleteSymbolsButton_Click;
             closeButton.Click += CloseButton_Click;
+
+            symbolsGrid.MultiSelect = true;
+            symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             Load += PortfolioManagementForm_Load;
         }
@@ -188,6 +192,106 @@ namespace Trade.It
                 MessageBox.Show(this,
                     $"حذف سبد انجام نشد:\n{ex.Message}",
                     "حذف سبد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeleteSymbolsButton_Click(object? sender, EventArgs e)
+        {
+            if (portfoliosListBox.SelectedItem is not string portfolioName ||
+                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            {
+                MessageBox.Show(this,
+                    "ابتدا یک سبد را انتخاب کنید.",
+                    "حذف نماد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var selectedRows = symbolsGrid.SelectedRows
+                .Cast<DataGridViewRow>()
+                .Where(row => !row.IsNewRow)
+                .OrderBy(row => row.Index)
+                .ToList();
+
+            if (selectedRows.Count == 0)
+            {
+                MessageBox.Show(this,
+                    "ابتدا یک یا چند نماد را انتخاب کنید.",
+                    "حذف نماد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var selectedSymbols = selectedRows
+                .Select(row => Convert.ToString(row.Cells["symbolNameColumn"].Value) ?? string.Empty)
+                .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
+                .ToList();
+
+            var symbolText = selectedSymbols.Count == 1
+                ? $"نماد «{selectedSymbols[0]}»"
+                : $"{ToPersianDigits(selectedSymbols.Count.ToString())} نماد انتخاب‌شده";
+
+            var result = MessageBox.Show(this,
+                $"آیا از حذف {symbolText} از سبد «{portfolioName}» مطمئن هستید؟",
+                "حذف نماد",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            try
+            {
+                if (!File.Exists(file))
+                {
+                    LoadPortfolios();
+                    MessageBox.Show(this,
+                        "فایل سبد پیدا نشد و فهرست سبدها به‌روزرسانی شد.",
+                        "حذف نماد",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                var json = File.ReadAllText(file);
+                var definition = JsonSerializer.Deserialize<PortfolioDefinition>(json);
+                if (definition == null)
+                {
+                    MessageBox.Show(this,
+                        "اطلاعات سبد معتبر نیست.",
+                        "حذف نماد",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+
+                var symbols = definition.Symbols ?? new List<string>();
+                var symbolsToRemove = new HashSet<string>(selectedSymbols, StringComparer.OrdinalIgnoreCase);
+                definition.Symbols = symbols
+                    .Where(symbol => !symbolsToRemove.Contains(symbol))
+                    .ToList();
+
+                var updatedJson = JsonSerializer.Serialize(definition, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                File.WriteAllText(file, updatedJson, new System.Text.UTF8Encoding(false));
+
+                LoadPortfolio(file);
+                statusLabel.Text = selectedSymbols.Count == 1
+                    ? "نماد با موفقیت حذف شد."
+                    : "نمادهای انتخاب‌شده با موفقیت حذف شدند.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this,
+                    $"حذف نماد انجام نشد:\n{ex.Message}",
+                    "حذف نماد",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
