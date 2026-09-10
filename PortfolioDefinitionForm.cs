@@ -53,6 +53,7 @@ namespace Trade.It
             symbolGrid.CurrentCellDirtyStateChanged += SymbolGrid_CurrentCellDirtyStateChanged;
             symbolGrid.CellValueChanged += SymbolGrid_CellValueChanged;
             symbolGrid.CellDoubleClick += SymbolGrid_CellDoubleClick;
+            symbolGrid.CellClick += SymbolGrid_CellClick;
             mappingGrid.CellValidating += MappingGrid_CellValidating;
             testMappingButton.Click += TestMappingButton_Click;
             saveButton.Click += SaveButton_Click;
@@ -231,6 +232,13 @@ namespace Trade.It
                 var value = row[symbolColumn - 1].Trim();
                 if (!string.IsNullOrWhiteSpace(value)) yield return value;
             }
+        }
+
+        private void SymbolGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.RowIndex >= symbolGrid.Rows.Count) return;
+            var file = symbolGrid.Rows[e.RowIndex].Tag as string;
+            if (!string.IsNullOrWhiteSpace(file) && File.Exists(file)) LoadPreview(file);
         }
 
         private void SymbolGrid_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
