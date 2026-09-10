@@ -6,16 +6,6 @@ namespace Trade.It
     {
         private bool ohlcChangeFilterEventsAttached;
 
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
-                return;
-
-            AttachOhlcChangeFilterEvents();
-        }
-
         private void AttachOhlcChangeFilterEvents()
         {
             if (ohlcChangeFilterEventsAttached || IsDisposed)
