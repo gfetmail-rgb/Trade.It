@@ -11,6 +11,12 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
+
+            // The WinForms designer creates MainForm inside the design-tools process.
+            // Runtime-only initialization must not execute while the designer is loading.
+            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
+                return;
+
             mainMenuStrip.RightToLeft = RightToLeft.No;
 
             portfolioDefinitionMenuItem.Click += (_, _) => new PortfolioDefinitionForm().ShowDialog(this);
