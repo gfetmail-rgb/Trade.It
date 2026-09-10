@@ -22,6 +22,8 @@ namespace Trade.It
             statusNegativeRadio.CheckedChanged += TradingStatusFilterChanged;
             portfolioComboBox.SelectedIndexChanged += TradingStatusPortfolioChanged;
             refreshButton.Click += TradingStatusRefreshChanged;
+            nameComboBox.SelectedIndexChanged += NameFilterChanged;
+            nameTextBox.TextChanged += NameFilterChanged;
         }
 
         private void InitializeFilterStatusDisplay()
@@ -64,6 +66,11 @@ namespace Trade.It
         }
 
         private void TradingStatusRefreshChanged(object? sender, EventArgs e)
+        {
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private void NameFilterChanged(object? sender, EventArgs e)
         {
             ApplyTradingStatusFilterWithWaitCursor();
         }
@@ -111,8 +118,10 @@ namespace Trade.It
                 }
 
                 var showTraded = statusPositiveRadio.Checked;
-                filtered = symbols.Where(symbol => showTraded == todaySymbols.Contains(symbol));
+                filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
             }
+
+            filtered = ApplyNameFilter(filtered);
 
             var result = filtered.ToList();
             UpdateFilterCounts(result.Count, symbols.Count);
@@ -132,6 +141,48 @@ namespace Trade.It
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
+        }
+
+        private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
+        {
+            var phrase = NormalizeSymbolName(nameTextBox.Text);
+            if (string.IsNullOrWhiteSpace(phrase))
+                return symbols;
+
+            var mode = nameComboBox.SelectedIndex;
+            if (mode < 0)
+                mode = 0;
+
+            return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
+        }
+
+        private static bool MatchesNameFilter(string symbol, string phrase, int mode)
+        {
+            var name = NormalizeSymbolName(symbol);
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phrase))
+                return true;
+
+            var index = name.IndexOf(phrase, StringComparison.OrdinalIgnoreCase);
+            var found = index >= 0;
+
+            return mode switch
+            {
+                0 => found,
+                1 => found && index == 0,
+                2 => found && index + phrase.Length == name.Length,
+                3 => found && index > 0 && index + phrase.Length < name.Length,
+                4 => !found,
+                _ => found
+            };
+        }
+
+        private static string NormalizeSymbolName(string value)
+        {
+            return (value ?? string.Empty)
+                .Trim()
+                .Replace('ي', 'ی')
+                .Replace('ى', 'ی')
+                .Replace('ك', 'ک');
         }
 
         private void UpdateFilterCounts(int foundCount, int totalCount)
