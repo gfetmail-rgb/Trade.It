@@ -499,7 +499,7 @@ namespace Trade.It
             selectColumn.HeaderText = "انتخاب";
             selectColumn.MinimumWidth = 8;
             selectColumn.Name = "selectColumn";
-            selectColumn.ReadOnly = true;
+            selectColumn.ReadOnly = false;
             selectColumn.Width = 68;
             // 
             // portfolioComboBox
