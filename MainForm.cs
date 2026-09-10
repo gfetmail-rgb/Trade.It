@@ -57,6 +57,8 @@ namespace Trade.It
 
             portfolioComboBox.SelectedIndexChanged += PortfolioComboBox_SelectedIndexChanged;
             newPortfolioButton.Click += NewPortfolioButton_Click;
+            refreshButton.Click += RefreshStocksButton_Click;
+            refreshButtonPortfolio.Click += RefreshPortfolioButton_Click;
             deleteButton.Click += DeleteButton_Click;
             selectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged;
             selectNoneCheckBox.CheckedChanged += SelectNoneCheckBox_CheckedChanged;
@@ -66,6 +68,66 @@ namespace Trade.It
         private void MainForm_Portfolios_Load(object? sender, EventArgs e)
         {
             RefreshPortfolioListAndClearSelection();
+        }
+
+        private void RefreshPortfolioButton_Click(object? sender, EventArgs e)
+        {
+            // The upper refresh button refreshes only the portfolio list in the ComboBox.
+            RefreshPortfolioListAndClearSelection();
+        }
+
+        private void RefreshStocksButton_Click(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName))
+            {
+                stocksDataGridView.Rows.Clear();
+                UpdateSelectionControls();
+                return;
+            }
+
+            // The lower refresh button refreshes only the symbols of the currently
+            // displayed portfolio; the portfolio ComboBox remains unchanged.
+            var folder = Path.Combine(AppContext.BaseDirectory, "Portfolios");
+            if (!Directory.Exists(folder))
+                return;
+
+            try
+            {
+                var currentName = displayedPortfolioName.Trim();
+                var safeName = string.Concat(currentName.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
+                var file = Path.Combine(folder, safeName + ".json");
+
+                if (!File.Exists(file))
+                {
+                    file = Directory.GetFiles(folder, "*.json")
+                        .FirstOrDefault(f =>
+                        {
+                            try
+                            {
+                                var definition = JsonSerializer.Deserialize<PortfolioDefinition>(File.ReadAllText(f));
+                                return definition != null && string.Equals(definition.Name?.Trim(), currentName, StringComparison.OrdinalIgnoreCase);
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        }) ?? string.Empty;
+                }
+
+                if (string.IsNullOrEmpty(file))
+                    return;
+
+                var refreshed = JsonSerializer.Deserialize<PortfolioDefinition>(File.ReadAllText(file));
+                if (refreshed == null || string.IsNullOrWhiteSpace(refreshed.Name))
+                    return;
+
+                loadedPortfolios[currentName] = refreshed;
+                PopulateStocksGrid(refreshed);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"تازه‌سازی فهرست سهام انجام نشد:\n{ex.Message}", "تازه‌سازی", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void RefreshPortfolioListAndClearSelection()
