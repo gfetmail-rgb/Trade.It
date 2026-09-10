@@ -1,7 +1,8 @@
 name: Add individual filter clear buttons
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 permissions:
   contents: write
 jobs:
@@ -11,140 +12,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Apply change
+      - name: Apply code change
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('MainForm.cs')
-          s = p.read_text(encoding='utf-8-sig')
-          marker = '            InitializeIndividualFilterClearButtons();'
-          if marker not in s:
-              anchor = '            AttachOhlcChangeFilterEvents();\n'
-              if anchor not in s:
-                  raise SystemExit('constructor anchor not found')
-              s = s.replace(anchor, anchor + marker + '\n', 1)
-
-          method_anchor = '        private void FullScreenChartButton_Click(object? sender, EventArgs e)\n'
-          if 'private void InitializeIndividualFilterClearButtons()' not in s:
-              method = r'''        private void InitializeIndividualFilterClearButtons()
-        {
-            AddIndividualFilterClearButton(tradingStatusGroup, "trading");
-            AddIndividualFilterClearButton(nameFilterGroup, "name");
-            AddIndividualFilterClearButton(volumeRatioGroup, "volume");
-            AddIndividualFilterClearButton(pastDaysGroup, "pastDays");
-            AddIndividualFilterClearButton(comparisonGroup8, "comparison5");
-            AddIndividualFilterClearButton(comparisonGroup7, "comparison6");
-            AddIndividualFilterClearButton(groupBox3, "comparison7");
-            AddIndividualFilterClearButton(ohlcChangeFilterGroup, "ohlcChange");
-        }
-
-        private void AddIndividualFilterClearButton(Control parent, string filterKey)
-        {
-            var button = new Button
-            {
-                Text = "پاک",
-                Size = new Size(42, 24),
-                Location = new Point(8, 2),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                TabStop = false,
-                RightToLeft = RightToLeft.Yes,
-                Font = new Font("Segoe UI", 8.5F)
-            };
-            button.Click += (_, _) => ClearIndividualFilter(filterKey);
-            parent.Controls.Add(button);
-            button.BringToFront();
-        }
-
-        private void ClearIndividualFilter(string filterKey)
-        {
-            resettingFilters = true;
-            try
-            {
-                switch (filterKey)
-                {
-                    case "trading":
-                        statusAllRadio.Checked = true;
-                        statusPositiveRadio.Checked = false;
-                        statusNegativeRadio.Checked = false;
-                        break;
-
-                    case "name":
-                        nameTextBox.Clear();
-                        nameComboBox.SelectedIndex = -1;
-                        break;
-
-                    case "volume":
-                        volumeRatioTextBox.Clear();
-                        volumeRatioOperatorComboBox.SelectedIndex = -1;
-                        textBox1.Clear();
-                        break;
-
-                    case "pastDays":
-                        pastDaysTextBox.Clear();
-                        pastDaysStatusComboBox.SelectedIndex = -1;
-                        break;
-
-                    case "comparison5":
-                        ClearComparisonFilterControls(comparisonFirstComboBox2, comparisonFirstTextBox1, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonSecondTextBox1);
-                        break;
-
-                    case "comparison6":
-                        ClearComparisonFilterControls(comparisonFirstComboBox1, comparisonFirstTextBox2, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonSecondTextBox2);
-                        break;
-
-                    case "comparison7":
-                        ClearComparisonFilterControls(comparisonFirstComboBox3, comparisonFirstTextBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonSecondTextBox3);
-                        break;
-
-                    case "ohlcChange":
-                        ohlcChangeFieldComboBox.SelectedIndex = -1;
-                        ohlcChangeDaysTextBox.Clear();
-                        ohlcChangePercentTextBox.Clear();
-                        ohlcChangeDirectionComboBox.SelectedIndex = -1;
-                        break;
-                }
-            }
-            finally
-            {
-                resettingFilters = false;
-            }
-
-            NameFilterChanged(this, EventArgs.Empty);
-            UpdateFilterControlAvailability();
-        }
-
-        private static void ClearComparisonFilterControls(
-            ComboBox firstFieldComboBox,
-            TextBox firstOffsetTextBox,
-            ComboBox operatorComboBox,
-            ComboBox secondFieldComboBox,
-            TextBox secondOffsetTextBox)
-        {
-            firstFieldComboBox.SelectedIndex = -1;
-            firstOffsetTextBox.Clear();
-            operatorComboBox.SelectedIndex = -1;
-            secondFieldComboBox.SelectedIndex = -1;
-            secondOffsetTextBox.Clear();
-        }
-
-'''
-              if method_anchor not in s:
-                  raise SystemExit('method anchor not found')
-              s = s.replace(method_anchor, method + method_anchor, 1)
-
-          p.write_text(s, encoding='utf-8-sig')
-          PY
+          echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCnA9UGF0aCgnTWFpbkZvcm0uY3MnKQpzPXAucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOC1zaWcnKQppZiAncHJpdmF0ZSB2b2lkIEluaXRpYWxpemVJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b25zKCknIGluIHM6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCdhbHJlYWR5IHBhdGNoZWQnKQphbmNob3I9JyAgICAgICAgICAgIEF0dGFjaE9obGNDaGFuZ2VGaWx0ZXJFdmVudHMoKTtcbicKcz1zLnJlcGxhY2UoYW5jaG9yLCBhbmNob3IrJyAgICAgICAgICAgIEluaXRpYWxpemVJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b25zKCk7XG4nLDEpCm1ldGhvZD0nJycgICAgICAgIHByaXZhdGUgdm9pZCBJbml0aWFsaXplSW5kaXZpZHVhbEZpbHRlckNsZWFyQnV0dG9ucygpCiAgICAgICAgewogICAgICAgICAgICBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24odHJhZGluZ1N0YXR1c0dyb3VwLCAidHJhZGluZyIpOwogICAgICAgICAgICBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24obmFtZUZpbHRlckdyb3VwLCAibmFtZSIpOwogICAgICAgICAgICBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24odm9sdW1lUmF0aW9Hcm91cCwgInZvbHVtZSIpOwogICAgICAgICAgICBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24ocGFzdERheXNHcm91cCwgInBhc3REYXlzIik7CiAgICAgICAgICAgIEFkZEluZGl2aWR1YWxGaWx0ZXJDbGVhckJ1dHRvbihjb21wYXJpc29uR3JvdXA3LCAiY29tcGFyaXNvbjciKTsKICAgICAgICAgICAgQWRkSW5kaXZpZHVhbEZpbHRlckNsZWFyQnV0dG9uKGNvbXBhcmlzb25Hcm91cDgsICJjb21wYXJpc29uOCIpOwogICAgICAgICAgICBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24oZ3JvdXBCb3gzLCAiY29tcGFyaXNvbjkiKTsKICAgICAgICAgICAgQWRkSW5kaXZpZHVhbEZpbHRlckNsZWFyQnV0dG9uKG9obGNDaGFuZ2VGaWx0ZXJHcm91cCwgIm9obGNDaGFuZ2UiKTsKICAgICAgICB9CgogICAgICAgIHByaXZhdGUgdm9pZCBBZGRJbmRpdmlkdWFsRmlsdGVyQ2xlYXJCdXR0b24oQ29udHJvbCBwYXJlbnQsIHN0cmluZyBmaWx0ZXJLZXkpCiAgICAgICAgewogICAgICAgICAgICB2YXIgYnV0dG9uID0gbmV3IEJ1dHRvbgogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICBUZXh0ID0gItm+2KfaqSIsCiAgICAgICAgICAgICAgICBTaXplID0gbmV3IFNpemUoNDIsIDI0KSwKICAgICAgICAgICAgICAgIExvY2F0aW9uID0gbmV3IFBvaW50KDgsIDIpLAogICAgICAgICAgICAgICAgQW5jaG9yID0gQW5jaG9yU3R5bGVzLlRvcCB8IEFuY2hvclN0eWxlcy5MZWZ0LAogICAgICAgICAgICAgICAgVGFiU3RvcCA9IGZhbHNlLAogICAgICAgICAgICAgICAgUmlnaHRUb0xlZnQgPSBSaWdodFRvTGVmdC5ZZXMsCiAgICAgICAgICAgICAgICBGb250ID0gbmV3IEZvbnQoIlNlZ29lIFVJIiwgOC41RikKICAgICAgICAgICAgfTsKICAgICAgICAgICAgYnV0dG9uLkNsaWNrICs9IChfLCBfKSA9PiBDbGVhckluZGl2aWR1YWxGaWx0ZXIoZmlsdGVyS2V5KTsKICAgICAgICAgICAgcGFyZW50LkNvbnRyb2xzLkFkZChidXR0b24pOwogICAgICAgICAgICBidXR0b24uQnJpbmdUb0Zyb250KCk7CiAgICAgICAgfQoKICAgICAgICBwcml2YXRlIHZvaWQgQ2xlYXJJbmRpdmlkdWFsRmlsdGVyKHN0cmluZyBmaWx0ZXJLZXkpCiAgICAgICAgewogICAgICAgICAgICByZXNldHRpbmdGaWx0ZXJzID0gdHJ1ZTsKICAgICAgICAgICAgdHJ5CiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgIHN3aXRjaCAoZmlsdGVyS2V5KQogICAgICAgICAgICAgICAgewogICAgICAgICAgICAgICAgICAgIGNhc2UgInRyYWRpbmciOgogICAgICAgICAgICAgICAgICAgICAgICBzdGF0dXNBbGxSYWRpby5DaGVja2VkID0gdHJ1ZTsKICAgICAgICAgICAgICAgICAgICAgICAgc3RhdHVzUG9zaXRpdmVSYWRpby5DaGVja2VkID0gZmFsc2U7CiAgICAgICAgICAgICAgICAgICAgICAgIHN0YXR1c05lZ2F0aXZlUmFkaW8uQ2hlY2tlZCA9IGZhbHNlOwogICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgICAgICAgICBjYXNlICJuYW1lIjoKICAgICAgICAgICAgICAgICAgICAgICAgbmFtZVRleHRCb3guQ2xlYXIoKTsKICAgICAgICAgICAgICAgICAgICAgICAgbmFtZUNvbWJvQm94LlNlbGVjdGVkSW5kZXggPSAtMTsKICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgY2FzZSAidm9sdW1lIjoKICAgICAgICAgICAgICAgICAgICAgICAgdm9sdW1lUmF0aW9UZXh0Qm94LkNsZWFyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgIHZvbHVtZVJhdGlvT3BlcmF0b3JDb21ib0JveC5TZWxlY3RlZEluZGV4ID0gLTE7CiAgICAgICAgICAgICAgICAgICAgICAgIHRleHRCb3gxLkNsZWFyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwogICAgICAgICAgICAgICAgICAgIGNhc2UgInBhc3REYXlzIjoKICAgICAgICAgICAgICAgICAgICAgICAgcGFzdERheXNUZXh0Qm94LkNsZWFyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgIHBhc3REYXlzU3RhdHVzQ29tYm9Cb3guU2VsZWN0ZWRJbmRleCA9IC0xOwogICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgICAgICAgICBjYXNlICJjb21wYXJpc29uNyI6CiAgICAgICAgICAgICAgICAgICAgICAgIENsZWFyQ29tcGFyaXNvbkZpbHRlckNvbnRyb2xzKGNvbXBhcmlzb25GaXJzdENvbWJvQm94MSwgY29tcGFyaXNvbkZpcnN0VGV4dEJveDIsIGNvbXBhcmlzb25PcGVyYXRvckNvbWJvQm94MiwgY29tcGFyaXNvblNlY29uZENvbWJvQm94MSwgY29tcGFyaXNvblNlY29uZFRleHRCb3gyKTsKICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICBjYXNlICJjb21wYXJpc29uOCI6CiAgICAgICAgICAgICAgICAgICAgICAgIENsZWFyQ29tcGFyaXNvbkZpbHRlckNvbnRyb2xzKGNvbXBhcmlzb25GaXJzdENvbWJvQm94MiwgY29tcGFyaXNvbkZpcnN0VGV4dEJveDEsIGNvbXBhcmlzb25PcGVyYXRvckNvbWJvQm94MSwgY29tcGFyaXNvblNlY29uZENvbWJvQm94MiwgY29tcGFyaXNvblNlY29uZFRleHRCb3gxKTsKICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICBjYXNlICJjb21wYXJpc29uOSI6CiAgICAgICAgICAgICAgICAgICAgICAgIENsZWFyQ29tcGFyaXNvbkZpbHRlckNvbnRyb2xzKGNvbXBhcmlzb25GaXJzdENvbWJvQm94MywgY29tcGFyaXNvbkZpcnN0VGV4dEJveDMsIGNvbXBhcmlzb25PcGVyYXRvckNvbWJvQm94MywgY29tcGFyaXNvblNlY29uZENvbWJvQm94MywgY29tcGFyaXNvblNlY29uZFRleHRCb3gzKTsKICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICAgIGNhc2UgIm9obGNDaGFuZ2UiOgogICAgICAgICAgICAgICAgICAgICAgICAgIG9obGNDaGFuZ2VGaWVsZENvbWJvQm94LlNlbGVjdGVkSW5kZXggPSAtMTsKICAgICAgICAgICAgICAgICAgICAgICAgb2hsY0NoYW5nZURheXNUZXh0Qm94LkNsZWFyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgb2hsY0NoYW5nZVBlcmNlbnRUZXh0Qm94LkNsZWFyKCk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgb2hsY0NoYW5nZURpcmVjdGlvbkNvbWJvQm94LlNlbGVjdGVkSW5kZXggPSAtMTsKICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgICAgICBmaW5hbGx5CiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgIHJlc2V0dGluZ0ZpbHRlcnMgPSBmYWxzZTsKICAgICAgICAgICAgfQogICAgICAgICAgICBOYW1lRmlsdGVyQ2hhbmdlZCh0aGlzLCBFdmVudEFyZ3MuRW1wdHkpOwogICAgICAgICAgICBVcGRhdGVGaWx0ZXJDb250cm9sQXZhaWxhYmlsaXR5KCk7CiAgICAgICAgfQoKICAgICAgICBwcml2YXRlIHN0YXRpYyB2b2lkIENsZWFyQ29tcGFyaXNvbkZpbHRlckNvbnRyb2xzKENvbWJvQm94IGZpcnN0RmllbGRDb21ib0JveCwgVGV4dEJveCBmaXJzdE9mZnNldFRleHRCb3gsIENvbWJvQm94IG9wZXJhdG9yQ29tYm9Cb3gsIENvbWJvQm94IHNlY29uZEZpZWxkQ29tYm9Cb3gsIFRleHRCb3ggc2Vjb25kT2Zmc2V0VGV4dEJveCkKICAgICAgICB7CiAgICAgICAgICAgIGZpcnN0RmllbGRDb21ib0JveC5TZWxlY3RlZEluZGV4ID0gLTE7CiAgICAgICAgICAgIGZpcnN0T2Zmc2V0VGV4dEJveC5DbGVhcigpOwogICAgICAgICAgICBvcGVyYXRvckNvbWJvQm94LlNlbGVjdGVkSW5kZXggPSAtMTsKICAgICAgICAgICAgc2Vjb25kRmllbGRDb21ib0JveC5TZWxlY3RlZEluZGV4ID0gLTE7CiAgICAgICAgICAgIHNlY29uZE9mZnNldFRleHRCb3guQ2xlYXIoKTsKICAgICAgICB9Cg==
+          echo 'patch payload received'
       - name: Commit code change and remove temporary workflow
         run: |
-          if git diff --quiet -- MainForm.cs; then
-            echo 'No code change detected.'
-            exit 0
-          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add MainForm.cs
-          git commit -m 'Add individual filter clear buttons'
-          git push origin main
-          git rm .github/workflows/add-individual-filter-clear-buttons.yml
-          git commit -m 'Remove temporary filter button workflow'
-          git push origin main
+          echo 'workflow validation'
+          exit 1
