@@ -13,6 +13,7 @@ namespace Trade.It
 
             portfoliosListBox.SelectedIndexChanged += PortfoliosListBox_SelectedIndexChanged;
             reloadButton.Click += ReloadButton_Click;
+            deletePortfoliosButton.Click += DeletePortfoliosButton_Click;
             closeButton.Click += CloseButton_Click;
 
             Load += PortfolioManagementForm_Load;
@@ -136,6 +137,57 @@ namespace Trade.It
                 MessageBox.Show(this,
                     $"اطلاعات سبد خوانده نشد:\n{ex.Message}",
                     "مدیریت سبد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void DeletePortfoliosButton_Click(object? sender, EventArgs e)
+        {
+            if (portfoliosListBox.SelectedItem is not string portfolioName ||
+                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            {
+                MessageBox.Show(this,
+                    "ابتدا یک سبد را انتخاب کنید.",
+                    "حذف سبد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            var result = MessageBox.Show(this,
+                $"آیا از حذف سبد «{portfolioName}» مطمئن هستید؟\nاین عملیات قابل بازگشت نیست.",
+                "حذف سبد",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            try
+            {
+                if (!File.Exists(file))
+                {
+                    LoadPortfolios();
+                    MessageBox.Show(this,
+                        "فایل سبد پیدا نشد و فهرست سبدها به‌روزرسانی شد.",
+                        "حذف سبد",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                File.Delete(file);
+                LoadPortfolios();
+
+                statusLabel.Text = "سبد با موفقیت حذف شد.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this,
+                    $"حذف سبد انجام نشد:\n{ex.Message}",
+                    "حذف سبد",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
