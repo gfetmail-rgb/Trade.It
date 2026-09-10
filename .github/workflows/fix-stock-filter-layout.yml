@@ -1,0 +1,66 @@
+name: Repair stock controls and filters layout
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Repair designer layout
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+
+          # --- Stock controls: restore the known-good two-row FlowLayoutPanel layout. ---
+          s = s.replace('        private System.Windows.Forms.Button navigationButton;\n',
+                        '        private System.Windows.Forms.Panel stockControlsPanel;\n        private System.Windows.Forms.FlowLayoutPanel stockButtonsPanel;\n        private System.Windows.Forms.FlowLayoutPanel stockOptionsPanel;\n        private System.Windows.Forms.Button navigationButton;\n', 1)
+
+          s = s.replace('            groupBox1 = new GroupBox();\n',
+                        '            stockControlsPanel = new Panel();\n            stockButtonsPanel = new FlowLayoutPanel();\n            stockOptionsPanel = new FlowLayoutPanel();\n', 1)
+          s = s.replace('            groupBox1.SuspendLayout();\n',
+                        '            stockControlsPanel.SuspendLayout();\n            stockButtonsPanel.SuspendLayout();\n            stockOptionsPanel.SuspendLayout();\n', 1)
+
+          old_stock_controls = '''            stocksTabPage.Controls.Add(portfolioLabel);\n            stocksTabPage.Controls.Add(portfolioComboBox);\n            stocksTabPage.Controls.Add(stocksDataGridView);\n            stocksTabPage.Controls.Add(groupBox1);\n'''
+          new_stock_controls = '''            stocksTabPage.Controls.Add(stocksDataGridView);\n            stocksTabPage.Controls.Add(stockControlsPanel);\n            stocksTabPage.Controls.Add(portfolioComboBox);\n            stocksTabPage.Controls.Add(portfolioLabel);\n'''
+          if old_stock_controls not in s:
+              raise SystemExit('Expected stock tab control block not found')
+          s = s.replace(old_stock_controls, new_stock_controls, 1)
+
+          start = s.index('            groupBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;')
+          end = s.index('            stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;', start)
+          stock_block = '''            stockControlsPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;\n            stockControlsPanel.Location = new Point(8, 672);\n            stockControlsPanel.Size = new Size(344, 105);\n            stockButtonsPanel.Dock = DockStyle.Top;\n            stockButtonsPanel.Height = 38;\n            stockButtonsPanel.FlowDirection = FlowDirection.LeftToRight;\n            stockButtonsPanel.WrapContents = false;\n            stockButtonsPanel.Controls.Add(navigationButton);\n            stockButtonsPanel.Controls.Add(newPortfolioButton);\n            stockButtonsPanel.Controls.Add(refreshButton);\n            stockButtonsPanel.Controls.Add(deleteButton);\n            stockOptionsPanel.Dock = DockStyle.Fill;\n            stockOptionsPanel.Padding = new Padding(3, 5, 3, 3);\n            stockOptionsPanel.FlowDirection = FlowDirection.LeftToRight;\n            stockOptionsPanel.WrapContents = false;\n            stockOptionsPanel.Controls.Add(selectAllCheckBox);\n            stockOptionsPanel.Controls.Add(selectNoneCheckBox);\n            stockOptionsPanel.Controls.Add(speedLabel);\n            stockOptionsPanel.Controls.Add(navigationSpeedTextBox);\n            stockControlsPanel.Controls.Add(stockOptionsPanel);\n            stockControlsPanel.Controls.Add(stockButtonsPanel);\n\n            navigationButton.Text = "پیمایش";\n            navigationButton.Size = new Size(75, 30);\n            newPortfolioButton.Text = "سبد جدید";\n            newPortfolioButton.Size = new Size(75, 30);\n            refreshButton.Text = "تازه‌سازی";\n            refreshButton.Size = new Size(75, 30);\n            deleteButton.Text = "حذف";\n            deleteButton.Size = new Size(60, 30);\n            selectAllCheckBox.Text = "همه";\n            selectAllCheckBox.AutoSize = true;\n            selectNoneCheckBox.Text = "هیچکدام";\n            selectNoneCheckBox.AutoSize = true;\n            speedLabel.Text = "سرعت:";\n            speedLabel.AutoSize = true;\n            navigationSpeedTextBox.Size = new Size(65, 23);\n            navigationSpeedTextBox.Text = "1000";\n\n'''
+          s = s[:start] + stock_block + s[end:]
+          s = s.replace('            stocksDataGridView.Location = new Point(8, 48);\n            stocksDataGridView.Name = "stocksDataGridView";\n            stocksDataGridView.Size = new Size(344, 627);',
+                        '            stocksDataGridView.Location = new Point(8, 48);\n            stocksDataGridView.Name = "stocksDataGridView";\n            stocksDataGridView.Size = new Size(344, 619);', 1)
+
+          # --- Filters: keep every comparison label/control inside the 314px group. ---
+          for n in ['', '6', '7', '8']:
+              old = f'            label5{("_" + n) if n else ""}.Location = new Point(319, 36);'
+              if old in s:
+                  s = s.replace(old, f'            label5{("_" + n) if n else ""}.Location = new Point(250, 36);', 1)
+          s = s.replace('            clearFiltersButton.Size = new Size(314, 36);',
+                        '            clearFiltersButton.Size = new Size(314, 36);', 1)
+
+          # Restore designer cleanup for the new stock controls.
+          s = s.replace('            groupBox1.ResumeLayout(false);\n            groupBox1.PerformLayout();\n',
+                        '            stockOptionsPanel.ResumeLayout(false);\n            stockOptionsPanel.PerformLayout();\n            stockButtonsPanel.ResumeLayout(false);\n            stockControlsPanel.ResumeLayout(false);\n', 1)
+
+          # Remove obsolete field declarations left by the old designer layout.
+          s = s.replace('        private System.Windows.Forms.GroupBox groupBox1;\n', '')
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.Designer.cs
+          git commit -m "Repair stock controls and filter layout"
+          git rm .github/workflows/fix-stock-filter-layout.yml
+          git commit -m "Remove temporary layout repair workflow"
+          git push origin HEAD:main
