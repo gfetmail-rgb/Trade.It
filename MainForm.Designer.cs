@@ -408,7 +408,7 @@ namespace Trade.It
             // 
             speedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(112, 36);
+            speedLabel.Location = new Point(117, 38);
             speedLabel.Name = "speedLabel";
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 2;
@@ -456,10 +456,8 @@ namespace Trade.It
             stocksDataGridView.AllowUserToAddRows = false;
             stocksDataGridView.AllowUserToDeleteRows = false;
             stocksDataGridView.AllowUserToOrderColumns = true;
-            stocksDataGridView.AllowUserToResizeColumns = true;
             stocksDataGridView.AllowUserToResizeRows = false;
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            stocksDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             stocksDataGridView.ColumnHeadersHeight = 34;
             stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             stocksDataGridView.Location = new Point(11, 47);
@@ -649,8 +647,6 @@ namespace Trade.It
             // 
             // filterCountLabel
             // 
-            filterCountLabel.AutoSize = false;
-            filterCountLabel.BorderStyle = BorderStyle.None;
             filterCountLabel.Font = new Font("Segoe UI", 9F);
             filterCountLabel.Location = new Point(150, 858);
             filterCountLabel.Name = "filterCountLabel";
@@ -659,7 +655,6 @@ namespace Trade.It
             filterCountLabel.TabIndex = 11;
             filterCountLabel.Text = "کل: ۰    پیدا شده: ۰";
             filterCountLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // 
             // ohlcChangeFilterGroup
             // 
