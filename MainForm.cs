@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -42,27 +42,6 @@ namespace Trade.It
                 RefreshPortfolioListAndClearSelection();
             };
 
-            tabPage3.Controls.Clear();
-            tabPage3.AutoScroll = true;
-            var identifierButtonsPanel = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 52, Padding = new Padding(4), FlowDirection = FlowDirection.RightToLeft, WrapContents = false, RightToLeft = RightToLeft.Yes };
-            foreach (var buttonInfo in new[] { (Text: "جدید", Width: 62), (Text: "ذخیره", Width: 70), (Text: "حذف", Width: 62), (Text: "حذف همه", Width: 80), (Text: "ورود از اکسل", Width: 105) })
-                identifierButtonsPanel.Controls.Add(new Button { Text = buttonInfo.Text, Width = buttonInfo.Width, Height = 36, Margin = new Padding(3) });
-            var identifierGroup = new GroupBox { Dock = DockStyle.Top, AutoSize = true, Text = "اطلاعات شناسه", Padding = new Padding(10), RightToLeft = RightToLeft.Yes };
-            var identifierFields = new (string Label, bool Combo)[] { ("کد ۱۲ رقمی نماد", false), ("کد ۵ رقمی نماد", false), ("نام لاتین شرکت", false), ("کد ۴ رقمی شرکت", false), ("نام شرکت", false), ("نماد فارسی", false), ("نماد ۳۰ رقمی فارسی", false), ("کد ۱۲ رقمی شرکت", false), ("بازار", true), ("کد تابلو", false), ("کد گروه صنعت", false), ("گروه صنعت", false), ("کد زیر گروه صنعت", false), ("زیر گروه صنعت", false) };
-            var identifierTable = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 2, RowCount = identifierFields.Length, Padding = new Padding(6), RightToLeft = RightToLeft.Yes };
-            identifierTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
-            identifierTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            foreach (var field in identifierFields)
-            {
-                identifierTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-                identifierTable.Controls.Add(new Label { Text = field.Label, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(4), Font = new Font("Segoe UI", 10F) });
-                Control input = field.Combo ? new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Margin = new Padding(4) } : new TextBox { Dock = DockStyle.Fill, Margin = new Padding(4) };
-                identifierTable.Controls.Add(input);
-            }
-            identifierGroup.Controls.Add(identifierTable);
-            tabPage3.Controls.Add(identifierGroup);
-            tabPage3.Controls.Add(identifierButtonsPanel);
-            identifierButtonsPanel.BringToFront();
 
             portfolioComboBox.SelectedIndexChanged += PortfolioComboBox_SelectedIndexChanged;
             newPortfolioButton.Click += NewPortfolioButton_Click;
@@ -78,7 +57,6 @@ namespace Trade.It
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
-            InitializeIndividualFilterClearButtons();
         }
 
         private void InitializeFilterComboEmptyOptions()
@@ -102,33 +80,11 @@ namespace Trade.It
             }
         }
 
-        private void InitializeIndividualFilterClearButtons()
-        {
-            AddIndividualFilterClearButton(tradingStatusGroup, "trading");
-            AddIndividualFilterClearButton(nameFilterGroup, "name");
-            AddIndividualFilterClearButton(volumeRatioGroup, "volume");
-            AddIndividualFilterClearButton(pastDaysGroup, "pastDays");
-            AddIndividualFilterClearButton(comparisonGroup7, "comparison7");
-            AddIndividualFilterClearButton(comparisonGroup8, "comparison8");
-            AddIndividualFilterClearButton(groupBox3, "comparison9");
-            AddIndividualFilterClearButton(ohlcChangeFilterGroup, "ohlcChange");
-        }
 
-        private void AddIndividualFilterClearButton(Control parent, string filterKey)
+        private void IndividualFilterClearButton_Click(object? sender, EventArgs e)
         {
-            var button = new Button
-            {
-                Text = "پاک",
-                Size = new Size(42, 24),
-                Location = new Point(8, 2),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                TabStop = false,
-                RightToLeft = RightToLeft.Yes,
-                Font = new Font("Segoe UI", 8.5F)
-            };
-            button.Click += (_, _) => ClearIndividualFilter(filterKey);
-            parent.Controls.Add(button);
-            button.BringToFront();
+            if (sender is Button button && button.Tag is string filterKey)
+                ClearIndividualFilter(filterKey);
         }
 
         private void ClearIndividualFilter(string filterKey)
