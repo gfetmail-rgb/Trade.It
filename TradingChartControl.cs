@@ -29,9 +29,10 @@ namespace Trade.It
         private int dragStartFirstIndex;
         private bool horizontalAxisDrag;
         private bool verticalAxisDrag;
-        private bool showGrid = true;
+        private bool showGrid;
         private bool showCrosshair;
         private Point crosshairPoint;
+        private double verticalZoom = 1.0;
 
         public TradingChartControl()
         {
@@ -49,6 +50,7 @@ namespace Trade.It
             points.AddRange(data.OrderBy(x => x.Date));
             visibleCount = Math.Max(1, points.Count);
             firstIndex = 0;
+            verticalZoom = 1.0;
             Invalidate();
         }
 
@@ -78,9 +80,11 @@ namespace Trade.It
         {
             visibleCount = Math.Max(1, points.Count);
             firstIndex = 0;
+            verticalZoom = 1.0;
             Invalidate();
         }
 
+        // X zoom keeps the right edge (latest data) fixed and opens/closes only from the left.
         public void ZoomX(double factor)
         {
             if (points.Count < 2)
@@ -91,14 +95,8 @@ namespace Trade.It
             if (newCount == oldCount)
                 return;
 
-            var center = firstIndex + oldCount / 2.0;
             visibleCount = newCount;
-            firstIndex = Math.Clamp((int)Math.Round(center - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
-            Invalidate();
-        }
-
-        public void ZoomY(double factor)
-        {
+            firstIndex = Math.Max(0, points.Count - newCount);
             Invalidate();
         }
 
@@ -153,16 +151,12 @@ namespace Trade.It
             }
             else if (verticalAxisDrag)
             {
-                // Vertical axis dragging changes the visible price span around its center.
-                // The current implementation derives the span directly from the drag distance.
                 var delta = dragStart.Value - e.Y;
                 verticalZoom = Math.Clamp(verticalZoom * Math.Exp(-delta / 260.0), 0.15, 8.0);
                 dragStart = e.Y;
                 Invalidate();
             }
         }
-
-        private double verticalZoom = 1.0;
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
@@ -238,8 +232,7 @@ namespace Trade.It
             {
                 var y = plot.Top + plot.Height * i / 5f;
                 var value = max - (max - min) * i / 5.0;
-                var label = value.ToString("0.##");
-                e.Graphics.DrawString(label, Font, textBrush, 4, y - Font.Height / 2f);
+                e.Graphics.DrawString(value.ToString("0.##"), Font, textBrush, 4, y - Font.Height / 2f);
             }
 
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
@@ -305,8 +298,10 @@ namespace Trade.It
             if (showCrosshair)
             {
                 using var crossPen = new Pen(Color.FromArgb(100, 80, 80, 80), 1) { DashStyle = DashStyle.Dash };
-                e.Graphics.DrawLine(crossPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
-                e.Graphics.DrawLine(crossPen, crosshairPoint.X, plot.Top, crosshairPoint.X, plot.Bottom);
+                var x = Math.Clamp(crosshairPoint.X, plot.Left, plot.Right);
+                var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
+                e.Graphics.DrawLine(crossPen, plot.Left, y, plot.Right, y);
+                e.Graphics.DrawLine(crossPen, x, plot.Top, x, plot.Bottom);
             }
         }
     }
