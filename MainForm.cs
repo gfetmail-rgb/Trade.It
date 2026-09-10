@@ -724,7 +724,6 @@ namespace Trade.It
                 return;
             }
 
-            UpdateFilterControlAvailability();
             var symbols = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
