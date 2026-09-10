@@ -11,7 +11,8 @@ namespace Trade.It
         {
             InitializeComponent();
 
-            portfoliosListBox.SelectedIndexChanged += PortfoliosListBox_SelectedIndexChanged;
+            portfoliosListBox.SelectionMode = SelectionMode.MultiExtended;
+            portfoliosListBox.MouseClick += PortfoliosListBox_MouseClick;
             reloadButton.Click += ReloadButton_Click;
             deletePortfoliosButton.Click += DeletePortfoliosButton_Click;
             deleteSymbolsButton.Click += DeleteSymbolsButton_Click;
@@ -74,7 +75,7 @@ namespace Trade.It
 
                 statusLabel.Text = portfoliosListBox.Items.Count == 0
                     ? "هیچ سبدی وجود ندارد."
-                    : "یک سبد را انتخاب کنید.";
+                    : "یک یا چند سبد را انتخاب کنید.";
             }
             finally
             {
@@ -82,19 +83,23 @@ namespace Trade.It
             }
         }
 
-        private void PortfoliosListBox_SelectedIndexChanged(object? sender, EventArgs e)
+        private void PortfoliosListBox_MouseClick(object? sender, MouseEventArgs e)
         {
-            if (internalUpdate)
+            if (internalUpdate || e.Button != MouseButtons.Left)
                 return;
 
-            if (portfoliosListBox.SelectedItem is not string portfolioName ||
-                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            var index = portfoliosListBox.IndexFromPoint(e.Location);
+            if (index < 0 || index >= portfoliosListBox.Items.Count)
+                return;
+
+            // The clicked portfolio is always the source of the details panel,
+            // while the ListBox keeps all current selections for multi-delete.
+            var portfolioName = Convert.ToString(portfoliosListBox.Items[index]);
+            if (!string.IsNullOrWhiteSpace(portfolioName) &&
+                portfolioFiles.TryGetValue(portfolioName, out var file))
             {
-                ClearPortfolioDetails();
-                return;
+                LoadPortfolio(file);
             }
-
-            LoadPortfolio(file);
         }
 
         private void LoadPortfolio(string file)
@@ -148,19 +153,30 @@ namespace Trade.It
 
         private void DeletePortfoliosButton_Click(object? sender, EventArgs e)
         {
-            if (portfoliosListBox.SelectedItem is not string portfolioName ||
-                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            var selectedPortfolios = portfoliosListBox.SelectedItems
+                .Cast<object>()
+                .Select(item => Convert.ToString(item) ?? string.Empty)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(name => portfolioFiles.ContainsKey(name))
+                .ToList();
+
+            if (selectedPortfolios.Count == 0)
             {
                 MessageBox.Show(this,
-                    "ابتدا یک سبد را انتخاب کنید.",
+                    "ابتدا یک یا چند سبد را انتخاب کنید.",
                     "حذف سبد",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 return;
             }
 
+            var portfolioText = selectedPortfolios.Count == 1
+                ? $"سبد «{selectedPortfolios[0]}»"
+                : $"{ToPersianDigits(selectedPortfolios.Count.ToString())} سبد انتخاب‌شده";
+
             var result = MessageBox.Show(this,
-                $"آیا از حذف سبد «{portfolioName}» مطمئن هستید؟\nاین عملیات قابل بازگشت نیست.",
+                $"آیا از حذف {portfolioText} مطمئن هستید؟\nاین عملیات قابل بازگشت نیست.",
                 "حذف سبد",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning,
@@ -171,21 +187,32 @@ namespace Trade.It
 
             try
             {
-                if (!File.Exists(file))
+                var deletedCount = 0;
+                var missingCount = 0;
+
+                foreach (var portfolioName in selectedPortfolios)
                 {
-                    LoadPortfolios();
-                    MessageBox.Show(this,
-                        "فایل سبد پیدا نشد و فهرست سبدها به‌روزرسانی شد.",
-                        "حذف سبد",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                    return;
+                    var file = portfolioFiles[portfolioName];
+                    if (!File.Exists(file))
+                    {
+                        missingCount++;
+                        continue;
+                    }
+
+                    File.Delete(file);
+                    deletedCount++;
                 }
 
-                File.Delete(file);
                 LoadPortfolios();
 
-                statusLabel.Text = "سبد با موفقیت حذف شد.";
+                if (deletedCount > 0 && missingCount == 0)
+                    statusLabel.Text = selectedPortfolios.Count == 1
+                        ? "سبد با موفقیت حذف شد."
+                        : "سبدهای انتخاب‌شده با موفقیت حذف شدند.";
+                else if (deletedCount > 0)
+                    statusLabel.Text = "سبدهای موجود حذف شدند و فهرست به‌روزرسانی شد.";
+                else
+                    statusLabel.Text = "هیچ‌یک از فایل‌های سبدهای انتخاب‌شده پیدا نشد.";
             }
             catch (Exception ex)
             {
@@ -199,11 +226,24 @@ namespace Trade.It
 
         private void DeleteSymbolsButton_Click(object? sender, EventArgs e)
         {
-            if (portfoliosListBox.SelectedItem is not string portfolioName ||
-                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            if (portfoliosListBox.SelectedItems.Count == 0)
             {
                 MessageBox.Show(this,
                     "ابتدا یک سبد را انتخاب کنید.",
+                    "حذف نماد",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            // Symbol deletion always applies to the portfolio whose details are currently displayed.
+            var portfolioName = portfolioNameLabel.Text.Trim();
+            if (string.IsNullOrWhiteSpace(portfolioName) ||
+                portfolioName == "—" ||
+                !portfolioFiles.TryGetValue(portfolioName, out var file))
+            {
+                MessageBox.Show(this,
+                    "ابتدا روی سبد موردنظر کلیک کنید.",
                     "حذف نماد",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
