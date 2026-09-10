@@ -68,7 +68,6 @@ namespace Trade.It
             newPortfolioButton.Click += NewPortfolioButton_Click;
             refreshButton.Click += RefreshStocksButton_Click;
             refreshButtonPortfolio.Click += RefreshPortfolioButton_Click;
-            stocksDataGridView.CellClick += StocksDataGridView_CellClick;
             deleteButton.Click += DeleteButton_Click;
             selectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged;
             selectNoneCheckBox.CheckedChanged += SelectNoneCheckBox_CheckedChanged;
@@ -238,23 +237,6 @@ namespace Trade.It
 
             displayedPortfolioName = name;
             PopulateStocksGrid(definition);
-        }
-
-        private void StocksDataGridView_CellClick(object? sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.RowIndex >= stocksDataGridView.Rows.Count)
-                return;
-
-            var sourceRow = stocksDataGridView.Rows[e.RowIndex];
-            if (sourceRow.IsNewRow)
-                return;
-
-            stockPreviewGrid.Rows.Clear();
-            stockPreviewGrid.Rows.Add(
-                sourceRow.Cells["rowColumn"].Value,
-                sourceRow.Cells["symbolColumn"].Value,
-                sourceRow.Cells["lastTradeColumn"].Value,
-                sourceRow.Cells["selectColumn"].Value);
         }
 
         private void PopulateStocksGrid(PortfolioDefinition definition)

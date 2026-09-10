@@ -20,12 +20,6 @@ namespace Trade.It
         private System.Windows.Forms.ComboBox portfolioComboBox;
         private System.Windows.Forms.Label portfolioLabel;
         private System.Windows.Forms.DataGridView stocksDataGridView;
-        private System.Windows.Forms.GroupBox stockPreviewGroup;
-        private System.Windows.Forms.DataGridView stockPreviewGrid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn previewRowColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn previewSymbolColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn previewLastTradeColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn previewSelectColumn;
         private System.Windows.Forms.Button navigationButton;
         private System.Windows.Forms.Button newPortfolioButton;
         private System.Windows.Forms.Button refreshButton;
@@ -194,12 +188,6 @@ namespace Trade.It
             newPortfolioButton = new Button();
             refreshButtonPortfolio = new Button();
             stocksDataGridView = new DataGridView();
-            stockPreviewGroup = new GroupBox();
-            stockPreviewGrid = new DataGridView();
-            previewRowColumn = new DataGridViewTextBoxColumn();
-            previewSymbolColumn = new DataGridViewTextBoxColumn();
-            previewLastTradeColumn = new DataGridViewTextBoxColumn();
-            previewSelectColumn = new DataGridViewCheckBoxColumn();
             rowColumn = new DataGridViewTextBoxColumn();
             symbolColumn = new DataGridViewTextBoxColumn();
             lastTradeColumn = new DataGridViewTextBoxColumn();
@@ -310,8 +298,6 @@ namespace Trade.It
             stocksTabPage.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
-            stockPreviewGroup.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)stockPreviewGrid).BeginInit();
             tabPage2.SuspendLayout();
             ohlcChangeFilterGroup.SuspendLayout();
             comparisonGroup8.SuspendLayout();
@@ -494,7 +480,6 @@ namespace Trade.It
             controlTabControl.TabIndex = 0;
             stocksTabPage.Controls.Add(portfolioLabel);
             stocksTabPage.Controls.Add(portfolioComboBox);
-            stocksTabPage.Controls.Add(stockPreviewGroup);
             stocksTabPage.Controls.Add(stocksDataGridView);
             stocksTabPage.Controls.Add(groupBox1);
             stocksTabPage.Location = new Point(4, 34);
@@ -542,62 +527,8 @@ namespace Trade.It
             stocksDataGridView.Dock = DockStyle.None;
             stocksDataGridView.Location = new Point(8, 48);
             stocksDataGridView.Name = "stocksDataGridView";
-            stocksDataGridView.Size = new Size(344, 310);
+            stocksDataGridView.Size = new Size(344, 627);
             stocksDataGridView.TabIndex = 1;
-            // stockPreviewGroup
-            // 
-            stockPreviewGroup.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            stockPreviewGroup.Location = new Point(8, 365);
-            stockPreviewGroup.Name = "stockPreviewGroup";
-            stockPreviewGroup.Size = new Size(344, 310);
-            stockPreviewGroup.TabIndex = 4;
-            stockPreviewGroup.TabStop = false;
-            stockPreviewGroup.Text = "پیش نمایش";
-            // 
-            // stockPreviewGrid
-            // 
-            stockPreviewGrid.AllowUserToAddRows = false;
-            stockPreviewGrid.AllowUserToDeleteRows = false;
-            stockPreviewGrid.Dock = DockStyle.Fill;
-            stockPreviewGrid.BackgroundColor = SystemColors.Window;
-            stockPreviewGrid.ColumnHeadersHeight = 34;
-            stockPreviewGrid.Columns.AddRange(new DataGridViewColumn[] { previewRowColumn, previewSymbolColumn, previewLastTradeColumn, previewSelectColumn });
-            stockPreviewGrid.Name = "stockPreviewGrid";
-            stockPreviewGrid.ReadOnly = true;
-            stockPreviewGrid.RightToLeft = RightToLeft.Yes;
-            stockPreviewGrid.RowHeadersVisible = false;
-            stockPreviewGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            stockPreviewGrid.TabIndex = 0;
-            // 
-            // previewRowColumn
-            // 
-            previewRowColumn.HeaderText = "ردیف";
-            previewRowColumn.Name = "previewRowColumn";
-            previewRowColumn.ReadOnly = true;
-            previewRowColumn.Width = 55;
-            // 
-            // previewSymbolColumn
-            // 
-            previewSymbolColumn.HeaderText = "نماد";
-            previewSymbolColumn.Name = "previewSymbolColumn";
-            previewSymbolColumn.ReadOnly = true;
-            previewSymbolColumn.Width = 75;
-            // 
-            // previewLastTradeColumn
-            // 
-            previewLastTradeColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            previewLastTradeColumn.HeaderText = "آخرین معامله";
-            previewLastTradeColumn.Name = "previewLastTradeColumn";
-            previewLastTradeColumn.ReadOnly = true;
-            // 
-            // previewSelectColumn
-            // 
-            previewSelectColumn.HeaderText = "انتخاب";
-            previewSelectColumn.Name = "previewSelectColumn";
-            previewSelectColumn.ReadOnly = true;
-            previewSelectColumn.Width = 60;
-            stockPreviewGroup.Controls.Add(stockPreviewGrid);
-            // 
             rowColumn.HeaderText = "ردیف";
             rowColumn.Name = "rowColumn";
             symbolColumn.HeaderText = "نماد";
@@ -900,8 +831,6 @@ namespace Trade.It
             stocksTabPage.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)stockPreviewGrid).EndInit();
-            stockPreviewGroup.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
             tabPage2.ResumeLayout(false);
             ohlcChangeFilterGroup.ResumeLayout(false);

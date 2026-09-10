@@ -34,6 +34,26 @@ namespace Trade.It
         private Button deleteSymbolsButton;
         private Label statusLabel;
         private Button closeButton;
+        private GroupBox previewGroup;
+        private DataGridView previewGrid;
+        private DataGridViewTextBoxColumn previewColumn1;
+        private DataGridViewTextBoxColumn previewColumn2;
+        private DataGridViewTextBoxColumn previewColumn3;
+        private DataGridViewTextBoxColumn previewColumn4;
+        private DataGridViewTextBoxColumn previewColumn5;
+        private DataGridViewTextBoxColumn previewColumn6;
+        private DataGridViewTextBoxColumn previewColumn7;
+        private DataGridViewTextBoxColumn previewColumn8;
+        private DataGridViewTextBoxColumn previewColumn9;
+        private DataGridViewTextBoxColumn previewColumn10;
+        private DataGridViewTextBoxColumn previewColumn11;
+        private DataGridViewTextBoxColumn previewColumn12;
+        private DataGridViewTextBoxColumn previewColumn13;
+        private DataGridViewTextBoxColumn previewColumn14;
+        private DataGridViewTextBoxColumn previewColumn15;
+        private DataGridViewTextBoxColumn previewColumn16;
+        private DataGridViewTextBoxColumn previewColumn17;
+        private DataGridViewTextBoxColumn previewColumn18;
 
         protected override void Dispose(bool disposing)
         {
@@ -75,16 +95,37 @@ namespace Trade.It
             deleteSymbolsButton = new Button();
             statusLabel = new Label();
             closeButton = new Button();
+            previewGroup = new GroupBox();
+            previewGrid = new DataGridView();
+            previewColumn1 = new DataGridViewTextBoxColumn();
+            previewColumn2 = new DataGridViewTextBoxColumn();
+            previewColumn3 = new DataGridViewTextBoxColumn();
+            previewColumn4 = new DataGridViewTextBoxColumn();
+            previewColumn5 = new DataGridViewTextBoxColumn();
+            previewColumn6 = new DataGridViewTextBoxColumn();
+            previewColumn7 = new DataGridViewTextBoxColumn();
+            previewColumn8 = new DataGridViewTextBoxColumn();
+            previewColumn9 = new DataGridViewTextBoxColumn();
+            previewColumn10 = new DataGridViewTextBoxColumn();
+            previewColumn11 = new DataGridViewTextBoxColumn();
+            previewColumn12 = new DataGridViewTextBoxColumn();
+            previewColumn13 = new DataGridViewTextBoxColumn();
+            previewColumn14 = new DataGridViewTextBoxColumn();
+            previewColumn15 = new DataGridViewTextBoxColumn();
+            previewColumn16 = new DataGridViewTextBoxColumn();
+            previewColumn17 = new DataGridViewTextBoxColumn();
+            previewColumn18 = new DataGridViewTextBoxColumn();
             groupBox1 = new GroupBox();
             NoDateTimeLabel = new Label();
             label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)previewGrid).BeginInit();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // reloadButton
             // 
-            reloadButton.Location = new Point(581, 769);
+            reloadButton.Location = new Point(581, 939);
             reloadButton.Name = "reloadButton";
             reloadButton.Size = new Size(110, 41);
             reloadButton.TabIndex = 1;
@@ -324,7 +365,7 @@ namespace Trade.It
             // 
             symbolsGrid.AllowUserToAddRows = false;
             symbolsGrid.AllowUserToDeleteRows = false;
-            symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            symbolsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.ColumnHeadersHeight = 34;
             symbolsGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowColumn, symbolNameColumn });
@@ -335,7 +376,7 @@ namespace Trade.It
             symbolsGrid.RowHeadersVisible = false;
             symbolsGrid.RowHeadersWidth = 62;
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            symbolsGrid.Size = new Size(1368, 373);
+            symbolsGrid.Size = new Size(1368, 250);
             symbolsGrid.TabIndex = 29;
             // 
             // symbolRowColumn
@@ -352,10 +393,110 @@ namespace Trade.It
             symbolNameColumn.Name = "symbolNameColumn";
             symbolNameColumn.ReadOnly = true;
             // 
+            // previewGroup
+            // 
+            previewGroup.Controls.Add(previewGrid);
+            previewGroup.Location = new Point(20, 650);
+            previewGroup.Name = "previewGroup";
+            previewGroup.Size = new Size(1368, 270);
+            previewGroup.TabIndex = 34;
+            previewGroup.TabStop = false;
+            previewGroup.Text = "پیش نمایش";
+            // 
+            // previewGrid
+            // 
+            previewGrid.AllowUserToAddRows = false;
+            previewGrid.AllowUserToDeleteRows = false;
+            previewGrid.BackgroundColor = SystemColors.Window;
+            previewGrid.ColumnHeadersHeight = 34;
+            previewGrid.Columns.AddRange(new DataGridViewColumn[]
+            {
+                previewColumn1, previewColumn2, previewColumn3, previewColumn4, previewColumn5, previewColumn6, previewColumn7, previewColumn8, previewColumn9, previewColumn10, previewColumn11, previewColumn12, previewColumn13, previewColumn14, previewColumn15, previewColumn16, previewColumn17, previewColumn18,
+            });
+            previewGrid.Dock = DockStyle.Fill;
+            previewGrid.Name = "previewGrid";
+            previewGrid.ReadOnly = true;
+            previewGrid.RightToLeft = RightToLeft.Yes;
+            previewGrid.RowHeadersVisible = false;
+            previewGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            previewGrid.TabIndex = 0;
+            previewColumn1.HeaderText = "ستون 1";
+            previewColumn1.Name = "previewColumn1";
+            previewColumn1.ReadOnly = true;
+            previewColumn1.Width = 120;
+            previewColumn2.HeaderText = "ستون 2";
+            previewColumn2.Name = "previewColumn2";
+            previewColumn2.ReadOnly = true;
+            previewColumn2.Width = 120;
+            previewColumn3.HeaderText = "ستون 3";
+            previewColumn3.Name = "previewColumn3";
+            previewColumn3.ReadOnly = true;
+            previewColumn3.Width = 120;
+            previewColumn4.HeaderText = "ستون 4";
+            previewColumn4.Name = "previewColumn4";
+            previewColumn4.ReadOnly = true;
+            previewColumn4.Width = 120;
+            previewColumn5.HeaderText = "ستون 5";
+            previewColumn5.Name = "previewColumn5";
+            previewColumn5.ReadOnly = true;
+            previewColumn5.Width = 120;
+            previewColumn6.HeaderText = "ستون 6";
+            previewColumn6.Name = "previewColumn6";
+            previewColumn6.ReadOnly = true;
+            previewColumn6.Width = 120;
+            previewColumn7.HeaderText = "ستون 7";
+            previewColumn7.Name = "previewColumn7";
+            previewColumn7.ReadOnly = true;
+            previewColumn7.Width = 120;
+            previewColumn8.HeaderText = "ستون 8";
+            previewColumn8.Name = "previewColumn8";
+            previewColumn8.ReadOnly = true;
+            previewColumn8.Width = 120;
+            previewColumn9.HeaderText = "ستون 9";
+            previewColumn9.Name = "previewColumn9";
+            previewColumn9.ReadOnly = true;
+            previewColumn9.Width = 120;
+            previewColumn10.HeaderText = "ستون 10";
+            previewColumn10.Name = "previewColumn10";
+            previewColumn10.ReadOnly = true;
+            previewColumn10.Width = 120;
+            previewColumn11.HeaderText = "ستون 11";
+            previewColumn11.Name = "previewColumn11";
+            previewColumn11.ReadOnly = true;
+            previewColumn11.Width = 120;
+            previewColumn12.HeaderText = "ستون 12";
+            previewColumn12.Name = "previewColumn12";
+            previewColumn12.ReadOnly = true;
+            previewColumn12.Width = 120;
+            previewColumn13.HeaderText = "ستون 13";
+            previewColumn13.Name = "previewColumn13";
+            previewColumn13.ReadOnly = true;
+            previewColumn13.Width = 120;
+            previewColumn14.HeaderText = "ستون 14";
+            previewColumn14.Name = "previewColumn14";
+            previewColumn14.ReadOnly = true;
+            previewColumn14.Width = 120;
+            previewColumn15.HeaderText = "ستون 15";
+            previewColumn15.Name = "previewColumn15";
+            previewColumn15.ReadOnly = true;
+            previewColumn15.Width = 120;
+            previewColumn16.HeaderText = "ستون 16";
+            previewColumn16.Name = "previewColumn16";
+            previewColumn16.ReadOnly = true;
+            previewColumn16.Width = 120;
+            previewColumn17.HeaderText = "ستون 17";
+            previewColumn17.Name = "previewColumn17";
+            previewColumn17.ReadOnly = true;
+            previewColumn17.Width = 120;
+            previewColumn18.HeaderText = "ستون 18";
+            previewColumn18.Name = "previewColumn18";
+            previewColumn18.ReadOnly = true;
+            previewColumn18.Width = 120;
+            // 
             // deleteSymbolsButton
             // 
             deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteSymbolsButton.Location = new Point(1263, 766);
+            deleteSymbolsButton.Location = new Point(1263, 936);
             deleteSymbolsButton.Name = "deleteSymbolsButton";
             deleteSymbolsButton.Size = new Size(125, 40);
             deleteSymbolsButton.TabIndex = 30;
@@ -375,7 +516,7 @@ namespace Trade.It
             // closeButton
             // 
             closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            closeButton.Location = new Point(715, 769);
+            closeButton.Location = new Point(715, 939);
             closeButton.Name = "closeButton";
             closeButton.Size = new Size(125, 41);
             closeButton.TabIndex = 32;
@@ -433,7 +574,7 @@ namespace Trade.It
             // 
             // PortfolioManagementForm
             // 
-            ClientSize = new Size(1400, 820);
+            ClientSize = new Size(1400, 1000);
             Controls.Add(groupBox1);
             Controls.Add(reloadButton);
             Controls.Add(portfoliosListBox);
@@ -441,6 +582,7 @@ namespace Trade.It
             Controls.Add(deletePortfoliosButton);
             Controls.Add(symbolsTitleLabel);
             Controls.Add(symbolsGrid);
+            Controls.Add(previewGroup);
             Controls.Add(deleteSymbolsButton);
             Controls.Add(statusLabel);
             Controls.Add(closeButton);
@@ -451,6 +593,7 @@ namespace Trade.It
             RightToLeftLayout = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "مدیریت سبدها";
+            ((System.ComponentModel.ISupportInitialize)previewGrid).EndInit();
             ((System.ComponentModel.ISupportInitialize)symbolsGrid).EndInit();
             groupBox1.ResumeLayout(false);
             ResumeLayout(false);
