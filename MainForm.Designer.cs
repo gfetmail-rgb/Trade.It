@@ -1,4 +1,4 @@
-namespace Trade.It
+﻿namespace Trade.It
 {
     partial class MainForm
     {
@@ -733,7 +733,7 @@ namespace Trade.It
             // 
             ohlcChangeDirectionComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { "رشد حداقل", "افت حداقل" });
+            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
             ohlcChangeDirectionComboBox.Location = new Point(195, 66);
             ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
             ohlcChangeDirectionComboBox.Size = new Size(142, 33);
@@ -972,6 +972,8 @@ namespace Trade.It
             // 
             // pastDaysStatusComboBox
             // 
+            pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            pastDaysStatusComboBox.Items.AddRange(new object[] { "داشته", "نداشته" });
             pastDaysStatusComboBox.Location = new Point(28, 42);
             pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";
             pastDaysStatusComboBox.Size = new Size(95, 33);
@@ -1009,6 +1011,8 @@ namespace Trade.It
             // 
             // volumeRatioOperatorComboBox
             // 
+            volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            volumeRatioOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
             volumeRatioOperatorComboBox.Location = new Point(104, 30);
             volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";
             volumeRatioOperatorComboBox.Size = new Size(121, 33);
@@ -1043,6 +1047,8 @@ namespace Trade.It
             // 
             // nameComboBox
             // 
+            nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            nameComboBox.Items.AddRange(new object[] { "در ابتدا", "در انتها", "در میانه", "در هرجا", "در هیچ جا" });
             nameComboBox.Location = new Point(20, 28);
             nameComboBox.Name = "nameComboBox";
             nameComboBox.Size = new Size(188, 33);
