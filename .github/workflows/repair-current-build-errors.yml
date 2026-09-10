@@ -1,0 +1,66 @@
+name: Repair current build errors
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/repair-current-build-errors.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repair source files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # MainForm.cs contains the OHLC filter implementation twice.
+          # Keep the first complete implementation and remove the second copy.
+          p = Path('MainForm.cs')
+          s = p.read_text(encoding='utf-8')
+          marker = 'private void AttachOhlcChangeFilterEvents()'
+          positions = []
+          start = 0
+          while True:
+              i = s.find(marker, start)
+              if i < 0:
+                  break
+              positions.append(i)
+              start = i + len(marker)
+          if len(positions) == 2:
+              s = s[:positions[1]].rstrip()
+              # The first implementation already closes MainForm; close only the namespace here.
+              s += '\n}\n'
+              p.write_text(s, encoding='utf-8')
+          elif len(positions) != 1:
+              raise SystemExit(f'Unexpected OHLC method count: {len(positions)}')
+
+          # textBox1 is already declared in MainForm.cs; the temporary partial declaration is redundant.
+          Path('MainForm.TextBox1Fix.cs').unlink(missing_ok=True)
+
+          # Keep PortfolioDefinitionForm's OnShown/save wrapper inside the form class.
+          p = Path('PortfolioDefinitionForm.cs')
+          s = p.read_text(encoding='utf-8')
+          bad = '\n    }\n}\n\nprotected override void OnShown(EventArgs e)'
+          good = '\n    }\n\nprotected override void OnShown(EventArgs e)'
+          if bad not in s:
+              raise SystemExit('PortfolioDefinitionForm brace pattern not found')
+          s = s.replace(bad, good, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+          git config user.name 'gfetmail-rgb'
+          git config user.email 'gfetmail@gmail.com'
+          git add MainForm.cs PortfolioDefinitionForm.cs
+          git rm -f --ignore-unmatch MainForm.TextBox1Fix.cs
+          git commit -m 'Fix duplicated OHLC code and form braces' || exit 0
+          git push origin HEAD:main
