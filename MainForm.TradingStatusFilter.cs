@@ -6,6 +6,8 @@ namespace Trade.It
     public partial class MainForm
     {
         private bool tradingStatusFilterInitialized;
+        private Label? filterFoundCountLabel;
+        private Label? filterTotalCountLabel;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -15,6 +17,7 @@ namespace Trade.It
                 return;
 
             tradingStatusFilterInitialized = true;
+            InitializeFilterStatusDisplay();
             statusAllRadio.CheckedChanged += TradingStatusFilterChanged;
             statusPositiveRadio.CheckedChanged += TradingStatusFilterChanged;
             statusNegativeRadio.CheckedChanged += TradingStatusFilterChanged;
@@ -22,22 +25,87 @@ namespace Trade.It
             refreshButton.Click += TradingStatusRefreshChanged;
         }
 
+        private void InitializeFilterStatusDisplay()
+        {
+            var parent = clearFiltersButton.Parent;
+            if (parent == null)
+                return;
+
+            // Keep the three items on the same bottom row of the Filters tab:
+            // clear button + found count + total portfolio count.
+            clearFiltersButton.Width = 100;
+            clearFiltersButton.Location = new Point(8, clearFiltersButton.Top);
+
+            filterFoundCountLabel = CreateFilterCountLabel("پیدا شده: ۰");
+            filterTotalCountLabel = CreateFilterCountLabel("کل سهام: ۰");
+
+            filterFoundCountLabel.Location = new Point(clearFiltersButton.Right + 4, clearFiltersButton.Top);
+            filterTotalCountLabel.Location = new Point(filterFoundCountLabel.Right + 4, clearFiltersButton.Top);
+
+            parent.Controls.Add(filterFoundCountLabel);
+            parent.Controls.Add(filterTotalCountLabel);
+            filterFoundCountLabel.BringToFront();
+            filterTotalCountLabel.BringToFront();
+            clearFiltersButton.BringToFront();
+        }
+
+        private static Label CreateFilterCountLabel(string text)
+        {
+            return new Label
+            {
+                AutoSize = false,
+                Width = 100,
+                Height = 36,
+                Text = text,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BorderStyle = BorderStyle.FixedSingle,
+                RightToLeft = RightToLeft.Yes,
+                Font = new Font("Segoe UI", 9F)
+            };
+        }
+
         private void TradingStatusFilterChanged(object? sender, EventArgs e)
         {
             if (sender is RadioButton radio && !radio.Checked)
                 return;
-            ApplyTradingStatusFilter();
+            ApplyTradingStatusFilterWithWaitCursor();
         }
 
-        private void TradingStatusPortfolioChanged(object? sender, EventArgs e) => ApplyTradingStatusFilter();
+        private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
+        {
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
 
-        private void TradingStatusRefreshChanged(object? sender, EventArgs e) => ApplyTradingStatusFilter();
+        private void TradingStatusRefreshChanged(object? sender, EventArgs e)
+        {
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private void ApplyTradingStatusFilterWithWaitCursor()
+        {
+            UseWaitCursor = true;
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                Application.DoEvents();
+                ApplyTradingStatusFilter();
+            }
+            finally
+            {
+                UseWaitCursor = false;
+                Cursor.Current = Cursors.Default;
+                Application.DoEvents();
+            }
+        }
 
         private void ApplyTradingStatusFilter()
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
                 !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+            {
+                UpdateFilterCounts(0, 0);
                 return;
+            }
 
             var symbols = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -60,6 +128,7 @@ namespace Trade.It
             }
 
             var result = filtered.ToList();
+            UpdateFilterCounts(result.Count, symbols.Count);
 
             internalPortfolioUpdate = true;
             try
@@ -76,6 +145,15 @@ namespace Trade.It
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
+        }
+
+        private void UpdateFilterCounts(int foundCount, int totalCount)
+        {
+            if (filterFoundCountLabel != null)
+                filterFoundCountLabel.Text = $"پیدا شده: {ToPersianDigits(foundCount.ToString())}";
+
+            if (filterTotalCountLabel != null)
+                filterTotalCountLabel.Text = $"کل سهام: {ToPersianDigits(totalCount.ToString())}";
         }
 
         private bool HasTradeOnToday(PortfolioDefinition definition, string symbol)
