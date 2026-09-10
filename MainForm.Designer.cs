@@ -702,6 +702,7 @@
             // 
             // ohlcChangeDaysLabel
             // 
+            ohlcChangeDaysLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDaysLabel.AutoSize = true;
             ohlcChangeDaysLabel.Location = new Point(183, 30);
             ohlcChangeDaysLabel.Name = "ohlcChangeDaysLabel";
@@ -901,7 +902,7 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(319, 39);
+            label6.Location = new Point(317, 39);
             label6.Name = "label6";
             label6.Size = new Size(55, 25);
             label6.TabIndex = 13;
@@ -1502,6 +1503,7 @@
             RightToLeftLayout = true;
             Text = "Trade.It";
             WindowState = FormWindowState.Maximized;
+            Load += MainForm_Load;
             mainMenuStrip.ResumeLayout(false);
             mainMenuStrip.PerformLayout();
             mainSplitContainer.Panel1.ResumeLayout(false);
