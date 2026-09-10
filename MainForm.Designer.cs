@@ -410,6 +410,7 @@ namespace Trade.It
             stocksDataGridView.RowHeadersWidth = 62;
             stocksDataGridView.Size = new Size(286, 672);
             stocksDataGridView.TabIndex = 0;
+            stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
             // 
             // selectAllCheckBox
             // 
