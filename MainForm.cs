@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -614,7 +614,7 @@ namespace Trade.It
             if (!string.IsNullOrWhiteSpace(displayedPortfolioName))
                 loadedPortfolios.TryGetValue(displayedPortfolioName, out definition);
 
-            var hasStocks = stocksDataGridView.Rows.Count > 0;
+            var hasStocks = definition?.Symbols?.Any(s => !string.IsNullOrWhiteSpace(s)) == true;
             var hasDate = hasStocks && HasDateColumn(definition);
             var hasVolume = hasStocks && HasVolumeColumn(definition);
 
@@ -724,7 +724,6 @@ namespace Trade.It
                 return;
             }
 
-            UpdateFilterControlAvailability();
             var symbols = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
