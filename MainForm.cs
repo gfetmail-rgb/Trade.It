@@ -1231,13 +1231,12 @@ namespace Trade.It
             if (string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem.ToString()))) return false;
             if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return false;
             if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return false;
-            return GetOhlcChangeDirection() >= 0;
+            return !string.IsNullOrWhiteSpace(GetOhlcChangeOperator());
         }
 
-        private int GetOhlcChangeDirection()
+        private string GetOhlcChangeOperator()
         {
-            var value = ohlcChangeDirectionComboBox.SelectedItem?.ToString()?.Trim() ?? string.Empty;
-            return value.Contains("رشد", StringComparison.Ordinal) ? 1 : value.Contains("افت", StringComparison.Ordinal) ? -1 : -1;
+            return ohlcChangeDirectionComboBox.SelectedItem?.ToString()?.Trim() ?? string.Empty;
         }
 
         private void ApplyOhlcChangeFilterToGrid()
@@ -1247,10 +1246,10 @@ namespace Trade.It
             if (string.IsNullOrEmpty(field)) return;
             if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return;
             if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return;
-            var direction = GetOhlcChangeDirection();
-            if (direction < 0) return;
+            var op = GetOhlcChangeOperator();
+            if (string.IsNullOrWhiteSpace(op)) return;
             var symbols = GetDisplayedGridSymbolsForOhlcFilter().ToList();
-            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && (direction > 0 ? changePercent >= percent : changePercent <= -percent)).ToList();
+            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts(result.Count, totalCount);
             internalPortfolioUpdate = true;
