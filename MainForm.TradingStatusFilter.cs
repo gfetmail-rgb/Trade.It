@@ -560,7 +560,8 @@ namespace Trade.It
 
         private static bool CompareNumeric(double left, double right, string op)
         {
-            return op switch
+            var normalized = NormalizeSymbolName(op);
+            return normalized switch
             {
                 ">" => left > right,
                 ">=" => left >= right,
@@ -569,9 +570,13 @@ namespace Trade.It
                 "=" => Math.Abs(left - right) < 1e-12,
                 "==" => Math.Abs(left - right) < 1e-12,
                 "مساوی" => Math.Abs(left - right) < 1e-12,
+                "بزرگتر از" => left > right,
                 "بزرگتر" => left > right,
+                "بزرگتر یا مساوی" => left >= right,
                 "بزرگتر مساوی" => left >= right,
+                "کوچکتر از" => left < right,
                 "کوچکتر" => left < right,
+                "کوچکتر یا مساوی" => left <= right,
                 "کوچکتر مساوی" => left <= right,
                 _ => false
             };
