@@ -1288,6 +1288,8 @@
             //
             // tabPage3
             //
+            tabPage3.Controls.Add(identifierMainGroup);
+            tabPage3.Controls.Add(identifierButtonsPanel);
             tabPage3.Location = new Point(4, 34);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(8);
@@ -1297,6 +1299,7 @@
             //
             // marketsTabPage
             //
+            marketsTabPage.Controls.Add(marketsMainGroup);
             marketsTabPage.Location = new Point(4, 34);
             marketsTabPage.Name = "marketsTabPage";
             marketsTabPage.Padding = new Padding(8);
@@ -1899,6 +1902,14 @@
             marketSubIndustryGroupTextBox.Size = new Size(100, 31);
             marketSubIndustryGroupTextBox.TabIndex = 0;
             //
+            tradingStatusGroup.Controls.Add(filterTradingClearButton);
+            nameFilterGroup.Controls.Add(filterNameClearButton);
+            volumeRatioGroup.Controls.Add(filterVolumeClearButton);
+            pastDaysGroup.Controls.Add(filterPastDaysClearButton);
+            comparisonGroup7.Controls.Add(filterComparison7ClearButton);
+            comparisonGroup8.Controls.Add(filterComparison8ClearButton);
+            groupBox3.Controls.Add(filterComparison9ClearButton);
+            ohlcChangeFilterGroup.Controls.Add(filterOhlcChangeClearButton);
             // MainForm
             //
             ClientSize = new Size(1643, 966);
