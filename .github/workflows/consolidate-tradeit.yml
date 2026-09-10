@@ -1,0 +1,69 @@
+name: Consolidate Trade.It
+
+on:
+  push:
+    paths:
+      - '.github/workflows/consolidate-tradeit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Consolidate form code and restore main layout
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          # Merge the existing behavior partial into the main portfolio-definition form file.
+          behavior = Path('PortfolioDefinitionForm.Behavior.cs').read_text(encoding='utf-8')
+          body = behavior[behavior.index('{', behavior.index('partial class PortfolioDefinitionForm')) + 1:behavior.rfind('}')]
+          main_form = Path('PortfolioDefinitionForm.cs')
+          main_text = main_form.read_text(encoding='utf-8')
+          insert = body.strip()
+          pos = main_text.rfind('}')
+          main_text = main_text[:pos].rstrip() + '\n\n' + insert + '\n' + main_text[pos:]
+          main_form.write_text(main_text, encoding='utf-8')
+
+          # The OHLC partial was deleted after the rest of MainForm was consolidated.
+          # Recover its implementation from the parent of that deletion commit and place it
+          # directly in MainForm.cs. Omit the already-existing field declaration.
+          ohlc = subprocess.check_output([
+              'git', 'show', 'b189dc64d4ef2130c1b737780ec9954d93eb05ab^:MainForm.OhlcChangeFilter.cs'
+          ], text=True)
+          ohlc = re.sub(r'\s*private bool ohlcChangeFilterEventsAttached;\s*', '\n', ohlc, count=1)
+          ohlc_body = ohlc[ohlc.index('{', ohlc.index('partial class MainForm')) + 1:ohlc.rfind('}')]
+          main_form = Path('MainForm.cs')
+          main_text = main_form.read_text(encoding='utf-8')
+          pos = main_text.rfind('}')
+          main_text = main_text[:pos].rstrip() + '\n\n' + ohlc_body.strip() + '\n' + main_text[pos:]
+          main_form.write_text(main_text, encoding='utf-8')
+
+          # MainForm already contains the textBox1 declaration; the temporary fix file is redundant.
+          Path('MainForm.TextBox1Fix.cs').unlink(missing_ok=True)
+          Path('PortfolioDefinitionForm.Behavior.cs').unlink(missing_ok=True)
+
+          # Swap only the two top-level panes. Do not alter anything inside the Stocks or Filters tabs.
+          designer = Path('MainForm.Designer.cs')
+          d = designer.read_text(encoding='utf-8')
+          d = d.replace(
+              'mainSplitContainer.Panel1.Controls.Add(chartPanel);\n            mainSplitContainer.Panel1MinSize = 500;\n            mainSplitContainer.Panel2.Controls.Add(controlTabControl);\n            mainSplitContainer.Panel2MinSize = 300;\n            mainSplitContainer.Size = new Size(1452, 825);\n            mainSplitContainer.SplitterDistance = 1084;',
+              'mainSplitContainer.Panel1.Controls.Add(controlTabControl);\n            mainSplitContainer.Panel1MinSize = 300;\n            mainSplitContainer.Panel2.Controls.Add(chartPanel);\n            mainSplitContainer.Panel2MinSize = 500;\n            mainSplitContainer.Size = new Size(1452, 825);\n            mainSplitContainer.SplitterDistance = 368;'
+          )
+          designer.write_text(d, encoding='utf-8')
+          PY
+
+          git config user.name 'gfetmail-rgb'
+          git config user.email 'gfetmail@gmail.com'
+          git add MainForm.cs PortfolioDefinitionForm.cs MainForm.Designer.cs
+          git rm -f .github/workflows/consolidate-tradeit.yml
+          git commit -m 'Consolidate form code and restore main layout'
+          git push origin HEAD:main
