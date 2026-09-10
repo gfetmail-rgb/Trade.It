@@ -12,6 +12,12 @@ namespace Trade.It
         private bool ohlcChangeFilterInitialized;
         private bool ohlcChangeFilterEventsAttached;
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            InitializeOhlcChangeFilter();
+        }
+
         private void InitializeOhlcChangeFilter()
         {
             if (ohlcChangeFilterInitialized || tabPage2 == null)
@@ -98,8 +104,6 @@ namespace Trade.It
             tabPage2.Controls.Add(ohlcChangeFilterGroup);
             ohlcChangeFilterGroup.BringToFront();
 
-            // The existing filter pipeline is installed during OnLoad. Attach this
-            // filter afterwards so it runs on the already-filtered symbol list.
             BeginInvoke(new Action(AttachOhlcChangeFilterEvents));
         }
 
@@ -117,7 +121,6 @@ namespace Trade.It
             ohlcChangePercentTextBox.TextChanged += OhlcChangeFilterChanged;
             ohlcChangeDirectionComboBox.SelectedIndexChanged += OhlcChangeFilterChanged;
 
-            // Re-apply filter 9 whenever an earlier filter changes.
             nameComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
             nameTextBox.TextChanged += OhlcBaseFilterChanged;
             volumeRatioTextBox.TextChanged += OhlcBaseFilterChanged;
