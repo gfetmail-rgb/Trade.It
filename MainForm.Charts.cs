@@ -48,11 +48,8 @@ namespace Trade.It
             else
             {
                 chartTabPage.Text = string.IsNullOrWhiteSpace(activeChartSymbol) ? "چارت" : activeChartSymbol;
-                if (!string.IsNullOrWhiteSpace(activeChartSymbol) && chartControls.TryGetValue(activeChartSymbol, out var chart))
-                {
-                    if (chart.Parent is not TabPage)
-                        AttachChartToTab(chart, activeChartSymbol);
-                }
+                if (!string.IsNullOrWhiteSpace(activeChartSymbol) && chartControls.TryGetValue(activeChartSymbol, out var chart) && chart.Parent is null)
+                    AttachChartToTab(chart, activeChartSymbol);
             }
         }
 
@@ -110,16 +107,7 @@ namespace Trade.It
                 var chart = GetOrCreateChart(symbol);
                 chart.SetData(points);
                 chart.SetChartType(GetSelectedChartType());
-
-                if (chartDisplayMode == ChartDisplayMode.SingleTab)
-                {
-                    chartTabPage.Text = symbol;
-                    chartTabControl.SelectedTab = chartTabPage;
-                }
-                else
-                {
-                    AttachChartToTab(chart, symbol);
-                }
+                AttachChartToTab(chart, symbol);
             }
             catch (Exception ex)
             {
@@ -152,6 +140,15 @@ namespace Trade.It
             if (chart.Parent is TabPage currentPage)
             {
                 chartTabControl.SelectedTab = currentPage;
+                return;
+            }
+
+            if (chartTabControl.TabPages.Count == 1 && chartTabPage.Controls.OfType<TradingChartControl>().Count() == 0)
+            {
+                chartTabPage.Controls.Clear();
+                chartTabPage.Controls.Add(chart);
+                chartTabPage.Text = symbol;
+                chartTabControl.SelectedTab = chartTabPage;
                 return;
             }
 
@@ -225,9 +222,6 @@ namespace Trade.It
             var highColumn = FindMappedColumn(definition, header, "high", "بیشترین", "بیشترين", "بیشینه");
             var lowColumn = FindMappedColumn(definition, header, "low", "کمترین", "کمترين", "کمینه");
             var closeColumn = FindMappedColumn(definition, header, "close", "پایانی", "پاياني", "بسته", "closeprice");
-
-            if (dateColumn < 0 && !hasHeader)
-                dateColumn = FindMappedColumn(definition, header, "date", "تاریخ", "روز");
 
             if (openColumn < 0 || highColumn < 0 || lowColumn < 0 || closeColumn < 0)
                 return new List<TradingChartPoint>();
