@@ -1,0 +1,148 @@
+name: Fix drawing toolbar and pitchfork
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('MainForm.ChartDrawing.cs')
+          s = p.read_text(encoding='utf-8-sig')
+
+          start = s.index('        private bool chartDrawingToolsInitialized;')
+          end = s.index('        private void ActivateDrawingTool(')
+          replacement = '''        private System.Windows.Forms.Timer drawingStateTimer = new();\n\n'''
+          s = s[:start] + replacement + s[end:]
+
+          start = s.index('        private void ActivateDrawingTool(')
+          end = s.index('        private void ActivateAdvancedDrawingTool(', start)
+          # Keep ActivateDrawingTool; only the removed block above is replaced.
+
+          p.write_text(s, encoding='utf-8-sig')
+
+          p = Path('MainForm.ChartDrawing.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          s = s.replace('''            chartToolbarPanel.Controls.Add(drawTrendLineButton);\n            chartToolbarPanel.Controls.Add(drawTrendChannelButton);\n            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);\n            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);\n            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);\n            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);\n            chartToolbarPanel.Controls.Add(drawRectangleButton);\n            chartToolbarPanel.Controls.Add(drawFibonacciButton);\n            chartToolbarPanel.Controls.Add(drawTextButton);\n            chartToolbarPanel.Controls.Add(drawPitchforkButton);\n            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);\n            chartToolbarPanel.Controls.Add(drawMeasureButton);\n\n            ArrangeDrawingToolButtons();\n            chartToolbarPanel.Resize += (_, _) => ArrangeDrawingToolButtons();\n\n''', '')
+          p.write_text(s, encoding='utf-8-sig')
+
+          # Replace the runtime initialization method with Designer-button wiring only.
+          p = Path('MainForm.ChartDrawing.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          start = s.index('        private void InitializeChartDrawingTools()')
+          end = s.index('        private void ActivateDrawingTool(', start)
+          new_method = '''        private void InitializeChartDrawingTools()\n        {\n            ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);\n            ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);\n            ConfigureDrawingIcon(drawFibonacciButton, DrawingIcon.Fibonacci);\n            ConfigureDrawingIcon(drawTextButton, DrawingIcon.Text);\n            ConfigureDrawingIcon(drawPitchforkButton, DrawingIcon.Pitchfork);\n            ConfigureDrawingIcon(drawFibonacciExtensionButton, DrawingIcon.FibonacciExtension);\n            ConfigureDrawingIcon(drawMeasureButton, DrawingIcon.Measure);\n\n            drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);\n            drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);\n            drawHorizontalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalDoubleArrow, drawHorizontalDoubleButton);\n            drawVerticalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.VerticalDoubleArrow, drawVerticalDoubleButton);\n            drawHorizontalRayButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalRay, drawHorizontalRayButton);\n            drawTrendLineArrowButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLineWithArrow, drawTrendLineArrowButton);\n            drawRectangleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);\n            drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);\n            drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);\n            drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);\n            drawFibonacciExtensionButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.FibonacciExtension, drawFibonacciExtensionButton);\n            drawMeasureButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Measure, drawMeasureButton);\n\n            chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;\n            closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();\n            drawingStateTimer.Interval = 100;\n            drawingStateTimer.Tick += DrawingStateTimer_Tick;\n            drawingStateTimer.Start();\n            ResetDrawingToolButtons();\n        }\n\n'''
+          s = s[:start] + new_method + s[end:]
+
+          # Remove the obsolete ArrangeDrawingToolButtons method.
+          marker = '        private void ArrangeDrawingToolButtons()'
+          if marker in s:
+              start = s.index(marker)
+              end = s.index('        private enum DrawingIcon', start)
+              s = s[:start] + s[end:]
+
+          p.write_text(s, encoding='utf-8-sig')
+
+          # Designer: add 12 drawing-tool fields.
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          field_marker = '        private System.Windows.Forms.Button fullScreenChartButton;\n'
+          fields = '''        private System.Windows.Forms.Button drawTrendLineButton;\n        private System.Windows.Forms.Button drawTrendChannelButton;\n        private System.Windows.Forms.Button drawHorizontalDoubleButton;\n        private System.Windows.Forms.Button drawVerticalDoubleButton;\n        private System.Windows.Forms.Button drawHorizontalRayButton;\n        private System.Windows.Forms.Button drawTrendLineArrowButton;\n        private System.Windows.Forms.Button drawRectangleButton;\n        private System.Windows.Forms.Button drawFibonacciButton;\n        private System.Windows.Forms.Button drawTextButton;\n        private System.Windows.Forms.Button drawPitchforkButton;\n        private System.Windows.Forms.Button drawFibonacciExtensionButton;\n        private System.Windows.Forms.Button drawMeasureButton;\n'''
+          s = s.replace(field_marker, field_marker + fields, 1)
+
+          init_marker = '            fullScreenChartButton = new Button();\n'
+          init_fields = '''            drawTrendLineButton = new Button();\n            drawTrendChannelButton = new Button();\n            drawHorizontalDoubleButton = new Button();\n            drawVerticalDoubleButton = new Button();\n            drawHorizontalRayButton = new Button();\n            drawTrendLineArrowButton = new Button();\n            drawRectangleButton = new Button();\n            drawFibonacciButton = new Button();\n            drawTextButton = new Button();\n            drawPitchforkButton = new Button();\n            drawFibonacciExtensionButton = new Button();\n            drawMeasureButton = new Button();\n'''
+          s = s.replace(init_marker, init_marker + init_fields, 1)
+
+          controls_marker = '            chartToolbarPanel.Controls.Add(fullScreenChartButton);\n'
+          controls = '''            chartToolbarPanel.Controls.Add(drawTrendLineButton);\n            chartToolbarPanel.Controls.Add(drawTrendChannelButton);\n            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);\n            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);\n            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);\n            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);\n            chartToolbarPanel.Controls.Add(drawRectangleButton);\n            chartToolbarPanel.Controls.Add(drawFibonacciButton);\n            chartToolbarPanel.Controls.Add(drawTextButton);\n            chartToolbarPanel.Controls.Add(drawPitchforkButton);\n            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);\n            chartToolbarPanel.Controls.Add(drawMeasureButton);\n'''
+          s = s.replace(controls_marker, controls_marker + controls, 1)
+
+          props_marker = '            fullScreenChartButton.Text = "تمام صفحه";\n'
+          props = '''            // Drawing tools\n            ConfigureDesignerDrawingButton(drawTrendLineButton, "drawTrendLineButton", "خط روند", new Point(790, 7), 82);\n            ConfigureDesignerDrawingButton(drawTrendChannelButton, "drawTrendChannelButton", "کانال موازی", new Point(877, 7), 82);\n            ConfigureDesignerDrawingButton(drawHorizontalDoubleButton, "drawHorizontalDoubleButton", "افقی دو سر", new Point(964, 7), 82);\n            ConfigureDesignerDrawingButton(drawVerticalDoubleButton, "drawVerticalDoubleButton", "عمودی دو سر", new Point(1051, 7), 82);\n            ConfigureDesignerDrawingButton(drawHorizontalRayButton, "drawHorizontalRayButton", "نیم خط افقی", new Point(1138, 7), 82);\n            ConfigureDesignerDrawingButton(drawTrendLineArrowButton, "drawTrendLineArrowButton", "خط روند فلش", new Point(790, 47), 82);\n            ConfigureDesignerDrawingButton(drawRectangleButton, "drawRectangleButton", "مستطیل", new Point(877, 47), 82);\n            ConfigureDesignerDrawingButton(drawFibonacciButton, "drawFibonacciButton", "فیبوناچی", new Point(964, 47), 82);\n            ConfigureDesignerDrawingButton(drawTextButton, "drawTextButton", "متن", new Point(1051, 47), 82);\n            ConfigureDesignerDrawingButton(drawPitchforkButton, "drawPitchforkButton", "چنگال", new Point(1138, 47), 82);\n            ConfigureDesignerDrawingButton(drawFibonacciExtensionButton, "drawFibonacciExtensionButton", "فیبو اکسپنشن", new Point(790, 87), 92);\n            ConfigureDesignerDrawingButton(drawMeasureButton, "drawMeasureButton", "خط کش", new Point(887, 87), 82);\n            chartToolbarPanel.Height = 128;\n'''
+          s = s.replace(props_marker, props_marker + props, 1)
+
+          # Add designer helper in the partial class before Dispose.
+          dispose_marker = '        protected override void Dispose(bool disposing)\n'
+          helper = '''        private static void ConfigureDesignerDrawingButton(Button button, string name, string text, Point location, int width)\n        {\n            button.Location = location;\n            button.Name = name;\n            button.Size = new Size(width, 34);\n            button.TabIndex = 20;\n            button.Text = text;\n            button.UseVisualStyleBackColor = true;\n            button.RightToLeft = RightToLeft.Yes;\n        }\n\n'''
+          s = s.replace(dispose_marker, helper + dispose_marker, 1)
+
+          p.write_text(s, encoding='utf-8-sig')
+
+          # Ensure the Designer creates all buttons before MainForm.ChartDrawing wires events.
+          p = Path('MainForm.Designer.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          # Existing ConfigureDesignerDrawingButton calls are intentionally in InitializeComponent.
+          # No runtime button creation remains in MainForm.ChartDrawing.cs.
+          p.write_text(s, encoding='utf-8-sig')
+
+          # Pitchfork: render extra drawings from the main chart OnPaint rather than the Paint event.
+          p = Path('TradingChartControl.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          old = '            DrawDrawings(e.Graphics, plot, visible.Count, min, max);\n\n'
+          new = '            DrawDrawings(e.Graphics, plot, visible.Count, min, max);\n            DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);\n\n'
+          if old not in s:
+              raise SystemExit('TradingChartControl OnPaint marker not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8-sig')
+
+          # Move ExtraDrawing rendering into a helper called by the main OnPaint.
+          p = Path('TradingChartControl.ExtraDrawingTools.cs')
+          s = p.read_text(encoding='utf-8-sig')
+          s = s.replace('            Paint += ExtraDrawing_Paint;\n', '', 1)
+          start = s.index('        private void ExtraDrawing_Paint(')
+          end = s.index('        private void DrawPitchfork(', start)
+          block = s[start:end]
+          block = block.replace('        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)', '        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)')
+          # Replace context setup because OnPaint already has the current context.
+          lines = block.splitlines()
+          # Keep SyncExtraDrawingData, but remove TryGetExtraContext declaration/use and use parameters.
+          filtered = []
+          skip = False
+          for line in lines:
+              if line.strip() == 'if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))':
+                  filtered.append('            // Context is supplied by TradingChartControl.OnPaint.')
+                  skip = True
+                  continue
+              if skip:
+                  if line.strip() == 'return;':
+                      skip = False
+                  continue
+              filtered.append(line.replace('e.Graphics', 'g'))
+          block = '\n'.join(filtered) + '\n\n'
+          s = s[:start] + block + s[end:]
+          p.write_text(s, encoding='utf-8-sig')
+          PY
+
+      - name: Verify source structure
+        shell: bash
+        run: |
+          test "$(grep -c 'drawTrendLineButton = new Button();' MainForm.Designer.cs)" -eq 1
+          test "$(grep -c 'drawMeasureButton = new Button();' MainForm.Designer.cs)" -eq 1
+          test "$(grep -c 'CreateDrawingToolButton' MainForm.ChartDrawing.cs)" -eq 0
+          test "$(grep -c 'DrawExtraDrawings(e.Graphics' TradingChartControl.cs)" -eq 1
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.Designer.cs MainForm.ChartDrawing.cs TradingChartControl.cs TradingChartControl.ExtraDrawingTools.cs
+          git commit -m "Build drawing toolbar in designer and render pitchfork"
+          git push origin HEAD:main
+          git rm .github/workflows/fix-drawing-tools.yml
+          git commit -m "Remove temporary drawing fix workflow"
+          git push origin HEAD:main
