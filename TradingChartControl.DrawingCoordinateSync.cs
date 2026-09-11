@@ -4,6 +4,24 @@ namespace Trade.It
     {
         private int drawingSyncFirstIndex;
         private bool drawingSyncInitialized;
+        private bool drawingSyncPaintInitialized;
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            if (!drawingSyncPaintInitialized)
+            {
+                drawingSyncPaintInitialized = true;
+                Paint += DrawingSync_Paint;
+            }
+            drawingSyncFirstIndex = firstIndex;
+            drawingSyncInitialized = true;
+        }
+
+        private void DrawingSync_Paint(object? sender, PaintEventArgs e)
+        {
+            SyncDrawingCoordinatesToView();
+        }
 
         private void SyncDrawingCoordinatesToView()
         {
