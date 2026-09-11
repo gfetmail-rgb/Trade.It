@@ -43,6 +43,13 @@ namespace Trade.It
                 return;
             }
 
+            var selectedRow = stocksDataGridView.SelectedRows
+                .Cast<DataGridViewRow>()
+                .FirstOrDefault(row => !row.IsNewRow);
+            var selectedSymbol = selectedRow == null
+                ? null
+                : Convert.ToString(selectedRow.Cells[symbolColumn.Index].Value)?.Trim();
+
             var symbols = stocksDataGridView.Rows.Cast<DataGridViewRow>()
                 .Where(row => !row.IsNewRow && row.Cells[selectColumn.Index].Value is true)
                 .Select(row => Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim())
@@ -75,6 +82,16 @@ namespace Trade.It
 
             navigationSymbols = symbols;
             navigationIndex = 0;
+
+            if (!string.IsNullOrWhiteSpace(selectedSymbol))
+            {
+                var selectedIndex = navigationSymbols.FindIndex(symbol =>
+                    string.Equals(symbol, selectedSymbol, StringComparison.OrdinalIgnoreCase));
+
+                if (selectedIndex >= 0)
+                    navigationIndex = selectedIndex;
+            }
+
             navigationRunning = true;
             navigationTimer.Interval = Math.Clamp(milliseconds, 100, 3600000);
             navigationButton.UseVisualStyleBackColor = false;
