@@ -59,7 +59,7 @@ namespace Trade.It
                 ? AdvancedDrawingTool.None
                 : AdvancedDrawingTool.TextLabel;
             advancedDrawingInProgress = false;
-            Cursor = activeAdvancedDrawingTool == AdvancedDrawingTool.None ? Cursors.Default : Cursors.Cross;
+            Cursor = Cursors.Default;
             Focus();
             Invalidate();
         }
@@ -260,8 +260,9 @@ namespace Trade.It
                 draggingDrawingIndex = -1;
                 draggingHandle = 0;
                 Capture = false;
-                if (AdvancedDrawingActive)
-                    Cursor = Cursors.Cross;
+                Cursor = activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement
+                    ? Cursors.Cross
+                    : Cursors.Default;
             }));
         }
 
@@ -294,7 +295,7 @@ namespace Trade.It
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
                 Text = text
             });
-            selectedAdvancedDrawingIndex = advancedDrawings.Count - 1;
+            selectedAdvancedDrawingIndex = -1;
         }
 
         private bool TryGetAdvancedContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
