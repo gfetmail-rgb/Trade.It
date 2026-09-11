@@ -7,6 +7,8 @@ namespace Trade.It
 
         private void InitializeChartDrawingTools()
         {
+            InitializeToolbarIcons();
+
             if (chartDrawingToolsInitialized)
                 return;
 
