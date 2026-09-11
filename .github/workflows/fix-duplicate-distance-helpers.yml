@@ -1,0 +1,52 @@
+name: Fix duplicate distance helpers
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove duplicate helpers
+        shell: python
+        run: |
+          import re
+          from pathlib import Path
+
+          pattern = re.compile(
+              r'\n        private static float DistanceToPoint\(Point p, PointF q\)\n'
+              r'        \{.*?\n        \}\n\n'
+              r'        private static float DistanceToSegment\(Point p, PointF a, PointF b\)\n'
+              r'        \{.*?\n        \}\n',
+              re.S,
+          )
+
+          for name in [
+              'TradingChartControl.ExtraDrawingTools.cs',
+              'TradingChartControl.AdvancedDrawing.cs',
+          ]:
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              new_text, count = pattern.subn('', text)
+              if count != 1:
+                  raise SystemExit(f'{name}: expected exactly one duplicate helper block, found {count}')
+              path.write_text(new_text, encoding='utf-8', newline='')
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          rm -f .github/workflows/fix-duplicate-distance-helpers.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add TradingChartControl.ExtraDrawingTools.cs TradingChartControl.AdvancedDrawing.cs .github/workflows/fix-duplicate-distance-helpers.yml
+          git commit -m "Remove duplicate distance helper methods"
+          git push origin main
