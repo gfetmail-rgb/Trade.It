@@ -22,7 +22,6 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
 
           def read(name):
               return Path(name).read_text(encoding='utf-8-sig')
@@ -31,12 +30,17 @@ jobs:
 
           p = 'MainForm.ChartDrawing.cs'
           s = read(p)
-          s, n = re.subn(
-              r'\n        private bool chartDrawingToolsInitialized;.*?\n        private readonly System\.Windows\.Forms\.Timer drawingStateTimer = new\(\);\n',
-              '\n        private readonly System.Windows.Forms.Timer drawingStateTimer = new();\n', s, count=1, flags=re.S)
-          if n != 1:
-              raise SystemExit('ChartDrawing field block not found')
+          start = s.find('        private bool chartDrawingToolsInitialized;')
+          end = s.find('        private void ActivateDrawingTool(')
+          if start < 0 or end < 0 or end <= start:
+              raise SystemExit('ChartDrawing block boundaries not found')
+          new_prefix = '        private readonly System.Windows.Forms.Timer drawingStateTimer = new();\n\n'
+          s = s[:start] + new_prefix + s[end:]
 
+          start = s.find('        private void InitializeChartDrawingTools()')
+          end = s.find('        private void ActivateDrawingTool(', start)
+          if start < 0 or end < 0:
+              raise SystemExit('InitializeChartDrawingTools boundaries not found')
           new_init = '''        private void InitializeChartDrawingTools()
           {
               ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
@@ -69,15 +73,20 @@ jobs:
           }
 
           '''
-          s, n = re.subn(r'        private void InitializeChartDrawingTools\(\).*?(?=        private void ActivateDrawingTool\()', new_init, s, count=1, flags=re.S)
-          if n != 1:
-              raise SystemExit('InitializeChartDrawingTools not found')
-          s, n = re.subn(r'\n        private void ArrangeDrawingToolButtons\(\).*?(?=        private enum DrawingIcon)', '\n', s, count=1, flags=re.S)
-          if n != 1:
-              raise SystemExit('ArrangeDrawingToolButtons not found')
-          s, n = re.subn(r'\n        private Button CreateDrawingToolButton\(.*?\n        }\n', '\n', s, count=1, flags=re.S)
+          s = s[:start] + new_init + s[end:]
+
+          start = s.find('        private void ArrangeDrawingToolButtons()')
+          if start >= 0:
+              end = s.find('        private enum DrawingIcon', start)
+              if end < 0: raise SystemExit('DrawingIcon boundary not found')
+              s = s[:start] + s[end:]
+          start = s.find('        private Button CreateDrawingToolButton(')
+          if start >= 0:
+              end = s.find('        private void ActivateDrawingTool(', start)
+              if end < 0: raise SystemExit('ActivateDrawingTool boundary not found')
+              s = s[:start] + s[end:]
           if 'CreateDrawingToolButton' in s or 'ArrangeDrawingToolButtons' in s:
-              raise SystemExit('Runtime drawing toolbar code still present')
+              raise SystemExit('Runtime toolbar code remains')
           write(p, s)
 
           p = 'MainForm.Designer.cs'
@@ -98,15 +107,14 @@ jobs:
           ]
           if 'private System.Windows.Forms.Button drawTrendLineButton;' not in s:
               marker = '        private System.Windows.Forms.Button fullScreenChartButton;\n'
-              fields = ''.join(f'        private System.Windows.Forms.Button {x[0]};\n' for x in names)
               if marker not in s: raise SystemExit('Designer field marker not found')
+              fields = ''.join(f'        private System.Windows.Forms.Button {x[0]};\n' for x in names)
               s = s.replace(marker, marker + fields, 1)
           if 'drawTrendLineButton = new Button();' not in s:
               marker = '            fullScreenChartButton = new Button();'
               idx = s.find(marker)
               if idx < 0: raise SystemExit('Designer init marker not found')
               end = s.find('\n', idx)
-              if end < 0: end = len(s)
               inits = ''.join(f'            {x[0]} = new Button();\n' for x in names)
               s = s[:end+1] + inits + s[end+1:]
           if 'chartToolbarPanel.Controls.Add(drawTrendLineButton);' not in s:
@@ -114,7 +122,6 @@ jobs:
               idx = s.find(marker)
               if idx < 0: raise SystemExit('Designer controls marker not found')
               end = s.find('\n', idx)
-              if end < 0: end = len(s)
               controls = ''.join(f'            chartToolbarPanel.Controls.Add({x[0]});\n' for x in names)
               s = s[:end+1] + controls + s[end+1:]
           if 'drawTrendLineButton.Text = "خط روند";' not in s:
@@ -122,7 +129,6 @@ jobs:
               idx = s.find(marker)
               if idx < 0: raise SystemExit('Designer property marker not found')
               end = s.find('\n', idx)
-              if end < 0: end = len(s)
               props = ''
               for i,(name,text,x,y,w) in enumerate(names, start=20):
                   props += f'''            {name}.Location = new Point({x}, {y});
@@ -140,27 +146,28 @@ jobs:
           p = 'TradingChartControl.cs'
           s = read(p)
           if 'DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);' not in s:
-              m = re.search(r'(?m)^(\s*)DrawDrawings\(e\.Graphics,[^\n]*\);\s*$', s)
-              if not m: raise SystemExit('DrawDrawings call not found')
-              line_end = s.find('\n', m.end())
-              if line_end < 0: line_end = len(s)
-              s = s[:line_end+1] + m.group(1) + 'DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);\n' + s[line_end+1:]
+              marker = '            DrawDrawings(e.Graphics, plot, visible.Count, min, max);'
+              idx = s.find(marker)
+              if idx < 0: raise SystemExit('DrawDrawings call not found')
+              end = idx + len(marker)
+              s = s[:end] + '\n            DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);' + s[end:]
           write(p, s)
 
           p = 'TradingChartControl.ExtraDrawingTools.cs'
           s = read(p)
           s = s.replace('            Paint += ExtraDrawing_Paint;\n', '', 1)
-          if 'private void ExtraDrawing_Paint(' in s:
-              s = s.replace('        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)', '        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)', 1)
-              header = '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
+          marker = '        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)'
+          if marker in s:
+              s = s.replace(marker, '        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)', 1)
+              old = '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
           {
               SyncExtraDrawingData();
               if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                   return;
 
           '''
-              if header not in s: raise SystemExit('Extra renderer header not found')
-              s = s.replace(header, '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
+              if old not in s: raise SystemExit('Extra renderer header not found')
+              s = s.replace(old, '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
           {
           ''', 1)
               s = s.replace('e.Graphics', 'g')
