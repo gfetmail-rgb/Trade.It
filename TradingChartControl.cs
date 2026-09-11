@@ -355,6 +355,8 @@ namespace Trade.It
             using var fallingBrush = new SolidBrush(Color.FromArgb(205, 70, 70));
             using var linePen = new Pen(Color.FromArgb(35, 90, 160), 1.6f);
             using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
+            using var crosshairLabelBackBrush = new SolidBrush(Color.FromArgb(45, 45, 45));
+            using var crosshairLabelTextBrush = new SolidBrush(Color.White);
 
             if (showGrid)
             {
@@ -449,7 +451,7 @@ namespace Trade.It
                 var p = visible[crosshairIndex];
                 var x = (float)X(crosshairIndex);
                 var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
-                var price = min + (plot.Bottom - y) / plot.Height * (max - min);
+                var price = min + (plot.Bottom - y) / (double)plot.Height * (max - min);
 
                 using var crossPen = new Pen(Color.FromArgb(100, 80, 80, 80), 1) { DashStyle = DashStyle.Dash };
                 e.Graphics.DrawLine(crossPen, plot.Left, y, plot.Right, y);
@@ -457,13 +459,17 @@ namespace Trade.It
 
                 var priceText = price.ToString("0.##");
                 var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
-                e.Graphics.DrawString(priceText, axisTextFont, textBrush, 4, y - priceSize.Height / 2f);
+                var priceRect = new RectangleF(2, y - priceSize.Height / 2f - 2, priceSize.Width + 6, priceSize.Height + 4);
+                e.Graphics.FillRectangle(crosshairLabelBackBrush, priceRect);
+                e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3, priceRect.Y + 2);
 
                 if (p.Date != default)
                 {
                     var dateText = p.Date.ToString("yyyy/MM/dd");
                     var dateSize = e.Graphics.MeasureString(dateText, axisTextFont);
-                    e.Graphics.DrawString(dateText, axisTextFont, textBrush, x - dateSize.Width / 2f, plot.Bottom + 7);
+                    var dateRect = new RectangleF(x - dateSize.Width / 2f - 3, plot.Bottom + 4, dateSize.Width + 6, dateSize.Height + 4);
+                    e.Graphics.FillRectangle(crosshairLabelBackBrush, dateRect);
+                    e.Graphics.DrawString(dateText, axisTextFont, crosshairLabelTextBrush, dateRect.X + 3, dateRect.Y + 2);
                 }
             }
         }
