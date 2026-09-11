@@ -21,15 +21,15 @@ namespace Trade.It
 
             chartDrawingToolsInitialized = true;
 
-            drawTrendLineButton = CreateDrawingToolButton("خط روند", new Point(790, 7), 82);
-            drawTrendChannelButton = CreateDrawingToolButton("کانال روند", new Point(877, 7), 82);
-            drawHorizontalDoubleButton = CreateDrawingToolButton("افقی دو سر", new Point(964, 7), 82);
-            drawVerticalDoubleButton = CreateDrawingToolButton("عمودی دو سر", new Point(1051, 7), 82);
-            drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(1138, 7), 82);
-            drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(1225, 7), 82);
-            drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(1312, 7), 82);
-            drawFibonacciButton = CreateDrawingToolButton("فیبوناچی", new Point(1399, 7), 82);
-            drawTextButton = CreateDrawingToolButton("متن", new Point(1486, 7), 82);
+            drawTrendLineButton = CreateDrawingToolButton("خط روند", new Point(0, 0), 82);
+            drawTrendChannelButton = CreateDrawingToolButton("کانال روند", new Point(0, 0), 82);
+            drawHorizontalDoubleButton = CreateDrawingToolButton("افقی دو سر", new Point(0, 0), 82);
+            drawVerticalDoubleButton = CreateDrawingToolButton("عمودی دو سر", new Point(0, 0), 82);
+            drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(0, 0), 82);
+            drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(0, 0), 82);
+            drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(0, 0), 82);
+            drawFibonacciButton = CreateDrawingToolButton("فیبوناچی", new Point(0, 0), 82);
+            drawTextButton = CreateDrawingToolButton("متن", new Point(0, 0), 82);
 
             ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
             ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
@@ -45,6 +45,9 @@ namespace Trade.It
             chartToolbarPanel.Controls.Add(drawRectangleButton);
             chartToolbarPanel.Controls.Add(drawFibonacciButton);
             chartToolbarPanel.Controls.Add(drawTextButton);
+
+            ArrangeDrawingToolButtons();
+            chartToolbarPanel.Resize += (_, _) => ArrangeDrawingToolButtons();
 
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
             drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
@@ -62,6 +65,48 @@ namespace Trade.It
             drawingStateTimer.Tick += DrawingStateTimer_Tick;
             drawingStateTimer.Start();
             ResetDrawingToolButtons();
+        }
+
+        private void ArrangeDrawingToolButtons()
+        {
+            if (drawTrendLineButton == null || drawTrendChannelButton == null ||
+                drawHorizontalDoubleButton == null || drawVerticalDoubleButton == null ||
+                drawHorizontalRayButton == null || drawTrendLineArrowButton == null ||
+                drawRectangleButton == null || drawFibonacciButton == null || drawTextButton == null)
+                return;
+
+            var buttons = new[]
+            {
+                drawTrendLineButton,
+                drawTrendChannelButton,
+                drawHorizontalDoubleButton,
+                drawVerticalDoubleButton,
+                drawHorizontalRayButton,
+                drawTrendLineArrowButton,
+                drawRectangleButton,
+                drawFibonacciButton,
+                drawTextButton
+            };
+
+            const int startX = 790;
+            const int rowY = 7;
+            const int secondRowY = 51;
+            const int buttonWidth = 82;
+            const int gap = 5;
+            const int horizontalPadding = 6;
+
+            var oneLineEnd = startX + buttons.Length * buttonWidth + (buttons.Length - 1) * gap;
+            var oneLine = chartToolbarPanel.ClientSize.Width >= oneLineEnd + horizontalPadding;
+            var x = oneLine ? startX : horizontalPadding;
+            var y = oneLine ? rowY : secondRowY;
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].Location = new Point(x, y);
+                x += buttonWidth + gap;
+            }
+
+            chartToolbarPanel.Height = oneLine ? 51 : 94;
         }
 
         private enum DrawingIcon
