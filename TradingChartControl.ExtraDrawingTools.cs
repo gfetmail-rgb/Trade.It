@@ -32,6 +32,7 @@ namespace Trade.It
         private int extraDraggingHandle;
         private int extraDraggingDrawingIndex = -1;
         private bool extraDraggingHandleActive;
+        private bool extraInputHandled;
         private int extraDataCount = -1;
         private DateTime extraFirstDate;
         private DateTime extraLastDate;
@@ -52,6 +53,7 @@ namespace Trade.It
             extraDraggingHandle = 0;
             extraDraggingDrawingIndex = -1;
             extraDraggingHandleActive = false;
+            extraInputHandled = false;
             Capture = false;
             Cursor = Cursors.Default;
             Invalidate();
@@ -69,6 +71,7 @@ namespace Trade.It
             extraDraggingHandle = 0;
             extraDraggingDrawingIndex = -1;
             extraDraggingHandleActive = false;
+            extraInputHandled = false;
             Cursor = activeExtraDrawingTool == ExtraDrawingTool.None ? Cursors.Default : Cursors.Cross;
             Focus();
             Invalidate();
@@ -108,9 +111,11 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseDown(object? sender, MouseEventArgs e)
         {
+            extraInputHandled = false;
             SyncExtraDrawingData();
             if (e.Button == MouseButtons.Right)
             {
+                extraInputHandled = true;
                 if (ExtraDrawingActive || extraDrawingInProgress)
                     CancelExtraDrawing();
                 else
@@ -131,6 +136,7 @@ namespace Trade.It
                 if (!IsInsidePlot(e.Location))
                     return;
 
+                extraInputHandled = true;
                 panning = false;
                 horizontalAxisDrag = false;
                 verticalAxisDrag = false;
@@ -174,12 +180,14 @@ namespace Trade.It
                     var handle = HitTestHandle(e.Location, p1, p2, p3);
                     if (handle != 0)
                     {
+                        extraInputHandled = true;
                         selectedExtraDrawingIndex = i;
                         extraDraggingDrawingIndex = i;
                         extraDraggingHandle = handle;
                         extraDraggingHandleActive = true;
                         Capture = true;
                         Cursor = Cursors.SizeAll;
+                        Focus();
                         Invalidate();
                         return;
                     }
@@ -189,6 +197,7 @@ namespace Trade.It
                     (d.Tool == ExtraDrawingTool.FibonacciExtension && HitTestFibonacciLevel(e.Location, d, plot, visibleCountForDrawing, min, max)) ||
                     (d.Tool == ExtraDrawingTool.Measure && DistanceToSegment(e.Location, p1, p2) <= 7f))
                 {
+                    extraInputHandled = true;
                     selectedExtraDrawingIndex = i;
                     Invalidate();
                     DeferExtraMouseState();
@@ -196,6 +205,8 @@ namespace Trade.It
                 }
             }
 
+            if (extraDrawings.Count > 0)
+                extraInputHandled = true;
             selectedExtraDrawingIndex = -1;
             extraDraggingHandle = 0;
             extraDraggingDrawingIndex = -1;
@@ -207,8 +218,10 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseMove(object? sender, MouseEventArgs e)
         {
+            extraInputHandled = false;
             if (extraDraggingHandleActive && extraDraggingDrawingIndex >= 0 && extraDraggingDrawingIndex < extraDrawings.Count)
             {
+                extraInputHandled = true;
                 if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                     return;
 
@@ -238,6 +251,7 @@ namespace Trade.It
 
             if (!ExtraDrawingActive)
                 return;
+            extraInputHandled = true;
             panning = false;
             horizontalAxisDrag = false;
             verticalAxisDrag = false;
@@ -251,8 +265,10 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseUp(object? sender, MouseEventArgs e)
         {
+            extraInputHandled = false;
             if (e.Button == MouseButtons.Left && extraDraggingHandleActive)
             {
+                extraInputHandled = true;
                 extraDraggingHandleActive = false;
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandle = 0;
@@ -263,7 +279,10 @@ namespace Trade.It
             }
 
             if (e.Button == MouseButtons.Left && ExtraDrawingActive)
+            {
+                extraInputHandled = true;
                 DeferExtraMouseState();
+            }
         }
 
         private int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
@@ -285,7 +304,7 @@ namespace Trade.It
             if (location.X < leftX - 6f || location.X > rightX + 6f)
                 return false;
 
-            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f })
+            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
             {
                 var y = c.Y + dy * level;
                 if (Math.Abs(location.Y - y) <= 7f)
@@ -469,14 +488,17 @@ namespace Trade.It
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
-            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f };
+            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
+            var leftX = Math.Min(a.X, c.X);
+            var rightX = Math.Max(a.X, c.X);
             g.DrawLine(pen, a, b); g.DrawLine(pen, b, c);
             foreach (var level in levels)
             {
                 var y = c.Y + dy * level;
-                g.DrawLine(pen, c.X, y, plot.Right, y);
-                var text = level switch { 0f => "0%", 0.382f => "38.2%", 0.618f => "61.8%", 1f => "100%", 1.272f => "127.2%", 1.618f => "161.8%", _ => "261.8%" };
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, Math.Min(c.X + 4f, plot.Right - 48f), y - 8f);
+                g.DrawLine(pen, leftX, y, rightX, y);
+                var text = level switch { 0f => "0%", 0.382f => "38.2%", 0.618f => "61.8%", 1f => "100%", 1.272f => "127.2%", 1.618f => "161.8%", 2f => "200%", _ => "261.8%" };
+                var labelX = Math.Min(leftX + 4f, Math.Max(leftX, rightX - 48f));
+                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - 8f);
             }
             DrawHandle(g, a); DrawHandle(g, b); DrawHandle(g, c);
         }
@@ -488,9 +510,11 @@ namespace Trade.It
             var b = points.Count > 1 ? points[1] : current;
             var c = points.Count > 2 ? points[2] : current;
             var dy = b.Y - a.Y;
+            var leftX = Math.Min(a.X, c.X);
+            var rightX = Math.Max(a.X, c.X);
             g.DrawLine(pen, a, b); g.DrawLine(pen, b, c);
-            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f })
-                g.DrawLine(pen, c.X, c.Y + dy * level, plot.Right, c.Y + dy * level);
+            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
+                g.DrawLine(pen, leftX, c.Y + dy * level, rightX, c.Y + dy * level);
         }
 
         private void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
