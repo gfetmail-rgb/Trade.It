@@ -43,10 +43,8 @@ namespace Trade.It
                 return;
             }
 
-            var selectedRow = stocksDataGridView.SelectedRows
-                .Cast<DataGridViewRow>()
-                .FirstOrDefault(row => !row.IsNewRow);
-            var selectedSymbol = selectedRow == null
+            var selectedRow = stocksDataGridView.CurrentRow;
+            var selectedSymbol = selectedRow == null || selectedRow.IsNewRow
                 ? null
                 : Convert.ToString(selectedRow.Cells[symbolColumn.Index].Value)?.Trim();
 
