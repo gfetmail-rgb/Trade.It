@@ -20,13 +20,19 @@ namespace Trade.It
                 EnsureChartPanCompensation();
             }
 
-            if ((m.Msg == WM_LBUTTONDOWN || m.Msg == WM_LBUTTONUP || m.Msg == WM_MOUSEMOVE) &&
-                !ExtraDrawingActive && !extraDraggingHandleActive)
+            var detachedExtraMouseDown = false;
+            if (m.Msg == WM_LBUTTONDOWN && !ExtraDrawingActive && !extraDraggingHandleActive &&
+                !IsExtraDrawingHit(GetMousePointFromMessage(m)))
             {
+                MouseDown -= ExtraDrawing_MouseDown;
+                detachedExtraMouseDown = true;
                 extraInputHandled = false;
             }
 
             base.WndProc(ref m);
+
+            if (detachedExtraMouseDown)
+                MouseDown += ExtraDrawing_MouseDown;
 
             if (m.Msg == WM_MOUSEMOVE && verticalAxisDrag && Capture && points.Count > 1)
             {
@@ -40,6 +46,45 @@ namespace Trade.It
 
             if (m.Msg == WM_PAINT)
                 DrawChartBoundaryAndAxisOverlay();
+        }
+
+        private Point GetMousePointFromMessage(Message m)
+        {
+            var x = (short)(long)m.LParam;
+            var y = (short)((long)m.LParam >> 16);
+            return new Point(x, y);
+        }
+
+        private bool IsExtraDrawingHit(Point location)
+        {
+            if (extraDrawings.Count == 0)
+                return false;
+
+            if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
+                return false;
+
+            for (var i = extraDrawings.Count - 1; i >= 0; i--)
+            {
+                var d = extraDrawings[i];
+                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+
+                if (DistanceToPoint(location, p1) <= 10f ||
+                    DistanceToPoint(location, p2) <= 10f ||
+                    DistanceToPoint(location, p3) <= 10f)
+                    return true;
+
+                if (d.Tool == ExtraDrawingTool.FibonacciExtension &&
+                    HitTestFibonacciLevel(location, d, plot, visibleCountForDrawing, min, max))
+                    return true;
+
+                if (d.Tool == ExtraDrawingTool.Measure &&
+                    DistanceToSegment(location, p1, p2) <= 7f)
+                    return true;
+            }
+
+            return false;
         }
 
         private void EnsureChartPanCompensation()
