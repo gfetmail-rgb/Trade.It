@@ -47,7 +47,7 @@ namespace Trade.It
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
-            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f };
+            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
 
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
@@ -65,6 +65,7 @@ namespace Trade.It
                     1f => "100%",
                     1.272f => "127.2%",
                     1.618f => "161.8%",
+                    2f => "200%",
                     _ => "261.8%"
                 };
 
