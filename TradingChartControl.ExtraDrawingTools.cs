@@ -266,19 +266,12 @@ namespace Trade.It
                 DeferExtraMouseState();
         }
 
-        private static int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
+        private int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
         {
             if (DistanceToPoint(location, p1) <= 10f) return 1;
             if (DistanceToPoint(location, p2) <= 10f) return 2;
             if (DistanceToPoint(location, p3) <= 10f) return 3;
             return 0;
-        }
-
-        private static double DistanceToPoint(Point p, PointF target)
-        {
-            var dx = p.X - target.X;
-            var dy = p.Y - target.Y;
-            return Math.Sqrt(dx * dx + dy * dy);
         }
 
         private bool HitTestFibonacciLevel(Point location, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
