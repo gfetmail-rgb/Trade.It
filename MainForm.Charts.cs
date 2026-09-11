@@ -237,14 +237,16 @@ namespace Trade.It
             var highColumn = FindMappedColumn(definition, header, "high", "بیشترین", "بیشترين", "بیشینه");
             var lowColumn = FindMappedColumn(definition, header, "low", "کمترین", "کمترين", "کمینه");
             var closeColumn = FindMappedColumn(definition, header, "close", "پایانی", "پاياني", "بسته", "closeprice");
+            var volumeColumn = FindMappedColumn(definition, header, "volume", "حجم", "ارزش معاملات", "volumevalue");
             if (openColumn < 0 || highColumn < 0 || lowColumn < 0 || closeColumn < 0) return new List<TradingChartPoint>();
             var result = new List<TradingChartPoint>();
             for (var i = start; i < lines.Count; i++)
             {
                 var fields = SplitLine(lines[i], separator);
                 if (!TryGetDouble(fields, openColumn, out var open) || !TryGetDouble(fields, highColumn, out var high) || !TryGetDouble(fields, lowColumn, out var low) || !TryGetDouble(fields, closeColumn, out var close)) continue;
+                var volume = TryGetDouble(fields, volumeColumn, out var parsedVolume) ? parsedVolume : 0.0;
                 if (!TryGetDate(fields, dateColumn, timeColumn, definition.Calendar, out var date)) continue;
-                result.Add(new TradingChartPoint { Date = date, Open = open, High = high, Low = low, Close = close });
+                result.Add(new TradingChartPoint { Date = date, Open = open, High = high, Low = low, Close = close, Volume = volume });
             }
             return result.OrderBy(x => x.Date).ToList();
         }
