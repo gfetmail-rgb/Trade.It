@@ -736,9 +736,10 @@ namespace Trade.It
                     var right = Math.Max(start.X, end.X);
                     var bottom = Math.Max(start.Y, end.Y);
                     var rect = RectangleF.FromLTRB(left, top, right, bottom);
-                    using (var fill = new SolidBrush(Color.FromArgb(225, 240, 255)))
+                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255)))
                         g.FillRectangle(fill, rect);
-                    g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    using (var rectanglePen = new Pen(pen.Color, 1.0f))
+                        g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
                     break;
             }
         }
@@ -770,9 +771,10 @@ namespace Trade.It
                     var top = Math.Min(start.Y, end.Y);
                     var width = Math.Abs(end.X - start.X);
                     var height = Math.Abs(end.Y - start.Y);
-                    using (var fill = new SolidBrush(Color.FromArgb(225, 240, 255)))
+                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255)))
                         g.FillRectangle(fill, left, top, width, height);
-                    g.DrawRectangle(pen, left, top, width, height);
+                    using (var rectanglePen = new Pen(pen.Color, 1.0f))
+                        g.DrawRectangle(rectanglePen, left, top, width, height);
                     break;
             }
         }
@@ -792,20 +794,20 @@ namespace Trade.It
 
             if (Math.Abs(dx) < 0.001f)
             {
-                g.DrawLine(pen, first.X, plot.Top, first.X, plot.Bottom);
-                g.DrawLine(pen, third.X, plot.Top, third.X, plot.Bottom);
+                var offsetX = third.X - first.X;
+                g.DrawLine(pen, first, second);
+                g.DrawLine(pen,
+                    new PointF(first.X + offsetX, first.Y),
+                    new PointF(second.X + offsetX, second.Y));
                 return;
             }
 
             var slope = dy / dx;
-            var yMainLeft = first.Y + slope * (plot.Left - first.X);
-            var yMainRight = first.Y + slope * (plot.Right - first.X);
             var offset = third.Y - (first.Y + slope * (third.X - first.X));
-            var ySecondLeft = yMainLeft + offset;
-            var ySecondRight = yMainRight + offset;
-
-            g.DrawLine(pen, plot.Left, yMainLeft, plot.Right, yMainRight);
-            g.DrawLine(pen, plot.Left, ySecondLeft, plot.Right, ySecondRight);
+            g.DrawLine(pen, first, second);
+            g.DrawLine(pen,
+                new PointF(first.X, first.Y + offset),
+                new PointF(second.X, second.Y + offset));
         }
 
         private void GetDrawingScreenPoints(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max, out PointF start, out PointF end)
@@ -919,15 +921,20 @@ namespace Trade.It
             var dx = second.X - first.X;
             var dy = second.Y - first.Y;
             if (Math.Abs(dx) < 0.001f)
-                return Math.Abs(location.X - first.X) <= tolerance || Math.Abs(location.X - third.X) <= tolerance;
+            {
+                var offsetX = third.X - first.X;
+                var parallelFirst = new PointF(first.X + offsetX, first.Y);
+                var parallelSecond = new PointF(second.X + offsetX, second.Y);
+                return DistanceToSegment(location, first, second) <= tolerance ||
+                       DistanceToSegment(location, parallelFirst, parallelSecond) <= tolerance;
+            }
 
             var slope = dy / dx;
-            var mainLeft = new PointF(plot.Left, first.Y + slope * (plot.Left - first.X));
-            var mainRight = new PointF(plot.Right, first.Y + slope * (plot.Right - first.X));
             var offset = third.Y - (first.Y + slope * (third.X - first.X));
-            var parallelLeft = new PointF(plot.Left, mainLeft.Y + offset);
-            var parallelRight = new PointF(plot.Right, mainRight.Y + offset);
-            return DistanceToSegment(location, mainLeft, mainRight) <= tolerance || DistanceToSegment(location, parallelLeft, parallelRight) <= tolerance;
+            var parallelFirstPoint = new PointF(first.X, first.Y + offset);
+            var parallelSecondPoint = new PointF(second.X, second.Y + offset);
+            return DistanceToSegment(location, first, second) <= tolerance ||
+                   DistanceToSegment(location, parallelFirstPoint, parallelSecondPoint) <= tolerance;
         }
 
         private void MoveOrResizeDrawing(int index, int handle, Point location)
