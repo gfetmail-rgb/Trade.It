@@ -73,6 +73,7 @@ namespace Trade.It
             advancedDrawingCurrentPoint = Point.Empty;
             draggingAdvancedDrawingIndex = -1;
             draggingAdvancedLastPoint = Point.Empty;
+            draggingAdvancedHandle = 0;
             Capture = false;
             Cursor = Cursors.Default;
             Invalidate();
@@ -183,6 +184,7 @@ namespace Trade.It
                     var dx = currentX - previousX;
                     var dy = currentY - previousY;
                     var d = advancedDrawings[draggingAdvancedDrawingIndex];
+
                     if (d.Tool == AdvancedDrawingTool.FibonacciRetracement && draggingAdvancedHandle == 1)
                     {
                         d.X1 = currentX;
@@ -203,6 +205,7 @@ namespace Trade.It
                             d.Y2 += dy;
                         }
                     }
+
                     draggingAdvancedLastPoint = e.Location;
                     Invalidate();
                     DeferAdvancedMouseState();
@@ -231,6 +234,7 @@ namespace Trade.It
             {
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
+                draggingAdvancedHandle = 0;
                 if (AdvancedDrawingActive || advancedDrawingInProgress)
                     DeferAdvancedMouseState();
             }
@@ -244,6 +248,7 @@ namespace Trade.It
                 selectedAdvancedDrawingIndex = -1;
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
+                draggingAdvancedHandle = 0;
                 Invalidate();
                 e.Handled = true;
                 e.SuppressKeyPress = true;
