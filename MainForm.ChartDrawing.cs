@@ -8,7 +8,6 @@ namespace Trade.It
         private Button? drawVerticalDoubleButton;
         private Button? drawHorizontalRayButton;
         private Button? drawTrendLineArrowButton;
-        private readonly HashSet<TradingChartControl> drawingEventCharts = new();
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
@@ -64,8 +63,6 @@ namespace Trade.It
             if (chart == null)
                 return;
 
-            AttachDrawingEvents(chart);
-
             if (chart.ActiveDrawingTool == tool)
             {
                 chart.CancelDrawing();
@@ -79,14 +76,6 @@ namespace Trade.It
             SetToggleButtonState(selectedButton, true);
         }
 
-        private void AttachDrawingEvents(TradingChartControl chart)
-        {
-            if (!drawingEventCharts.Add(chart))
-                return;
-
-            chart.HandleCreated += (_, _) => ResetDrawingToolButtons();
-        }
-
         private void DrawingStateTimer_Tick(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
@@ -96,12 +85,7 @@ namespace Trade.It
 
         private void ChartDrawingTabChanged(object? sender, EventArgs e)
         {
-            var chart = GetActiveChart();
-            if (chart != null)
-            {
-                AttachDrawingEvents(chart);
-                chart.CancelDrawing();
-            }
+            GetActiveChart()?.CancelDrawing();
             ResetDrawingToolButtons();
         }
 
