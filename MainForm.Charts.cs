@@ -245,10 +245,11 @@ namespace Trade.It
                 var fields = SplitLine(lines[i], separator);
                 if (!TryGetDouble(fields, openColumn, out var open) || !TryGetDouble(fields, highColumn, out var high) || !TryGetDouble(fields, lowColumn, out var low) || !TryGetDouble(fields, closeColumn, out var close)) continue;
                 var volume = TryGetDouble(fields, volumeColumn, out var parsedVolume) ? parsedVolume : 0.0;
-                if (!TryGetDate(fields, dateColumn, timeColumn, definition.Calendar, out var date)) continue;
+                var date = default(DateTime);
+                if (dateColumn >= 0 && !TryGetDate(fields, dateColumn, timeColumn, definition.Calendar, out date)) continue;
                 result.Add(new TradingChartPoint { Date = date, Open = open, High = high, Low = low, Close = close, Volume = volume });
             }
-            return result.OrderBy(x => x.Date).ToList();
+            return dateColumn >= 0 ? result.OrderBy(x => x.Date).ToList() : result;
         }
 
         private static string? FindSymbolFile(PortfolioDefinition definition, string symbol)
