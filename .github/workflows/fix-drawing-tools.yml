@@ -29,11 +29,10 @@ jobs:
           def write(name, text):
               Path(name).write_text(text, encoding='utf-8-sig')
 
-          # MainForm.ChartDrawing.cs: use Designer-created buttons only.
           p = 'MainForm.ChartDrawing.cs'
           s = read(p)
           s, n = re.subn(
-              r'\n        private bool chartDrawingToolsInitialized;.*?\n        private readonly System\\.Windows\\.Forms\\.Timer drawingStateTimer = new\(\);\n',
+              r'\n        private bool chartDrawingToolsInitialized;.*?\n        private readonly System\.Windows\.Forms\.Timer drawingStateTimer = new\(\);\n',
               '\n        private readonly System.Windows.Forms.Timer drawingStateTimer = new();\n', s, count=1, flags=re.S)
           if n != 1:
               raise SystemExit('ChartDrawing field block not found')
@@ -81,7 +80,6 @@ jobs:
               raise SystemExit('Runtime drawing toolbar code still present')
           write(p, s)
 
-          # MainForm.Designer.cs: declare/instantiate/configure all 12 buttons.
           p = 'MainForm.Designer.cs'
           s = read(p)
           names = [
@@ -139,7 +137,6 @@ jobs:
               s = s[:end+1] + props + s[end+1:]
           write(p, s)
 
-          # TradingChartControl.cs: render extra drawings in the main OnPaint pass.
           p = 'TradingChartControl.cs'
           s = read(p)
           if 'DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);' not in s:
@@ -150,7 +147,6 @@ jobs:
               s = s[:line_end+1] + m.group(1) + 'DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);\n' + s[line_end+1:]
           write(p, s)
 
-          # TradingChartControl.ExtraDrawingTools.cs: stop using the Paint event.
           p = 'TradingChartControl.ExtraDrawingTools.cs'
           s = read(p)
           s = s.replace('            Paint += ExtraDrawing_Paint;\n', '', 1)
@@ -163,14 +159,12 @@ jobs:
                   return;
 
           '''
-              if header not in s:
-                  raise SystemExit('Extra renderer header not found')
+              if header not in s: raise SystemExit('Extra renderer header not found')
               s = s.replace(header, '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
           {
           ''', 1)
               s = s.replace('e.Graphics', 'g')
-          if 'private void DrawExtraDrawings(' not in s:
-              raise SystemExit('DrawExtraDrawings method missing')
+          if 'private void DrawExtraDrawings(' not in s: raise SystemExit('DrawExtraDrawings missing')
           write(p, s)
 
           print('Source transformations completed.')
