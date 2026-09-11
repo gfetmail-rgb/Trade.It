@@ -348,7 +348,7 @@ namespace Trade.It
             var left = Math.Min(start.X, end.X);
             var right = Math.Max(start.X, end.X);
             var height = end.Y - start.Y;
-            var levels = new[] { 0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0 };
+            var levels = new[] { 0f, 0.236f, 0.382f, 0.5f, 0.618f, 0.786f, 1f };
 
             foreach (var level in levels)
             {
@@ -356,12 +356,12 @@ namespace Trade.It
                 g.DrawLine(pen, left, y, right, y);
                 var text = level switch
                 {
-                    0.0 => "0%",
-                    0.236 => "23.6%",
-                    0.382 => "38.2%",
-                    0.5 => "50%",
-                    0.618 => "61.8%",
-                    0.786 => "78.6%",
+                    0f => "0%",
+                    0.236f => "23.6%",
+                    0.382f => "38.2%",
+                    0.5f => "50%",
+                    0.618f => "61.8%",
+                    0.786f => "78.6%",
                     _ => "100%"
                 };
                 var size = g.MeasureString(text, SystemFonts.DefaultFont);
@@ -443,7 +443,7 @@ namespace Trade.It
                     var left = Math.Min(first.X, second.X);
                     var right = Math.Max(first.X, second.X);
                     var height = second.Y - first.Y;
-                    foreach (var level in new[] { 0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0 })
+                    foreach (var level in new[] { 0f, 0.236f, 0.382f, 0.5f, 0.618f, 0.786f, 1f })
                     {
                         var y = second.Y + height * level;
                         if (DistanceToSegment(location, new PointF(left, y), new PointF(right, y)) <= tolerance)
