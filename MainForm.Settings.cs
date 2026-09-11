@@ -147,6 +147,32 @@ namespace Trade.It
                 navigationTabPage.Controls.Add(chart);
                 navigationTabPage.Text = symbol;
                 chartTabControl.SelectedTab = navigationTabPage;
+
+                var row = stocksDataGridView.Rows.Cast<DataGridViewRow>()
+                    .FirstOrDefault(r => !r.IsNewRow &&
+                        string.Equals(
+                            Convert.ToString(r.Cells[symbolColumn.Index].Value)?.Trim(),
+                            symbol,
+                            StringComparison.OrdinalIgnoreCase));
+
+                if (row != null)
+                {
+                    stocksDataGridView.ClearSelection();
+                    row.Selected = true;
+                    stocksDataGridView.CurrentCell = row.Cells[symbolColumn.Index];
+                    if (row.Index >= 0 && row.Index < stocksDataGridView.Rows.Count)
+                    {
+                        try
+                        {
+                            stocksDataGridView.FirstDisplayedScrollingRowIndex = row.Index;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The row may already be visible or scrolling may be unavailable.
+                        }
+                    }
+                }
+
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
                 SetToggleButtonState(gridButton, chart.GridVisible);
                 SetToggleButtonState(hideChartButton, false);
