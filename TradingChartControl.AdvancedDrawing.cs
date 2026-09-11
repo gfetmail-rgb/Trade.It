@@ -384,29 +384,6 @@ namespace Trade.It
             return g.MeasureString(text, font);
         }
 
-        private static float DistanceToPoint(Point p, PointF q)
-        {
-            var dx = p.X - q.X;
-            var dy = p.Y - q.Y;
-            return (float)Math.Sqrt(dx * dx + dy * dy);
-        }
-
-        private static float DistanceToSegment(Point p, PointF a, PointF b)
-        {
-            var dx = b.X - a.X;
-            var dy = b.Y - a.Y;
-            var len2 = dx * dx + dy * dy;
-            if (len2 < 0.001f)
-                return DistanceToPoint(p, a);
-            var t = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / len2;
-            t = Math.Max(0f, Math.Min(1f, t));
-            var x = a.X + t * dx;
-            var y = a.Y + t * dy;
-            var ddx = p.X - x;
-            var ddy = p.Y - y;
-            return (float)Math.Sqrt(ddx * ddx + ddy * ddy);
-        }
-
         private string? PromptAdvancedText()
         {
             using var form = new Form { Width = 360, Height = 150, FormBorderStyle = FormBorderStyle.FixedDialog, StartPosition = FormStartPosition.CenterParent, MinimizeBox = false, MaximizeBox = false, RightToLeft = RightToLeft.Yes, RightToLeftLayout = true, Text = "درج متن" };
