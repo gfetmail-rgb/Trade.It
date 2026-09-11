@@ -2,6 +2,7 @@ namespace Trade.It
 {
     public partial class MainForm
     {
+        private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
