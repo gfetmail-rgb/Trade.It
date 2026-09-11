@@ -388,7 +388,7 @@ namespace Trade.It
             var levels = new[] { 0f, 0.236f, 0.382f, 0.5f, 0.618f, 0.786f, 1f };
             foreach (var level in levels)
             {
-                var y = end.Y + height * level;
+                var y = start.Y + height * level;
                 g.DrawLine(pen, left, y, right, y);
                 var text = level switch { 0f => "0%", 0.236f => "23.6%", 0.382f => "38.2%", 0.5f => "50%", 0.618f => "61.8%", 0.786f => "78.6%", _ => "100%" };
                 var size = g.MeasureString(text, SystemFonts.DefaultFont);
