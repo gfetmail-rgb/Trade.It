@@ -29,6 +29,9 @@ namespace Trade.It
         private readonly List<Point> extraDrawingPoints = new();
         private Point extraDrawingCurrentPoint;
         private int selectedExtraDrawingIndex = -1;
+        private int extraDraggingHandle;
+        private int extraDraggingDrawingIndex = -1;
+        private bool extraDraggingHandleActive;
         private int extraDataCount = -1;
         private DateTime extraFirstDate;
         private DateTime extraLastDate;
@@ -46,6 +49,9 @@ namespace Trade.It
             extraDrawingInProgress = false;
             extraDrawingPoints.Clear();
             extraDrawingCurrentPoint = Point.Empty;
+            extraDraggingHandle = 0;
+            extraDraggingDrawingIndex = -1;
+            extraDraggingHandleActive = false;
             Capture = false;
             Cursor = Cursors.Default;
             Invalidate();
@@ -60,6 +66,9 @@ namespace Trade.It
             extraDrawingInProgress = false;
             extraDrawingPoints.Clear();
             extraDrawingCurrentPoint = Point.Empty;
+            extraDraggingHandle = 0;
+            extraDraggingDrawingIndex = -1;
+            extraDraggingHandleActive = false;
             Cursor = activeExtraDrawingTool == ExtraDrawingTool.None ? Cursors.Default : Cursors.Cross;
             Focus();
             Invalidate();
@@ -86,6 +95,9 @@ namespace Trade.It
             {
                 extraDrawings.Clear();
                 selectedExtraDrawingIndex = -1;
+                extraDraggingHandle = 0;
+                extraDraggingDrawingIndex = -1;
+                extraDraggingHandleActive = false;
                 extraDataCount = count;
                 extraFirstDate = first;
                 extraLastDate = last;
@@ -101,6 +113,14 @@ namespace Trade.It
             {
                 if (ExtraDrawingActive || extraDrawingInProgress)
                     CancelExtraDrawing();
+                else
+                {
+                    selectedExtraDrawingIndex = -1;
+                    extraDraggingHandle = 0;
+                    extraDraggingDrawingIndex = -1;
+                    extraDraggingHandleActive = false;
+                    Invalidate();
+                }
                 return;
             }
             if (e.Button != MouseButtons.Left)
@@ -138,17 +158,84 @@ namespace Trade.It
                 return;
             }
 
-            var hit = HitTestExtraDrawing(e.Location, GetPlotRectangle());
-            if (hit >= 0)
+            var plot = GetPlotRectangle();
+            if (!TryGetExtraContext(out _, out var visibleCountForDrawing, out var min, out var max))
+                return;
+
+            for (var i = extraDrawings.Count - 1; i >= 0; i--)
             {
-                selectedExtraDrawingIndex = hit;
-                Invalidate();
-                DeferExtraMouseState();
+                var d = extraDrawings[i];
+                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+
+                if (d.Tool == ExtraDrawingTool.FibonacciExtension)
+                {
+                    var handle = HitTestHandle(e.Location, p1, p2, p3);
+                    if (handle != 0)
+                    {
+                        selectedExtraDrawingIndex = i;
+                        extraDraggingDrawingIndex = i;
+                        extraDraggingHandle = handle;
+                        extraDraggingHandleActive = true;
+                        Capture = true;
+                        Cursor = Cursors.SizeAll;
+                        Invalidate();
+                        return;
+                    }
+                }
+
+                if (DistanceToPoint(e.Location, p1) <= 10f || DistanceToPoint(e.Location, p2) <= 10f || DistanceToPoint(e.Location, p3) <= 10f ||
+                    (d.Tool == ExtraDrawingTool.FibonacciExtension && HitTestFibonacciLevel(e.Location, d, plot, visibleCountForDrawing, min, max)) ||
+                    (d.Tool == ExtraDrawingTool.Measure && DistanceToSegment(e.Location, p1, p2) <= 7f))
+                {
+                    selectedExtraDrawingIndex = i;
+                    Invalidate();
+                    DeferExtraMouseState();
+                    return;
+                }
             }
+
+            selectedExtraDrawingIndex = -1;
+            extraDraggingHandle = 0;
+            extraDraggingDrawingIndex = -1;
+            extraDraggingHandleActive = false;
+            Capture = false;
+            Cursor = Cursors.Default;
+            Invalidate();
         }
 
         private void ExtraDrawing_MouseMove(object? sender, MouseEventArgs e)
         {
+            if (extraDraggingHandleActive && extraDraggingDrawingIndex >= 0 && extraDraggingDrawingIndex < extraDrawings.Count)
+            {
+                if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
+                    return;
+
+                var d = extraDrawings[extraDraggingDrawingIndex];
+                var x = ScreenToDataX(e.X, plot, visibleCountForDrawing);
+                var y = ScreenToPrice(e.Y, plot, min, max);
+
+                if (extraDraggingHandle == 1)
+                {
+                    d.X1 = x;
+                    d.Y1 = y;
+                }
+                else if (extraDraggingHandle == 2)
+                {
+                    d.X2 = x;
+                    d.Y2 = y;
+                }
+                else if (extraDraggingHandle == 3)
+                {
+                    d.X3 = x;
+                    d.Y3 = y;
+                }
+
+                Invalidate();
+                return;
+            }
+
             if (!ExtraDrawingActive)
                 return;
             panning = false;
@@ -164,8 +251,54 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseUp(object? sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left && extraDraggingHandleActive)
+            {
+                extraDraggingHandleActive = false;
+                extraDraggingDrawingIndex = -1;
+                extraDraggingHandle = 0;
+                Capture = false;
+                Cursor = Cursors.Default;
+                Invalidate();
+                return;
+            }
+
             if (e.Button == MouseButtons.Left && ExtraDrawingActive)
                 DeferExtraMouseState();
+        }
+
+        private static int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
+        {
+            if (DistanceToPoint(location, p1) <= 10f) return 1;
+            if (DistanceToPoint(location, p2) <= 10f) return 2;
+            if (DistanceToPoint(location, p3) <= 10f) return 3;
+            return 0;
+        }
+
+        private static double DistanceToPoint(Point p, PointF target)
+        {
+            var dx = p.X - target.X;
+            var dy = p.Y - target.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        private bool HitTestFibonacciLevel(Point location, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        {
+            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
+            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var dy = b.Y - a.Y;
+            var leftX = Math.Min(a.X, c.X);
+            var rightX = Math.Max(a.X, c.X);
+            if (location.X < leftX - 6f || location.X > rightX + 6f)
+                return false;
+
+            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f })
+            {
+                var y = c.Y + dy * level;
+                if (Math.Abs(location.Y - y) <= 7f)
+                    return true;
+            }
+            return false;
         }
 
         private void DeferExtraMouseState()
@@ -193,6 +326,9 @@ namespace Trade.It
             {
                 extraDrawings.RemoveAt(selectedExtraDrawingIndex);
                 selectedExtraDrawingIndex = -1;
+                extraDraggingHandle = 0;
+                extraDraggingDrawingIndex = -1;
+                extraDraggingHandleActive = false;
                 Invalidate();
                 e.Handled = true;
                 e.SuppressKeyPress = true;
@@ -226,7 +362,7 @@ namespace Trade.It
                 X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing),
                 Y3 = ScreenToPrice(p3.Y, plot, min, max)
             });
-            selectedExtraDrawingIndex = extraDrawings.Count - 1;
+            selectedExtraDrawingIndex = -1;
         }
 
         private bool TryGetExtraContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
@@ -303,9 +439,6 @@ namespace Trade.It
             var dx = midpoint.X - p1.X;
             var dy = midpoint.Y - p1.Y;
             if (Math.Abs(dx) + Math.Abs(dy) < 0.001f) return;
-
-            // Andrews Pitchfork: the median and its two parallel tines extend
-            // from their anchor points toward the future (right side of chart).
             DrawRayToRight(g, pen, p1, dx, dy, plot);
             DrawRayToRight(g, pen, p2, dx, dy, plot);
             DrawRayToRight(g, pen, p3, dx, dy, plot);
@@ -319,7 +452,6 @@ namespace Trade.It
                 g.DrawLine(pen, start.X, start.Y, start.X, plot.Bottom);
                 return;
             }
-
             var targetX = plot.Right;
             var targetY = start.Y + dy * ((targetX - start.X) / dx);
             if (targetY >= plot.Top && targetY <= plot.Bottom)
@@ -327,14 +459,12 @@ namespace Trade.It
                 g.DrawLine(pen, start, new PointF(targetX, targetY));
                 return;
             }
-
             var targetTopX = start.X + dx * ((plot.Top - start.Y) / dy);
             if (Math.Abs(dy) > 0.001f && targetTopX >= start.X && targetTopX <= plot.Right)
             {
                 g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
                 return;
             }
-
             var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
             if (Math.Abs(dy) > 0.001f && targetBottomX >= start.X && targetBottomX <= plot.Right)
                 g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
@@ -414,6 +544,8 @@ namespace Trade.It
                 var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
                 var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f || DistanceToPoint(location, p2) <= 10f || DistanceToPoint(location, p3) <= 10f)
+                    return i;
+                if (d.Tool == ExtraDrawingTool.FibonacciExtension && HitTestFibonacciLevel(location, d, plot, visibleCountForDrawing, min, max))
                     return i;
                 if (d.Tool == ExtraDrawingTool.Measure && DistanceToSegment(location, p1, p2) <= 7f)
                     return i;
