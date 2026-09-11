@@ -608,6 +608,7 @@ namespace Trade.It
             }
 
             DrawDrawings(e.Graphics, plot, visible.Count, min, max);
+            RenderAdvancedDrawings(e.Graphics);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
