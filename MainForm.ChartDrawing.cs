@@ -7,8 +7,6 @@ namespace Trade.It
 
         private void InitializeChartDrawingTools()
         {
-            InitializeToolbarIcons();
-
             if (chartDrawingToolsInitialized)
                 return;
 
@@ -16,14 +14,6 @@ namespace Trade.It
                 return;
 
             chartDrawingToolsInitialized = true;
-
-            ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
-            ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
-            ConfigureDrawingIcon(drawFibonacciButton, DrawingIcon.Fibonacci);
-            ConfigureDrawingIcon(drawTextButton, DrawingIcon.Text);
-            ConfigureDrawingIcon(drawPitchforkButton, DrawingIcon.Pitchfork);
-            ConfigureDrawingIcon(drawFibonacciExtensionButton, DrawingIcon.FibonacciExtension);
-            ConfigureDrawingIcon(drawMeasureButton, DrawingIcon.Measure);
 
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
             drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
@@ -46,17 +36,6 @@ namespace Trade.It
             ResetDrawingToolButtons();
         }
 
-        private enum DrawingIcon
-        {
-            TrendChannel,
-            Rectangle,
-            Fibonacci,
-            Text,
-            Pitchfork,
-            FibonacciExtension,
-            Measure
-        }
-
         private enum AdvancedDrawingSelection
         {
             Fibonacci,
@@ -68,95 +47,6 @@ namespace Trade.It
             Pitchfork,
             FibonacciExtension,
             Measure
-        }
-
-        private void ConfigureDrawingIcon(Button button, DrawingIcon icon)
-        {
-            button.Text = string.Empty;
-            button.Tag = icon;
-            button.Paint += DrawingIconButton_Paint;
-            button.AccessibleName = icon switch
-            {
-                DrawingIcon.TrendChannel => "کانال روند",
-                DrawingIcon.Rectangle => "مستطیل",
-                DrawingIcon.Fibonacci => "فیبوناچی",
-                DrawingIcon.Pitchfork => "چنگال اندروز",
-                DrawingIcon.FibonacciExtension => "فیبوناچی اکسپنشن",
-                DrawingIcon.Measure => "خط کش اندازه گیری",
-                _ => "متن"
-            };
-        }
-
-        private void DrawingIconButton_Paint(object? sender, PaintEventArgs e)
-        {
-            if (sender is not Button button || button.Tag is not DrawingIcon icon)
-                return;
-
-            var bounds = button.ClientRectangle;
-            var centerX = bounds.Width / 2;
-            var centerY = bounds.Height / 2;
-            using var pen = new Pen(button.Enabled ? SystemColors.ControlText : SystemColors.GrayText, 2.2f)
-            {
-                StartCap = System.Drawing.Drawing2D.LineCap.Round,
-                EndCap = System.Drawing.Drawing2D.LineCap.Round
-            };
-
-            if (icon == DrawingIcon.Rectangle)
-            {
-                var rect = new RectangleF(centerX - 20, centerY - 10, 40, 20);
-                e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
-                return;
-            }
-
-            if (icon == DrawingIcon.Fibonacci)
-            {
-                e.Graphics.DrawLine(pen, centerX - 22, centerY + 8, centerX + 22, centerY - 8);
-                e.Graphics.DrawLine(pen, centerX - 19, centerY - 8, centerX + 22, centerY - 8);
-                e.Graphics.DrawLine(pen, centerX - 19, centerY - 2, centerX + 22, centerY - 2);
-                e.Graphics.DrawLine(pen, centerX - 19, centerY + 4, centerX + 22, centerY + 4);
-                e.Graphics.DrawLine(pen, centerX - 19, centerY + 10, centerX + 22, centerY + 10);
-                return;
-            }
-
-            if (icon == DrawingIcon.Text)
-            {
-                using var font = new Font(button.Font.FontFamily, 15f, FontStyle.Bold);
-                using var brush = new SolidBrush(button.Enabled ? SystemColors.ControlText : SystemColors.GrayText);
-                var text = "T";
-                var size = e.Graphics.MeasureString(text, font);
-                e.Graphics.DrawString(text, font, brush, centerX - size.Width / 2f, centerY - size.Height / 2f - 1);
-                return;
-            }
-
-            if (icon == DrawingIcon.Pitchfork)
-            {
-                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX + 20, centerY - 9);
-                e.Graphics.DrawLine(pen, centerX - 12, centerY + 5, centerX + 16, centerY + 12);
-                e.Graphics.DrawLine(pen, centerX - 12, centerY + 5, centerX + 16, centerY - 2);
-                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX - 12, centerY + 5);
-                return;
-            }
-
-            if (icon == DrawingIcon.FibonacciExtension)
-            {
-                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX - 4, centerY - 8);
-                e.Graphics.DrawLine(pen, centerX - 4, centerY - 8, centerX + 8, centerY + 3);
-                e.Graphics.DrawLine(pen, centerX + 8, centerY - 8, centerX + 21, centerY - 8);
-                e.Graphics.DrawLine(pen, centerX + 8, centerY + 2, centerX + 21, centerY + 2);
-                e.Graphics.DrawLine(pen, centerX + 8, centerY + 10, centerX + 21, centerY + 10);
-                return;
-            }
-
-            if (icon == DrawingIcon.Measure)
-            {
-                e.Graphics.DrawLine(pen, centerX - 21, centerY + 8, centerX + 21, centerY - 8);
-                e.Graphics.DrawLine(pen, centerX - 18, centerY + 3, centerX - 24, centerY + 13);
-                e.Graphics.DrawLine(pen, centerX + 18, centerY - 13, centerX + 24, centerY - 3);
-                return;
-            }
-
-            e.Graphics.DrawLine(pen, centerX - 24, centerY + 9, centerX + 23, centerY - 8);
-            e.Graphics.DrawLine(pen, centerX - 24, centerY + 17, centerX + 23, centerY);
         }
 
         private void ActivateDrawingTool(ChartDrawingTool tool, Button selectedButton)
