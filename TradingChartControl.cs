@@ -204,17 +204,15 @@ namespace Trade.It
                 FitVerticalRange();
         }
 
-        private void FitVerticalRange()
-        {
-            if (points.Count == 0) return;
-            verticalZoom = 1;
-            verticalPanOffset = 0;
-            Invalidate();
-        }
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
+
+            if (extraInputHandled)
+            {
+                extraInputHandled = false;
+                return;
+            }
 
             if (e.Button == MouseButtons.Right)
             {
@@ -434,6 +432,12 @@ namespace Trade.It
         {
             base.OnMouseMove(e);
 
+            if (extraInputHandled)
+            {
+                extraInputHandled = false;
+                return;
+            }
+
             if (showCrosshair)
             {
                 var plotLeft = 55;
@@ -508,6 +512,13 @@ namespace Trade.It
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
+
+            if (extraInputHandled)
+            {
+                extraInputHandled = false;
+                return;
+            }
+
             if (e.Button != MouseButtons.Left) return;
             panning = false;
             horizontalAxisDrag = false;
@@ -609,6 +620,7 @@ namespace Trade.It
 
             DrawDrawings(e.Graphics, plot, visible.Count, min, max);
             RenderAdvancedDrawings(e.Graphics);
+            RenderExtraDrawings(e.Graphics);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
