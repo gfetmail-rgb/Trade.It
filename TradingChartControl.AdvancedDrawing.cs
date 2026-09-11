@@ -31,6 +31,8 @@ namespace Trade.It
         private DateTime advancedFirstDate;
         private DateTime advancedLastDate;
         private bool advancedDrawingEventsInitialized;
+        private int draggingAdvancedDrawingIndex = -1;
+        private Point draggingAdvancedLastPoint;
 
         public bool AdvancedDrawingActive => activeAdvancedDrawingTool != AdvancedDrawingTool.None;
 
@@ -68,6 +70,8 @@ namespace Trade.It
             advancedDrawingInProgress = false;
             advancedDrawingStartPoint = Point.Empty;
             advancedDrawingCurrentPoint = Point.Empty;
+            draggingAdvancedDrawingIndex = -1;
+            draggingAdvancedLastPoint = Point.Empty;
             Capture = false;
             Cursor = Cursors.Default;
             Invalidate();
@@ -157,6 +161,9 @@ namespace Trade.It
             if (hit >= 0)
             {
                 selectedAdvancedDrawingIndex = hit;
+                draggingAdvancedDrawingIndex = hit;
+                draggingAdvancedLastPoint = e.Location;
+                Focus();
                 Invalidate();
                 DeferAdvancedMouseState();
             }
@@ -164,6 +171,31 @@ namespace Trade.It
 
         private void AdvancedDrawing_MouseMove(object? sender, MouseEventArgs e)
         {
+            if (draggingAdvancedDrawingIndex >= 0 && draggingAdvancedDrawingIndex < advancedDrawings.Count && e.Button == MouseButtons.Left)
+            {
+                if (TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
+                {
+                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing);
+                    var previousY = ScreenToPrice(draggingAdvancedLastPoint.Y, plot, min, max);
+                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing);
+                    var currentY = ScreenToPrice(e.Location.Y, plot, min, max);
+                    var dx = currentX - previousX;
+                    var dy = currentY - previousY;
+                    var d = advancedDrawings[draggingAdvancedDrawingIndex];
+                    d.X1 += dx;
+                    d.Y1 += dy;
+                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
+                    {
+                        d.X2 += dx;
+                        d.Y2 += dy;
+                    }
+                    draggingAdvancedLastPoint = e.Location;
+                    Invalidate();
+                    DeferAdvancedMouseState();
+                }
+                return;
+            }
+
             if (!AdvancedDrawingActive)
                 return;
 
@@ -181,8 +213,13 @@ namespace Trade.It
 
         private void AdvancedDrawing_MouseUp(object? sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && (AdvancedDrawingActive || advancedDrawingInProgress))
-                DeferAdvancedMouseState();
+            if (e.Button == MouseButtons.Left)
+            {
+                draggingAdvancedDrawingIndex = -1;
+                draggingAdvancedLastPoint = Point.Empty;
+                if (AdvancedDrawingActive || advancedDrawingInProgress)
+                    DeferAdvancedMouseState();
+            }
         }
 
         private void AdvancedDrawing_KeyDown(object? sender, KeyEventArgs e)
@@ -191,6 +228,8 @@ namespace Trade.It
             {
                 advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);
                 selectedAdvancedDrawingIndex = -1;
+                draggingAdvancedDrawingIndex = -1;
+                draggingAdvancedLastPoint = Point.Empty;
                 Invalidate();
                 e.Handled = true;
                 e.SuppressKeyPress = true;
