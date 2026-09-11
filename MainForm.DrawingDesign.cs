@@ -2,9 +2,9 @@ namespace Trade.It
 {
     public partial class MainForm
     {
-        protected override void OnCreateControl()
+        protected override void OnHandleCreated(EventArgs e)
         {
-            base.OnCreateControl();
+            base.OnHandleCreated(e);
             InitializeChartDrawingTools();
         }
     }
