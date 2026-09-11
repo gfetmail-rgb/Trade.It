@@ -1,0 +1,61 @@
+name: Fix Text Selection And Cursor
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fix Text behavior
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('TradingChartControl.AdvancedDrawing.cs')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''            Cursor = activeAdvancedDrawingTool == AdvancedDrawingTool.None ? Cursors.Default : Cursors.Cross;\n            Focus();\n            Invalidate();\n        }\n\n        public void CancelAdvancedDrawing()'''
+          new = '''            Cursor = Cursors.Default;\n            Focus();\n            Invalidate();\n        }\n\n        public void CancelAdvancedDrawing()'''
+          if old not in s:
+              raise SystemExit('ActivateTextLabel cursor block not found')
+          s = s.replace(old, new, 1)
+
+          old = '''            advancedDrawings.Add(new AdvancedDrawing\n            {\n                Tool = AdvancedDrawingTool.TextLabel,\n                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing),\n                Y1 = ScreenToPrice(location.Y, plot, min, max),\n                Text = text\n            });\n            selectedAdvancedDrawingIndex = advancedDrawings.Count - 1;'''
+          new = '''            advancedDrawings.Add(new AdvancedDrawing\n            {\n                Tool = AdvancedDrawingTool.TextLabel,\n                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing),\n                Y1 = ScreenToPrice(location.Y, plot, min, max),\n                Text = text\n            });\n            selectedAdvancedDrawingIndex = -1;'''
+          if old not in s:
+              raise SystemExit('AddAdvancedText block not found')
+          s = s.replace(old, new, 1)
+
+          old = '''                Capture = false;\n                if (AdvancedDrawingActive)\n                    Cursor = Cursors.Cross;'''
+          new = '''                Capture = false;\n                Cursor = activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement\n                    ? Cursors.Cross\n                    : Cursors.Default;'''
+          if old not in s:
+              raise SystemExit('Deferred cursor block not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add TradingChartControl.AdvancedDrawing.cs
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix text selection and cursor behavior"
+          git push
+
+      - name: Remove temporary workflow
+        shell: bash
+        run: |
+          git rm .github/workflows/fix-text-selection-cursor.yml
+          git commit -m "Remove temporary text fix workflow"
+          git push
