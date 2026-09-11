@@ -7,6 +7,7 @@ namespace Trade.It
         private bool HookUiFixes()
         {
             HandleCreated += MainForm_HandleCreatedForUiFixes;
+            Load += MainForm_HandleCreatedForUiFixes;
             return true;
         }
 
