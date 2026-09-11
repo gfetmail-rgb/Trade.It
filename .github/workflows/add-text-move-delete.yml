@@ -1,0 +1,48 @@
+name: Add text move delete
+on:
+  push:
+    branches: [main]
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch text interaction
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('TradingChartControl.AdvancedDrawing.cs')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('''        private bool advancedDrawingEventsInitialized;\n''', '''        private bool advancedDrawingEventsInitialized;\n        private int draggingAdvancedDrawingIndex = -1;\n        private Point draggingAdvancedLastPoint;\n''', 1)
+          old = '''            var plot = GetPlotRectangle();\n            var hit = HitTestAdvancedDrawing(e.Location, plot);\n            if (hit >= 0)\n            {\n                selectedAdvancedDrawingIndex = hit;\n                Invalidate();\n                DeferAdvancedMouseState();\n            }\n'''
+          new = '''            var plot = GetPlotRectangle();\n            var hit = HitTestAdvancedDrawing(e.Location, plot);\n            if (hit >= 0)\n            {\n                selectedAdvancedDrawingIndex = hit;\n                draggingAdvancedDrawingIndex = hit;\n                draggingAdvancedLastPoint = e.Location;\n                Focus();\n                Invalidate();\n                DeferAdvancedMouseState();\n            }\n'''
+          if old not in s: raise SystemExit('selection block not found')
+          s = s.replace(old, new, 1)
+          old = '''        private void AdvancedDrawing_MouseMove(object? sender, MouseEventArgs e)\n        {\n            if (!AdvancedDrawingActive)\n                return;\n\n            panning = false;\n            horizontalAxisDrag = false;\n            verticalAxisDrag = false;\n\n            if (advancedDrawingInProgress && activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement)\n            {\n                advancedDrawingCurrentPoint = e.Location;\n                Invalidate();\n                DeferAdvancedMouseState();\n            }\n        }\n'''
+          new = '''        private void AdvancedDrawing_MouseMove(object? sender, MouseEventArgs e)\n        {\n            if (draggingAdvancedDrawingIndex >= 0 && draggingAdvancedDrawingIndex < advancedDrawings.Count && e.Button == MouseButtons.Left)\n            {\n                if (TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))\n                {\n                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing);\n                    var previousY = ScreenToPrice(draggingAdvancedLastPoint.Y, plot, min, max);\n                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing);\n                    var currentY = ScreenToPrice(e.Location.Y, plot, min, max);\n                    var dx = currentX - previousX;\n                    var dy = currentY - previousY;\n                    var d = advancedDrawings[draggingAdvancedDrawingIndex];\n                    d.X1 += dx;\n                    d.Y1 += dy;\n                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)\n                    {\n                        d.X2 += dx;\n                        d.Y2 += dy;\n                    }\n                    draggingAdvancedLastPoint = e.Location;\n                    Invalidate();\n                    DeferAdvancedMouseState();\n                }\n                return;\n            }\n\n            if (!AdvancedDrawingActive)\n                return;\n\n            panning = false;\n            horizontalAxisDrag = false;\n            verticalAxisDrag = false;\n\n            if (advancedDrawingInProgress && activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement)\n            {\n                advancedDrawingCurrentPoint = e.Location;\n                Invalidate();\n                DeferAdvancedMouseState();\n            }\n        }\n'''
+          if old not in s: raise SystemExit('mousemove block not found')
+          s = s.replace(old, new, 1)
+          old = '''        private void AdvancedDrawing_MouseUp(object? sender, MouseEventArgs e)\n        {\n            if (e.Button == MouseButtons.Left && (AdvancedDrawingActive || advancedDrawingInProgress))\n                DeferAdvancedMouseState();\n        }\n'''
+          new = '''        private void AdvancedDrawing_MouseUp(object? sender, MouseEventArgs e)\n        {\n            if (e.Button == MouseButtons.Left)\n            {\n                draggingAdvancedDrawingIndex = -1;\n                draggingAdvancedLastPoint = Point.Empty;\n                if (AdvancedDrawingActive || advancedDrawingInProgress)\n                    DeferAdvancedMouseState();\n            }\n        }\n'''
+          if old not in s: raise SystemExit('mouseup block not found')
+          s = s.replace(old, new, 1)
+          old = '''                advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);\n                selectedAdvancedDrawingIndex = -1;\n                Invalidate();\n'''
+          new = '''                advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);\n                selectedAdvancedDrawingIndex = -1;\n                draggingAdvancedDrawingIndex = -1;\n                draggingAdvancedLastPoint = Point.Empty;\n                Invalidate();\n'''
+          if old not in s: raise SystemExit('delete block not found')
+          s = s.replace(old, new, 1)
+          old = '''            activeAdvancedDrawingTool = AdvancedDrawingTool.None;\n            advancedDrawingInProgress = false;\n            advancedDrawingStartPoint = Point.Empty;\n            advancedDrawingCurrentPoint = Point.Empty;\n            Capture = false;\n'''
+          new = '''            activeAdvancedDrawingTool = AdvancedDrawingTool.None;\n            advancedDrawingInProgress = false;\n            advancedDrawingStartPoint = Point.Empty;\n            advancedDrawingCurrentPoint = Point.Empty;\n            draggingAdvancedDrawingIndex = -1;\n            draggingAdvancedLastPoint = Point.Empty;\n            Capture = false;\n'''
+          if old not in s: raise SystemExit('cancel block not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add TradingChartControl.AdvancedDrawing.cs
+          git commit -m "Add text selection move and delete"
+          git rm .github/workflows/add-text-move-delete.yml
+          git commit -m "Remove temporary text interaction workflow"
+          git push
