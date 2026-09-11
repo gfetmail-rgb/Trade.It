@@ -12,6 +12,9 @@ namespace Trade.It
         private Button? drawRectangleButton;
         private Button? drawFibonacciButton;
         private Button? drawTextButton;
+        private Button? drawPitchforkButton;
+        private Button? drawFibonacciExtensionButton;
+        private Button? drawMeasureButton;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
@@ -30,11 +33,17 @@ namespace Trade.It
             drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(0, 0), 82);
             drawFibonacciButton = CreateDrawingToolButton("فیبوناچی", new Point(0, 0), 82);
             drawTextButton = CreateDrawingToolButton("متن", new Point(0, 0), 82);
+            drawPitchforkButton = CreateDrawingToolButton("چنگال", new Point(0, 0), 82);
+            drawFibonacciExtensionButton = CreateDrawingToolButton("فیبو اکسپنشن", new Point(0, 0), 92);
+            drawMeasureButton = CreateDrawingToolButton("خط کش", new Point(0, 0), 82);
 
             ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
             ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
             ConfigureDrawingIcon(drawFibonacciButton, DrawingIcon.Fibonacci);
             ConfigureDrawingIcon(drawTextButton, DrawingIcon.Text);
+            ConfigureDrawingIcon(drawPitchforkButton, DrawingIcon.Pitchfork);
+            ConfigureDrawingIcon(drawFibonacciExtensionButton, DrawingIcon.FibonacciExtension);
+            ConfigureDrawingIcon(drawMeasureButton, DrawingIcon.Measure);
 
             chartToolbarPanel.Controls.Add(drawTrendLineButton);
             chartToolbarPanel.Controls.Add(drawTrendChannelButton);
@@ -45,6 +54,9 @@ namespace Trade.It
             chartToolbarPanel.Controls.Add(drawRectangleButton);
             chartToolbarPanel.Controls.Add(drawFibonacciButton);
             chartToolbarPanel.Controls.Add(drawTextButton);
+            chartToolbarPanel.Controls.Add(drawPitchforkButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);
+            chartToolbarPanel.Controls.Add(drawMeasureButton);
 
             ArrangeDrawingToolButtons();
             chartToolbarPanel.Resize += (_, _) => ArrangeDrawingToolButtons();
@@ -58,6 +70,9 @@ namespace Trade.It
             drawRectangleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
+            drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);
+            drawFibonacciExtensionButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.FibonacciExtension, drawFibonacciExtensionButton);
+            drawMeasureButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Measure, drawMeasureButton);
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
             closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
@@ -72,7 +87,8 @@ namespace Trade.It
             if (drawTrendLineButton == null || drawTrendChannelButton == null ||
                 drawHorizontalDoubleButton == null || drawVerticalDoubleButton == null ||
                 drawHorizontalRayButton == null || drawTrendLineArrowButton == null ||
-                drawRectangleButton == null || drawFibonacciButton == null || drawTextButton == null)
+                drawRectangleButton == null || drawFibonacciButton == null || drawTextButton == null ||
+                drawPitchforkButton == null || drawFibonacciExtensionButton == null || drawMeasureButton == null)
                 return;
 
             var buttons = new[]
@@ -85,7 +101,10 @@ namespace Trade.It
                 drawTrendLineArrowButton,
                 drawRectangleButton,
                 drawFibonacciButton,
-                drawTextButton
+                drawTextButton,
+                drawPitchforkButton,
+                drawFibonacciExtensionButton,
+                drawMeasureButton
             };
 
             const int startX = 790;
@@ -95,15 +114,17 @@ namespace Trade.It
             const int gap = 5;
             const int horizontalPadding = 6;
 
-            var oneLineEnd = startX + buttons.Length * buttonWidth + (buttons.Length - 1) * gap;
+            var widths = new[] { 82, 82, 82, 82, 82, 82, 82, 82, 82, 82, 92, 82 };
+            var oneLineEnd = startX + widths.Sum() + (buttons.Length - 1) * gap;
             var oneLine = chartToolbarPanel.ClientSize.Width >= oneLineEnd + horizontalPadding;
             var x = oneLine ? startX : horizontalPadding;
             var y = oneLine ? rowY : secondRowY;
 
             for (int i = 0; i < buttons.Length; i++)
             {
+                buttons[i].Size = new Size(widths[i], 34);
                 buttons[i].Location = new Point(x, y);
-                x += buttonWidth + gap;
+                x += widths[i] + gap;
             }
 
             chartToolbarPanel.Height = oneLine ? 51 : 94;
@@ -114,13 +135,23 @@ namespace Trade.It
             TrendChannel,
             Rectangle,
             Fibonacci,
-            Text
+            Text,
+            Pitchfork,
+            FibonacciExtension,
+            Measure
         }
 
         private enum AdvancedDrawingSelection
         {
             Fibonacci,
             Text
+        }
+
+        private enum ExtraDrawingSelection
+        {
+            Pitchfork,
+            FibonacciExtension,
+            Measure
         }
 
         private void ConfigureDrawingIcon(Button button, DrawingIcon icon)
@@ -133,6 +164,9 @@ namespace Trade.It
                 DrawingIcon.TrendChannel => "کانال روند",
                 DrawingIcon.Rectangle => "مستطیل",
                 DrawingIcon.Fibonacci => "فیبوناچی",
+                DrawingIcon.Pitchfork => "چنگال اندروز",
+                DrawingIcon.FibonacciExtension => "فیبوناچی اکسپنشن",
+                DrawingIcon.Measure => "خط کش اندازه گیری",
                 _ => "متن"
             };
         }
@@ -178,6 +212,33 @@ namespace Trade.It
                 return;
             }
 
+            if (icon == DrawingIcon.Pitchfork)
+            {
+                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX + 20, centerY - 9);
+                e.Graphics.DrawLine(pen, centerX - 12, centerY + 5, centerX + 16, centerY + 12);
+                e.Graphics.DrawLine(pen, centerX - 12, centerY + 5, centerX + 16, centerY - 2);
+                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX - 12, centerY + 5);
+                return;
+            }
+
+            if (icon == DrawingIcon.FibonacciExtension)
+            {
+                e.Graphics.DrawLine(pen, centerX - 20, centerY + 9, centerX - 4, centerY - 8);
+                e.Graphics.DrawLine(pen, centerX - 4, centerY - 8, centerX + 8, centerY + 3);
+                e.Graphics.DrawLine(pen, centerX + 8, centerY - 8, centerX + 21, centerY - 8);
+                e.Graphics.DrawLine(pen, centerX + 8, centerY + 2, centerX + 21, centerY + 2);
+                e.Graphics.DrawLine(pen, centerX + 8, centerY + 10, centerX + 21, centerY + 10);
+                return;
+            }
+
+            if (icon == DrawingIcon.Measure)
+            {
+                e.Graphics.DrawLine(pen, centerX - 21, centerY + 8, centerX + 21, centerY - 8);
+                e.Graphics.DrawLine(pen, centerX - 18, centerY + 3, centerX - 24, centerY + 13);
+                e.Graphics.DrawLine(pen, centerX + 18, centerY - 13, centerX + 24, centerY - 3);
+                return;
+            }
+
             e.Graphics.DrawLine(pen, centerX - 24, centerY + 9, centerX + 23, centerY - 8);
             e.Graphics.DrawLine(pen, centerX - 24, centerY + 17, centerX + 23, centerY);
         }
@@ -203,6 +264,7 @@ namespace Trade.It
                 return;
 
             chart.CancelAdvancedDrawing();
+            chart.CancelExtraDrawing();
 
             if (chart.ActiveDrawingTool == tool)
             {
@@ -224,6 +286,7 @@ namespace Trade.It
                 return;
 
             chart.CancelDrawing();
+            chart.CancelExtraDrawing();
 
             if (selection == AdvancedDrawingSelection.Fibonacci)
                 chart.ActivateFibonacciRetracement();
@@ -234,10 +297,33 @@ namespace Trade.It
             SetToggleButtonState(selectedButton, chart.AdvancedDrawingActive);
         }
 
+        private void ActivateExtraDrawingTool(ExtraDrawingSelection selection, Button selectedButton)
+        {
+            var chart = GetActiveChart();
+            if (chart == null)
+                return;
+
+            chart.CancelDrawing();
+            chart.CancelAdvancedDrawing();
+
+            if (selection == ExtraDrawingSelection.Pitchfork)
+                chart.ActivatePitchfork();
+            else if (selection == ExtraDrawingSelection.FibonacciExtension)
+                chart.ActivateFibonacciExtension();
+            else
+                chart.ActivateMeasureTool();
+
+            ResetDrawingToolButtons();
+            SetToggleButtonState(selectedButton, chart.ExtraDrawingActive);
+        }
+
         private void DrawingStateTimer_Tick(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (chart == null || (chart.ActiveDrawingTool == ChartDrawingTool.None && !chart.AdvancedDrawingActive))
+            if (chart == null ||
+                (chart.ActiveDrawingTool == ChartDrawingTool.None &&
+                 !chart.AdvancedDrawingActive &&
+                 !chart.ExtraDrawingActive))
                 ResetDrawingToolButtons();
         }
 
@@ -245,6 +331,7 @@ namespace Trade.It
         {
             GetActiveChart()?.CancelDrawing();
             GetActiveChart()?.CancelAdvancedDrawing();
+            GetActiveChart()?.CancelExtraDrawing();
             ResetDrawingToolButtons();
         }
 
@@ -268,6 +355,12 @@ namespace Trade.It
                 SetToggleButtonState(drawFibonacciButton, false);
             if (drawTextButton != null)
                 SetToggleButtonState(drawTextButton, false);
+            if (drawPitchforkButton != null)
+                SetToggleButtonState(drawPitchforkButton, false);
+            if (drawFibonacciExtensionButton != null)
+                SetToggleButtonState(drawFibonacciExtensionButton, false);
+            if (drawMeasureButton != null)
+                SetToggleButtonState(drawMeasureButton, false);
         }
     }
 }
