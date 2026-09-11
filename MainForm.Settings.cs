@@ -23,6 +23,7 @@ namespace Trade.It
             navigationTimer.Tick += NavigationTimer_Tick;
             portfolioComboBox.SelectedIndexChanged += NavigationPortfolioChanged;
             InitializeChartRuntime();
+            InitializeChartDrawingTools();
         }
 
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
