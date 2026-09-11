@@ -11,7 +11,6 @@ namespace Trade.It
             using var normalPen = new Pen(Color.FromArgb(155, 80, 45), 1.3f);
             using var selectedPen = new Pen(Color.FromArgb(190, 55, 35), 2.2f);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
-            using var labelBack = new SolidBrush(Color.FromArgb(248, 248, 248));
             using var previewPen = new Pen(Color.FromArgb(155, 80, 45), 1.2f)
             {
                 DashStyle = System.Drawing.Drawing2D.DashStyle.Dash
@@ -20,30 +19,15 @@ namespace Trade.It
             for (var i = 0; i < extraDrawings.Count; i++)
             {
                 var d = extraDrawings[i];
-                var selected = i == selectedExtraDrawingIndex;
-                var pen = selected ? selectedPen : normalPen;
+                var isSelected = i == selectedExtraDrawingIndex;
+                var pen = isSelected ? selectedPen : normalPen;
 
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                {
                     DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max);
-                }
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
-                {
-                    DrawThreePointFibonacci(
-                        g,
-                        pen,
-                        labelBrush,
-                        d,
-                        plot,
-                        visibleCountForDrawing,
-                        min,
-                        max,
-                        selected);
-                }
+                    DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else
-                {
-                    DrawMeasure(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
-                }
+                    DrawMeasure(g, pen, labelBrush, labelBrush, d, plot, visibleCountForDrawing, min, max);
             }
 
             if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
@@ -57,16 +41,7 @@ namespace Trade.It
             }
         }
 
-        private void DrawThreePointFibonacci(
-            Graphics g,
-            Pen pen,
-            Brush labelBrush,
-            ExtraDrawing d,
-            Rectangle plot,
-            int visibleCount,
-            double min,
-            double max,
-            bool selected)
+        private void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -74,17 +49,13 @@ namespace Trade.It
             var dy = b.Y - a.Y;
             var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2.618f };
 
-            // The Fibonacci horizontal levels must run only from point 1 to point 3.
-            var levelLeft = Math.Min(a.X, c.X);
-            var levelRight = Math.Max(a.X, c.X);
-
-            g.DrawLine(pen, a, b);
-            g.DrawLine(pen, b, c);
+            var leftX = Math.Min(a.X, c.X);
+            var rightX = Math.Max(a.X, c.X);
 
             foreach (var level in levels)
             {
                 var y = c.Y + dy * level;
-                g.DrawLine(pen, levelLeft, y, levelRight, y);
+                g.DrawLine(pen, leftX, y, rightX, y);
 
                 var text = level switch
                 {
@@ -97,17 +68,15 @@ namespace Trade.It
                     _ => "261.8%"
                 };
 
-                var textX = Math.Min(levelLeft + 4f, Math.Max(levelLeft, levelRight - 48f));
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, textX, y - 8f);
+                var labelX = Math.Min(leftX + 4f, Math.Max(leftX, rightX - 48f));
+                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - 8f);
             }
 
-            // Endpoints are visible only when the Fibonacci is selected.
-            // This makes selection explicit and provides the three editable points.
             if (selected)
             {
-                DrawHandle(g, a);
-                DrawHandle(g, b);
-                DrawHandle(g, c);
+                DrawAdvancedHandle(g, a);
+                DrawAdvancedHandle(g, b);
+                DrawAdvancedHandle(g, c);
             }
         }
     }
