@@ -21,6 +21,7 @@ namespace Trade.It
             settingsMenuItem.Click += SettingsMenuItem_Click;
             navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
+            portfolioComboBox.SelectedIndexChanged += NavigationPortfolioChanged;
             InitializeChartRuntime();
         }
 
@@ -65,9 +66,9 @@ namespace Trade.It
                 return;
             }
 
-            if (!int.TryParse(navigationSpeedTextBox.Text.Trim(), out var seconds) || seconds <= 0)
+            if (!int.TryParse(navigationSpeedTextBox.Text.Trim(), out var milliseconds) || milliseconds <= 0)
             {
-                MessageBox.Show(this, "سرعت پیمایش را به صورت تعداد ثانیه وارد کنید.", "پیمایش", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "سرعت پیمایش را به صورت تعداد میلی‌ثانیه وارد کنید.", "پیمایش", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 navigationSpeedTextBox.Focus();
                 return;
             }
@@ -75,7 +76,7 @@ namespace Trade.It
             navigationSymbols = symbols;
             navigationIndex = 0;
             navigationRunning = true;
-            navigationTimer.Interval = Math.Clamp(seconds * 1000, 100, 3600000);
+            navigationTimer.Interval = Math.Clamp(milliseconds, 100, 3600000);
             navigationButton.UseVisualStyleBackColor = false;
             navigationButton.BackColor = SystemColors.Highlight;
             navigationButton.ForeColor = SystemColors.HighlightText;
@@ -94,6 +95,12 @@ namespace Trade.It
                 navigationIndex = 0;
 
             ShowNavigationChart(navigationSymbols[navigationIndex]);
+        }
+
+        private void NavigationPortfolioChanged(object? sender, EventArgs e)
+        {
+            StopNavigation();
+            CloseAllChartTabs();
         }
 
         private void ShowNavigationChart(string symbol)
