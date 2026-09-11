@@ -169,6 +169,11 @@ namespace Trade.It
                 Invalidate();
                 DeferAdvancedMouseState();
             }
+            else
+            {
+                selectedAdvancedDrawingIndex = -1;
+                Invalidate();
+            }
         }
 
         private void AdvancedDrawing_MouseMove(object? sender, MouseEventArgs e)
@@ -347,9 +352,10 @@ namespace Trade.It
             for (var i = 0; i < advancedDrawings.Count; i++)
             {
                 var d = advancedDrawings[i];
-                var pen = i == selectedAdvancedDrawingIndex ? selectedPen : normalPen;
+                var isSelected = i == selectedAdvancedDrawingIndex;
+                var pen = isSelected ? selectedPen : normalPen;
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
-                    DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max);
+                    DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else
                     DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
@@ -378,13 +384,16 @@ namespace Trade.It
             }
         }
 
-        private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max, bool selected)
         {
             var start = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
             var end = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
             DrawFibonacciLevels(g, pen, labelBrush, start, end);
-            DrawAdvancedHandle(g, start);
-            DrawAdvancedHandle(g, end);
+            if (selected)
+            {
+                DrawAdvancedHandle(g, start);
+                DrawAdvancedHandle(g, end);
+            }
         }
 
         private void DrawAdvancedText(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
