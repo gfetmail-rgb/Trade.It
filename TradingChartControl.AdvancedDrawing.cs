@@ -299,6 +299,26 @@ namespace Trade.It
                 DrawFibonacciLevels(e.Graphics, previewPen, labelBrush, advancedDrawingStartPoint, advancedDrawingCurrentPoint);
         }
 
+        private void DrawAdvancedTextLabels(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            SyncAdvancedDrawingData();
+
+            using var normalPen = new Pen(Color.FromArgb(45, 105, 170), 1.2f);
+            using var selectedPen = new Pen(Color.FromArgb(25, 75, 140), 2f);
+            using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
+            using var labelBack = new SolidBrush(Color.FromArgb(245, 248, 252));
+
+            for (var i = 0; i < advancedDrawings.Count; i++)
+            {
+                var d = advancedDrawings[i];
+                if (d.Tool != AdvancedDrawingTool.TextLabel)
+                    continue;
+
+                var pen = i == selectedAdvancedDrawingIndex ? selectedPen : normalPen;
+                DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
+            }
+        }
+
         private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             var start = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);

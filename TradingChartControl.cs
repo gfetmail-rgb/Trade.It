@@ -629,6 +629,8 @@ namespace Trade.It
                 var y = PriceToScreen(value, plot, min, max);
                 e.Graphics.DrawString(value.ToString("0.##"), axisTextFont, textBrush, plot.Right + 4, y - axisTextFont.Height / 2f);
             }
+
+            DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
         }
 
         private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
