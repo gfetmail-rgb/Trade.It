@@ -16,6 +16,7 @@ namespace Trade.It
         public double High { get; init; }
         public double Low { get; init; }
         public double Close { get; init; }
+        public double Volume { get; init; }
     }
 
     internal sealed class TradingChartControl : Control
@@ -106,7 +107,6 @@ namespace Trade.It
             Invalidate();
         }
 
-        // X zoom keeps the right edge (latest data) fixed and opens/closes only from the left.
         public void ZoomX(double factor)
         {
             if (points.Count < 2)
@@ -136,9 +136,7 @@ namespace Trade.It
             var plotLeft = 55;
             var plotBottom = Height - 35;
             if (e.Button == MouseButtons.Left && e.X <= plotLeft && e.Y <= plotBottom)
-            {
                 FitVerticalRange();
-            }
         }
 
         private void FitVerticalRange()
@@ -239,8 +237,6 @@ namespace Trade.It
 
             if (horizontalAxisDrag && Capture && points.Count > 1)
             {
-                // Horizontal-axis drag zooms around the exact middle of the view.
-                // The center stays fixed while the visible range opens/closes in both directions.
                 var delta = e.X - horizontalAxisStartPoint.X;
                 var factor = Math.Exp(-delta / 300.0);
                 var newCount = Math.Clamp(
@@ -261,9 +257,6 @@ namespace Trade.It
 
             if (verticalAxisDrag && Capture && points.Count > 1)
             {
-                // Moving the price axis upward zooms in; moving it downward zooms out.
-                // Calculate from the zoom level at mouse-down so sensitivity is stable
-                // and does not compound on every mouse-move event.
                 var delta = verticalAxisStartPoint.Y - e.Y;
                 verticalZoom = Math.Clamp(
                     verticalAxisStartZoom * Math.Exp(delta / 700.0),
@@ -275,17 +268,11 @@ namespace Trade.It
 
             if (panning && Capture && points.Count > 1)
             {
-                // Horizontal movement moves the chart itself. The initial chart is shifted
-                // 25% to the left, but the full chart area remains available for panning/zooming.
                 var horizontalDelta = e.X - panStartPoint.X;
                 horizontalPanOffset = panStartHorizontalOffset + horizontalDelta;
-
-                // Keep the chart inside a reasonable movable range. In particular, the user
-                // can move it back to the right edge instead of having a permanent 25% gap.
                 var plotWidth = Math.Max(1, Width - 70);
                 horizontalPanOffset = Math.Clamp(horizontalPanOffset, -plotWidth, plotWidth);
 
-                // Vertical movement translates the price range in the same direction as the mouse.
                 var verticalDelta = e.Y - panStartPoint.Y;
                 if (Math.Abs(verticalDelta) >= 0.5)
                 {
@@ -323,8 +310,6 @@ namespace Trade.It
             var left = 55;
             var top = 15;
             var bottom = 35;
-            // The full horizontal chart area remains available. The 25% offset is only
-            // the initial position of the chart, not a permanent reduction of its width.
             var right = 15;
             var plot = new Rectangle(left, top, Math.Max(1, Width - left - right), Math.Max(1, Height - top - bottom));
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
@@ -471,6 +456,14 @@ namespace Trade.It
                     e.Graphics.FillRectangle(crosshairLabelBackBrush, dateRect);
                     e.Graphics.DrawString(dateText, axisTextFont, crosshairLabelTextBrush, dateRect.X + 3, dateRect.Y + 2);
                 }
+
+                // Show the selected candle's OHLC and volume in the upper-left corner.
+                var infoText = $"Open: {p.Open:0.##}   High: {p.High:0.##}   Low: {p.Low:0.##}   Close: {p.Close:0.##}   Volume: {p.Volume:N0}";
+                using var infoFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size - 1.0f), Font.Style);
+                var infoSize = e.Graphics.MeasureString(infoText, infoFont);
+                var infoRect = new RectangleF(plot.Left + 6, plot.Top + 5, infoSize.Width + 10, infoSize.Height + 6);
+                e.Graphics.FillRectangle(crosshairLabelBackBrush, infoRect);
+                e.Graphics.DrawString(infoText, infoFont, crosshairLabelTextBrush, infoRect.X + 5, infoRect.Y + 3);
             }
         }
     }
