@@ -8,6 +8,7 @@ namespace Trade.It
         private Button? drawVerticalDoubleButton;
         private Button? drawHorizontalRayButton;
         private Button? drawTrendLineArrowButton;
+        private readonly HashSet<TradingChartControl> drawingEventCharts = new();
 
         private void InitializeChartDrawingTools()
         {
@@ -35,6 +36,7 @@ namespace Trade.It
             drawTrendLineArrowButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLineWithArrow, drawTrendLineArrowButton);
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
+            closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
             ResetDrawingToolButtons();
         }
 
@@ -58,6 +60,8 @@ namespace Trade.It
             if (chart == null)
                 return;
 
+            AttachDrawingEvents(chart);
+
             if (chart.ActiveDrawingTool == tool)
             {
                 chart.CancelDrawing();
@@ -71,9 +75,28 @@ namespace Trade.It
             SetToggleButtonState(selectedButton, true);
         }
 
+        private void AttachDrawingEvents(TradingChartControl chart)
+        {
+            if (!drawingEventCharts.Add(chart))
+                return;
+
+            chart.DrawingStateChanged += ChartDrawingStateChanged;
+        }
+
+        private void ChartDrawingStateChanged(object? sender, EventArgs e)
+        {
+            if (sender is TradingChartControl chart && chart == GetActiveChart() && chart.ActiveDrawingTool == ChartDrawingTool.None)
+                ResetDrawingToolButtons();
+        }
+
         private void ChartDrawingTabChanged(object? sender, EventArgs e)
         {
-            GetActiveChart()?.CancelDrawing();
+            var chart = GetActiveChart();
+            if (chart != null)
+            {
+                AttachDrawingEvents(chart);
+                chart.CancelDrawing();
+            }
             ResetDrawingToolButtons();
         }
 
