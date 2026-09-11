@@ -347,7 +347,7 @@ namespace Trade.It
             e.Graphics.Restore(state);
         }
 
-        private static void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private  void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -388,7 +388,7 @@ namespace Trade.It
             g.DrawLine(pen, point.X - dx * length, point.Y - dy * length, point.X + dx * length, point.Y + dy * length);
         }
 
-        private static void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private  void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -420,7 +420,7 @@ namespace Trade.It
             DrawExtraHandle(g, c, true);
         }
 
-        private static void DrawFibonacciExtensionPreview(Graphics g, Pen pen, Brush labelBrush, Point[] points, Point current, Rectangle plot)
+        private  void DrawFibonacciExtensionPreview(Graphics g, Pen pen, Brush labelBrush, Point[] points, Point current, Rectangle plot)
         {
             if (points.Length == 0)
                 return;
@@ -448,19 +448,19 @@ namespace Trade.It
             }
         }
 
-        private static void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private  void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var start = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var end = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             DrawMeasureLine(g, pen, labelBrush, labelBack, font, start, end, plot, visibleCount, min, max);
         }
 
-        private static void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, Point start, Point end, Rectangle plot, int visibleCount, double min, double max)
+        private  void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, Point start, Point end, Rectangle plot, int visibleCount, double min, double max)
         {
             DrawMeasureLine(g, pen, labelBrush, labelBack, font, start, end, plot, visibleCount, min, max);
         }
 
-        private static void DrawMeasureLine(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, PointF start, PointF end, Rectangle plot, int visibleCount, double min, double max)
+        private  void DrawMeasureLine(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, Font font, PointF start, PointF end, Rectangle plot, int visibleCount, double min, double max)
         {
             g.DrawLine(pen, start, end);
             var dx = end.X - start.X;
