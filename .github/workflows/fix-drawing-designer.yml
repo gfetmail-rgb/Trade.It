@@ -1,0 +1,123 @@
+name: Prepare drawing buttons
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-designer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add drawing buttons to Designer
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("MainForm.Designer.cs")
+          text = path.read_text(encoding="utf-8-sig")
+
+          if "private System.Windows.Forms.Button drawTrendLineButton;" in text:
+              print("Drawing buttons already exist; nothing to do.")
+              raise SystemExit(0)
+
+          names = [
+              ("drawTrendLineButton", "خط روند", 82),
+              ("drawTrendChannelButton", "کانال روند", 82),
+              ("drawHorizontalDoubleButton", "افقی دو سر", 82),
+              ("drawVerticalDoubleButton", "عمودی دو سر", 82),
+              ("drawHorizontalRayButton", "نیم خط افقی", 82),
+              ("drawTrendLineArrowButton", "خط روند فلش", 82),
+              ("drawRectangleButton", "مستطیل", 82),
+              ("drawFibonacciButton", "فیبوناچی", 82),
+              ("drawTextButton", "متن", 82),
+              ("drawPitchforkButton", "چنگال", 82),
+              ("drawFibonacciExtensionButton", "فیبو اکسپنشن", 92),
+              ("drawMeasureButton", "خط کش", 82),
+          ]
+
+          declarations = "\n".join(
+              f"        private System.Windows.Forms.Button {name};" for name, _, _ in names
+          ) + "\n"
+          anchor = "        private System.Windows.Forms.Button fullScreenChartButton;\n"
+          if anchor not in text:
+              raise SystemExit("Could not find Designer declaration anchor.")
+          text = text.replace(anchor, anchor + declarations, 1)
+
+          initializers = "\n".join(
+              f"            {name} = new Button();" for name, _, _ in names
+          ) + "\n"
+          anchor = "            fullScreenChartButton = new Button();\n"
+          if anchor not in text:
+              raise SystemExit("Could not find Designer initialization anchor.")
+          text = text.replace(anchor, anchor + initializers, 1)
+
+          button_setup = []
+          for i, (name, caption, width) in enumerate(names):
+              if i < 5:
+                  x = 790 + i * 87
+                  y = 7
+              else:
+                  x = 6 + (i - 5) * 87
+                  y = 51
+              button_setup.extend([
+                  "            // ",
+                  f"            // {name}",
+                  "            // ",
+                  f"            {name}.Location = new Point({x}, {y});",
+                  f"            {name}.Name = \"{name}\";",
+                  f"            {name}.RightToLeft = RightToLeft.Yes;",
+                  f"            {name}.Size = new Size({width}, 34);",
+                  f"            {name}.TabIndex = 20;",
+                  f"            {name}.Text = \"{caption}\";",
+                  f"            {name}.UseVisualStyleBackColor = true;",
+              ])
+          button_setup_text = "\n".join(button_setup) + "\n"
+
+          anchor = "            // chartToolbarPanel\n            // \n"
+          if anchor not in text:
+              raise SystemExit("Could not find chartToolbarPanel Designer anchor.")
+          text = text.replace(anchor, button_setup_text + anchor, 1)
+
+          add_controls = (
+              "            chartToolbarPanel.Controls.Add(drawTrendLineButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawTrendChannelButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawRectangleButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawFibonacciButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawTextButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawPitchforkButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);\n"
+              "            chartToolbarPanel.Controls.Add(drawMeasureButton);\n"
+          )
+          anchor = "            chartToolbarPanel.Controls.Add(fullScreenChartButton);\n"
+          if anchor in text:
+              text = text.replace(anchor, anchor + add_controls, 1)
+          else:
+              anchor = "            chartToolbarPanel.Controls.Add(snapshotChartButton);\n"
+              if anchor not in text:
+                  raise SystemExit("Could not find chartToolbarPanel Controls anchor.")
+              text = text.replace(anchor, anchor + add_controls, 1)
+
+          anchor = "            chartToolbarPanel.Size = new Size(1237, 51);\n"
+          if anchor in text:
+              text = text.replace(anchor, "            chartToolbarPanel.Size = new Size(1237, 94);\n", 1)
+
+          path.write_text(text, encoding="utf-8-sig", newline="\n")
+      - name: Commit Designer change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MainForm.Designer.cs
+          if git diff --cached --quiet; then
+            echo "No Designer changes to commit."
+            exit 0
+          fi
+          git commit -m "Add chart drawing buttons to WinForms Designer"
+          git push
