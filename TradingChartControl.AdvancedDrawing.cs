@@ -362,6 +362,8 @@ namespace Trade.It
 
             if (advancedDrawingInProgress && activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement && IsInsidePlot(advancedDrawingCurrentPoint))
                 DrawFibonacciLevels(g, previewPen, labelBrush, advancedDrawingStartPoint, advancedDrawingCurrentPoint);
+
+            RenderExtraDrawings(g);
         }
 
         private void DrawAdvancedTextLabels(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
