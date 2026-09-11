@@ -1,0 +1,51 @@
+name: Fix Pitchfork Rendering
+on:
+  push:
+    branches: [main]
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix Pitchfork rendering
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          chart = Path('TradingChartControl.cs')
+          text = chart.read_text()
+          old = '''            DrawDrawings(e.Graphics, plot, visible.Count, min, max);\n\n            if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))'''
+          new = '''            DrawDrawings(e.Graphics, plot, visible.Count, min, max);\n            DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);\n\n            if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))'''
+          if old not in text:
+              raise SystemExit('OnPaint insertion point not found')
+          chart.write_text(text.replace(old, new, 1))
+
+          extra = Path('TradingChartControl.ExtraDrawingTools.cs')
+          text = extra.read_text()
+          marker = '''        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)\n        {'''
+          helper = '''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)\n        {\n            SyncExtraDrawingData();\n\n            using var normalPen = new Pen(Color.FromArgb(155, 80, 45), 1.3f);\n            using var selectedPen = new Pen(Color.FromArgb(190, 55, 35), 2f);\n            using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));\n            using var labelBack = new SolidBrush(Color.FromArgb(248, 248, 248));\n            using var previewPen = new Pen(Color.FromArgb(155, 80, 45), 1.2f) { DashStyle = DashStyle.Dash };\n\n            for (var i = 0; i < extraDrawings.Count; i++)\n            {\n                var d = extraDrawings[i];\n                var pen = i == selectedExtraDrawingIndex ? selectedPen : normalPen;\n                if (d.Tool == ExtraDrawingTool.Pitchfork)\n                    DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max);\n                else if (d.Tool == ExtraDrawingTool.FibonacciExtension)\n                    DrawFibonacciExtension(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max);\n                else\n                    DrawMeasure(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);\n            }\n\n            if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)\n            {\n                if (activeExtraDrawingTool == ExtraDrawingTool.Measure)\n                    DrawMeasurePreview(g, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot);\n                else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)\n                    DrawPitchforkPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);\n                else\n                    DrawFibonacciExtensionPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);\n            }\n        }\n\n'''
+          if marker not in text:
+              raise SystemExit('ExtraDrawing_Paint marker not found')
+          extra.write_text(text.replace(marker, helper + marker, 1))
+          PY
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add TradingChartControl.cs TradingChartControl.ExtraDrawingTools.cs
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix Pitchfork rendering"
+          git push
+      - name: Remove temporary workflow
+        if: always()
+        shell: bash
+        run: |
+          rm -f .github/workflows/fix-pitchfork-render.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/fix-pitchfork-render.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "Remove temporary pitchfork workflow"
+          git push
