@@ -10,6 +10,8 @@ namespace Trade.It
         private Button? drawHorizontalRayButton;
         private Button? drawTrendLineArrowButton;
         private Button? drawRectangleButton;
+        private Button? drawFibonacciButton;
+        private Button? drawTextButton;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
@@ -26,9 +28,13 @@ namespace Trade.It
             drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(1138, 7), 82);
             drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(1225, 7), 82);
             drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(1312, 7), 82);
+            drawFibonacciButton = CreateDrawingToolButton("فیبوناچی", new Point(1399, 7), 82);
+            drawTextButton = CreateDrawingToolButton("متن", new Point(1486, 7), 82);
 
             ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
             ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
+            ConfigureDrawingIcon(drawFibonacciButton, DrawingIcon.Fibonacci);
+            ConfigureDrawingIcon(drawTextButton, DrawingIcon.Text);
 
             chartToolbarPanel.Controls.Add(drawTrendLineButton);
             chartToolbarPanel.Controls.Add(drawTrendChannelButton);
@@ -37,6 +43,8 @@ namespace Trade.It
             chartToolbarPanel.Controls.Add(drawHorizontalRayButton);
             chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);
             chartToolbarPanel.Controls.Add(drawRectangleButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciButton);
+            chartToolbarPanel.Controls.Add(drawTextButton);
 
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
             drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
@@ -45,6 +53,8 @@ namespace Trade.It
             drawHorizontalRayButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalRay, drawHorizontalRayButton);
             drawTrendLineArrowButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLineWithArrow, drawTrendLineArrowButton);
             drawRectangleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);
+            drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
+            drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
             closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
@@ -57,7 +67,15 @@ namespace Trade.It
         private enum DrawingIcon
         {
             TrendChannel,
-            Rectangle
+            Rectangle,
+            Fibonacci,
+            Text
+        }
+
+        private enum AdvancedDrawingSelection
+        {
+            Fibonacci,
+            Text
         }
 
         private void ConfigureDrawingIcon(Button button, DrawingIcon icon)
@@ -65,7 +83,13 @@ namespace Trade.It
             button.Text = string.Empty;
             button.Tag = icon;
             button.Paint += DrawingIconButton_Paint;
-            button.AccessibleName = icon == DrawingIcon.TrendChannel ? "کانال روند" : "مستطیل";
+            button.AccessibleName = icon switch
+            {
+                DrawingIcon.TrendChannel => "کانال روند",
+                DrawingIcon.Rectangle => "مستطیل",
+                DrawingIcon.Fibonacci => "فیبوناچی",
+                _ => "متن"
+            };
         }
 
         private void DrawingIconButton_Paint(object? sender, PaintEventArgs e)
@@ -86,6 +110,25 @@ namespace Trade.It
             {
                 var rect = new RectangleF(centerX - 20, centerY - 10, 40, 20);
                 e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                return;
+            }
+
+            if (icon == DrawingIcon.Fibonacci)
+            {
+                e.Graphics.DrawLine(pen, centerX - 22, centerY + 8, centerX + 22, centerY - 8);
+                e.Graphics.DrawLine(pen, centerX - 19, centerY - 8, centerX + 22, centerY - 8);
+                e.Graphics.DrawLine(pen, centerX - 19, centerY - 2, centerX + 22, centerY - 2);
+                e.Graphics.DrawLine(pen, centerX - 19, centerY + 4, centerX + 22, centerY + 4);
+                e.Graphics.DrawLine(pen, centerX - 19, centerY + 10, centerX + 22, centerY + 10);
+                return;
+            }
+
+            if (icon == DrawingIcon.Text)
+            {
+                using var font = new Font(button.Font.FontFamily, 15f, FontStyle.Bold);
+                var text = "T";
+                var size = e.Graphics.MeasureString(text, font);
+                e.Graphics.DrawString(text, font, pen.Brush, centerX - size.Width / 2f, centerY - size.Height / 2f - 1);
                 return;
             }
 
@@ -113,6 +156,8 @@ namespace Trade.It
             if (chart == null)
                 return;
 
+            chart.CancelAdvancedDrawing();
+
             if (chart.ActiveDrawingTool == tool)
             {
                 chart.CancelDrawing();
@@ -126,16 +171,34 @@ namespace Trade.It
             SetToggleButtonState(selectedButton, true);
         }
 
+        private void ActivateAdvancedDrawingTool(AdvancedDrawingSelection selection, Button selectedButton)
+        {
+            var chart = GetActiveChart();
+            if (chart == null)
+                return;
+
+            chart.CancelDrawing();
+
+            if (selection == AdvancedDrawingSelection.Fibonacci)
+                chart.ActivateFibonacciRetracement();
+            else
+                chart.ActivateTextLabel();
+
+            ResetDrawingToolButtons();
+            SetToggleButtonState(selectedButton, chart.AdvancedDrawingActive);
+        }
+
         private void DrawingStateTimer_Tick(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (chart == null || chart.ActiveDrawingTool == ChartDrawingTool.None)
+            if (chart == null || (chart.ActiveDrawingTool == ChartDrawingTool.None && !chart.AdvancedDrawingActive))
                 ResetDrawingToolButtons();
         }
 
         private void ChartDrawingTabChanged(object? sender, EventArgs e)
         {
             GetActiveChart()?.CancelDrawing();
+            GetActiveChart()?.CancelAdvancedDrawing();
             ResetDrawingToolButtons();
         }
 
@@ -155,6 +218,10 @@ namespace Trade.It
                 SetToggleButtonState(drawTrendLineArrowButton, false);
             if (drawRectangleButton != null)
                 SetToggleButtonState(drawRectangleButton, false);
+            if (drawFibonacciButton != null)
+                SetToggleButtonState(drawFibonacciButton, false);
+            if (drawTextButton != null)
+                SetToggleButtonState(drawTextButton, false);
         }
     }
 }
