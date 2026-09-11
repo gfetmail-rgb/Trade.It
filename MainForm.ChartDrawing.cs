@@ -2,19 +2,6 @@ namespace Trade.It
 {
     public partial class MainForm
     {
-        private bool chartDrawingToolsInitialized;
-        private Button? drawTrendLineButton;
-        private Button? drawTrendChannelButton;
-        private Button? drawHorizontalDoubleButton;
-        private Button? drawVerticalDoubleButton;
-        private Button? drawHorizontalRayButton;
-        private Button? drawTrendLineArrowButton;
-        private Button? drawRectangleButton;
-        private Button? drawFibonacciButton;
-        private Button? drawTextButton;
-        private Button? drawPitchforkButton;
-        private Button? drawFibonacciExtensionButton;
-        private Button? drawMeasureButton;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
@@ -22,20 +9,10 @@ namespace Trade.It
             if (chartDrawingToolsInitialized)
                 return;
 
-            chartDrawingToolsInitialized = true;
+            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
+                return;
 
-            drawTrendLineButton = CreateDrawingToolButton("خط روند", new Point(0, 0), 82);
-            drawTrendChannelButton = CreateDrawingToolButton("کانال روند", new Point(0, 0), 82);
-            drawHorizontalDoubleButton = CreateDrawingToolButton("افقی دو سر", new Point(0, 0), 82);
-            drawVerticalDoubleButton = CreateDrawingToolButton("عمودی دو سر", new Point(0, 0), 82);
-            drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(0, 0), 82);
-            drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(0, 0), 82);
-            drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(0, 0), 82);
-            drawFibonacciButton = CreateDrawingToolButton("فیبوناچی", new Point(0, 0), 82);
-            drawTextButton = CreateDrawingToolButton("متن", new Point(0, 0), 82);
-            drawPitchforkButton = CreateDrawingToolButton("چنگال", new Point(0, 0), 82);
-            drawFibonacciExtensionButton = CreateDrawingToolButton("فیبو اکسپنشن", new Point(0, 0), 92);
-            drawMeasureButton = CreateDrawingToolButton("خط کش", new Point(0, 0), 82);
+            chartDrawingToolsInitialized = true;
 
             ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
             ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
@@ -44,22 +21,6 @@ namespace Trade.It
             ConfigureDrawingIcon(drawPitchforkButton, DrawingIcon.Pitchfork);
             ConfigureDrawingIcon(drawFibonacciExtensionButton, DrawingIcon.FibonacciExtension);
             ConfigureDrawingIcon(drawMeasureButton, DrawingIcon.Measure);
-
-            chartToolbarPanel.Controls.Add(drawTrendLineButton);
-            chartToolbarPanel.Controls.Add(drawTrendChannelButton);
-            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);
-            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);
-            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);
-            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);
-            chartToolbarPanel.Controls.Add(drawRectangleButton);
-            chartToolbarPanel.Controls.Add(drawFibonacciButton);
-            chartToolbarPanel.Controls.Add(drawTextButton);
-            chartToolbarPanel.Controls.Add(drawPitchforkButton);
-            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);
-            chartToolbarPanel.Controls.Add(drawMeasureButton);
-
-            ArrangeDrawingToolButtons();
-            chartToolbarPanel.Resize += (_, _) => ArrangeDrawingToolButtons();
 
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
             drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
@@ -80,54 +41,6 @@ namespace Trade.It
             drawingStateTimer.Tick += DrawingStateTimer_Tick;
             drawingStateTimer.Start();
             ResetDrawingToolButtons();
-        }
-
-        private void ArrangeDrawingToolButtons()
-        {
-            if (drawTrendLineButton == null || drawTrendChannelButton == null ||
-                drawHorizontalDoubleButton == null || drawVerticalDoubleButton == null ||
-                drawHorizontalRayButton == null || drawTrendLineArrowButton == null ||
-                drawRectangleButton == null || drawFibonacciButton == null || drawTextButton == null ||
-                drawPitchforkButton == null || drawFibonacciExtensionButton == null || drawMeasureButton == null)
-                return;
-
-            var buttons = new[]
-            {
-                drawTrendLineButton,
-                drawTrendChannelButton,
-                drawHorizontalDoubleButton,
-                drawVerticalDoubleButton,
-                drawHorizontalRayButton,
-                drawTrendLineArrowButton,
-                drawRectangleButton,
-                drawFibonacciButton,
-                drawTextButton,
-                drawPitchforkButton,
-                drawFibonacciExtensionButton,
-                drawMeasureButton
-            };
-
-            const int startX = 790;
-            const int rowY = 7;
-            const int secondRowY = 51;
-            const int buttonWidth = 82;
-            const int gap = 5;
-            const int horizontalPadding = 6;
-
-            var widths = new[] { 82, 82, 82, 82, 82, 82, 82, 82, 82, 82, 92, 82 };
-            var oneLineEnd = startX + widths.Sum() + (buttons.Length - 1) * gap;
-            var oneLine = chartToolbarPanel.ClientSize.Width >= oneLineEnd + horizontalPadding;
-            var x = oneLine ? startX : horizontalPadding;
-            var y = oneLine ? rowY : secondRowY;
-
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                buttons[i].Size = new Size(widths[i], 34);
-                buttons[i].Location = new Point(x, y);
-                x += widths[i] + gap;
-            }
-
-            chartToolbarPanel.Height = oneLine ? 51 : 94;
         }
 
         private enum DrawingIcon
@@ -243,20 +156,6 @@ namespace Trade.It
             e.Graphics.DrawLine(pen, centerX - 24, centerY + 17, centerX + 23, centerY);
         }
 
-        private Button CreateDrawingToolButton(string text, Point location, int width)
-        {
-            return new Button
-            {
-                Location = location,
-                Name = "draw" + Guid.NewGuid().ToString("N"),
-                Size = new Size(width, 34),
-                TabIndex = 20,
-                Text = text,
-                UseVisualStyleBackColor = true,
-                RightToLeft = RightToLeft.Yes
-            };
-        }
-
         private void ActivateDrawingTool(ChartDrawingTool tool, Button selectedButton)
         {
             var chart = GetActiveChart();
@@ -337,30 +236,18 @@ namespace Trade.It
 
         private void ResetDrawingToolButtons()
         {
-            if (drawTrendLineButton != null)
-                SetToggleButtonState(drawTrendLineButton, false);
-            if (drawTrendChannelButton != null)
-                SetToggleButtonState(drawTrendChannelButton, false);
-            if (drawHorizontalDoubleButton != null)
-                SetToggleButtonState(drawHorizontalDoubleButton, false);
-            if (drawVerticalDoubleButton != null)
-                SetToggleButtonState(drawVerticalDoubleButton, false);
-            if (drawHorizontalRayButton != null)
-                SetToggleButtonState(drawHorizontalRayButton, false);
-            if (drawTrendLineArrowButton != null)
-                SetToggleButtonState(drawTrendLineArrowButton, false);
-            if (drawRectangleButton != null)
-                SetToggleButtonState(drawRectangleButton, false);
-            if (drawFibonacciButton != null)
-                SetToggleButtonState(drawFibonacciButton, false);
-            if (drawTextButton != null)
-                SetToggleButtonState(drawTextButton, false);
-            if (drawPitchforkButton != null)
-                SetToggleButtonState(drawPitchforkButton, false);
-            if (drawFibonacciExtensionButton != null)
-                SetToggleButtonState(drawFibonacciExtensionButton, false);
-            if (drawMeasureButton != null)
-                SetToggleButtonState(drawMeasureButton, false);
+            SetToggleButtonState(drawTrendLineButton, false);
+            SetToggleButtonState(drawTrendChannelButton, false);
+            SetToggleButtonState(drawHorizontalDoubleButton, false);
+            SetToggleButtonState(drawVerticalDoubleButton, false);
+            SetToggleButtonState(drawHorizontalRayButton, false);
+            SetToggleButtonState(drawTrendLineArrowButton, false);
+            SetToggleButtonState(drawRectangleButton, false);
+            SetToggleButtonState(drawFibonacciButton, false);
+            SetToggleButtonState(drawTextButton, false);
+            SetToggleButtonState(drawPitchforkButton, false);
+            SetToggleButtonState(drawFibonacciExtensionButton, false);
+            SetToggleButtonState(drawMeasureButton, false);
         }
     }
 }
