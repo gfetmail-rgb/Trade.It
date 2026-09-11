@@ -231,8 +231,8 @@ namespace Trade.It
             var hasHeader = definition.HasHeader;
             var header = hasHeader ? first : Array.Empty<string>();
             var start = hasHeader ? 1 : 0;
-            var dateColumn = FindMappedColumn(definition, header, "date", "تاریخ", "روز");
-            var timeColumn = FindMappedColumn(definition, header, "time", "زمان", "ساعت");
+            var dateColumn = definition.NoDateTime ? -1 : FindMappedColumn(definition, header, "date", "تاریخ", "روز");
+            var timeColumn = definition.NoDateTime ? -1 : FindMappedColumn(definition, header, "time", "زمان", "ساعت");
             var openColumn = FindMappedColumn(definition, header, "open", "باز", "اولین", "اول");
             var highColumn = FindMappedColumn(definition, header, "high", "بیشترین", "بیشترين", "بیشینه");
             var lowColumn = FindMappedColumn(definition, header, "low", "کمترین", "کمترين", "کمینه");
