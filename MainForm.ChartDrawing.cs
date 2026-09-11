@@ -126,9 +126,10 @@ namespace Trade.It
             if (icon == DrawingIcon.Text)
             {
                 using var font = new Font(button.Font.FontFamily, 15f, FontStyle.Bold);
+                using var brush = new SolidBrush(button.Enabled ? SystemColors.ControlText : SystemColors.GrayText);
                 var text = "T";
                 var size = e.Graphics.MeasureString(text, font);
-                e.Graphics.DrawString(text, font, pen.Brush, centerX - size.Width / 2f, centerY - size.Height / 2f - 1);
+                e.Graphics.DrawString(text, font, brush, centerX - size.Width / 2f, centerY - size.Height / 2f - 1);
                 return;
             }
 
