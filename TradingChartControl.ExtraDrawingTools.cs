@@ -113,6 +113,7 @@ namespace Trade.It
         {
             extraInputHandled = false;
             SyncExtraDrawingData();
+
             if (e.Button == MouseButtons.Right)
             {
                 extraInputHandled = true;
@@ -128,6 +129,7 @@ namespace Trade.It
                 }
                 return;
             }
+
             if (e.Button != MouseButtons.Left)
                 return;
 
@@ -175,7 +177,7 @@ namespace Trade.It
                 var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
                 var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
 
-                if (d.Tool == ExtraDrawingTool.FibonacciExtension)
+                if (d.Tool == ExtraDrawingTool.Pitchfork || d.Tool == ExtraDrawingTool.FibonacciExtension)
                 {
                     var handle = HitTestHandle(e.Location, p1, p2, p3);
                     if (handle != 0)
@@ -219,6 +221,7 @@ namespace Trade.It
         private void ExtraDrawing_MouseMove(object? sender, MouseEventArgs e)
         {
             extraInputHandled = false;
+
             if (extraDraggingHandleActive && extraDraggingDrawingIndex >= 0 && extraDraggingDrawingIndex < extraDrawings.Count)
             {
                 extraInputHandled = true;
@@ -251,6 +254,7 @@ namespace Trade.It
 
             if (!ExtraDrawingActive)
                 return;
+
             extraInputHandled = true;
             panning = false;
             horizontalAxisDrag = false;
@@ -346,6 +350,7 @@ namespace Trade.It
                 e.SuppressKeyPress = true;
                 return;
             }
+
             if (e.KeyCode == Keys.Escape && ExtraDrawingActive)
             {
                 CancelExtraDrawing();
@@ -409,9 +414,9 @@ namespace Trade.It
                 var d = extraDrawings[i];
                 var pen = i == selectedExtraDrawingIndex ? selectedPen : normalPen;
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max);
+                    DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
-                    DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max);
+                    DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
                 else
                     DrawMeasure(e.Graphics, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
@@ -427,13 +432,18 @@ namespace Trade.It
             }
         }
 
-        private void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
             var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
             DrawPitchforkGeometry(g, pen, p1, p2, p3, plot);
-            DrawHandle(g, p1); DrawHandle(g, p2); DrawHandle(g, p3);
+            if (selected)
+            {
+                DrawHandle(g, p1);
+                DrawHandle(g, p2);
+                DrawHandle(g, p3);
+            }
         }
 
         private static void DrawPitchforkPreview(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
@@ -471,18 +481,22 @@ namespace Trade.It
                 g.DrawLine(pen, start, new PointF(targetX, targetY));
                 return;
             }
-            var targetTopX = start.X + dx * ((plot.Top - start.Y) / dy);
-            if (Math.Abs(dy) > 0.001f && targetTopX >= start.X && targetTopX <= plot.Right)
+            if (Math.Abs(dy) > 0.001f)
             {
-                g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
-                return;
+                var targetTopX = start.X + dx * ((plot.Top - start.Y) / dy);
+                if (targetTopX >= start.X && targetTopX <= plot.Right)
+                {
+                    g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
+                    return;
+                }
+
+                var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
+                if (targetBottomX >= start.X && targetBottomX <= plot.Right)
+                    g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
             }
-            var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
-            if (Math.Abs(dy) > 0.001f && targetBottomX >= start.X && targetBottomX <= plot.Right)
-                g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
         }
 
-        private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -491,16 +505,32 @@ namespace Trade.It
             var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            g.DrawLine(pen, a, b); g.DrawLine(pen, b, c);
+            g.DrawLine(pen, a, b);
+            g.DrawLine(pen, b, c);
             foreach (var level in levels)
             {
                 var y = c.Y + dy * level;
                 g.DrawLine(pen, leftX, y, rightX, y);
-                var text = level switch { 0f => "0%", 0.382f => "38.2%", 0.618f => "61.8%", 1f => "100%", 1.272f => "127.2%", 1.618f => "161.8%", 2f => "200%", _ => "261.8%" };
+                var text = level switch
+                {
+                    0f => "0%",
+                    0.382f => "38.2%",
+                    0.618f => "61.8%",
+                    1f => "100%",
+                    1.272f => "127.2%",
+                    1.618f => "161.8%",
+                    2f => "200%",
+                    _ => "261.8%"
+                };
                 var labelX = Math.Min(leftX + 4f, Math.Max(leftX, rightX - 48f));
                 g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - 8f);
             }
-            DrawHandle(g, a); DrawHandle(g, b); DrawHandle(g, c);
+            if (selected)
+            {
+                DrawHandle(g, a);
+                DrawHandle(g, b);
+                DrawHandle(g, c);
+            }
         }
 
         private static void DrawFibonacciExtensionPreview(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
@@ -512,30 +542,38 @@ namespace Trade.It
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            g.DrawLine(pen, a, b); g.DrawLine(pen, b, c);
+            g.DrawLine(pen, a, b);
+            g.DrawLine(pen, b, c);
             foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
-                g.DrawLine(pen, leftX, c.Y + dy * level, rightX, c.Y + dy * level);
+            {
+                var y = c.Y + dy * level;
+                g.DrawLine(pen, leftX, y, rightX, y);
+            }
         }
 
         private void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            g.DrawLine(pen, a, b); DrawHandle(g, a); DrawHandle(g, b);
+            g.DrawLine(pen, a, b);
+            DrawHandle(g, a);
+            DrawHandle(g, b);
             var text = $"Δ قیمت: {d.Y2 - d.Y1:N2}    Δ کندل: {Math.Abs(d.X2 - d.X1):N1}";
             using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
             var size = g.MeasureString(text, font);
             var x = Math.Max(plot.Left + 4f, Math.Min((a.X + b.X) / 2f, plot.Right - size.Width - 8f));
             var y = Math.Max(plot.Top + 4f, Math.Min((a.Y + b.Y) / 2f - size.Height - 4f, plot.Bottom - size.Height - 4f));
             var rect = new RectangleF(x, y, size.Width + 8f, size.Height + 4f);
-            g.FillRectangle(labelBack, rect); g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+            g.FillRectangle(labelBack, rect);
+            g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
             g.DrawString(text, font, labelBrush, x + 4f, y + 2f);
         }
 
         private static void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Point a, Point b, Rectangle plot)
         {
             g.DrawLine(pen, a, b);
-            var dx = b.X - a.X; var dy = b.Y - a.Y;
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
             var text = $"فاصله: {Math.Sqrt(dx * dx + dy * dy):N0}px";
             using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
             g.DrawString(text, font, labelBrush, b.X + 6f, b.Y + 6f);
