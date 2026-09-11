@@ -158,7 +158,8 @@ namespace Trade.It
                 extraDrawingCurrentPoint = e.Location;
                 if (extraDrawingPoints.Count >= RequiredExtraPoints)
                 {
-                    AddExtraDrawing();
+                    if (activeExtraDrawingTool != ExtraDrawingTool.Measure)
+                        AddExtraDrawing();
                     CancelExtraDrawing();
                 }
                 Invalidate();
@@ -361,6 +362,8 @@ namespace Trade.It
 
         private void AddExtraDrawing()
         {
+            if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
+                return;
             if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
             if (extraDrawingPoints.Count < RequiredExtraPoints)
@@ -417,14 +420,12 @@ namespace Trade.It
                     DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
                     DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
-                else
-                    DrawMeasure(e.Graphics, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
 
             if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
             {
                 if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
-                    DrawMeasurePreview(e.Graphics, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot);
+                    DrawMeasurePreview(e.Graphics, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot, visibleCountForDrawing, min, max);
                 else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
                     DrawPitchforkPreview(e.Graphics, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
                 else
@@ -489,7 +490,6 @@ namespace Trade.It
                     g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
                     return;
                 }
-
                 var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
                 if (targetBottomX >= start.X && targetBottomX <= plot.Right)
                     g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
@@ -522,8 +522,11 @@ namespace Trade.It
                     2f => "200%",
                     _ => "261.8%"
                 };
-                var labelX = Math.Min(leftX + 4f, Math.Max(leftX, rightX - 48f));
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - 8f);
+                var size = g.MeasureString(text, SystemFonts.DefaultFont);
+                var labelX = Math.Min(rightX + 5f, plot.Right - size.Width - 2f);
+                if (labelX < leftX)
+                    labelX = leftX;
+                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
             }
             if (selected)
             {
@@ -551,32 +554,31 @@ namespace Trade.It
             }
         }
 
-        private void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Point a, Point b, Rectangle plot, int visibleCount, double min, double max)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             g.DrawLine(pen, a, b);
-            DrawHandle(g, a);
-            DrawHandle(g, b);
-            var text = $"Δ قیمت: {d.Y2 - d.Y1:N2}    Δ کندل: {Math.Abs(d.X2 - d.X1):N1}";
+
+            var price1 = ScreenToPrice(a.Y, plot, min, max);
+            var price2 = ScreenToPrice(b.Y, plot, min, max);
+            var percent = Math.Abs(price1) > double.Epsilon ? ((price2 - price1) / price1) * 100.0 : 0.0;
+
+            var x1 = ScreenToDataX(a.X, plot, visibleCount);
+            var x2 = ScreenToDataX(b.X, plot, visibleCount);
+            var candleCount = Math.Abs((int)Math.Round(x2) - (int)Math.Round(x1)) + 1;
+
+            var sign = percent > 0 ? "+" : string.Empty;
+            var text = $"Δ قیمت: {sign}{percent:N2}%   |   تعداد کندل: {candleCount:N0}";
             using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
             var size = g.MeasureString(text, font);
-            var x = Math.Max(plot.Left + 4f, Math.Min((a.X + b.X) / 2f, plot.Right - size.Width - 8f));
-            var y = Math.Max(plot.Top + 4f, Math.Min((a.Y + b.Y) / 2f - size.Height - 4f, plot.Bottom - size.Height - 4f));
-            var rect = new RectangleF(x, y, size.Width + 8f, size.Height + 4f);
-            g.FillRectangle(labelBack, rect);
-            g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
-            g.DrawString(text, font, labelBrush, x + 4f, y + 2f);
-        }
 
-        private static void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Point a, Point b, Rectangle plot)
-        {
-            g.DrawLine(pen, a, b);
-            var dx = b.X - a.X;
-            var dy = b.Y - a.Y;
-            var text = $"فاصله: {Math.Sqrt(dx * dx + dy * dy):N0}px";
-            using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
-            g.DrawString(text, font, labelBrush, b.X + 6f, b.Y + 6f);
+            var x = Math.Min(b.X + 10f, plot.Right - size.Width - 10f);
+            if (x < plot.Left + 5f) x = plot.Left + 5f;
+            var y = Math.Min(b.Y + 10f, plot.Bottom - size.Height - 10f);
+            if (y < plot.Top + 5f) y = plot.Top + 5f;
+
+            using var back = new SolidBrush(Color.FromArgb(245, 245, 245));
+            g.FillRectangle(back, x - 4f, y - 2f, size.Width + 8f, size.Height + 4f);
+            g.DrawString(text, font, labelBrush, x, y);
         }
 
         private static void DrawHandle(Graphics g, PointF p)
