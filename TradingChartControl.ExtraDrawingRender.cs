@@ -11,7 +11,7 @@ namespace Trade.It
             using var normalPen = new Pen(Color.FromArgb(155, 80, 45), 1.3f);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             using var labelBack = new SolidBrush(Color.FromArgb(248, 248, 248));
-            using var previewPen = new Pen(Color.FromArgb(155, 80, 45), 1.2f) { System.Drawing.Drawing2D.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash };
+            using var previewPen = new Pen(Color.FromArgb(155, 80, 45), 1.2f) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash };
 
             for (var i = 0; i < extraDrawings.Count; i++)
             {
@@ -35,7 +35,7 @@ namespace Trade.It
             }
         }
 
-        private static void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
