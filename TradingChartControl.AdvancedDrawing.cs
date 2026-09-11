@@ -33,6 +33,7 @@ namespace Trade.It
         private bool advancedDrawingEventsInitialized;
         private int draggingAdvancedDrawingIndex = -1;
         private Point draggingAdvancedLastPoint;
+        private int draggingAdvancedHandle;
 
         public bool AdvancedDrawingActive => activeAdvancedDrawingTool != AdvancedDrawingTool.None;
 
@@ -156,11 +157,12 @@ namespace Trade.It
             }
 
             var plot = GetPlotRectangle();
-            var hit = HitTestAdvancedDrawing(e.Location, plot);
+            var hit = HitTestAdvancedDrawing(e.Location, plot, out var hitHandle);
             if (hit >= 0)
             {
                 selectedAdvancedDrawingIndex = hit;
                 draggingAdvancedDrawingIndex = hit;
+                draggingAdvancedHandle = hitHandle;
                 draggingAdvancedLastPoint = e.Location;
                 Focus();
                 Invalidate();
@@ -181,12 +183,25 @@ namespace Trade.It
                     var dx = currentX - previousX;
                     var dy = currentY - previousY;
                     var d = advancedDrawings[draggingAdvancedDrawingIndex];
-                    d.X1 += dx;
-                    d.Y1 += dy;
-                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
+                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement && draggingAdvancedHandle == 1)
                     {
-                        d.X2 += dx;
-                        d.Y2 += dy;
+                        d.X1 = currentX;
+                        d.Y1 = currentY;
+                    }
+                    else if (d.Tool == AdvancedDrawingTool.FibonacciRetracement && draggingAdvancedHandle == 2)
+                    {
+                        d.X2 = currentX;
+                        d.Y2 = currentY;
+                    }
+                    else
+                    {
+                        d.X1 += dx;
+                        d.Y1 += dy;
+                        if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
+                        {
+                            d.X2 += dx;
+                            d.Y2 += dy;
+                        }
                     }
                     draggingAdvancedLastPoint = e.Location;
                     Invalidate();
@@ -279,7 +294,7 @@ namespace Trade.It
                 return;
 
             advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 });
-            selectedAdvancedDrawingIndex = advancedDrawings.Count - 1;
+            selectedAdvancedDrawingIndex = -1;
         }
 
         private void AddAdvancedText(Point location, string text)
@@ -407,8 +422,9 @@ namespace Trade.It
             g.DrawEllipse(pen, point.X - r, point.Y - r, r * 2f, r * 2f);
         }
 
-        private int HitTestAdvancedDrawing(Point location, Rectangle plot)
+        private int HitTestAdvancedDrawing(Point location, Rectangle plot, out int handle)
         {
+            handle = 0;
             if (!TryGetAdvancedContext(out _, out var visibleCountForDrawing, out var min, out var max))
                 return -1;
 
@@ -417,13 +433,24 @@ namespace Trade.It
                 var d = advancedDrawings[i];
                 var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f)
+                {
+                    handle = d.Tool == AdvancedDrawingTool.FibonacciRetracement ? 1 : 0;
                     return i;
+                }
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
                     var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                    if (DistanceToPoint(location, p2) <= 10f || DistanceToSegment(location, p1, p2) <= 6f)
+                    if (DistanceToPoint(location, p2) <= 10f)
+                    {
+                        handle = 2;
                         return i;
+                    }
+                    if (DistanceToSegment(location, p1, p2) <= 6f)
+                    {
+                        handle = 0;
+                        return i;
+                    }
                 }
                 else
                 {
