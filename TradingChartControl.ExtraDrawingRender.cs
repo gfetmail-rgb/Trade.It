@@ -23,7 +23,7 @@ namespace Trade.It
                 var pen = isSelected ? selectedPen : normalPen;
 
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max);
+                    DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
                     DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else
