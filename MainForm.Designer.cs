@@ -41,6 +41,18 @@
         private System.Windows.Forms.Button printChartButton;
         private System.Windows.Forms.Button snapshotChartButton;
         private System.Windows.Forms.Button fullScreenChartButton;
+        private System.Windows.Forms.Button drawTrendLineButton;
+        private System.Windows.Forms.Button drawTrendChannelButton;
+        private System.Windows.Forms.Button drawHorizontalDoubleButton;
+        private System.Windows.Forms.Button drawVerticalDoubleButton;
+        private System.Windows.Forms.Button drawHorizontalRayButton;
+        private System.Windows.Forms.Button drawTrendLineArrowButton;
+        private System.Windows.Forms.Button drawRectangleButton;
+        private System.Windows.Forms.Button drawFibonacciButton;
+        private System.Windows.Forms.Button drawTextButton;
+        private System.Windows.Forms.Button drawPitchforkButton;
+        private System.Windows.Forms.Button drawFibonacciExtensionButton;
+        private System.Windows.Forms.Button drawMeasureButton;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.Panel chartInfoPanel;
@@ -306,6 +318,18 @@
             printChartButton = new Button();
             snapshotChartButton = new Button();
             fullScreenChartButton = new Button();
+            drawTrendLineButton = new Button();
+            drawTrendChannelButton = new Button();
+            drawHorizontalDoubleButton = new Button();
+            drawVerticalDoubleButton = new Button();
+            drawHorizontalRayButton = new Button();
+            drawTrendLineArrowButton = new Button();
+            drawRectangleButton = new Button();
+            drawFibonacciButton = new Button();
+            drawTextButton = new Button();
+            drawPitchforkButton = new Button();
+            drawFibonacciExtensionButton = new Button();
+            drawMeasureButton = new Button();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
             mainMenuStrip.SuspendLayout();
@@ -1991,6 +2015,126 @@
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // 
+            // drawTrendLineButton
+            // 
+            drawTrendLineButton.Location = new Point(790, 7);
+            drawTrendLineButton.Name = "drawTrendLineButton";
+            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineButton.Size = new Size(82, 34);
+            drawTrendLineButton.TabIndex = 20;
+            drawTrendLineButton.Text = "خط روند";
+            drawTrendLineButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendChannelButton
+            // 
+            drawTrendChannelButton.Location = new Point(877, 7);
+            drawTrendChannelButton.Name = "drawTrendChannelButton";
+            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
+            drawTrendChannelButton.Size = new Size(82, 34);
+            drawTrendChannelButton.TabIndex = 20;
+            drawTrendChannelButton.Text = "کانال روند";
+            drawTrendChannelButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalDoubleButton
+            // 
+            drawHorizontalDoubleButton.Location = new Point(964, 7);
+            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
+            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalDoubleButton.Size = new Size(82, 34);
+            drawHorizontalDoubleButton.TabIndex = 20;
+            drawHorizontalDoubleButton.Text = "افقی دو سر";
+            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawVerticalDoubleButton
+            // 
+            drawVerticalDoubleButton.Location = new Point(1051, 7);
+            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
+            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawVerticalDoubleButton.Size = new Size(82, 34);
+            drawVerticalDoubleButton.TabIndex = 20;
+            drawVerticalDoubleButton.Text = "عمودی دو سر";
+            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalRayButton
+            // 
+            drawHorizontalRayButton.Location = new Point(1138, 7);
+            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
+            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalRayButton.Size = new Size(82, 34);
+            drawHorizontalRayButton.TabIndex = 20;
+            drawHorizontalRayButton.Text = "نیم خط افقی";
+            drawHorizontalRayButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendLineArrowButton
+            // 
+            drawTrendLineArrowButton.Location = new Point(6, 51);
+            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
+            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineArrowButton.Size = new Size(82, 34);
+            drawTrendLineArrowButton.TabIndex = 20;
+            drawTrendLineArrowButton.Text = "خط روند فلش";
+            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
+            // 
+            // drawRectangleButton
+            // 
+            drawRectangleButton.Location = new Point(93, 51);
+            drawRectangleButton.Name = "drawRectangleButton";
+            drawRectangleButton.RightToLeft = RightToLeft.Yes;
+            drawRectangleButton.Size = new Size(82, 34);
+            drawRectangleButton.TabIndex = 20;
+            drawRectangleButton.Text = "مستطیل";
+            drawRectangleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciButton
+            // 
+            drawFibonacciButton.Location = new Point(180, 51);
+            drawFibonacciButton.Name = "drawFibonacciButton";
+            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciButton.Size = new Size(82, 34);
+            drawFibonacciButton.TabIndex = 20;
+            drawFibonacciButton.Text = "فیبوناچی";
+            drawFibonacciButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTextButton
+            // 
+            drawTextButton.Location = new Point(267, 51);
+            drawTextButton.Name = "drawTextButton";
+            drawTextButton.RightToLeft = RightToLeft.Yes;
+            drawTextButton.Size = new Size(82, 34);
+            drawTextButton.TabIndex = 20;
+            drawTextButton.Text = "متن";
+            drawTextButton.UseVisualStyleBackColor = true;
+            // 
+            // drawPitchforkButton
+            // 
+            drawPitchforkButton.Location = new Point(354, 51);
+            drawPitchforkButton.Name = "drawPitchforkButton";
+            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
+            drawPitchforkButton.Size = new Size(82, 34);
+            drawPitchforkButton.TabIndex = 20;
+            drawPitchforkButton.Text = "چنگال";
+            drawPitchforkButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciExtensionButton
+            // 
+            drawFibonacciExtensionButton.Location = new Point(441, 51);
+            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
+            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciExtensionButton.Size = new Size(92, 34);
+            drawFibonacciExtensionButton.TabIndex = 20;
+            drawFibonacciExtensionButton.Text = "فیبو اکسپنشن";
+            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
+            // 
+            // drawMeasureButton
+            // 
+            drawMeasureButton.Location = new Point(528, 51);
+            drawMeasureButton.Name = "drawMeasureButton";
+            drawMeasureButton.RightToLeft = RightToLeft.Yes;
+            drawMeasureButton.Size = new Size(82, 34);
+            drawMeasureButton.TabIndex = 20;
+            drawMeasureButton.Text = "خط کش";
+            drawMeasureButton.UseVisualStyleBackColor = true;
             // chartToolbarPanel
             // 
             chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
@@ -2005,12 +2149,24 @@
             chartToolbarPanel.Controls.Add(printChartButton);
             chartToolbarPanel.Controls.Add(snapshotChartButton);
             chartToolbarPanel.Controls.Add(fullScreenChartButton);
+            chartToolbarPanel.Controls.Add(drawTrendLineButton);
+            chartToolbarPanel.Controls.Add(drawTrendChannelButton);
+            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);
+            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);
+            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);
+            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);
+            chartToolbarPanel.Controls.Add(drawRectangleButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciButton);
+            chartToolbarPanel.Controls.Add(drawTextButton);
+            chartToolbarPanel.Controls.Add(drawPitchforkButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);
+            chartToolbarPanel.Controls.Add(drawMeasureButton);
             chartToolbarPanel.Dock = DockStyle.Top;
             chartToolbarPanel.Location = new Point(0, 0);
             chartToolbarPanel.Name = "chartToolbarPanel";
             chartToolbarPanel.Padding = new Padding(6, 5, 6, 5);
             chartToolbarPanel.RightToLeft = RightToLeft.Yes;
-            chartToolbarPanel.Size = new Size(1237, 51);
+            chartToolbarPanel.Size = new Size(1237, 94);
             chartToolbarPanel.TabIndex = 1;
             // 
             // chartTypeComboBox
