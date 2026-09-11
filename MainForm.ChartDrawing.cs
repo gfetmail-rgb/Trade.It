@@ -4,10 +4,12 @@ namespace Trade.It
     {
         private bool chartDrawingToolsInitialized;
         private Button? drawTrendLineButton;
+        private Button? drawTrendChannelButton;
         private Button? drawHorizontalDoubleButton;
         private Button? drawVerticalDoubleButton;
         private Button? drawHorizontalRayButton;
         private Button? drawTrendLineArrowButton;
+        private Button? drawRectangleButton;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
 
         private void InitializeChartDrawingTools()
@@ -18,22 +20,28 @@ namespace Trade.It
             chartDrawingToolsInitialized = true;
 
             drawTrendLineButton = CreateDrawingToolButton("خط روند", new Point(790, 7), 82);
-            drawHorizontalDoubleButton = CreateDrawingToolButton("افقی دو سر", new Point(877, 7), 82);
-            drawVerticalDoubleButton = CreateDrawingToolButton("عمودی دو سر", new Point(964, 7), 82);
-            drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(1051, 7), 82);
-            drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(1138, 7), 82);
+            drawTrendChannelButton = CreateDrawingToolButton("کانال روند", new Point(877, 7), 82);
+            drawHorizontalDoubleButton = CreateDrawingToolButton("افقی دو سر", new Point(964, 7), 82);
+            drawVerticalDoubleButton = CreateDrawingToolButton("عمودی دو سر", new Point(1051, 7), 82);
+            drawHorizontalRayButton = CreateDrawingToolButton("نیم خط افقی", new Point(1138, 7), 82);
+            drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(1225, 7), 82);
+            drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(1312, 7), 82);
 
             chartToolbarPanel.Controls.Add(drawTrendLineButton);
+            chartToolbarPanel.Controls.Add(drawTrendChannelButton);
             chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);
             chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);
             chartToolbarPanel.Controls.Add(drawHorizontalRayButton);
             chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);
+            chartToolbarPanel.Controls.Add(drawRectangleButton);
 
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
+            drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
             drawHorizontalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalDoubleArrow, drawHorizontalDoubleButton);
             drawVerticalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.VerticalDoubleArrow, drawVerticalDoubleButton);
             drawHorizontalRayButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalRay, drawHorizontalRayButton);
             drawTrendLineArrowButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLineWithArrow, drawTrendLineArrowButton);
+            drawRectangleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
             closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
@@ -93,6 +101,8 @@ namespace Trade.It
         {
             if (drawTrendLineButton != null)
                 SetToggleButtonState(drawTrendLineButton, false);
+            if (drawTrendChannelButton != null)
+                SetToggleButtonState(drawTrendChannelButton, false);
             if (drawHorizontalDoubleButton != null)
                 SetToggleButtonState(drawHorizontalDoubleButton, false);
             if (drawVerticalDoubleButton != null)
@@ -101,6 +111,8 @@ namespace Trade.It
                 SetToggleButtonState(drawHorizontalRayButton, false);
             if (drawTrendLineArrowButton != null)
                 SetToggleButtonState(drawTrendLineArrowButton, false);
+            if (drawRectangleButton != null)
+                SetToggleButtonState(drawRectangleButton, false);
         }
     }
 }
