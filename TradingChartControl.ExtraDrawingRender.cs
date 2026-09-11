@@ -26,14 +26,12 @@ namespace Trade.It
                     DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
                     DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
-                else
-                    DrawMeasure(g, pen, labelBrush, labelBrush, d, plot, visibleCountForDrawing, min, max);
             }
 
             if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
             {
                 if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
-                    DrawMeasurePreview(g, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot);
+                    DrawMeasurePreview(g, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot, visibleCountForDrawing, min, max);
                 else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
                     DrawPitchforkPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
                 else
@@ -69,8 +67,11 @@ namespace Trade.It
                     _ => "261.8%"
                 };
 
-                var labelX = Math.Min(leftX + 4f, Math.Max(leftX, rightX - 48f));
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - 8f);
+                var size = g.MeasureString(text, SystemFonts.DefaultFont);
+                var labelX = rightX + 5f;
+                if (labelX + size.Width > plot.Right)
+                    labelX = Math.Max(plot.Left, leftX - size.Width - 5f);
+                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
             }
 
             if (selected)
