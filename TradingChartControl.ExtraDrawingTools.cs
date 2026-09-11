@@ -303,16 +303,41 @@ namespace Trade.It
             var dx = midpoint.X - p1.X;
             var dy = midpoint.Y - p1.Y;
             if (Math.Abs(dx) + Math.Abs(dy) < 0.001f) return;
-            DrawInfiniteLine(g, pen, p1, dx, dy, plot);
-            DrawInfiniteLine(g, pen, p2, dx, dy, plot);
-            DrawInfiniteLine(g, pen, p3, dx, dy, plot);
+
+            // Andrews Pitchfork: the median and its two parallel tines extend
+            // from their anchor points toward the future (right side of chart).
+            DrawRayToRight(g, pen, p1, dx, dy, plot);
+            DrawRayToRight(g, pen, p2, dx, dy, plot);
+            DrawRayToRight(g, pen, p3, dx, dy, plot);
             g.DrawLine(pen, p2, p3);
         }
 
-        private static void DrawInfiniteLine(Graphics g, Pen pen, PointF p, float dx, float dy, Rectangle plot)
+        private static void DrawRayToRight(Graphics g, Pen pen, PointF start, float dx, float dy, Rectangle plot)
         {
-            var length = Math.Max(plot.Width, plot.Height) * 3f;
-            g.DrawLine(pen, p.X - dx * length, p.Y - dy * length, p.X + dx * length, p.Y + dy * length);
+            if (Math.Abs(dx) < 0.001f)
+            {
+                g.DrawLine(pen, start.X, start.Y, start.X, plot.Bottom);
+                return;
+            }
+
+            var targetX = plot.Right;
+            var targetY = start.Y + dy * ((targetX - start.X) / dx);
+            if (targetY >= plot.Top && targetY <= plot.Bottom)
+            {
+                g.DrawLine(pen, start, new PointF(targetX, targetY));
+                return;
+            }
+
+            var targetTopX = start.X + dx * ((plot.Top - start.Y) / dy);
+            if (Math.Abs(dy) > 0.001f && targetTopX >= start.X && targetTopX <= plot.Right)
+            {
+                g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
+                return;
+            }
+
+            var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
+            if (Math.Abs(dy) > 0.001f && targetBottomX >= start.X && targetBottomX <= plot.Right)
+                g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
         }
 
         private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
