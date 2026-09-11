@@ -83,7 +83,6 @@ namespace Trade.It
                 return;
 
             advancedDrawingEventsInitialized = true;
-            Paint += AdvancedDrawing_Paint;
             MouseDown += AdvancedDrawing_MouseDown;
             MouseMove += AdvancedDrawing_MouseMove;
             MouseUp += AdvancedDrawing_MouseUp;
@@ -313,7 +312,7 @@ namespace Trade.It
             return true;
         }
 
-        private void AdvancedDrawing_Paint(object? sender, PaintEventArgs e)
+        private void RenderAdvancedDrawings(Graphics g)
         {
             SyncAdvancedDrawingData();
             if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
@@ -330,13 +329,13 @@ namespace Trade.It
                 var d = advancedDrawings[i];
                 var pen = i == selectedAdvancedDrawingIndex ? selectedPen : normalPen;
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
-                    DrawAdvancedFibonacci(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max);
+                    DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max);
                 else
-                    DrawAdvancedText(e.Graphics, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
+                    DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
 
             if (advancedDrawingInProgress && activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement && IsInsidePlot(advancedDrawingCurrentPoint))
-                DrawFibonacciLevels(e.Graphics, previewPen, labelBrush, advancedDrawingStartPoint, advancedDrawingCurrentPoint);
+                DrawFibonacciLevels(g, previewPen, labelBrush, advancedDrawingStartPoint, advancedDrawingCurrentPoint);
         }
 
         private void DrawAdvancedTextLabels(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
