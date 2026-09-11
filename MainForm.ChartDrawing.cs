@@ -27,6 +27,9 @@ namespace Trade.It
             drawTrendLineArrowButton = CreateDrawingToolButton("خط روند فلش", new Point(1225, 7), 82);
             drawRectangleButton = CreateDrawingToolButton("مستطیل", new Point(1312, 7), 82);
 
+            ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
+            ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
+
             chartToolbarPanel.Controls.Add(drawTrendLineButton);
             chartToolbarPanel.Controls.Add(drawTrendChannelButton);
             chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);
@@ -49,6 +52,45 @@ namespace Trade.It
             drawingStateTimer.Tick += DrawingStateTimer_Tick;
             drawingStateTimer.Start();
             ResetDrawingToolButtons();
+        }
+
+        private enum DrawingIcon
+        {
+            TrendChannel,
+            Rectangle
+        }
+
+        private void ConfigureDrawingIcon(Button button, DrawingIcon icon)
+        {
+            button.Text = string.Empty;
+            button.Tag = icon;
+            button.Paint += DrawingIconButton_Paint;
+            button.AccessibleName = icon == DrawingIcon.TrendChannel ? "کانال روند" : "مستطیل";
+        }
+
+        private void DrawingIconButton_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Button button || button.Tag is not DrawingIcon icon)
+                return;
+
+            var bounds = button.ClientRectangle;
+            var centerX = bounds.Width / 2;
+            var centerY = bounds.Height / 2;
+            using var pen = new Pen(button.Enabled ? SystemColors.ControlText : SystemColors.GrayText, 2.2f)
+            {
+                StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                EndCap = System.Drawing.Drawing2D.LineCap.Round
+            };
+
+            if (icon == DrawingIcon.Rectangle)
+            {
+                var rect = new RectangleF(centerX - 20, centerY - 10, 40, 20);
+                e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                return;
+            }
+
+            e.Graphics.DrawLine(pen, centerX - 24, centerY + 9, centerX + 23, centerY - 8);
+            e.Graphics.DrawLine(pen, centerX - 24, centerY + 17, centerX + 23, centerY);
         }
 
         private Button CreateDrawingToolButton(string text, Point location, int width)
