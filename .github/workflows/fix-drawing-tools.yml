@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   fix:
-    if: "!contains(github.event.head_commit.message, '[skip drawing-fix]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,20 +21,15 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
           def read(p): return Path(p).read_text(encoding='utf-8-sig')
-          def write(p, s): Path(p).write_text(s, encoding='utf-8-sig')
-          def between(s, a, b, replacement):
-              i = s.find(a)
-              j = s.find(b, i + len(a)) if i >= 0 else -1
-              if i < 0 or j < 0 or j <= i:
-                  raise SystemExit(f'Cannot replace block: {a}')
-              return s[:i] + replacement + s[j:]
+          def write(p,s): Path(p).write_text(s,encoding='utf-8-sig')
+          def between(s,a,b,r):
+              i=s.find(a); j=s.find(b,i+len(a)) if i>=0 else -1
+              if i<0 or j<0 or j<=i: raise SystemExit(f'block not found: {a}')
+              return s[:i]+r+s[j:]
 
-          # MainForm.ChartDrawing.cs: Designer owns all 12 buttons; keep only wiring here.
-          p = 'MainForm.ChartDrawing.cs'
-          s = read(p).replace('        private bool chartDrawingToolsInitialized;\n', '')
-          init = '''        private void InitializeChartDrawingTools()
+          p='MainForm.ChartDrawing.cs'; s=read(p).replace('        private bool chartDrawingToolsInitialized;\n','')
+          init='''        private void InitializeChartDrawingTools()
         {
             ConfigureDrawingIcon(drawTrendChannelButton, DrawingIcon.TrendChannel);
             ConfigureDrawingIcon(drawRectangleButton, DrawingIcon.Rectangle);
@@ -44,7 +38,6 @@ jobs:
             ConfigureDrawingIcon(drawPitchforkButton, DrawingIcon.Pitchfork);
             ConfigureDrawingIcon(drawFibonacciExtensionButton, DrawingIcon.FibonacciExtension);
             ConfigureDrawingIcon(drawMeasureButton, DrawingIcon.Measure);
-
             drawTrendLineButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLine, drawTrendLineButton);
             drawTrendChannelButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendChannel, drawTrendChannelButton);
             drawHorizontalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalDoubleArrow, drawHorizontalDoubleButton);
@@ -57,91 +50,63 @@ jobs:
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);
             drawFibonacciExtensionButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.FibonacciExtension, drawFibonacciExtensionButton);
             drawMeasureButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Measure, drawMeasureButton);
-
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
             closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
-            drawingStateTimer.Interval = 100;
-            drawingStateTimer.Tick += DrawingStateTimer_Tick;
-            drawingStateTimer.Start();
+            drawingStateTimer.Interval=100; drawingStateTimer.Tick += DrawingStateTimer_Tick; drawingStateTimer.Start();
             ResetDrawingToolButtons();
         }
 
 '''
-          s = between(s, '        private void InitializeChartDrawingTools()', '        private void ActivateDrawingTool(', init)
-          s = between(s, '        private void ArrangeDrawingToolButtons()', '        private enum DrawingIcon', '') if '        private void ArrangeDrawingToolButtons()' in s else s
-          s = between(s, '        private Button CreateDrawingToolButton(', '        private void ActivateDrawingTool(', '') if '        private Button CreateDrawingToolButton(' in s else s
-          if 'CreateDrawingToolButton' in s or 'ArrangeDrawingToolButtons' in s:
-              raise SystemExit('Runtime toolbar code remains')
-          write(p, s)
+          s=between(s,'        private void InitializeChartDrawingTools()','        private void ActivateDrawingTool(',init)
+          if '        private void ArrangeDrawingToolButtons()' in s: s=between(s,'        private void ArrangeDrawingToolButtons()','        private enum DrawingIcon','')
+          if '        private Button CreateDrawingToolButton(' in s: s=between(s,'        private Button CreateDrawingToolButton(','        private void ActivateDrawingTool(','')
+          if 'CreateDrawingToolButton' in s or 'ArrangeDrawingToolButtons' in s: raise SystemExit('runtime toolbar remains')
+          write(p,s)
 
-          # MainForm.Designer.cs: add the 12 real designer buttons once.
-          p = 'MainForm.Designer.cs'; s = read(p)
-          tools = [
-            ('drawTrendLineButton','خط روند',790,7,82), ('drawTrendChannelButton','کانال موازی',877,7,82),
-            ('drawHorizontalDoubleButton','افقی دو سر',964,7,82), ('drawVerticalDoubleButton','عمودی دو سر',1051,7,82),
-            ('drawHorizontalRayButton','نیم خط افقی',1138,7,82), ('drawTrendLineArrowButton','خط روند فلش',790,47,82),
-            ('drawRectangleButton','مستطیل',877,47,82), ('drawFibonacciButton','فیبوناچی',964,47,82),
-            ('drawTextButton','متن',1051,47,82), ('drawPitchforkButton','چنگال',1138,47,82),
-            ('drawFibonacciExtensionButton','فیبو اکسپنشن',790,87,92), ('drawMeasureButton','خط کش',887,87,82)]
+          p='MainForm.Designer.cs'; s=read(p)
+          tools=[('drawTrendLineButton','خط روند',790,7,82),('drawTrendChannelButton','کانال موازی',877,7,82),('drawHorizontalDoubleButton','افقی دو سر',964,7,82),('drawVerticalDoubleButton','عمودی دو سر',1051,7,82),('drawHorizontalRayButton','نیم خط افقی',1138,7,82),('drawTrendLineArrowButton','خط روند فلش',790,47,82),('drawRectangleButton','مستطیل',877,47,82),('drawFibonacciButton','فیبوناچی',964,47,82),('drawTextButton','متن',1051,47,82),('drawPitchforkButton','چنگال',1138,47,82),('drawFibonacciExtensionButton','فیبو اکسپنشن',790,87,92),('drawMeasureButton','خط کش',887,87,82)]
           if 'private System.Windows.Forms.Button drawTrendLineButton;' not in s:
-              m='        private System.Windows.Forms.Button fullScreenChartButton;\n'
-              if m not in s: raise SystemExit('Designer field marker missing')
-              s=s.replace(m,m+''.join(f'        private System.Windows.Forms.Button {n};\n' for n,*_ in tools),1)
+              m='        private System.Windows.Forms.Button fullScreenChartButton;\n'; i=s.find(m)
+              if i<0: raise SystemExit('designer fields marker')
+              s=s[:i]+m+''.join(f'        private System.Windows.Forms.Button {n};\n' for n,*_ in tools)+s[i+len(m):]
           if 'drawTrendLineButton = new Button();' not in s:
-              m='            fullScreenChartButton = new Button();'; i=s.find(m)
-              if i<0: raise SystemExit('Designer init marker missing')
-              j=s.find('\n',i)
+              m='            fullScreenChartButton = new Button();'; i=s.find(m); j=s.find('\n',i)
+              if i<0: raise SystemExit('designer init marker')
               s=s[:j+1]+''.join(f'            {n} = new Button();\n' for n,*_ in tools)+s[j+1:]
           if 'chartToolbarPanel.Controls.Add(drawTrendLineButton);' not in s:
-              m='            chartToolbarPanel.Controls.Add(fullScreenChartButton);'; i=s.find(m)
-              if i<0: raise SystemExit('Designer controls marker missing')
-              j=s.find('\n',i)
+              m='            chartToolbarPanel.Controls.Add(fullScreenChartButton);'; i=s.find(m); j=s.find('\n',i)
+              if i<0: raise SystemExit('designer controls marker')
               s=s[:j+1]+''.join(f'            chartToolbarPanel.Controls.Add({n});\n' for n,*_ in tools)+s[j+1:]
           if 'drawTrendLineButton.Text = "خط روند";' not in s:
-              m='            fullScreenChartButton.Text = "تمام صفحه";'; i=s.find(m)
-              if i<0: raise SystemExit('Designer property marker missing')
-              j=s.find('\n',i)
-              props=''.join(f'''            {n}.Location = new Point({x}, {y});
-            {n}.Name = "{n}";
-            {n}.Size = new Size({w}, 34);
-            {n}.TabIndex = {20+k};
-            {n}.Text = "{t}";
-            {n}.UseVisualStyleBackColor = true;
-            {n}.RightToLeft = RightToLeft.Yes;
-
-''' for k,(n,t,x,y,w) in enumerate(tools))
+              m='            fullScreenChartButton.Text = "تمام صفحه";'; i=s.find(m); j=s.find('\n',i)
+              if i<0: raise SystemExit('designer props marker')
+              props=''.join(f'            {n}.Location = new Point({x}, {y});\n            {n}.Name = "{n}";\n            {n}.Size = new Size({w}, 34);\n            {n}.TabIndex = {20+k};\n            {n}.Text = "{t}";\n            {n}.UseVisualStyleBackColor = true;\n            {n}.RightToLeft = RightToLeft.Yes;\n\n' for k,(n,t,x,y,w) in enumerate(tools))
               s=s[:j+1]+props+s[j+1:]
           write(p,s)
 
-          # Render extra drawings from the main chart paint pass, after normal drawings.
           p='TradingChartControl.cs'; s=read(p)
           if 'DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);' not in s:
               m='            DrawDrawings(e.Graphics, plot, visible.Count, min, max);'; i=s.find(m)
-              if i<0: raise SystemExit('DrawDrawings call missing')
+              if i<0: raise SystemExit('DrawDrawings marker')
               j=i+len(m); s=s[:j]+'\n            DrawExtraDrawings(e.Graphics, plot, visible.Count, min, max);'+s[j:]
           write(p,s)
 
-          # Convert the extra renderer from a separate Paint event into the main OnPaint pass.
-          p='TradingChartControl.ExtraDrawingTools.cs'; s=read(p)
-          s=s.replace('            Paint += ExtraDrawing_Paint;\n','',1)
+          p='TradingChartControl.ExtraDrawingTools.cs'; s=read(p).replace('            Paint += ExtraDrawing_Paint;\n','',1)
           if '        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)' in s:
               s=s.replace('        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)','        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)',1)
-              header='''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
+              h='''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             SyncExtraDrawingData();
             if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
 
 '''
-              if header in s:
-                  s=s.replace(header,'''        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-''',1)
+              if h in s: s=s.replace(h,'        private void DrawExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)\n        {\n',1)
               s=s.replace('e.Graphics','g')
-          if s.count('private void DrawExtraDrawings(') != 1: raise SystemExit('Extra renderer conversion failed')
-          if 'Paint += ExtraDrawing_Paint' in s: raise SystemExit('Old extra Paint hook remains')
+          if s.count('private void DrawExtraDrawings(')!=1: raise SystemExit('extra renderer conversion failed')
+          if 'Paint += ExtraDrawing_Paint' in s: raise SystemExit('old extra paint hook remains')
           write(p,s)
-          print('Drawing source fixes applied.')
+          print('ok')
           PY
 
       - name: Verify source structure
