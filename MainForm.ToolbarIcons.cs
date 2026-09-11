@@ -21,7 +21,14 @@ namespace Trade.It
             HorizontalDouble,
             VerticalDouble,
             HorizontalRay,
-            TrendLineArrow
+            TrendLineArrow,
+            RectanglePlaceholder,
+            FibonacciPlaceholder,
+            TextPlaceholder,
+            PitchforkPlaceholder,
+            FibonacciExtensionPlaceholder,
+            MeasurePlaceholder,
+            TrendChannelPlaceholder
         }
 
         private bool toolbarIconsInitialized;
@@ -44,21 +51,28 @@ namespace Trade.It
             ConfigureToolbarIcon(snapshotChartButton, ToolbarIcon.Snapshot);
             ConfigureToolbarIcon(fullScreenChartButton, ToolbarIcon.FullScreen);
 
-            ConfigureToolbarIcon(drawTrendLineButton, ToolbarIcon.TrendLine);
-            ConfigureToolbarIcon(drawTrendChannelButton, ToolbarIcon.TrendChannel);
-            ConfigureToolbarIcon(drawHorizontalDoubleButton, ToolbarIcon.HorizontalDouble);
-            ConfigureToolbarIcon(drawVerticalDoubleButton, ToolbarIcon.VerticalDouble);
-            ConfigureToolbarIcon(drawHorizontalRayButton, ToolbarIcon.HorizontalRay);
-            ConfigureToolbarIcon(drawTrendLineArrowButton, ToolbarIcon.TrendLineArrow);
-
             if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
             {
+                ConfigureToolbarIcon(drawTrendLineButton, ToolbarIcon.TrendLine);
+                ConfigureToolbarIcon(drawTrendChannelButton, ToolbarIcon.TrendChannelPlaceholder);
+                ConfigureToolbarIcon(drawHorizontalDoubleButton, ToolbarIcon.HorizontalDouble);
+                ConfigureToolbarIcon(drawVerticalDoubleButton, ToolbarIcon.VerticalDouble);
+                ConfigureToolbarIcon(drawHorizontalRayButton, ToolbarIcon.HorizontalRay);
+                ConfigureToolbarIcon(drawTrendLineArrowButton, ToolbarIcon.TrendLineArrow);
                 ConfigureToolbarIcon(drawRectangleButton, ToolbarIcon.RectanglePlaceholder);
                 ConfigureToolbarIcon(drawFibonacciButton, ToolbarIcon.FibonacciPlaceholder);
                 ConfigureToolbarIcon(drawTextButton, ToolbarIcon.TextPlaceholder);
                 ConfigureToolbarIcon(drawPitchforkButton, ToolbarIcon.PitchforkPlaceholder);
                 ConfigureToolbarIcon(drawFibonacciExtensionButton, ToolbarIcon.FibonacciExtensionPlaceholder);
                 ConfigureToolbarIcon(drawMeasureButton, ToolbarIcon.MeasurePlaceholder);
+            }
+            else
+            {
+                ConfigureToolbarIcon(drawTrendLineButton, ToolbarIcon.TrendLine);
+                ConfigureToolbarIcon(drawHorizontalDoubleButton, ToolbarIcon.HorizontalDouble);
+                ConfigureToolbarIcon(drawVerticalDoubleButton, ToolbarIcon.VerticalDouble);
+                ConfigureToolbarIcon(drawHorizontalRayButton, ToolbarIcon.HorizontalRay);
+                ConfigureToolbarIcon(drawTrendLineArrowButton, ToolbarIcon.TrendLineArrow);
             }
         }
 
@@ -134,6 +148,7 @@ namespace Trade.It
                     e.Graphics.FillEllipse(brush, cx + 19, cy - 12, 6, 6);
                     break;
                 case ToolbarIcon.TrendChannel:
+                case ToolbarIcon.TrendChannelPlaceholder:
                     e.Graphics.DrawLine(pen, cx - 22, cy + 9, cx + 22, cy - 9);
                     e.Graphics.DrawLine(pen, cx - 22, cy + 17, cx + 22, cy - 1);
                     e.Graphics.DrawLine(thinPen, cx - 22, cy + 9, cx - 22, cy + 17);
@@ -227,7 +242,7 @@ namespace Trade.It
 
         private static void DrawEyeIcon(Graphics g, Pen pen, float cx, float cy)
         {
-            var path = new GraphicsPath();
+            using var path = new GraphicsPath();
             path.AddBezier(cx - 22, cy, cx - 11, cy - 14, cx + 11, cy - 14, cx + 22, cy);
             path.AddBezier(cx + 22, cy, cx + 11, cy + 14, cx - 11, cy + 14, cx - 22, cy);
             g.DrawPath(pen, path);
