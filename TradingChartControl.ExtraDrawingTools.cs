@@ -279,7 +279,7 @@ namespace Trade.It
             }
         }
 
-        private static void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -315,7 +315,7 @@ namespace Trade.It
             g.DrawLine(pen, p.X - dx * length, p.Y - dy * length, p.X + dx * length, p.Y + dy * length);
         }
 
-        private static void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
@@ -345,7 +345,7 @@ namespace Trade.It
                 g.DrawLine(pen, c.X, c.Y + dy * level, plot.Right, c.Y + dy * level);
         }
 
-        private static void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
+        private void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
             var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
