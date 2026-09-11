@@ -29,7 +29,7 @@ namespace Trade.It
         public double Volume { get; init; }
     }
 
-    internal sealed class TradingChartControl : Control
+    internal sealed partial class TradingChartControl : Control
     {
         private readonly List<TradingChartPoint> points = new();
         private readonly List<ChartDrawing> drawings = new();
@@ -125,7 +125,6 @@ namespace Trade.It
         public bool CrosshairVisible => showCrosshair;
 
         public ChartDrawingTool ActiveDrawingTool => activeDrawingTool;
-
         public bool DrawingInProgress => drawingInProgress;
 
         public void SetDrawingTool(ChartDrawingTool tool)
@@ -185,7 +184,6 @@ namespace Trade.It
                 e.SuppressKeyPress = true;
                 return;
             }
-
             base.OnKeyDown(e);
         }
 
@@ -198,7 +196,6 @@ namespace Trade.It
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-
             var plotLeft = 55;
             var plotBottom = Height - 35;
             if (e.Button == MouseButtons.Left && e.X <= plotLeft && e.Y <= plotBottom)
@@ -209,12 +206,10 @@ namespace Trade.It
         {
             if (points.Count == 0)
                 return;
-
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
             if (visible.Count == 0)
                 return;
-
             verticalZoom = 1.0;
             verticalPanOffset = 0.0;
             Invalidate();
@@ -285,7 +280,6 @@ namespace Trade.It
                 {
                     panStartVerticalRange = 1.0;
                 }
-
                 Capture = true;
                 Cursor = Cursors.SizeAll;
             }
@@ -315,11 +309,7 @@ namespace Trade.It
             Invalidate();
         }
 
-        private bool IsInsidePlot(Point point)
-        {
-            var plot = GetPlotRectangle();
-            return plot.Contains(point);
-        }
+        private bool IsInsidePlot(Point point) => GetPlotRectangle().Contains(point);
 
         private void AddDrawing(Point start, Point end)
         {
@@ -360,7 +350,6 @@ namespace Trade.It
             if (showCrosshair)
             {
                 crosshairPoint = e.Location;
-
                 var plotLeft = 55;
                 var plotRight = Math.Max(plotLeft, Width - 15);
                 var plotTop = 15;
@@ -389,13 +378,8 @@ namespace Trade.It
                 var delta = e.X - horizontalAxisStartPoint.X;
                 var factor = Math.Exp(-delta / 300.0);
                 var newCount = Math.Clamp((int)Math.Round(horizontalAxisStartVisibleCount * factor), 2, points.Count);
-
                 visibleCount = newCount;
-                firstIndex = Math.Clamp(
-                    (int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0),
-                    0,
-                    Math.Max(0, points.Count - newCount));
-
+                firstIndex = Math.Clamp((int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
                 crosshairIndex = -1;
                 Invalidate();
                 return;
@@ -415,14 +399,12 @@ namespace Trade.It
                 horizontalPanOffset = panStartHorizontalOffset + horizontalDelta;
                 var plotWidth = Math.Max(1, Width - 70);
                 horizontalPanOffset = Math.Clamp(horizontalPanOffset, -plotWidth, plotWidth);
-
                 var verticalDelta = e.Y - panStartPoint.Y;
                 if (Math.Abs(verticalDelta) >= 0.5)
                 {
                     var plotHeight = Math.Max(1, Height - 50);
                     verticalPanOffset = panStartVerticalPanOffset + verticalDelta * panStartVerticalRange / plotHeight;
                 }
-
                 Invalidate();
             }
         }
@@ -446,7 +428,6 @@ namespace Trade.It
             base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.Clear(BackColor);
-
             if (points.Count == 0)
                 return;
 
@@ -475,7 +456,6 @@ namespace Trade.It
                     var y = plot.Top + plot.Height * i / 5f;
                     e.Graphics.DrawLine(gridPen, plot.Left, y, plot.Right, y);
                 }
-
                 var verticalGridCount = Math.Min(10, Math.Max(2, visible.Count));
                 for (var i = 0; i <= verticalGridCount; i++)
                 {
@@ -544,7 +524,7 @@ namespace Trade.It
                 }
             }
 
-            DrawDrawings(e.Graphics, plot, visible.Count, min, max, axisPen);
+            DrawDrawings(e.Graphics, plot, visible.Count, min, max);
 
             var labelCount = Math.Min(6, visible.Count);
             for (var i = 0; i < labelCount; i++)
@@ -564,17 +544,14 @@ namespace Trade.It
                 var x = (float)X(crosshairIndex);
                 var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
                 var price = min + (plot.Bottom - y) / (double)plot.Height * (max - min);
-
                 using var crossPen = new Pen(Color.FromArgb(100, 80, 80, 80), 1) { DashStyle = DashStyle.Dash };
                 e.Graphics.DrawLine(crossPen, plot.Left, y, plot.Right, y);
                 e.Graphics.DrawLine(crossPen, x, plot.Top, x, plot.Bottom);
-
                 var priceText = price.ToString("0.##");
                 var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
                 var priceRect = new RectangleF(2, y - priceSize.Height / 2f - 2, priceSize.Width + 6, priceSize.Height + 4);
                 e.Graphics.FillRectangle(crosshairLabelBackBrush, priceRect);
                 e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3, priceRect.Y + 2);
-
                 if (p.Date != default)
                 {
                     var dateText = p.Date.ToString("yyyy/MM/dd");
@@ -583,7 +560,6 @@ namespace Trade.It
                     e.Graphics.FillRectangle(crosshairLabelBackBrush, dateRect);
                     e.Graphics.DrawString(dateText, axisTextFont, crosshairLabelTextBrush, dateRect.X + 3, dateRect.Y + 2);
                 }
-
                 var infoText = $"Open: {p.Open:0.##}   High: {p.High:0.##}   Low: {p.Low:0.##}   Close: {p.Close:0.##}   Volume: {p.Volume:N0}";
                 using var infoFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size - 1.0f), Font.Style);
                 var infoSize = e.Graphics.MeasureString(infoText, infoFont);
@@ -593,9 +569,7 @@ namespace Trade.It
             }
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None)
-            {
                 DrawDrawingPreview(e.Graphics, plot, visible.Count, min, max);
-            }
         }
 
         private Rectangle GetPlotRectangle() => new(55, 15, Math.Max(1, Width - 70), Math.Max(1, Height - 50));
@@ -609,7 +583,6 @@ namespace Trade.It
                 max += 1;
                 min -= 1;
             }
-
             var center = (max + min) / 2.0 + verticalPanOffset;
             var halfRange = (max - min) / 2.0 / verticalZoom;
             min = center - halfRange;
@@ -641,11 +614,10 @@ namespace Trade.It
             return new PointF((float)x, (float)y);
         }
 
-        private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max, Pen axisPen)
+        private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             if (drawings.Count == 0)
                 return;
-
             using var drawingPen = new Pen(Color.FromArgb(30, 90, 160), 1.8f);
             foreach (var drawing in drawings)
                 DrawSingleDrawing(g, drawingPen, drawing, plot, visibleCountForDrawing, min, max);
@@ -653,27 +625,15 @@ namespace Trade.It
 
         private void DrawDrawingPreview(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            if (!drawingInProgress)
-                return;
-
-            var startX = ScreenToDataX(drawingStartPoint.X, plot, visibleCountForDrawing);
-            var startY = ScreenToPrice(drawingStartPoint.Y, plot, min, max);
-            var currentX = ScreenToDataX(drawingCurrentPoint.X, plot, visibleCountForDrawing);
-            var currentY = ScreenToPrice(drawingCurrentPoint.Y, plot, min, max);
-
             var preview = new ChartDrawing
             {
                 Tool = activeDrawingTool,
-                X1 = startX,
-                Y1 = startY,
-                X2 = currentX,
-                Y2 = currentY
+                X1 = ScreenToDataX(drawingStartPoint.X, plot, visibleCountForDrawing),
+                Y1 = ScreenToPrice(drawingStartPoint.Y, plot, min, max),
+                X2 = ScreenToDataX(drawingCurrentPoint.X, plot, visibleCountForDrawing),
+                Y2 = ScreenToPrice(drawingCurrentPoint.Y, plot, min, max)
             };
-
-            using var previewPen = new Pen(Color.FromArgb(110, 30, 90, 160), 1.6f)
-            {
-                DashStyle = DashStyle.Dash
-            };
+            using var previewPen = new Pen(Color.FromArgb(110, 30, 90, 160), 1.6f) { DashStyle = DashStyle.Dash };
             DrawSingleDrawing(g, previewPen, preview, plot, visibleCountForDrawing, min, max);
         }
 
@@ -681,7 +641,6 @@ namespace Trade.It
         {
             var start = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
             var end = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-
             switch (drawing.Tool)
             {
                 case ChartDrawingTool.TrendLine:
@@ -719,7 +678,6 @@ namespace Trade.It
             var length = Math.Sqrt(dx * dx + dy * dy);
             if (length < 0.5)
                 return;
-
             const float size = 8f;
             var ux = (float)(dx / length);
             var uy = (float)(dy / length);
