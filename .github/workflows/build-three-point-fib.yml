@@ -1,6 +1,7 @@
 name: build-three-point-fib
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 permissions:
   contents: write
 jobs:
@@ -149,7 +150,6 @@ namespace Trade.It
 }
 ''', encoding='utf-8')
 
-          # Remove this one-shot workflow from the resulting commit.
           wf = Path('.github/workflows/build-three-point-fib.yml')
           if wf.exists():
               wf.unlink()
