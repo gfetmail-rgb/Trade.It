@@ -210,12 +210,12 @@ namespace Trade.It
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Right)
             {
-                if (activeDrawingTool != ChartDrawingTool.None || drawingInProgress) CancelDrawing();
+                CancelDrawing();
                 return;
             }
+            if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button != MouseButtons.Left) return;
 
             if (activeDrawingTool != ChartDrawingTool.None)

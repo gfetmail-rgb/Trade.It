@@ -27,6 +27,7 @@ namespace Trade.It
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);
             drawFibonacciExtensionButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.FibonacciExtension, drawFibonacciExtensionButton);
             drawMeasureButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Measure, drawMeasureButton);
+            hideToolsButton.Click += (_, _) => GetActiveChart()?.ClearAllDrawings();
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
             closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
