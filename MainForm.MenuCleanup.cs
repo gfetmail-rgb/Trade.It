@@ -2,9 +2,9 @@ namespace Trade.It
 {
     public partial class MainForm
     {
-        protected override void OnCreateControl(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            base.OnCreateControl(e);
+            base.OnLoad(e);
             resetMenuItem.Visible = false;
         }
     }
