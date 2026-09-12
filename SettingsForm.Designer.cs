@@ -190,18 +190,24 @@ namespace Trade.It
             risingColorButton.Name = "risingColorButton";
             risingColorButton.Size = new Size(175, 34);
             risingColorButton.Text = "رنگ کندل و میله صعودی";
+            risingColorButton.BackColor = Color.FromArgb(35, 150, 80);
+            risingColorButton.ForeColor = Color.White;
             risingColorButton.UseVisualStyleBackColor = false;
 
             fallingColorButton.Location = new Point(380, 28);
             fallingColorButton.Name = "fallingColorButton";
             fallingColorButton.Size = new Size(175, 34);
             fallingColorButton.Text = "رنگ کندل و میله نزولی";
+            fallingColorButton.BackColor = Color.FromArgb(205, 70, 70);
+            fallingColorButton.ForeColor = Color.White;
             fallingColorButton.UseVisualStyleBackColor = false;
 
             lineColorButton.Location = new Point(190, 28);
             lineColorButton.Name = "lineColorButton";
             lineColorButton.Size = new Size(175, 34);
             lineColorButton.Text = "رنگ چارت خطی";
+            lineColorButton.BackColor = Color.FromArgb(35, 90, 160);
+            lineColorButton.ForeColor = Color.White;
             lineColorButton.UseVisualStyleBackColor = false;
 
             resetChartColorsButton.Location = new Point(20, 28);
@@ -239,13 +245,14 @@ namespace Trade.It
             chartLineStyleCombo.SelectedIndex = 0;
 
             // drawingColorsGroupBox
+            // Keep this container LTR so the explicit designer coordinates are identical
+            // in the Visual Studio designer and at runtime. Individual controls remain RTL.
             drawingColorsGroupBox.Location = new Point(16, 344);
             drawingColorsGroupBox.Name = "drawingColorsGroupBox";
-            drawingColorsGroupBox.RightToLeft = RightToLeft.Yes;
+            drawingColorsGroupBox.RightToLeft = RightToLeft.No;
             drawingColorsGroupBox.Size = new Size(760, 286);
             drawingColorsGroupBox.TabStop = false;
             drawingColorsGroupBox.Text = "رنگ، ضخامت و استایل شکل‌ها و ابزارهای رسم";
-
             drawingColorsGroupBox.Controls.Add(trendLineColorButton);
             drawingColorsGroupBox.Controls.Add(trendChannelColorButton);
             drawingColorsGroupBox.Controls.Add(horizontalDoubleArrowColorButton);
@@ -264,18 +271,18 @@ namespace Trade.It
             drawingColorsGroupBox.Controls.Add(drawingLineWidthLabel);
             drawingColorsGroupBox.Controls.Add(drawingLineStyleLabel);
 
-            ConfigureDrawingButton(trendLineColorButton, "خط روند", 565, 30);
-            ConfigureDrawingButton(trendChannelColorButton, "کانال روند", 375, 30);
-            ConfigureDrawingButton(horizontalDoubleArrowColorButton, "خط افقی دو سر", 185, 30);
-            ConfigureDrawingButton(verticalDoubleArrowColorButton, "خط عمودی دو سر", 0, 30);
-            ConfigureDrawingButton(horizontalRayColorButton, "نیم‌خط افقی", 565, 76);
-            ConfigureDrawingButton(trendLineWithArrowColorButton, "خط روند با فلش", 375, 76);
-            ConfigureDrawingButton(rectangleColorButton, "مستطیل", 185, 76);
-            ConfigureDrawingButton(fibonacciRetracementColorButton, "فیبوناچی اصلاحی", 0, 76);
-            ConfigureDrawingButton(textLabelColorButton, "برچسب متن", 565, 122);
-            ConfigureDrawingButton(pitchforkColorButton, "چنگال", 375, 122);
-            ConfigureDrawingButton(fibonacciExtensionColorButton, "فیبوناچی اکستنشن", 185, 122);
-            ConfigureDrawingButton(measureColorButton, "اندازه‌گیری", 0, 122);
+            ConfigureDrawingButton(trendLineColorButton, "خط روند", 565, 30, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(trendChannelColorButton, "کانال روند", 375, 30, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(horizontalDoubleArrowColorButton, "خط افقی دو سر", 185, 30, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(verticalDoubleArrowColorButton, "خط عمودی دو سر", 0, 30, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(horizontalRayColorButton, "نیم‌خط افقی", 565, 76, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(trendLineWithArrowColorButton, "خط روند با فلش", 375, 76, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(rectangleColorButton, "مستطیل", 185, 76, Color.FromArgb(30, 90, 160), Color.White);
+            ConfigureDrawingButton(fibonacciRetracementColorButton, "فیبوناچی اصلاحی", 0, 76, Color.FromArgb(45, 105, 170), Color.White);
+            ConfigureDrawingButton(textLabelColorButton, "برچسب متن", 565, 122, Color.FromArgb(45, 105, 170), Color.White);
+            ConfigureDrawingButton(pitchforkColorButton, "چنگال", 375, 122, Color.FromArgb(155, 80, 45), Color.White);
+            ConfigureDrawingButton(fibonacciExtensionColorButton, "فیبوناچی اکستنشن", 185, 122, Color.FromArgb(155, 80, 45), Color.White);
+            ConfigureDrawingButton(measureColorButton, "اندازه‌گیری", 0, 122, Color.FromArgb(155, 80, 45), Color.White);
 
             resetDrawingColorsButton.Location = new Point(565, 168);
             resetDrawingColorsButton.Name = "resetDrawingColorsButton";
@@ -314,7 +321,7 @@ namespace Trade.It
             // crosshairGridGroupBox
             crosshairGridGroupBox.Location = new Point(16, 640);
             crosshairGridGroupBox.Name = "crosshairGridGroupBox";
-            crosshairGridGroupBox.RightToLeft = RightToLeft.Yes;
+            crosshairGridGroupBox.RightToLeft = RightToLeft.No;
             crosshairGridGroupBox.Size = new Size(760, 160);
             crosshairGridGroupBox.TabStop = false;
             crosshairGridGroupBox.Text = "رنگ، ضخامت و استایل کراس و گرید";
@@ -333,6 +340,9 @@ namespace Trade.It
             crosshairColorButton.Name = "crosshairColorButton";
             crosshairColorButton.Size = new Size(175, 34);
             crosshairColorButton.Text = "رنگ کراس";
+            crosshairColorButton.BackColor = Color.FromArgb(120, 120, 120);
+            crosshairColorButton.ForeColor = Color.White;
+            crosshairColorButton.RightToLeft = RightToLeft.Yes;
             crosshairColorButton.UseVisualStyleBackColor = false;
 
             crosshairLineWidthLabel.AutoSize = true;
@@ -367,6 +377,9 @@ namespace Trade.It
             gridColorButton.Name = "gridColorButton";
             gridColorButton.Size = new Size(175, 34);
             gridColorButton.Text = "رنگ گرید";
+            gridColorButton.BackColor = Color.FromArgb(225, 225, 225);
+            gridColorButton.ForeColor = Color.Black;
+            gridColorButton.RightToLeft = RightToLeft.Yes;
             gridColorButton.UseVisualStyleBackColor = false;
 
             gridLineWidthLabel.AutoSize = true;
@@ -441,12 +454,15 @@ namespace Trade.It
             ResumeLayout(false);
         }
 
-        private static void ConfigureDrawingButton(Button button, string text, int x, int y)
+        private static void ConfigureDrawingButton(Button button, string text, int x, int y, Color backColor, Color foreColor)
         {
             button.Location = new Point(x, y);
-            button.Name = button.Name;
             button.Size = new Size(175, 36);
+            button.Name = button.Name;
             button.Text = text;
+            button.BackColor = backColor;
+            button.ForeColor = foreColor;
+            button.RightToLeft = RightToLeft.Yes;
             button.UseVisualStyleBackColor = false;
         }
     }
