@@ -19,6 +19,7 @@ namespace Trade.It
                 return;
 
             settingsMenuInitialized = true;
+            resetMenuItem.Visible = false;
             TradingChartControl.LoadChartAppearanceSettings();
             chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
             settingsMenuItem.Click += SettingsMenuItem_Click;
