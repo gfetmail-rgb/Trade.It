@@ -19,6 +19,8 @@ namespace Trade.It
                 return;
 
             settingsMenuInitialized = true;
+            TradingChartControl.LoadChartAppearanceSettings();
+            chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
             settingsMenuItem.Click += SettingsMenuItem_Click;
             navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
@@ -36,6 +38,8 @@ namespace Trade.It
                 chartDisplayMode = form.ChartDisplayMode;
                 chartRightEmptyPercent = form.ChartRightEmptyPercent;
                 TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
+                foreach (var chart in chartControls.Values.ToList())
+                    chart.ResetView();
                 ApplyChartDisplayMode();
                 Invalidate(true);
             }
@@ -183,14 +187,8 @@ namespace Trade.It
                     stocksDataGridView.CurrentCell = row.Cells[symbolColumn.Index];
                     if (row.Index >= 0 && row.Index < stocksDataGridView.Rows.Count)
                     {
-                        try
-                        {
-                            stocksDataGridView.FirstDisplayedScrollingRowIndex = row.Index;
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            // The row may already be visible or scrolling may be unavailable.
-                        }
+                        try { stocksDataGridView.FirstDisplayedScrollingRowIndex = row.Index; }
+                        catch (InvalidOperationException) { }
                     }
                 }
 
@@ -200,7 +198,7 @@ namespace Trade.It
             }
             catch (Exception ex)
             {
-                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}»: {ex.Message}";
+                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}": {ex.Message}";
                 chartPlaceholderLabel.Visible = true;
             }
         }
