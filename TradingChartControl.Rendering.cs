@@ -6,15 +6,22 @@ namespace Trade.It
     {
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.Clear(BackColor);
-            if (points.Count == 0) return;
+            if (points.Count == 0)
+            {
+                base.OnPaint(e);
+                return;
+            }
 
             var plot = GetPlotRectangle();
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
-            if (visible.Count == 0) return;
+            if (visible.Count == 0)
+            {
+                base.OnPaint(e);
+                return;
+            }
             GetVerticalRange(visible, out var min, out var max);
 
             using var gridPen = new Pen(Color.FromArgb(225, 225, 225), 1);
@@ -43,6 +50,11 @@ namespace Trade.It
 
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+
+            // Clip every chart object to the plot rectangle. This prevents panning,
+            // trend lines and other drawings from ever painting over the price/time axes.
+            var chartState = e.Graphics.Save();
+            e.Graphics.SetClip(plot, CombineMode.Intersect);
 
             var step = plot.Width / (double)Math.Max(1, visible.Count);
             var initialOffset = -plot.Width * 0.25;
@@ -110,6 +122,8 @@ namespace Trade.It
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
 
+            e.Graphics.Restore(chartState);
+
             for (var i = 0; i <= 5; i++)
             {
                 var value = max - (max - min) * i / 5.0;
@@ -121,6 +135,10 @@ namespace Trade.It
             }
 
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
+
+            // Paint-event overlays (axis labels/background and extra drawings) must
+            // execute after the chart content, not before it.
+            base.OnPaint(e);
         }
 
         private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
@@ -145,14 +163,9 @@ namespace Trade.It
                     g.DrawLine(pen, drawingStartPoint, drawingCurrentPoint);
                     return;
                 }
-
-                var first = drawingStartPoint;
-                var second = drawingSecondPoint;
-                var third = drawingCurrentPoint;
-                DrawScreenTrendChannel(g, pen, plot, first, second, third);
+                DrawScreenTrendChannel(g, pen, plot, drawingStartPoint, drawingSecondPoint, drawingCurrentPoint);
                 return;
             }
-
             DrawSinglePreview(g, pen, activeDrawingTool, drawingStartPoint, drawingCurrentPoint, plot);
         }
 
@@ -161,7 +174,6 @@ namespace Trade.It
             using var handleBrush = new SolidBrush(Color.White);
             using var handlePen = new Pen(GetDrawingColor(drawing.Tool), 1.5f);
             const float radius = 4f;
-
             var handles = GetScreenHandles(drawing, plot, visibleCountForDrawing, min, max);
             foreach (var handle in handles)
             {
@@ -174,12 +186,7 @@ namespace Trade.It
         {
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             if (drawing.Tool == ChartDrawingTool.Rectangle)
-            {
-                return new List<PointF>
-                {
-                    new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y)
-                };
-            }
+                return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
                 var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
@@ -191,40 +198,30 @@ namespace Trade.It
         private void DrawSingleDrawing(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-
             switch (drawing.Tool)
             {
                 case ChartDrawingTool.TrendLine:
-                    g.DrawLine(pen, start, end);
-                    break;
+                    g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
-                    g.DrawLine(pen, start, end);
-                    DrawArrowHead(g, pen, end, start);
-                    break;
+                    g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendChannel:
-                    DrawTrendChannel(g, pen, drawing, plot, visibleCountForDrawing, min, max);
-                    break;
+                    DrawTrendChannel(g, pen, drawing, plot, visibleCountForDrawing, min, max); break;
                 case ChartDrawingTool.HorizontalDoubleArrow:
-                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y);
-                    break;
+                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
                 case ChartDrawingTool.VerticalDoubleArrow:
-                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom);
-                    break;
+                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
                 case ChartDrawingTool.HorizontalRay:
                     var direction = end.X >= start.X ? 1f : -1f;
                     var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
-                    g.DrawLine(pen, start, rayEnd);
-                    break;
+                    g.DrawLine(pen, start, rayEnd); break;
                 case ChartDrawingTool.Rectangle:
                     var left = Math.Min(start.X, end.X);
                     var top = Math.Min(start.Y, end.Y);
                     var right = Math.Max(start.X, end.X);
                     var bottom = Math.Max(start.Y, end.Y);
                     var rect = RectangleF.FromLTRB(left, top, right, bottom);
-                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255)))
-                        g.FillRectangle(fill, rect);
-                    using (var rectanglePen = new Pen(pen.Color, 1.0f))
-                        g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
+                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, rect);
+                    using (var rectanglePen = new Pen(pen.Color, 1.0f)) g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
                     break;
             }
         }
@@ -234,32 +231,24 @@ namespace Trade.It
             switch (tool)
             {
                 case ChartDrawingTool.TrendLine:
-                    g.DrawLine(pen, start, end);
-                    break;
+                    g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
-                    g.DrawLine(pen, start, end);
-                    DrawArrowHead(g, pen, end, start);
-                    break;
+                    g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.HorizontalDoubleArrow:
-                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y);
-                    break;
+                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
                 case ChartDrawingTool.VerticalDoubleArrow:
-                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom);
-                    break;
+                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
                 case ChartDrawingTool.HorizontalRay:
                     var direction = end.X >= start.X ? 1f : -1f;
                     var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
-                    g.DrawLine(pen, start, rayEnd);
-                    break;
+                    g.DrawLine(pen, start, rayEnd); break;
                 case ChartDrawingTool.Rectangle:
                     var left = Math.Min(start.X, end.X);
                     var top = Math.Min(start.Y, end.Y);
                     var width = Math.Abs(end.X - start.X);
                     var height = Math.Abs(end.Y - start.Y);
-                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255)))
-                        g.FillRectangle(fill, left, top, width, height);
-                    using (var rectanglePen = new Pen(pen.Color, 1.0f))
-                        g.DrawRectangle(rectanglePen, left, top, width, height);
+                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, left, top, width, height);
+                    using (var rectanglePen = new Pen(pen.Color, 1.0f)) g.DrawRectangle(rectanglePen, left, top, width, height);
                     break;
             }
         }
@@ -276,23 +265,17 @@ namespace Trade.It
         {
             var dx = second.X - first.X;
             var dy = second.Y - first.Y;
-
             if (Math.Abs(dx) < 0.001f)
             {
                 var offsetX = third.X - first.X;
                 g.DrawLine(pen, first, second);
-                g.DrawLine(pen,
-                    new PointF(first.X + offsetX, first.Y),
-                    new PointF(second.X + offsetX, second.Y));
+                g.DrawLine(pen, new PointF(first.X + offsetX, first.Y), new PointF(second.X + offsetX, second.Y));
                 return;
             }
-
             var slope = dy / dx;
             var offset = third.Y - (first.Y + slope * (third.X - first.X));
             g.DrawLine(pen, first, second);
-            g.DrawLine(pen,
-                new PointF(first.X, first.Y + offset),
-                new PointF(second.X, second.Y + offset));
+            g.DrawLine(pen, new PointF(first.X, first.Y + offset), new PointF(second.X, second.Y + offset));
         }
 
         private void GetDrawingScreenPoints(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max, out PointF start, out PointF end)
@@ -300,19 +283,13 @@ namespace Trade.It
             if (drawing.Tool == ChartDrawingTool.HorizontalDoubleArrow)
             {
                 var y = PriceToScreen(drawing.Y1, plot, min, max);
-                start = new PointF(plot.Left, y);
-                end = new PointF(plot.Right, y);
-                return;
+                start = new PointF(plot.Left, y); end = new PointF(plot.Right, y); return;
             }
-
             if (drawing.Tool == ChartDrawingTool.VerticalDoubleArrow)
             {
                 var x = DataToScreen(drawing.X1, 0, plot, visibleCountForDrawing, min, max).X;
-                start = new PointF(x, plot.Top);
-                end = new PointF(x, plot.Bottom);
-                return;
+                start = new PointF(x, plot.Top); end = new PointF(x, plot.Bottom); return;
             }
-
             start = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
             end = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
         }
@@ -321,14 +298,12 @@ namespace Trade.It
         {
             handle = 0;
             if (drawings.Count == 0) return -1;
-
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visibleCountForDrawing = Math.Max(1, endIndex - firstIndex);
             var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
             if (visible.Count == 0) return -1;
             GetVerticalRange(visible, out var min, out var max);
             const double tolerance = 9.0;
-
             for (var i = drawings.Count - 1; i >= 0; i--)
             {
                 var handles = GetScreenHandles(drawings[i], plot, visibleCountForDrawing, min, max);
@@ -336,8 +311,7 @@ namespace Trade.It
                 {
                     if (DistanceToPoint(location, handles[h]) <= tolerance)
                     {
-                        handle = h + 1;
-                        return i;
+                        handle = h + 1; return i;
                     }
                 }
             }
@@ -353,12 +327,10 @@ namespace Trade.It
             if (visible.Count == 0) return -1;
             GetVerticalRange(visible, out var min, out var max);
             const double tolerance = 7.0;
-
             for (var i = drawings.Count - 1; i >= 0; i--)
             {
                 var drawing = drawings[i];
                 GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-
                 switch (drawing.Tool)
                 {
                     case ChartDrawingTool.TrendLine:
@@ -388,8 +360,7 @@ namespace Trade.It
                             DistanceToSegment(location, new PointF(left, top), new PointF(right, top)) <= tolerance ||
                             DistanceToSegment(location, new PointF(right, top), new PointF(right, bottom)) <= tolerance ||
                             DistanceToSegment(location, new PointF(right, bottom), new PointF(left, bottom)) <= tolerance ||
-                            DistanceToSegment(location, new PointF(left, bottom), new PointF(left, top)) <= tolerance)
-                            return i;
+                            DistanceToSegment(location, new PointF(left, bottom), new PointF(left, top)) <= tolerance) return i;
                         break;
                 }
             }
@@ -405,16 +376,13 @@ namespace Trade.It
                 var offsetX = third.X - first.X;
                 var parallelFirst = new PointF(first.X + offsetX, first.Y);
                 var parallelSecond = new PointF(second.X + offsetX, second.Y);
-                return DistanceToSegment(location, first, second) <= tolerance ||
-                       DistanceToSegment(location, parallelFirst, parallelSecond) <= tolerance;
+                return DistanceToSegment(location, first, second) <= tolerance || DistanceToSegment(location, parallelFirst, parallelSecond) <= tolerance;
             }
-
             var slope = dy / dx;
             var offset = third.Y - (first.Y + slope * (third.X - first.X));
             var parallelFirstPoint = new PointF(first.X, first.Y + offset);
             var parallelSecondPoint = new PointF(second.X, second.Y + offset);
-            return DistanceToSegment(location, first, second) <= tolerance ||
-                   DistanceToSegment(location, parallelFirstPoint, parallelSecondPoint) <= tolerance;
+            return DistanceToSegment(location, first, second) <= tolerance || DistanceToSegment(location, parallelFirstPoint, parallelSecondPoint) <= tolerance;
         }
 
         private void MoveOrResizeDrawing(int index, int handle, Point location)
@@ -426,50 +394,26 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var drawing = drawings[index];
-
             if (drawing.Tool == ChartDrawingTool.HorizontalDoubleArrow)
             {
                 drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
-                drawing.Y2 = drawing.Y1;
-                return;
+                drawing.Y2 = drawing.Y1; return;
             }
-
             if (drawing.Tool == ChartDrawingTool.VerticalDoubleArrow)
             {
                 var x = ScreenToDataX(location.X, plot, visible.Count);
-                drawing.X1 = x;
-                drawing.X2 = x;
-                return;
+                drawing.X1 = x; drawing.X2 = x; return;
             }
-
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                if (handle == 1)
-                {
-                    drawing.X1 = ScreenToDataX(location.X, plot, visible.Count);
-                    drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
-                    return;
-                }
-                if (handle == 2)
-                {
-                    drawing.X2 = ScreenToDataX(location.X, plot, visible.Count);
-                    drawing.Y2 = ScreenToPrice(location.Y, plot, min, max);
-                    return;
-                }
-                if (handle == 3)
-                {
-                    drawing.X3 = ScreenToDataX(location.X, plot, visible.Count);
-                    drawing.Y3 = ScreenToPrice(location.Y, plot, min, max);
-                    return;
-                }
-
+                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
+                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
+                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); return; }
                 var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
                 var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
                 drawing.X1 += deltaX; drawing.X2 += deltaX; drawing.X3 += deltaX;
-                drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY;
-                return;
+                drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY; return;
             }
-
             if (drawing.Tool == ChartDrawingTool.Rectangle && handle > 0)
             {
                 var x = ScreenToDataX(location.X, plot, visible.Count);
@@ -483,21 +427,8 @@ namespace Trade.It
                 }
                 return;
             }
-
-            if (handle == 1)
-            {
-                drawing.X1 = ScreenToDataX(location.X, plot, visible.Count);
-                drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
-                return;
-            }
-
-            if (handle == 2)
-            {
-                drawing.X2 = ScreenToDataX(location.X, plot, visible.Count);
-                drawing.Y2 = ScreenToPrice(location.Y, plot, min, max);
-                return;
-            }
-
+            if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
+            if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
             var moveX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
             var moveY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
             drawing.X1 += moveX; drawing.X2 += moveX;
@@ -515,8 +446,7 @@ namespace Trade.It
         {
             var dx = end.X - start.X;
             var dy = end.Y - start.Y;
-            if (Math.Abs(dx) < 0.001 && Math.Abs(dy) < 0.001)
-                return DistanceToPoint(point, start);
+            if (Math.Abs(dx) < 0.001 && Math.Abs(dy) < 0.001) return DistanceToPoint(point, start);
             var t = ((point.X - start.X) * dx + (point.Y - start.Y) * dy) / (dx * dx + dy * dy);
             t = Math.Clamp(t, 0f, 1f);
             var nearestX = start.X + t * dx;
@@ -563,8 +493,7 @@ namespace Trade.It
 
         private float PriceToScreen(double price, Rectangle plot, double min, double max)
         {
-            if (Math.Abs(max - min) < 1e-12)
-                return plot.Top + plot.Height / 2f;
+            if (Math.Abs(max - min) < 1e-12) return plot.Top + plot.Height / 2f;
             return (float)(plot.Bottom - (price - min) / (max - min) * plot.Height);
         }
 
