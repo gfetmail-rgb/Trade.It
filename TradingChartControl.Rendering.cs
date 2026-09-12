@@ -8,20 +8,15 @@ namespace Trade.It
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             e.Graphics.Clear(BackColor);
+            base.OnPaint(e);
             if (points.Count == 0)
-            {
-                base.OnPaint(e);
                 return;
-            }
 
             var plot = GetPlotRectangle();
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
             if (visible.Count == 0)
-            {
-                base.OnPaint(e);
                 return;
-            }
             GetVerticalRange(visible, out var min, out var max);
 
             using var gridPen = new Pen(Color.FromArgb(225, 225, 225), 1);
@@ -134,11 +129,36 @@ namespace Trade.It
                 e.Graphics.DrawString(text, axisTextFont, textBrush, x, y - size.Height / 2f);
             }
 
-            DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
+            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
+            {
+                var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var crosshairPrice = max - ((crosshairPoint.Y - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
+                var priceText = crosshairPrice.ToString("0.##");
+                var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
+                var priceRect = new RectangleF(
+                    Math.Max(1f, plot.Left - priceSize.Width - 9f),
+                    crosshairPoint.Y - priceSize.Height / 2f - 2f,
+                    priceSize.Width + 6f,
+                    priceSize.Height + 4f);
 
-            // Paint-event overlays (axis labels/background and extra drawings) must
-            // execute after the chart content, not before it.
-            base.OnPaint(e);
+                using var crosshairLabelBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
+                using var crosshairLabelTextBrush = new SolidBrush(Color.White);
+                e.Graphics.FillRectangle(crosshairLabelBrush, priceRect);
+                e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3f, priceRect.Y + 2f);
+
+                var timeText = visible[crosshairIndex].Date.ToString("MM/dd HH:mm");
+                var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
+                var timeRect = new RectangleF(
+                    Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
+                    plot.Bottom + 2f,
+                    timeSize.Width + 6f,
+                    timeSize.Height + 4f);
+
+                e.Graphics.FillRectangle(crosshairLabelBrush, timeRect);
+                e.Graphics.DrawString(timeText, axisTextFont, crosshairLabelTextBrush, timeRect.X + 3f, timeRect.Y + 2f);
+            }
+
+            DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
         }
 
         private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
