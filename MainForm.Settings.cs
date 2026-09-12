@@ -198,7 +198,7 @@ namespace Trade.It
             }
             catch (Exception ex)
             {
-                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}": {ex.Message}";
+                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}»: {ex.Message}";
                 chartPlaceholderLabel.Visible = true;
             }
         }
