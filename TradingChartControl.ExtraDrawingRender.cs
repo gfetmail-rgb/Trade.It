@@ -76,9 +76,9 @@ namespace Trade.It
 
             if (selected)
             {
-                DrawAdvancedHandle(g, a, pen.Color);
-                DrawAdvancedHandle(g, b, pen.Color);
-                DrawAdvancedHandle(g, c, pen.Color);
+                DrawAdvancedHandle(g, a);
+                DrawAdvancedHandle(g, b);
+                DrawAdvancedHandle(g, c);
             }
         }
     }
