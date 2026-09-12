@@ -343,17 +343,19 @@ namespace Trade.It
             if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
 
-            using var normalPen = new Pen(Color.FromArgb(45, 105, 170), 1.2f);
-            using var selectedPen = new Pen(Color.FromArgb(25, 75, 140), 2f);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             using var labelBack = new SolidBrush(Color.FromArgb(245, 248, 252));
-            using var previewPen = new Pen(Color.FromArgb(45, 105, 170), 1.2f) { DashStyle = DashStyle.Dash };
 
             for (var i = 0; i < advancedDrawings.Count; i++)
             {
                 var d = advancedDrawings[i];
                 var isSelected = i == selectedAdvancedDrawingIndex;
-                var pen = isSelected ? selectedPen : normalPen;
+                var color = d.Tool == AdvancedDrawingTool.FibonacciRetracement
+                    ? ChartAppearanceSettings.FibonacciRetracementColor
+                    : ChartAppearanceSettings.TextLabelColor;
+                var width = isSelected ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
+                using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                     DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else
@@ -361,7 +363,10 @@ namespace Trade.It
             }
 
             if (advancedDrawingInProgress && activeAdvancedDrawingTool == AdvancedDrawingTool.FibonacciRetracement && IsInsidePlot(advancedDrawingCurrentPoint))
+            {
+                using var previewPen = new Pen(ChartAppearanceSettings.FibonacciRetracementColor, LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 DrawFibonacciLevels(g, previewPen, labelBrush, advancedDrawingStartPoint, advancedDrawingCurrentPoint);
+            }
 
             RenderExtraDrawings(g);
         }
@@ -370,8 +375,6 @@ namespace Trade.It
         {
             SyncAdvancedDrawingData();
 
-            using var normalPen = new Pen(Color.FromArgb(45, 105, 170), 1.2f);
-            using var selectedPen = new Pen(Color.FromArgb(25, 75, 140), 2f);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             using var labelBack = new SolidBrush(Color.FromArgb(245, 248, 252));
 
@@ -381,7 +384,8 @@ namespace Trade.It
                 if (d.Tool != AdvancedDrawingTool.TextLabel)
                     continue;
 
-                var pen = i == selectedAdvancedDrawingIndex ? selectedPen : normalPen;
+                var width = i == selectedAdvancedDrawingIndex ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
+                using var pen = new Pen(ChartAppearanceSettings.TextLabelColor, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
         }
@@ -432,7 +436,7 @@ namespace Trade.It
         private static void DrawAdvancedHandle(Graphics g, PointF point)
         {
             using var brush = new SolidBrush(Color.White);
-            using var pen = new Pen(Color.FromArgb(45, 105, 170), 1.3f);
+            using var pen = new Pen(ChartAppearanceSettings.FibonacciRetracementColor, 1.3f);
             const float r = 4f;
             g.FillEllipse(brush, point.X - r, point.Y - r, r * 2f, r * 2f);
             g.DrawEllipse(pen, point.X - r, point.Y - r, r * 2f, r * 2f);
