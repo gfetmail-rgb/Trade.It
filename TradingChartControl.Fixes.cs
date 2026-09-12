@@ -99,7 +99,8 @@ namespace Trade.It
         private void EnsureChartPanCompensation()
         {
             var plot = GetPlotRectangle();
-            var desired = plot.Width * 0.25;
+            var desiredMargin = Math.Clamp(ChartRightEmptyPercent, 0.0, 90.0) / 100.0;
+            var desired = plot.Width * (0.25 - desiredMargin);
             var delta = desired - chartPanCompensation;
             if (Math.Abs(delta) < 0.01)
                 return;
@@ -136,8 +137,8 @@ namespace Trade.It
 
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
 
-            // Price axis belongs on the right side of the chart.
-            g.DrawLine(axisPen, plot.Right, plot.Top, plot.Right, plot.Bottom);
+            // Price axis belongs on the left side of the chart.
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
             g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
 
             using var textBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
@@ -150,7 +151,7 @@ namespace Trade.It
                 var y = PriceToScreen(value, plot, min, max);
                 var text = value.ToString("0.##");
                 var size = g.MeasureString(text, axisTextFont);
-                var x = plot.Right + 4f;
+                var x = Math.Max(1f, plot.Left - size.Width - 4f);
                 g.FillRectangle(labelBack, x - 2f, y - size.Height / 2f - 1f, size.Width + 4f, size.Height + 2f);
                 g.DrawString(text, axisTextFont, textBrush, x, y - size.Height / 2f);
             }
@@ -179,7 +180,7 @@ namespace Trade.It
                 var timeText = visible[crosshairIndex].Date.ToString("yyyy/MM/dd");
 
                 var priceSize = g.MeasureString(priceText, axisTextFont);
-                var priceX = plot.Right + 4f;
+                var priceX = Math.Max(1f, plot.Left - priceSize.Width - 4f);
                 g.FillRectangle(labelBack, priceX - 2f, y - priceSize.Height / 2f - 1f, priceSize.Width + 4f, priceSize.Height + 2f);
                 g.DrawString(priceText, axisTextFont, textBrush, priceX, y - priceSize.Height / 2f);
 
