@@ -23,7 +23,8 @@ namespace Trade.It
             {
                 var d = extraDrawings[i];
                 var color = GetExtraDrawingColor(d.Tool);
-                using var pen = new Pen(color, i == selectedExtraDrawingIndex ? 2.2f : 1.3f);
+                var width = i == selectedExtraDrawingIndex ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
+                using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
 
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
                     DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
@@ -34,7 +35,7 @@ namespace Trade.It
             if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
             {
                 var previewColor = GetExtraDrawingColor(activeExtraDrawingTool);
-                using var previewPen = new Pen(previewColor, 1.2f) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash };
+                using var previewPen = new Pen(previewColor, LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
                     DrawMeasurePreview(g, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot, visibleCountForDrawing, min, max);
                 else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
