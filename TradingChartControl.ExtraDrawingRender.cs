@@ -12,6 +12,7 @@ namespace Trade.It
 
         private void RenderExtraDrawings(Graphics g)
         {
+            RenderConfiguredAdvancedOverlay(g);
             SyncExtraDrawingData();
             if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
