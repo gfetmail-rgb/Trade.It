@@ -27,7 +27,7 @@ namespace Trade.It
             closeAllChartsMenuItem.Click += (_, _) => CloseAllChartTabs();
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
-            SetToggleButtonState(crossButton, false);
+            SetToggleButtonState(crossButton, true);
             SetToggleButtonState(hideChartButton, false);
             ApplyChartDisplayMode();
         }
@@ -85,6 +85,7 @@ namespace Trade.It
                 chart.SetChartType(GetSelectedChartType());
                 chart.Visible = true;
                 SetToggleButtonState(hideChartButton, false);
+                SetToggleButtonState(crossButton, chart.CrosshairVisible);
                 AttachChartToTab(chart, symbol);
             }
             catch (Exception ex)
@@ -218,109 +219,6 @@ namespace Trade.It
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, false);
             SetToggleButtonState(hideChartButton, false);
-        }
-
-        private List<TradingChartPoint> LoadChartData(PortfolioDefinition definition, string symbol)
-        {
-            var file = FindSymbolFile(definition, symbol);
-            if (file == null) return new List<TradingChartPoint>();
-            var separator = string.IsNullOrEmpty(definition.Separator) ? ',' : definition.Separator[0];
-            var lines = File.ReadLines(file).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-            if (lines.Count == 0) return new List<TradingChartPoint>();
-            var first = SplitLine(lines[0], separator);
-            var hasHeader = definition.HasHeader;
-            var header = hasHeader ? first : Array.Empty<string>();
-            var start = hasHeader ? 1 : 0;
-            var dateColumn = definition.NoDateTime ? -1 : FindMappedColumn(definition, header, "date", "تاریخ", "روز");
-            var timeColumn = definition.NoDateTime ? -1 : FindMappedColumn(definition, header, "time", "زمان", "ساعت");
-            var openColumn = FindMappedColumn(definition, header, "open", "باز", "اولین", "اول");
-            var highColumn = FindMappedColumn(definition, header, "high", "بیشترین", "بیشترين", "بیشینه");
-            var lowColumn = FindMappedColumn(definition, header, "low", "کمترین", "کمترين", "کمینه");
-            var closeColumn = FindMappedColumn(definition, header, "close", "پایانی", "پاياني", "بسته", "closeprice");
-            var volumeColumn = FindMappedColumn(definition, header, "volume", "حجم", "ارزش معاملات", "volumevalue");
-            if (openColumn < 0 || highColumn < 0 || lowColumn < 0 || closeColumn < 0) return new List<TradingChartPoint>();
-            var result = new List<TradingChartPoint>();
-            for (var i = start; i < lines.Count; i++)
-            {
-                var fields = SplitLine(lines[i], separator);
-                if (!TryGetDouble(fields, openColumn, out var open) || !TryGetDouble(fields, highColumn, out var high) || !TryGetDouble(fields, lowColumn, out var low) || !TryGetDouble(fields, closeColumn, out var close)) continue;
-                var volume = TryGetDouble(fields, volumeColumn, out var parsedVolume) ? parsedVolume : 0.0;
-                var date = default(DateTime);
-                if (dateColumn >= 0 && !TryGetDate(fields, dateColumn, timeColumn, definition.Calendar, out date)) continue;
-                result.Add(new TradingChartPoint { Date = date, Open = open, High = high, Low = low, Close = close, Volume = volume });
-            }
-            return dateColumn >= 0 ? result.OrderBy(x => x.Date).ToList() : result;
-        }
-
-        private static string? FindSymbolFile(PortfolioDefinition definition, string symbol)
-        {
-            var path = definition.DataPath?.Trim();
-            if (string.IsNullOrWhiteSpace(path)) return null;
-            if (File.Exists(path)) return path;
-            if (!Directory.Exists(path)) return null;
-            var extensions = definition.FileType.Equals("CSV", StringComparison.OrdinalIgnoreCase) ? new[] { ".csv", ".txt" } : new[] { ".txt", ".csv" };
-            foreach (var extension in extensions)
-            {
-                var exact = Path.Combine(path, symbol + extension);
-                if (File.Exists(exact)) return exact;
-            }
-            return Directory.EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly).FirstOrDefault(file => string.Equals(Path.GetFileNameWithoutExtension(file), symbol, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private static int FindMappedColumn(PortfolioDefinition definition, string[] header, params string[] aliases)
-        {
-            var mapping = definition.Mappings?.FirstOrDefault(m => aliases.Any(a => Normalize(m.Field).Contains(Normalize(a), StringComparison.OrdinalIgnoreCase)));
-            if (mapping != null) return Math.Max(0, mapping.Column - 1);
-            if (header.Length > 0)
-                for (var i = 0; i < header.Length; i++) if (aliases.Any(a => Normalize(header[i]).Contains(Normalize(a), StringComparison.OrdinalIgnoreCase))) return i;
-            return -1;
-        }
-
-        private static string Normalize(string value) => value.Replace("ی", "ي", StringComparison.Ordinal).Replace("ک", "ك", StringComparison.Ordinal).Replace(" ", string.Empty, StringComparison.Ordinal).Replace("_", string.Empty, StringComparison.Ordinal).Trim();
-
-        private static string[] SplitLine(string line, char separator)
-        {
-            var result = new List<string>(); var current = new StringBuilder(); var quoted = false;
-            foreach (var ch in line)
-            {
-                if (ch == '"') { quoted = !quoted; continue; }
-                if (ch == separator && !quoted) { result.Add(current.ToString().Trim()); current.Clear(); } else current.Append(ch);
-            }
-            result.Add(current.ToString().Trim()); return result.ToArray();
-        }
-
-        private static bool TryGetDouble(string[] fields, int index, out double value)
-        {
-            value = 0; if (index < 0 || index >= fields.Length) return false;
-            var text = fields[index].Trim().Replace(",", string.Empty, StringComparison.Ordinal);
-            return double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value) || double.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out value);
-        }
-
-        private static bool TryGetDate(string[] fields, int dateColumn, int timeColumn, InputCalendar calendar, out DateTime date)
-        {
-            date = default; if (dateColumn < 0 || dateColumn >= fields.Length) return false;
-            var dateText = new string(fields[dateColumn].Where(char.IsDigit).ToArray());
-            var timeText = timeColumn >= 0 && timeColumn < fields.Length ? new string(fields[timeColumn].Where(char.IsDigit).ToArray()) : string.Empty;
-            if (calendar == InputCalendar.Persian && dateText.Length >= 8 && int.TryParse(dateText[..4], out var py) && int.TryParse(dateText.Substring(4, 2), out var pm) && int.TryParse(dateText.Substring(6, 2), out var pd))
-            {
-                try
-                {
-                    var pc = new PersianCalendar(); var hour = timeText.Length >= 2 ? int.Parse(timeText[..2]) : 0; var minute = timeText.Length >= 4 ? int.Parse(timeText.Substring(2, 2)) : 0; var second = timeText.Length >= 6 ? int.Parse(timeText.Substring(4, 2)) : 0;
-                    date = pc.ToDateTime(py, pm, pd, hour, minute, second, 0); return true;
-                }
-                catch { return false; }
-            }
-            if (DateTime.TryParse(fields[dateColumn], CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date))
-            {
-                if (timeText.Length >= 2 && int.TryParse(timeText[..2], out var hour))
-                {
-                    var minute = timeText.Length >= 4 && int.TryParse(timeText.Substring(2, 2), out var m) ? m : 0;
-                    var second = timeText.Length >= 6 && int.TryParse(timeText.Substring(4, 2), out var s) ? s : 0;
-                    date = date.Date.Add(new TimeSpan(hour, minute, second));
-                }
-                return true;
-            }
-            return false;
         }
     }
 }
