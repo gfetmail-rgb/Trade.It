@@ -3,6 +3,7 @@ namespace Trade.It
     public partial class MainForm
     {
         private ChartDisplayMode chartDisplayMode = ChartDisplayMode.SeparateTabs;
+        private double chartRightEmptyPercent = 25.0;
         private bool settingsMenuInitialized;
         private readonly System.Windows.Forms.Timer navigationTimer = new();
         private bool navigationRunning;
@@ -22,17 +23,21 @@ namespace Trade.It
             navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
             portfolioComboBox.SelectedIndexChanged += NavigationPortfolioChanged;
+            TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
             InitializeChartRuntime();
             InitializeChartDrawingTools();
         }
 
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
         {
-            using var form = new SettingsForm(chartDisplayMode);
+            using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent);
             if (form.ShowDialog(this) == DialogResult.OK)
             {
                 chartDisplayMode = form.ChartDisplayMode;
+                chartRightEmptyPercent = form.ChartRightEmptyPercent;
+                TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
                 ApplyChartDisplayMode();
+                Invalidate(true);
             }
         }
 
