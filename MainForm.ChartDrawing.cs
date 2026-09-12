@@ -110,6 +110,8 @@ namespace Trade.It
             else
                 chart.ActivateMeasureTool();
 
+            chart.EnableExtraDrawingMouseSafety();
+
             ResetDrawingToolButtons();
             SetToggleButtonState(selectedButton, chart.ExtraDrawingActive);
         }
