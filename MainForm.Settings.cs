@@ -20,6 +20,7 @@ namespace Trade.It
 
             settingsMenuInitialized = true;
             resetMenuItem.Visible = false;
+            hideToolsButton.Text = "حذف ابزار";
             TradingChartControl.LoadChartAppearanceSettings();
             chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
             settingsMenuItem.Click += SettingsMenuItem_Click;
