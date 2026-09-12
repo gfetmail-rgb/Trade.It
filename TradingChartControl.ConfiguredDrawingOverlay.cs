@@ -19,7 +19,8 @@ namespace Trade.It
                     ? ChartAppearanceSettings.FibonacciRetracementColor
                     : ChartAppearanceSettings.TextLabelColor;
 
-                using var pen = new Pen(color, 2.0f);
+                var penWidth = LineAppearanceSettings.DrawingLineWidth;
+                using var pen = new Pen(color, penWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
 
                 if (drawing.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
