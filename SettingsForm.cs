@@ -35,6 +35,8 @@ namespace Trade.It
             ChartRightEmptyPercent = chartRightEmptyPercent;
             LoadColorButtons();
             AttachColorEvents();
+            okButton.Click += okButton_Click;
+            cancelButton.Click += cancelButton_Click;
         }
 
         private void LoadColorButtons()
@@ -74,12 +76,14 @@ namespace Trade.It
             {
                 ChartAppearanceSettings.ResetChartColors();
                 LoadColorButtons();
+                RefreshOwnerCharts();
             };
 
             resetDrawingColorsButton.Click += (_, _) =>
             {
                 ChartAppearanceSettings.ResetDrawingColors();
                 LoadColorButtons();
+                RefreshOwnerCharts();
             };
         }
 
@@ -95,6 +99,8 @@ namespace Trade.It
                     ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, dialog.Color, ChartAppearanceSettings.LineChartColor);
                 else
                     ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, ChartAppearanceSettings.FallingCandleColor, dialog.Color);
+
+                RefreshOwnerCharts();
             }
         }
 
@@ -105,7 +111,14 @@ namespace Trade.It
             {
                 ChartAppearanceSettings.SetDrawingColor(key, dialog.Color);
                 SetColorButton(button, dialog.Color);
+                RefreshOwnerCharts();
             }
+        }
+
+        private void RefreshOwnerCharts()
+        {
+            if (Owner is MainForm mainForm && !mainForm.IsDisposed)
+                mainForm.Refresh();
         }
 
         private static void SetColorButton(Button button, Color color)
