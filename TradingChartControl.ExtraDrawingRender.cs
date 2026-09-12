@@ -2,6 +2,8 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
+        private bool extraDrawingLegacyPaintDetached;
+
         private static Color GetExtraDrawingColor(ExtraDrawingTool tool) => tool switch
         {
             ExtraDrawingTool.Pitchfork => ChartAppearanceSettings.PitchforkColor,
@@ -10,8 +12,22 @@ namespace Trade.It
             _ => ChartAppearanceSettings.PitchforkColor
         };
 
+        private void DetachLegacyExtraDrawingPaint()
+        {
+            if (extraDrawingLegacyPaintDetached)
+                return;
+
+            Paint -= ExtraDrawing_Paint;
+            extraDrawingLegacyPaintDetached = true;
+        }
+
         private void RenderExtraDrawings(Graphics g)
         {
+            // ExtraDrawingTools.cs contains an older Paint handler. Detach it so the
+            // Fibonacci-extension renderer below is the single source of rendering.
+            // The legacy handler drew the three-point connecting trend lines.
+            DetachLegacyExtraDrawingPaint();
+
             RenderConfiguredAdvancedOverlay(g);
             SyncExtraDrawingData();
             if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
@@ -41,7 +57,7 @@ namespace Trade.It
                 else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
                     DrawPitchforkPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
                 else
-                    DrawFibonacciExtensionPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
+                    DrawThreePointFibonacciPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
             }
         }
 
@@ -55,6 +71,8 @@ namespace Trade.It
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
 
+            // Deliberately do NOT draw A-B or B-C. This is a three-point
+            // Fibonacci extension, not a trend-line tool.
             foreach (var level in levels)
             {
                 var y = c.Y + dy * level;
@@ -72,7 +90,8 @@ namespace Trade.It
                 };
                 var size = g.MeasureString(text, SystemFonts.DefaultFont);
                 var labelX = rightX + 5f;
-                if (labelX + size.Width > plot.Right) labelX = Math.Max(plot.Left, leftX - size.Width - 5f);
+                if (labelX + size.Width > plot.Right)
+                    labelX = Math.Max(plot.Left, leftX - size.Width - 5f);
                 g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
             }
 
@@ -81,6 +100,27 @@ namespace Trade.It
                 DrawAdvancedHandle(g, a);
                 DrawAdvancedHandle(g, b);
                 DrawAdvancedHandle(g, c);
+            }
+        }
+
+        private static void DrawThreePointFibonacciPreview(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
+        {
+            if (points.Count == 0)
+                return;
+
+            var a = points[0];
+            var b = points.Count > 1 ? points[1] : current;
+            var c = points.Count > 2 ? points[2] : current;
+            var dy = b.Y - a.Y;
+            var leftX = Math.Min(a.X, c.X);
+            var rightX = Math.Max(a.X, c.X);
+
+            // Preview also contains levels only; no connecting trend lines.
+            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
+            {
+                var y = c.Y + dy * level;
+                if (y >= plot.Top - 1 && y <= plot.Bottom + 1)
+                    g.DrawLine(pen, leftX, y, rightX, y);
             }
         }
     }
