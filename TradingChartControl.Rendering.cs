@@ -19,14 +19,14 @@ namespace Trade.It
                 return;
             GetVerticalRange(visible, out var min, out var max);
 
-            using var gridPen = new Pen(Color.FromArgb(225, 225, 225), 1);
+            using var gridPen = new Pen(LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineWidth) { DashStyle = LineAppearanceSettings.GridLineStyle };
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
             using var textBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
             using var risingBrush = new SolidBrush(ChartAppearanceSettings.RisingCandleColor);
             using var fallingBrush = new SolidBrush(ChartAppearanceSettings.FallingCandleColor);
-            using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, 1.2f);
-            using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, 1.2f);
-            using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, 1.6f);
+            using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
+            using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
+            using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
 
             if (showGrid)
@@ -46,8 +46,6 @@ namespace Trade.It
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
             e.Graphics.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
 
-            // Clip every chart object to the plot rectangle. This prevents panning,
-            // trend lines and other drawings from ever painting over the price/time axes.
             var chartState = e.Graphics.Save();
             e.Graphics.SetClip(plot, CombineMode.Intersect);
 
@@ -105,14 +103,14 @@ namespace Trade.It
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
-                using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), 1.5f) { DashStyle = DashStyle.Dash };
+                using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 DrawDrawingPreview(e.Graphics, previewPen, plot, visible.Count, min, max);
             }
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
                 var x = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
-                using var crosshairPen = new Pen(Color.FromArgb(120, 120, 120), 1) { DashStyle = DashStyle.Dot };
+                using var crosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth) { DashStyle = LineAppearanceSettings.CrosshairLineStyle };
                 e.Graphics.DrawLine(crosshairPen, x, plot.Top, x, plot.Bottom);
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
@@ -141,12 +139,12 @@ namespace Trade.It
                     priceSize.Width + 6f,
                     priceSize.Height + 4f);
 
-                using var crosshairLabelBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
+                using var crosshairLabelBrush = new SolidBrush(LineAppearanceSettings.CrosshairColor);
                 using var crosshairLabelTextBrush = new SolidBrush(Color.White);
                 e.Graphics.FillRectangle(crosshairLabelBrush, priceRect);
                 e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3f, priceRect.Y + 2f);
 
-                var timeText = visible[crosshairIndex].Date.ToString("MM/dd HH:mm");
+                var timeText = visible[crosshairIndex].Date.ToString("MM/dd/yyyy HH:mm");
                 var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
                 var timeRect = new RectangleF(
                     Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
@@ -167,7 +165,8 @@ namespace Trade.It
             {
                 var selected = i == selectedDrawingIndex;
                 var color = GetDrawingColor(drawings[i].Tool);
-                using var drawingPen = new Pen(color, selected ? 3.2f : 1.8f);
+                var width = selected ? LineAppearanceSettings.DrawingLineWidth + 1.4f : LineAppearanceSettings.DrawingLineWidth;
+                using var drawingPen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
                 if (selected)
                     DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
@@ -241,7 +240,7 @@ namespace Trade.It
                     var bottom = Math.Max(start.Y, end.Y);
                     var rect = RectangleF.FromLTRB(left, top, right, bottom);
                     using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, rect);
-                    using (var rectanglePen = new Pen(pen.Color, 1.0f)) g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
+                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle }) g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
                     break;
             }
         }
@@ -268,7 +267,7 @@ namespace Trade.It
                     var width = Math.Abs(end.X - start.X);
                     var height = Math.Abs(end.Y - start.Y);
                     using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, left, top, width, height);
-                    using (var rectanglePen = new Pen(pen.Color, 1.0f)) g.DrawRectangle(rectanglePen, left, top, width, height);
+                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle }) g.DrawRectangle(rectanglePen, left, top, width, height);
                     break;
             }
         }
