@@ -100,6 +100,7 @@ namespace Trade.It
             verticalZoom = 1.0;
             verticalPanOffset = 0;
             horizontalPanOffset = 0;
+            chartPanCompensation = 0;
             showCrosshair = true;
             crosshairIndex = -1;
             CancelDrawing();
