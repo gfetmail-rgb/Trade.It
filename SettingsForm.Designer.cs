@@ -6,6 +6,10 @@ namespace Trade.It
         private System.Windows.Forms.GroupBox chartDisplayGroupBox;
         private System.Windows.Forms.RadioButton separateTabsRadioButton;
         private System.Windows.Forms.RadioButton singleTabRadioButton;
+        private System.Windows.Forms.GroupBox chartMarginGroupBox;
+        private System.Windows.Forms.Label chartRightEmptyPercentLabel;
+        private System.Windows.Forms.TextBox chartRightEmptyPercentTextBox;
+        private System.Windows.Forms.Label chartRightEmptyPercentHintLabel;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
 
@@ -22,9 +26,14 @@ namespace Trade.It
             chartDisplayGroupBox = new GroupBox();
             separateTabsRadioButton = new RadioButton();
             singleTabRadioButton = new RadioButton();
+            chartMarginGroupBox = new GroupBox();
+            chartRightEmptyPercentLabel = new Label();
+            chartRightEmptyPercentTextBox = new TextBox();
+            chartRightEmptyPercentHintLabel = new Label();
             okButton = new Button();
             cancelButton = new Button();
             chartDisplayGroupBox.SuspendLayout();
+            chartMarginGroupBox.SuspendLayout();
             SuspendLayout();
             //
             // chartDisplayGroupBox
@@ -62,13 +71,52 @@ namespace Trade.It
             singleTabRadioButton.Text = "همه چارت‌ها در یک تب واحد";
             singleTabRadioButton.UseVisualStyleBackColor = true;
             //
+            // chartMarginGroupBox
+            //
+            chartMarginGroupBox.Controls.Add(chartRightEmptyPercentHintLabel);
+            chartMarginGroupBox.Controls.Add(chartRightEmptyPercentTextBox);
+            chartMarginGroupBox.Controls.Add(chartRightEmptyPercentLabel);
+            chartMarginGroupBox.Location = new Point(16, 138);
+            chartMarginGroupBox.Name = "chartMarginGroupBox";
+            chartMarginGroupBox.RightToLeft = RightToLeft.Yes;
+            chartMarginGroupBox.Size = new Size(388, 118);
+            chartMarginGroupBox.TabIndex = 1;
+            chartMarginGroupBox.TabStop = false;
+            chartMarginGroupBox.Text = "حاشیه خالی سمت راست چارت";
+            //
+            // chartRightEmptyPercentLabel
+            //
+            chartRightEmptyPercentLabel.AutoSize = true;
+            chartRightEmptyPercentLabel.Location = new Point(214, 35);
+            chartRightEmptyPercentLabel.Name = "chartRightEmptyPercentLabel";
+            chartRightEmptyPercentLabel.Size = new Size(150, 20);
+            chartRightEmptyPercentLabel.TabIndex = 0;
+            chartRightEmptyPercentLabel.Text = "درصد فضای خالی سمت راست:";
+            //
+            // chartRightEmptyPercentTextBox
+            //
+            chartRightEmptyPercentTextBox.Location = new Point(104, 32);
+            chartRightEmptyPercentTextBox.Name = "chartRightEmptyPercentTextBox";
+            chartRightEmptyPercentTextBox.Size = new Size(82, 27);
+            chartRightEmptyPercentTextBox.TabIndex = 1;
+            chartRightEmptyPercentTextBox.TextAlign = HorizontalAlignment.Center;
+            //
+            // chartRightEmptyPercentHintLabel
+            //
+            chartRightEmptyPercentHintLabel.AutoSize = true;
+            chartRightEmptyPercentHintLabel.Location = new Point(38, 72);
+            chartRightEmptyPercentHintLabel.Name = "chartRightEmptyPercentHintLabel";
+            chartRightEmptyPercentHintLabel.Size = new Size(326, 20);
+            chartRightEmptyPercentHintLabel.TabIndex = 2;
+            chartRightEmptyPercentHintLabel.Text = "مثلاً 25 یعنی یک‌چهارم عرض چارت خالی بماند (۰ تا ۹۰).";
+            //
             // okButton
             //
             okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(238, 148);
+            okButton.Location = new Point(238, 272);
             okButton.Name = "okButton";
             okButton.Size = new Size(80, 30);
-            okButton.TabIndex = 1;
+            okButton.TabIndex = 2;
             okButton.Text = "تأیید";
             okButton.UseVisualStyleBackColor = true;
             okButton.Click += okButton_Click;
@@ -76,10 +124,10 @@ namespace Trade.It
             // cancelButton
             //
             cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(324, 148);
+            cancelButton.Location = new Point(324, 272);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(80, 30);
-            cancelButton.TabIndex = 2;
+            cancelButton.TabIndex = 3;
             cancelButton.Text = "انصراف";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
@@ -90,9 +138,10 @@ namespace Trade.It
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
-            ClientSize = new Size(420, 194);
+            ClientSize = new Size(420, 320);
             Controls.Add(cancelButton);
             Controls.Add(okButton);
+            Controls.Add(chartMarginGroupBox);
             Controls.Add(chartDisplayGroupBox);
             Font = new Font("Segoe UI", 9.5F);
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -105,6 +154,8 @@ namespace Trade.It
             Text = "تنظیمات";
             chartDisplayGroupBox.ResumeLayout(false);
             chartDisplayGroupBox.PerformLayout();
+            chartMarginGroupBox.ResumeLayout(false);
+            chartMarginGroupBox.PerformLayout();
             ResumeLayout(false);
         }
     }
