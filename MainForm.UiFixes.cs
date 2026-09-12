@@ -5,7 +5,8 @@ namespace Trade.It
     {
         private void ApplyUiFixes()
         {
-            hideToolsButton.Visible = false;
+            hideToolsButton.Visible = true;
+            hideToolsButton.Text = "حذف ابزار";
 
             gridButton.Image = null;
             crossButton.Image = null;
