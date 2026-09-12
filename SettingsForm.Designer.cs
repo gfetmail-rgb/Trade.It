@@ -122,7 +122,6 @@ namespace Trade.It
             ((System.ComponentModel.ISupportInitialize)gridLineWidthNumeric).BeginInit();
             SuspendLayout();
 
-            // chartDisplayGroupBox
             chartDisplayGroupBox.Controls.Add(singleTabRadioButton);
             chartDisplayGroupBox.Controls.Add(separateTabsRadioButton);
             chartDisplayGroupBox.Location = new Point(16, 16);
@@ -140,7 +139,6 @@ namespace Trade.It
             singleTabRadioButton.Text = "همه چارت‌ها در یک تب واحد";
             singleTabRadioButton.RightToLeft = RightToLeft.Yes;
 
-            // chartMarginGroupBox
             chartMarginGroupBox.Controls.Add(chartRightEmptyPercentHintLabel);
             chartMarginGroupBox.Controls.Add(chartRightEmptyPercentTextBox);
             chartMarginGroupBox.Controls.Add(chartRightEmptyPercentLabel);
@@ -160,7 +158,6 @@ namespace Trade.It
             chartRightEmptyPercentHintLabel.Location = new Point(150, 65);
             chartRightEmptyPercentHintLabel.Text = "۰ تا ۹۰ درصد؛ مثلاً 25 یعنی یک‌چهارم عرض چارت خالی بماند.";
 
-            // chartColorsGroupBox
             chartColorsGroupBox.Controls.Add(risingColorButton);
             chartColorsGroupBox.Controls.Add(fallingColorButton);
             chartColorsGroupBox.Controls.Add(lineColorButton);
@@ -191,7 +188,6 @@ namespace Trade.It
             chartLineStyleLabel.Location = new Point(250, 78);
             chartLineStyleLabel.Text = "استایل:";
 
-            // drawingColorsGroupBox
             drawingColorsGroupBox.Controls.Add(drawingColorsPanel);
             drawingColorsGroupBox.Controls.Add(drawingLineWidthLabel);
             drawingColorsGroupBox.Controls.Add(drawingLineWidthNumeric);
@@ -235,7 +231,6 @@ namespace Trade.It
             drawingLineStyleLabel.Location = new Point(250, 205);
             drawingLineStyleLabel.Text = "استایل:";
 
-            // crosshairGridGroupBox
             crosshairGridGroupBox.Controls.Add(crosshairColorButton);
             crosshairGridGroupBox.Controls.Add(crosshairLineWidthLabel);
             crosshairGridGroupBox.Controls.Add(crosshairLineWidthNumeric);
@@ -271,7 +266,6 @@ namespace Trade.It
             gridLineStyleLabel.Location = new Point(205, 99);
             gridLineStyleLabel.Text = "استایل:";
 
-            // bottom buttons
             okButton.Location = new Point(500, 815);
             okButton.Size = new Size(80, 32);
             okButton.Text = "تأیید";
@@ -355,18 +349,13 @@ namespace Trade.It
             control.SelectedIndex = 0;
         }
 
-        private static void AddDrawingColorButton(Button button, string text)
+        private void AddDrawingColorButton(Button button, string text)
         {
             button.Size = new Size(170, 34);
             button.Margin = new Padding(4);
             button.Text = text;
             button.UseVisualStyleBackColor = false;
-            drawingColorsPanelStaticAdd(button);
-        }
-
-        private static void drawingColorsPanelStaticAdd(Button button)
-        {
-            // This helper is intentionally empty; buttons are added explicitly below.
+            drawingColorsPanel.Controls.Add(button);
         }
     }
 }
