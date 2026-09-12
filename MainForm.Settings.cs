@@ -11,26 +11,6 @@ namespace Trade.It
         private int navigationIndex = -1;
         private TabPage? navigationTabPage;
 
-        protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e);
-
-            if (settingsMenuInitialized)
-                return;
-
-            settingsMenuInitialized = true;
-            resetMenuItem.Visible = false;
-            TradingChartControl.LoadChartAppearanceSettings();
-            chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
-            settingsMenuItem.Click += SettingsMenuItem_Click;
-            navigationButton.Click += NavigationButton_Click;
-            navigationTimer.Tick += NavigationTimer_Tick;
-            portfolioComboBox.SelectedIndexChanged += NavigationPortfolioChanged;
-            TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
-            InitializeChartRuntime();
-            InitializeChartDrawingTools();
-        }
-
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
         {
             using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent);
