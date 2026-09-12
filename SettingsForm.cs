@@ -11,16 +11,6 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
-        private NumericUpDown chartLineWidthNumeric = null!;
-        private ComboBox chartLineStyleCombo = null!;
-        private NumericUpDown drawingLineWidthNumeric = null!;
-        private ComboBox drawingLineStyleCombo = null!;
-        private Button crosshairColorButton = null!;
-        private NumericUpDown crosshairLineWidthNumeric = null!;
-        private ComboBox crosshairLineStyleCombo = null!;
-        private Button gridColorButton = null!;
-        private NumericUpDown gridLineWidthNumeric = null!;
-        private ComboBox gridLineStyleCombo = null!;
 
         public ChartDisplayMode ChartDisplayMode
         {
@@ -47,7 +37,7 @@ namespace Trade.It
             ChartRightEmptyPercent = chartRightEmptyPercent;
             LoadColorButtons();
             AttachColorEvents();
-            CreateLineSettingsControls();
+            AttachLineSettingsEvents();
             okButton.Click += okButton_Click;
             cancelButton.Click += cancelButton_Click;
         }
@@ -100,135 +90,43 @@ namespace Trade.It
             };
         }
 
-        private void CreateLineSettingsControls()
+        private void AttachLineSettingsEvents()
         {
-            chartColorsGroupBox.Text = "رنگ، ضخامت و استایل نمودار";
-            drawingColorsGroupBox.Text = "رنگ، ضخامت و استایل شکل‌ها و ابزارهای رسم";
-
-            chartColorsGroupBox.Height = 145;
-            drawingColorsGroupBox.Location = new Point(16, 381);
-            drawingColorsGroupBox.Height = 250;
-
-            AddLineSettingLabel(chartColorsGroupBox, "ضخامت:", 470, 78);
-            chartLineWidthNumeric = CreateWidthControl(chartColorsGroupBox, 395, 75, LineAppearanceSettings.ChartLineWidth);
-            AddLineSettingLabel(chartColorsGroupBox, "استایل:", 250, 78);
-            chartLineStyleCombo = CreateStyleControl(chartColorsGroupBox, 155, 75, LineAppearanceSettings.ChartLineStyle);
-
-            AddLineSettingLabel(drawingColorsGroupBox, "ضخامت:", 470, 205);
-            drawingLineWidthNumeric = CreateWidthControl(drawingColorsGroupBox, 395, 202, LineAppearanceSettings.DrawingLineWidth);
-            AddLineSettingLabel(drawingColorsGroupBox, "استایل:", 250, 205);
-            drawingLineStyleCombo = CreateStyleControl(drawingColorsGroupBox, 155, 202, LineAppearanceSettings.DrawingLineStyle);
-
-            var crosshairGroup = new GroupBox
-            {
-                Name = "crosshairGridGroupBox",
-                Text = "رنگ، ضخامت و استایل کراس و گرید",
-                Location = new Point(16, 641),
-                Size = new Size(660, 160),
-                RightToLeft = RightToLeft.Yes,
-                TabStop = false
-            };
-            Controls.Add(crosshairGroup);
-
-            crosshairColorButton = new Button { Text = "رنگ کراس", Size = new Size(130, 34), Location = new Point(500, 32), UseVisualStyleBackColor = false };
-            SetColorButton(crosshairColorButton, LineAppearanceSettings.CrosshairColor);
             crosshairColorButton.Click += (_, _) => PickLineColor(crosshairColorButton, true);
-            crosshairGroup.Controls.Add(crosshairColorButton);
-            AddLineSettingLabel(crosshairGroup, "ضخامت:", 390, 39);
-            crosshairLineWidthNumeric = CreateWidthControl(crosshairGroup, 315, 36, LineAppearanceSettings.CrosshairLineWidth);
-            AddLineSettingLabel(crosshairGroup, "استایل:", 205, 39);
-            crosshairLineStyleCombo = CreateStyleControl(crosshairGroup, 105, 36, LineAppearanceSettings.CrosshairLineStyle);
-
-            gridColorButton = new Button { Text = "رنگ گرید", Size = new Size(130, 34), Location = new Point(500, 92), UseVisualStyleBackColor = false };
-            SetColorButton(gridColorButton, LineAppearanceSettings.GridColor);
             gridColorButton.Click += (_, _) => PickLineColor(gridColorButton, false);
-            crosshairGroup.Controls.Add(gridColorButton);
-            AddLineSettingLabel(crosshairGroup, "ضخامت:", 390, 99);
-            gridLineWidthNumeric = CreateWidthControl(crosshairGroup, 315, 96, LineAppearanceSettings.GridLineWidth);
-            AddLineSettingLabel(crosshairGroup, "استایل:", 205, 99);
-            gridLineStyleCombo = CreateStyleControl(crosshairGroup, 105, 96, LineAppearanceSettings.GridLineStyle);
 
-            foreach (var control in new Control[] { chartLineWidthNumeric, chartLineStyleCombo, drawingLineWidthNumeric, drawingLineStyleCombo, crosshairLineWidthNumeric, crosshairLineStyleCombo, gridLineWidthNumeric, gridLineStyleCombo })
-            {
-                if (control is NumericUpDown numeric)
-                    numeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
-                else if (control is ComboBox combo)
-                    combo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
-            }
-
-            okButton.Location = new Point(500, 815);
-            cancelButton.Location = new Point(590, 815);
-            ClientSize = new Size(692, 865);
+            chartLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
+            chartLineStyleCombo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
+            drawingLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
+            drawingLineStyleCombo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
+            crosshairLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
+            crosshairLineStyleCombo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
+            gridLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
+            gridLineStyleCombo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
         }
-
-        private static void AddLineSettingLabel(Control parent, string text, int x, int y)
-        {
-            parent.Controls.Add(new Label
-            {
-                AutoSize = true,
-                Text = text,
-                Location = new Point(x, y),
-                RightToLeft = RightToLeft.Yes
-            });
-        }
-
-        private static NumericUpDown CreateWidthControl(Control parent, int x, int y, float value)
-        {
-            var control = new NumericUpDown
-            {
-                Location = new Point(x, y),
-                Size = new Size(70, 27),
-                Minimum = 0.5m,
-                Maximum = 8.0m,
-                Increment = 0.1m,
-                DecimalPlaces = 1,
-                Value = (decimal)Math.Clamp(value, 0.5f, 8.0f),
-                TextAlign = HorizontalAlignment.Center
-            };
-            parent.Controls.Add(control);
-            return control;
-        }
-
-        private static ComboBox CreateStyleControl(Control parent, int x, int y, DashStyle style)
-        {
-            var combo = new ComboBox
-            {
-                Location = new Point(x, y),
-                Size = new Size(120, 28),
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                RightToLeft = RightToLeft.Yes
-            };
-            combo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            combo.SelectedIndex = StyleToIndex(style);
-            parent.Controls.Add(combo);
-            return combo;
-        }
-
-        private static int StyleToIndex(DashStyle style) => style switch
-        {
-            DashStyle.Dash => 1,
-            DashStyle.Dot => 2,
-            DashStyle.DashDot => 3,
-            DashStyle.DashDotDot => 4,
-            _ => 0
-        };
-
-        private static DashStyle IndexToStyle(int index) => index switch
-        {
-            1 => DashStyle.Dash,
-            2 => DashStyle.Dot,
-            3 => DashStyle.DashDot,
-            4 => DashStyle.DashDotDot,
-            _ => DashStyle.Solid
-        };
 
         private void ApplyLineSettingsFromControls()
         {
             if (chartLineWidthNumeric == null) return;
-            LineAppearanceSettings.SetChartLine((float)chartLineWidthNumeric.Value, IndexToStyle(chartLineStyleCombo.SelectedIndex));
-            LineAppearanceSettings.SetDrawingLine((float)drawingLineWidthNumeric.Value, IndexToStyle(drawingLineStyleCombo.SelectedIndex));
-            LineAppearanceSettings.SetCrosshair(LineAppearanceSettings.CrosshairColor, (float)crosshairLineWidthNumeric.Value, IndexToStyle(crosshairLineStyleCombo.SelectedIndex));
-            LineAppearanceSettings.SetGrid(LineAppearanceSettings.GridColor, (float)gridLineWidthNumeric.Value, IndexToStyle(gridLineStyleCombo.SelectedIndex));
+
+            LineAppearanceSettings.SetChartLine(
+                (float)chartLineWidthNumeric.Value,
+                IndexToStyle(chartLineStyleCombo.SelectedIndex));
+
+            LineAppearanceSettings.SetDrawingLine(
+                (float)drawingLineWidthNumeric.Value,
+                IndexToStyle(drawingLineStyleCombo.SelectedIndex));
+
+            LineAppearanceSettings.SetCrosshair(
+                LineAppearanceSettings.CrosshairColor,
+                (float)crosshairLineWidthNumeric.Value,
+                IndexToStyle(crosshairLineStyleCombo.SelectedIndex));
+
+            LineAppearanceSettings.SetGrid(
+                LineAppearanceSettings.GridColor,
+                (float)gridLineWidthNumeric.Value,
+                IndexToStyle(gridLineStyleCombo.SelectedIndex));
+
             RefreshOwnerCharts();
         }
 
@@ -237,11 +135,14 @@ namespace Trade.It
             var current = crosshair ? LineAppearanceSettings.CrosshairColor : LineAppearanceSettings.GridColor;
             using var dialog = new ColorDialog { Color = current, FullOpen = true };
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
+
             SetColorButton(button, dialog.Color);
+
             if (crosshair)
                 LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
             else
                 LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
+
             RefreshOwnerCharts();
         }
 
@@ -300,6 +201,15 @@ namespace Trade.It
             nameof(ChartAppearanceSettings.FibonacciExtensionColor) => ChartAppearanceSettings.FibonacciExtensionColor,
             nameof(ChartAppearanceSettings.MeasureColor) => ChartAppearanceSettings.MeasureColor,
             _ => Color.Black
+        };
+
+        private static DashStyle IndexToStyle(int index) => index switch
+        {
+            1 => DashStyle.Dash,
+            2 => DashStyle.Dot,
+            3 => DashStyle.DashDot,
+            4 => DashStyle.DashDotDot,
+            _ => DashStyle.Solid
         };
 
         private void okButton_Click(object? sender, EventArgs e)
