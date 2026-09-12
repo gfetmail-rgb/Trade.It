@@ -62,6 +62,7 @@ namespace Trade.It
 
             chart.CancelAdvancedDrawing();
             chart.CancelExtraDrawing();
+            chart.EnableExtraDrawingMouseSafety();
 
             if (chart.ActiveDrawingTool == tool)
             {
@@ -84,6 +85,7 @@ namespace Trade.It
 
             chart.CancelDrawing();
             chart.CancelExtraDrawing();
+            chart.EnableExtraDrawingMouseSafety();
 
             if (selection == AdvancedDrawingSelection.Fibonacci)
                 chart.ActivateFibonacciRetracement();
@@ -110,6 +112,8 @@ namespace Trade.It
             else
                 chart.ActivateMeasureTool();
 
+            chart.EnableExtraDrawingMouseSafety();
+
             ResetDrawingToolButtons();
             SetToggleButtonState(selectedButton, chart.ExtraDrawingActive);
         }
@@ -126,9 +130,11 @@ namespace Trade.It
 
         private void ChartDrawingTabChanged(object? sender, EventArgs e)
         {
-            GetActiveChart()?.CancelDrawing();
-            GetActiveChart()?.CancelAdvancedDrawing();
-            GetActiveChart()?.CancelExtraDrawing();
+            var chart = GetActiveChart();
+            chart?.CancelDrawing();
+            chart?.CancelAdvancedDrawing();
+            chart?.CancelExtraDrawing();
+            chart?.EnableExtraDrawingMouseSafety();
             ResetDrawingToolButtons();
         }
 
