@@ -1,17 +1,9 @@
+
 namespace Trade.It
 {
     public partial class MainForm
     {
-        private readonly bool uiFixesHooked = HookUiFixes();
-
-        private bool HookUiFixes()
-        {
-            HandleCreated += MainForm_HandleCreatedForUiFixes;
-            Load += MainForm_HandleCreatedForUiFixes;
-            return true;
-        }
-
-        private void MainForm_HandleCreatedForUiFixes(object? sender, EventArgs e)
+        private void ApplyUiFixes()
         {
             hideToolsButton.Visible = false;
 
@@ -54,3 +46,4 @@ namespace Trade.It
         }
     }
 }
+

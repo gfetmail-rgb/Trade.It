@@ -1103,11 +1103,21 @@ namespace Trade.It
             var normalized = NormalizeSymbolName(op);
             return normalized switch
             {
-                ">" => left > right, ">=" => left >= right, "<" => left < right, "<=" => left <= right,
-                "=" => Math.Abs(left - right) < 1e-12, "==" => Math.Abs(left - right) < 1e-12,
-                "مساوی" => Math.Abs(left - right) < 1e-12, "بزرگتر از" => left > right, "بزرگتر" => left > right,
-                "بزرگتر یا مساوی" => left >= right, "بزرگتر مساوی" => left >= right, "کوچکتر از" => left < right,
-                "کوچکتر" => left < right, "کوچکتر یا مساوی" => left <= right, "کوچکتر مساوی" => left <= right,
+                ">" => left > right,
+                ">=" => left >= right,
+                "<" => left < right,
+                "<=" => left <= right,
+                "=" => Math.Abs(left - right) < 1e-12,
+                "==" => Math.Abs(left - right) < 1e-12,
+                "مساوی" => Math.Abs(left - right) < 1e-12,
+                "بزرگتر از" => left > right,
+                "بزرگتر" => left > right,
+                "بزرگتر یا مساوی" => left >= right,
+                "بزرگتر مساوی" => left >= right,
+                "کوچکتر از" => left < right,
+                "کوچکتر" => left < right,
+                "کوچکتر یا مساوی" => left <= right,
+                "کوچکتر مساوی" => left <= right,
                 _ => false
             };
         }
@@ -1287,7 +1297,14 @@ namespace Trade.It
 
         private static string NormalizeComparisonField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
         {
-            "O" => "باز", "H" => "بیشترین", "L" => "کمترین", "C" => "پایانی", "V" => "حجم", "FINAL FEE" => "پایانی", "پایانی" => "پایانی", _ => string.Empty
+            "O" => "باز",
+            "H" => "بیشترین",
+            "L" => "کمترین",
+            "C" => "پایانی",
+            "V" => "حجم",
+            "FINAL FEE" => "پایانی",
+            "پایانی" => "پایانی",
+            _ => string.Empty
         };
 
         private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, out double left, out double right)
@@ -1304,8 +1321,8 @@ namespace Trade.It
             }
             catch { return false; }
             var firstIndex = rows.Count - firstOffset;
-  var secondIndex = rows.Count - secondOffset;
-  if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
+            var secondIndex = rows.Count - secondOffset;
+            if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
             var first = rows[firstIndex].First; var second = rows[secondIndex].Second;
             if (!first.HasValue || !second.HasValue) return false;
             left = first.Value; right = second.Value;
@@ -1331,8 +1348,13 @@ namespace Trade.It
 
         private static bool CompareComparisonOperator(double left, double right, string op) => op.Trim() switch
         {
-            ">" => left > right, "<" => left < right, "=" => Math.Abs(left - right) < 1e-12,
-            ">=" => left >= right, "<=" => left <= right, "!=" => Math.Abs(left - right) >= 1e-12, _ => false
+            ">" => left > right,
+            "<" => left < right,
+            "=" => Math.Abs(left - right) < 1e-12,
+            ">=" => left >= right,
+            "<=" => left <= right,
+            "!=" => Math.Abs(left - right) >= 1e-12,
+            _ => false
         };
 
         private void AttachOhlcChangeFilterEvents()
@@ -1466,7 +1488,18 @@ namespace Trade.It
 
         private static string NormalizeOhlcChangeField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
         {
-            "O" => "باز", "H" => "بیشترین", "L" => "کمترین", "C" => "پایانی", "FINAL FEE" => "پایانی", "پایانی" => "پایانی", _ => string.Empty
+            "O" => "باز",
+            "H" => "بیشترین",
+            "L" => "کمترین",
+            "C" => "پایانی",
+            "FINAL FEE" => "پایانی",
+            "پایانی" => "پایانی",
+            _ => string.Empty
         };
+
+        private void hideChartButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

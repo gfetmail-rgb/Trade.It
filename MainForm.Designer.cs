@@ -371,7 +371,7 @@
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.No;
-            mainMenuStrip.Size = new Size(1643, 33);
+            mainMenuStrip.Size = new Size(1491, 33);
             mainMenuStrip.TabIndex = 0;
             // 
             // portfolioDefinitionMenuItem
@@ -420,8 +420,8 @@
             mainSplitContainer.Panel2.Controls.Add(chartPanel);
             mainSplitContainer.Panel2MinSize = 700;
             mainSplitContainer.RightToLeft = RightToLeft.No;
-            mainSplitContainer.Size = new Size(1643, 933);
-            mainSplitContainer.SplitterDistance = 400;
+            mainSplitContainer.Size = new Size(1491, 933);
+            mainSplitContainer.SplitterDistance = 362;
             mainSplitContainer.TabIndex = 1;
             // 
             // controlTabControl
@@ -436,7 +436,7 @@
             controlTabControl.RightToLeft = RightToLeft.Yes;
             controlTabControl.RightToLeftLayout = true;
             controlTabControl.SelectedIndex = 0;
-            controlTabControl.Size = new Size(400, 933);
+            controlTabControl.Size = new Size(362, 933);
             controlTabControl.TabIndex = 0;
             // 
             // stocksTabPage
@@ -449,7 +449,7 @@
             stocksTabPage.Name = "stocksTabPage";
             stocksTabPage.Padding = new Padding(8);
             stocksTabPage.RightToLeft = RightToLeft.Yes;
-            stocksTabPage.Size = new Size(392, 895);
+            stocksTabPage.Size = new Size(354, 895);
             stocksTabPage.TabIndex = 0;
             stocksTabPage.Text = "سبد";
             // 
@@ -466,14 +466,14 @@
             groupBox2.Controls.Add(navigationSpeedTextBox);
             groupBox2.Location = new Point(8, 720);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(376, 170);
+            groupBox2.Size = new Size(338, 170);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             // 
             // navigationButton
             // 
             navigationButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            navigationButton.Location = new Point(274, 33);
+            navigationButton.Location = new Point(236, 33);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(87, 34);
             navigationButton.TabIndex = 0;
@@ -483,7 +483,7 @@
             // 
             selectAllCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(265, 78);
+            selectAllCheckBox.Location = new Point(227, 78);
             selectAllCheckBox.Name = "selectAllCheckBox";
             selectAllCheckBox.Size = new Size(70, 29);
             selectAllCheckBox.TabIndex = 0;
@@ -514,14 +514,14 @@
             refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             refreshButton.Location = new Point(114, 113);
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(159, 34);
+            refreshButton.Size = new Size(121, 34);
             refreshButton.TabIndex = 2;
             refreshButton.Text = "تازه";
             // 
             // deleteButton
             // 
             deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deleteButton.Location = new Point(288, 113);
+            deleteButton.Location = new Point(250, 113);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
             deleteButton.TabIndex = 3;
@@ -559,7 +559,7 @@
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
-            stocksDataGridView.Size = new Size(373, 672);
+            stocksDataGridView.Size = new Size(335, 672);
             stocksDataGridView.TabIndex = 0;
             // 
             // rowColumn
@@ -599,14 +599,14 @@
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new Point(8, 3);
             portfolioComboBox.Name = "portfolioComboBox";
-            portfolioComboBox.Size = new Size(312, 33);
+            portfolioComboBox.Size = new Size(274, 33);
             portfolioComboBox.TabIndex = 2;
             // 
             // portfolioLabel
             // 
             portfolioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             portfolioLabel.AutoSize = true;
-            portfolioLabel.Location = new Point(318, 6);
+            portfolioLabel.Location = new Point(280, 6);
             portfolioLabel.Name = "portfolioLabel";
             portfolioLabel.Size = new Size(63, 25);
             portfolioLabel.TabIndex = 3;
@@ -630,7 +630,7 @@
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(8);
             tabPage2.RightToLeft = RightToLeft.Yes;
-            tabPage2.Size = new Size(392, 895);
+            tabPage2.Size = new Size(354, 895);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "فیلترها";
             // 
@@ -648,7 +648,7 @@
             groupBox3.Controls.Add(filterComparison9ClearButton);
             groupBox3.Location = new Point(8, 743);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(376, 111);
+            groupBox3.Size = new Size(339, 111);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "9. مقایسه قیمت:";
@@ -667,7 +667,7 @@
             comparisonSecondTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox3.Location = new Point(182, 69);
             comparisonSecondTextBox3.Name = "comparisonSecondTextBox3";
-            comparisonSecondTextBox3.Size = new Size(57, 31);
+            comparisonSecondTextBox3.Size = new Size(20, 31);
             comparisonSecondTextBox3.TabIndex = 1;
             comparisonSecondTextBox3.Text = "5";
             comparisonSecondTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -686,7 +686,7 @@
             comparisonFirstTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox3.Location = new Point(182, 32);
             comparisonFirstTextBox3.Name = "comparisonFirstTextBox3";
-            comparisonFirstTextBox3.Size = new Size(57, 31);
+            comparisonFirstTextBox3.Size = new Size(20, 31);
             comparisonFirstTextBox3.TabIndex = 4;
             comparisonFirstTextBox3.Text = "5";
             comparisonFirstTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -695,7 +695,7 @@
             // 
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label9.AutoSize = true;
-            label9.Location = new Point(316, 35);
+            label9.Location = new Point(279, 35);
             label9.Name = "label9";
             label9.Size = new Size(55, 25);
             label9.TabIndex = 5;
@@ -706,7 +706,7 @@
             comparisonFirstComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox3.Location = new Point(241, 29);
+            comparisonFirstComboBox3.Location = new Point(204, 29);
             comparisonFirstComboBox3.Name = "comparisonFirstComboBox3";
             comparisonFirstComboBox3.Size = new Size(75, 33);
             comparisonFirstComboBox3.TabIndex = 6;
@@ -725,7 +725,7 @@
             comparisonSecondComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox3.Location = new Point(241, 68);
+            comparisonSecondComboBox3.Location = new Point(204, 68);
             comparisonSecondComboBox3.Name = "comparisonSecondComboBox3";
             comparisonSecondComboBox3.Size = new Size(75, 33);
             comparisonSecondComboBox3.TabIndex = 8;
@@ -777,7 +777,7 @@
             ohlcChangeFilterGroup.Controls.Add(filterOhlcChangeClearButton);
             ohlcChangeFilterGroup.Location = new Point(8, 638);
             ohlcChangeFilterGroup.Name = "ohlcChangeFilterGroup";
-            ohlcChangeFilterGroup.Size = new Size(376, 105);
+            ohlcChangeFilterGroup.Size = new Size(339, 105);
             ohlcChangeFilterGroup.TabIndex = 8;
             ohlcChangeFilterGroup.TabStop = false;
             ohlcChangeFilterGroup.Text = "10. درصد رشد";
@@ -786,7 +786,7 @@
             // 
             ohlcChangeFieldLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldLabel.AutoSize = true;
-            ohlcChangeFieldLabel.Location = new Point(289, 31);
+            ohlcChangeFieldLabel.Location = new Point(252, 31);
             ohlcChangeFieldLabel.Name = "ohlcChangeFieldLabel";
             ohlcChangeFieldLabel.Size = new Size(55, 25);
             ohlcChangeFieldLabel.TabIndex = 0;
@@ -797,7 +797,7 @@
             ohlcChangeFieldComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "پایانی" });
-            ohlcChangeFieldComboBox.Location = new Point(206, 27);
+            ohlcChangeFieldComboBox.Location = new Point(169, 27);
             ohlcChangeFieldComboBox.Name = "ohlcChangeFieldComboBox";
             ohlcChangeFieldComboBox.Size = new Size(79, 33);
             ohlcChangeFieldComboBox.TabIndex = 1;
@@ -843,7 +843,7 @@
             ohlcChangeDirectionComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            ohlcChangeDirectionComboBox.Location = new Point(195, 66);
+            ohlcChangeDirectionComboBox.Location = new Point(158, 66);
             ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
             ohlcChangeDirectionComboBox.Size = new Size(142, 33);
             ohlcChangeDirectionComboBox.TabIndex = 6;
@@ -876,7 +876,7 @@
             comparisonGroup8.Controls.Add(filterComparison8ClearButton);
             comparisonGroup8.Location = new Point(8, 519);
             comparisonGroup8.Name = "comparisonGroup8";
-            comparisonGroup8.Size = new Size(376, 119);
+            comparisonGroup8.Size = new Size(339, 119);
             comparisonGroup8.TabIndex = 7;
             comparisonGroup8.TabStop = false;
             comparisonGroup8.Text = "8. مقایسه قیمت:";
@@ -895,7 +895,7 @@
             comparisonSecondTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox1.Location = new Point(182, 70);
             comparisonSecondTextBox1.Name = "comparisonSecondTextBox1";
-            comparisonSecondTextBox1.Size = new Size(57, 31);
+            comparisonSecondTextBox1.Size = new Size(20, 31);
             comparisonSecondTextBox1.TabIndex = 1;
             comparisonSecondTextBox1.Text = "5";
             comparisonSecondTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -914,7 +914,7 @@
             comparisonFirstTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox1.Location = new Point(182, 33);
             comparisonFirstTextBox1.Name = "comparisonFirstTextBox1";
-            comparisonFirstTextBox1.Size = new Size(57, 31);
+            comparisonFirstTextBox1.Size = new Size(20, 31);
             comparisonFirstTextBox1.TabIndex = 4;
             comparisonFirstTextBox1.Text = "5";
             comparisonFirstTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -923,7 +923,7 @@
             // 
             label5_8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5_8.AutoSize = true;
-            label5_8.Location = new Point(316, 36);
+            label5_8.Location = new Point(279, 36);
             label5_8.Name = "label5_8";
             label5_8.Size = new Size(55, 25);
             label5_8.TabIndex = 5;
@@ -934,7 +934,7 @@
             comparisonFirstComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox2.Location = new Point(241, 30);
+            comparisonFirstComboBox2.Location = new Point(204, 30);
             comparisonFirstComboBox2.Name = "comparisonFirstComboBox2";
             comparisonFirstComboBox2.Size = new Size(75, 33);
             comparisonFirstComboBox2.TabIndex = 6;
@@ -953,7 +953,7 @@
             comparisonSecondComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox2.Location = new Point(241, 69);
+            comparisonSecondComboBox2.Location = new Point(204, 69);
             comparisonSecondComboBox2.Name = "comparisonSecondComboBox2";
             comparisonSecondComboBox2.Size = new Size(75, 33);
             comparisonSecondComboBox2.TabIndex = 8;
@@ -986,7 +986,7 @@
             comparisonGroup7.Controls.Add(filterComparison7ClearButton);
             comparisonGroup7.Location = new Point(8, 400);
             comparisonGroup7.Name = "comparisonGroup7";
-            comparisonGroup7.Size = new Size(376, 119);
+            comparisonGroup7.Size = new Size(339, 119);
             comparisonGroup7.TabIndex = 6;
             comparisonGroup7.TabStop = false;
             comparisonGroup7.Text = "7. مقایسه قیمت:";
@@ -1005,7 +1005,7 @@
             comparisonSecondTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox2.Location = new Point(185, 73);
             comparisonSecondTextBox2.Name = "comparisonSecondTextBox2";
-            comparisonSecondTextBox2.Size = new Size(57, 31);
+            comparisonSecondTextBox2.Size = new Size(20, 31);
             comparisonSecondTextBox2.TabIndex = 10;
             comparisonSecondTextBox2.Text = "5";
             comparisonSecondTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -1024,7 +1024,7 @@
             comparisonFirstTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox2.Location = new Point(185, 36);
             comparisonFirstTextBox2.Name = "comparisonFirstTextBox2";
-            comparisonFirstTextBox2.Size = new Size(57, 31);
+            comparisonFirstTextBox2.Size = new Size(20, 31);
             comparisonFirstTextBox2.TabIndex = 12;
             comparisonFirstTextBox2.Text = "5";
             comparisonFirstTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -1033,7 +1033,7 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(319, 39);
+            label6.Location = new Point(282, 39);
             label6.Name = "label6";
             label6.Size = new Size(55, 25);
             label6.TabIndex = 13;
@@ -1044,7 +1044,7 @@
             comparisonFirstComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox1.Location = new Point(244, 33);
+            comparisonFirstComboBox1.Location = new Point(207, 33);
             comparisonFirstComboBox1.Name = "comparisonFirstComboBox1";
             comparisonFirstComboBox1.Size = new Size(75, 33);
             comparisonFirstComboBox1.TabIndex = 14;
@@ -1063,7 +1063,7 @@
             comparisonSecondComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox1.Location = new Point(244, 72);
+            comparisonSecondComboBox1.Location = new Point(207, 72);
             comparisonSecondComboBox1.Name = "comparisonSecondComboBox1";
             comparisonSecondComboBox1.Size = new Size(75, 33);
             comparisonSecondComboBox1.TabIndex = 16;
@@ -1093,7 +1093,7 @@
             pastDaysGroup.Controls.Add(filterPastDaysClearButton);
             pastDaysGroup.Location = new Point(8, 281);
             pastDaysGroup.Name = "pastDaysGroup";
-            pastDaysGroup.Size = new Size(376, 119);
+            pastDaysGroup.Size = new Size(339, 119);
             pastDaysGroup.TabIndex = 3;
             pastDaysGroup.TabStop = false;
             pastDaysGroup.Text = "4. وضعیت معامله در روزهای گذشته:";
@@ -1101,7 +1101,7 @@
             // label4
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label4.Location = new Point(323, 45);
+            label4.Location = new Point(286, 45);
             label4.Name = "label4";
             label4.Size = new Size(40, 33);
             label4.TabIndex = 0;
@@ -1112,14 +1112,14 @@
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label3.Location = new Point(129, 45);
             label3.Name = "label3";
-            label3.Size = new Size(128, 34);
+            label3.Size = new Size(91, 34);
             label3.TabIndex = 1;
             label3.Text = "گذشته معامله";
             // 
             // pastDaysTextBox
             // 
             pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pastDaysTextBox.Location = new Point(263, 44);
+            pastDaysTextBox.Location = new Point(226, 44);
             pastDaysTextBox.Name = "pastDaysTextBox";
             pastDaysTextBox.Size = new Size(63, 31);
             pastDaysTextBox.TabIndex = 2;
@@ -1164,7 +1164,7 @@
             volumeRatioGroup.Controls.Add(filterVolumeClearButton);
             volumeRatioGroup.Location = new Point(8, 196);
             volumeRatioGroup.Name = "volumeRatioGroup";
-            volumeRatioGroup.Size = new Size(376, 85);
+            volumeRatioGroup.Size = new Size(339, 85);
             volumeRatioGroup.TabIndex = 2;
             volumeRatioGroup.TabStop = false;
             volumeRatioGroup.Text = "3. نسبت حجم آخرین روز به میانگین: ";
@@ -1172,7 +1172,7 @@
             // label2
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label2.Location = new Point(226, 32);
+            label2.Location = new Point(189, 32);
             label2.Name = "label2";
             label2.Size = new Size(69, 31);
             label2.TabIndex = 0;
@@ -1190,7 +1190,7 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            textBox1.Location = new Point(298, 30);
+            textBox1.Location = new Point(261, 30);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(59, 31);
             textBox1.TabIndex = 2;
@@ -1224,7 +1224,7 @@
             nameFilterGroup.Controls.Add(filterNameClearButton);
             nameFilterGroup.Location = new Point(8, 111);
             nameFilterGroup.Name = "nameFilterGroup";
-            nameFilterGroup.Size = new Size(376, 85);
+            nameFilterGroup.Size = new Size(339, 85);
             nameFilterGroup.TabIndex = 1;
             nameFilterGroup.TabStop = false;
             nameFilterGroup.Text = "2. جستجو در نام نماد:";
@@ -1241,7 +1241,7 @@
             // nameTextBox
             // 
             nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nameTextBox.Location = new Point(214, 30);
+            nameTextBox.Location = new Point(177, 30);
             nameTextBox.Name = "nameTextBox";
             nameTextBox.Size = new Size(149, 31);
             nameTextBox.TabIndex = 1;
@@ -1269,7 +1269,7 @@
             tradingStatusGroup.Controls.Add(filterTradingClearButton);
             tradingStatusGroup.Location = new Point(8, 8);
             tradingStatusGroup.Name = "tradingStatusGroup";
-            tradingStatusGroup.Size = new Size(376, 103);
+            tradingStatusGroup.Size = new Size(339, 103);
             tradingStatusGroup.TabIndex = 0;
             tradingStatusGroup.TabStop = false;
             tradingStatusGroup.Text = "1. وضعیت معامله امروز:";
@@ -1277,7 +1277,7 @@
             // statusAllRadio
             // 
             statusAllRadio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            statusAllRadio.Location = new Point(226, 49);
+            statusAllRadio.Location = new Point(189, 49);
             statusAllRadio.Name = "statusAllRadio";
             statusAllRadio.Size = new Size(90, 29);
             statusAllRadio.TabIndex = 0;
@@ -1288,7 +1288,7 @@
             statusPositiveRadio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             statusPositiveRadio.Location = new Point(154, 47);
             statusPositiveRadio.Name = "statusPositiveRadio";
-            statusPositiveRadio.Size = new Size(71, 33);
+            statusPositiveRadio.Size = new Size(34, 33);
             statusPositiveRadio.TabIndex = 1;
             statusPositiveRadio.Text = "دارد";
             // 
@@ -1321,7 +1321,7 @@
             tabPage3.Location = new Point(4, 34);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(8);
-            tabPage3.Size = new Size(392, 895);
+            tabPage3.Size = new Size(354, 895);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "شناسه";
             // 
@@ -1334,7 +1334,7 @@
             identifierMainGroup.Name = "identifierMainGroup";
             identifierMainGroup.Padding = new Padding(10);
             identifierMainGroup.RightToLeft = RightToLeft.Yes;
-            identifierMainGroup.Size = new Size(376, 644);
+            identifierMainGroup.Size = new Size(338, 644);
             identifierMainGroup.TabIndex = 0;
             identifierMainGroup.TabStop = false;
             identifierMainGroup.Text = "اطلاعات شناسه";
@@ -1393,14 +1393,14 @@
             identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.Size = new Size(356, 600);
+            identifierLayout.Size = new Size(318, 600);
             identifierLayout.TabIndex = 0;
             // 
             // identifierSymbolLabel
             // 
             identifierSymbolLabel.Dock = DockStyle.Fill;
             identifierSymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierSymbolLabel.Location = new Point(199, 10);
+            identifierSymbolLabel.Location = new Point(161, 10);
             identifierSymbolLabel.Margin = new Padding(4);
             identifierSymbolLabel.Name = "identifierSymbolLabel";
             identifierSymbolLabel.RightToLeft = RightToLeft.Yes;
@@ -1416,14 +1416,14 @@
             identifierSymbolTextBox.Margin = new Padding(4);
             identifierSymbolTextBox.Name = "identifierSymbolTextBox";
             identifierSymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSymbolTextBox.Size = new Size(181, 31);
+            identifierSymbolTextBox.Size = new Size(143, 31);
             identifierSymbolTextBox.TabIndex = 0;
             // 
             // identifierNameLabel
             // 
             identifierNameLabel.Dock = DockStyle.Fill;
             identifierNameLabel.Font = new Font("Segoe UI", 10F);
-            identifierNameLabel.Location = new Point(199, 52);
+            identifierNameLabel.Location = new Point(161, 52);
             identifierNameLabel.Margin = new Padding(4);
             identifierNameLabel.Name = "identifierNameLabel";
             identifierNameLabel.RightToLeft = RightToLeft.Yes;
@@ -1439,14 +1439,14 @@
             identifierNameTextBox.Margin = new Padding(4);
             identifierNameTextBox.Name = "identifierNameTextBox";
             identifierNameTextBox.RightToLeft = RightToLeft.Yes;
-            identifierNameTextBox.Size = new Size(181, 31);
+            identifierNameTextBox.Size = new Size(143, 31);
             identifierNameTextBox.TabIndex = 1;
             // 
             // identifierTsetmcLabel
             // 
             identifierTsetmcLabel.Dock = DockStyle.Fill;
             identifierTsetmcLabel.Font = new Font("Segoe UI", 10F);
-            identifierTsetmcLabel.Location = new Point(199, 94);
+            identifierTsetmcLabel.Location = new Point(161, 94);
             identifierTsetmcLabel.Margin = new Padding(4);
             identifierTsetmcLabel.Name = "identifierTsetmcLabel";
             identifierTsetmcLabel.RightToLeft = RightToLeft.Yes;
@@ -1462,14 +1462,14 @@
             identifierTsetmcTextBox.Margin = new Padding(4);
             identifierTsetmcTextBox.Name = "identifierTsetmcTextBox";
             identifierTsetmcTextBox.RightToLeft = RightToLeft.Yes;
-            identifierTsetmcTextBox.Size = new Size(181, 31);
+            identifierTsetmcTextBox.Size = new Size(143, 31);
             identifierTsetmcTextBox.TabIndex = 2;
             // 
             // identifierGroupLabel
             // 
             identifierGroupLabel.Dock = DockStyle.Fill;
             identifierGroupLabel.Font = new Font("Segoe UI", 10F);
-            identifierGroupLabel.Location = new Point(199, 136);
+            identifierGroupLabel.Location = new Point(161, 136);
             identifierGroupLabel.Margin = new Padding(4);
             identifierGroupLabel.Name = "identifierGroupLabel";
             identifierGroupLabel.RightToLeft = RightToLeft.Yes;
@@ -1485,14 +1485,14 @@
             identifierGroupTextBox.Margin = new Padding(4);
             identifierGroupTextBox.Name = "identifierGroupTextBox";
             identifierGroupTextBox.RightToLeft = RightToLeft.Yes;
-            identifierGroupTextBox.Size = new Size(181, 31);
+            identifierGroupTextBox.Size = new Size(143, 31);
             identifierGroupTextBox.TabIndex = 3;
             // 
             // identifierDescriptionLabel
             // 
             identifierDescriptionLabel.Dock = DockStyle.Fill;
             identifierDescriptionLabel.Font = new Font("Segoe UI", 10F);
-            identifierDescriptionLabel.Location = new Point(199, 178);
+            identifierDescriptionLabel.Location = new Point(161, 178);
             identifierDescriptionLabel.Margin = new Padding(4);
             identifierDescriptionLabel.Name = "identifierDescriptionLabel";
             identifierDescriptionLabel.RightToLeft = RightToLeft.Yes;
@@ -1508,14 +1508,14 @@
             identifierDescriptionTextBox.Margin = new Padding(4);
             identifierDescriptionTextBox.Name = "identifierDescriptionTextBox";
             identifierDescriptionTextBox.RightToLeft = RightToLeft.Yes;
-            identifierDescriptionTextBox.Size = new Size(181, 31);
+            identifierDescriptionTextBox.Size = new Size(143, 31);
             identifierDescriptionTextBox.TabIndex = 4;
             // 
             // identifierPersianSymbolLabel
             // 
             identifierPersianSymbolLabel.Dock = DockStyle.Fill;
             identifierPersianSymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierPersianSymbolLabel.Location = new Point(199, 220);
+            identifierPersianSymbolLabel.Location = new Point(161, 220);
             identifierPersianSymbolLabel.Margin = new Padding(4);
             identifierPersianSymbolLabel.Name = "identifierPersianSymbolLabel";
             identifierPersianSymbolLabel.RightToLeft = RightToLeft.Yes;
@@ -1531,14 +1531,14 @@
             identifierPersianSymbolTextBox.Margin = new Padding(4);
             identifierPersianSymbolTextBox.Name = "identifierPersianSymbolTextBox";
             identifierPersianSymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierPersianSymbolTextBox.Size = new Size(181, 31);
+            identifierPersianSymbolTextBox.Size = new Size(143, 31);
             identifierPersianSymbolTextBox.TabIndex = 5;
             // 
             // identifierPersian30SymbolLabel
             // 
             identifierPersian30SymbolLabel.Dock = DockStyle.Fill;
             identifierPersian30SymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierPersian30SymbolLabel.Location = new Point(199, 262);
+            identifierPersian30SymbolLabel.Location = new Point(161, 262);
             identifierPersian30SymbolLabel.Margin = new Padding(4);
             identifierPersian30SymbolLabel.Name = "identifierPersian30SymbolLabel";
             identifierPersian30SymbolLabel.RightToLeft = RightToLeft.Yes;
@@ -1554,14 +1554,14 @@
             identifierPersian30SymbolTextBox.Margin = new Padding(4);
             identifierPersian30SymbolTextBox.Name = "identifierPersian30SymbolTextBox";
             identifierPersian30SymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierPersian30SymbolTextBox.Size = new Size(181, 31);
+            identifierPersian30SymbolTextBox.Size = new Size(143, 31);
             identifierPersian30SymbolTextBox.TabIndex = 6;
             // 
             // identifierCompanyCode12Label
             // 
             identifierCompanyCode12Label.Dock = DockStyle.Fill;
             identifierCompanyCode12Label.Font = new Font("Segoe UI", 10F);
-            identifierCompanyCode12Label.Location = new Point(199, 304);
+            identifierCompanyCode12Label.Location = new Point(161, 304);
             identifierCompanyCode12Label.Margin = new Padding(4);
             identifierCompanyCode12Label.Name = "identifierCompanyCode12Label";
             identifierCompanyCode12Label.RightToLeft = RightToLeft.Yes;
@@ -1577,14 +1577,14 @@
             identifierCompanyCode12TextBox.Margin = new Padding(4);
             identifierCompanyCode12TextBox.Name = "identifierCompanyCode12TextBox";
             identifierCompanyCode12TextBox.RightToLeft = RightToLeft.Yes;
-            identifierCompanyCode12TextBox.Size = new Size(181, 31);
+            identifierCompanyCode12TextBox.Size = new Size(143, 31);
             identifierCompanyCode12TextBox.TabIndex = 7;
             // 
             // identifierMarketLabel
             // 
             identifierMarketLabel.Dock = DockStyle.Fill;
             identifierMarketLabel.Font = new Font("Segoe UI", 10F);
-            identifierMarketLabel.Location = new Point(199, 346);
+            identifierMarketLabel.Location = new Point(161, 346);
             identifierMarketLabel.Margin = new Padding(4);
             identifierMarketLabel.Name = "identifierMarketLabel";
             identifierMarketLabel.RightToLeft = RightToLeft.Yes;
@@ -1601,14 +1601,14 @@
             identifierMarketComboBox.Margin = new Padding(4);
             identifierMarketComboBox.Name = "identifierMarketComboBox";
             identifierMarketComboBox.RightToLeft = RightToLeft.Yes;
-            identifierMarketComboBox.Size = new Size(181, 33);
+            identifierMarketComboBox.Size = new Size(143, 33);
             identifierMarketComboBox.TabIndex = 8;
             // 
             // identifierBoardCodeLabel
             // 
             identifierBoardCodeLabel.Dock = DockStyle.Fill;
             identifierBoardCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierBoardCodeLabel.Location = new Point(199, 388);
+            identifierBoardCodeLabel.Location = new Point(161, 388);
             identifierBoardCodeLabel.Margin = new Padding(4);
             identifierBoardCodeLabel.Name = "identifierBoardCodeLabel";
             identifierBoardCodeLabel.RightToLeft = RightToLeft.Yes;
@@ -1624,14 +1624,14 @@
             identifierBoardCodeTextBox.Margin = new Padding(4);
             identifierBoardCodeTextBox.Name = "identifierBoardCodeTextBox";
             identifierBoardCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierBoardCodeTextBox.Size = new Size(181, 31);
+            identifierBoardCodeTextBox.Size = new Size(143, 31);
             identifierBoardCodeTextBox.TabIndex = 9;
             // 
             // identifierIndustryCodeLabel
             // 
             identifierIndustryCodeLabel.Dock = DockStyle.Fill;
             identifierIndustryCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierIndustryCodeLabel.Location = new Point(199, 430);
+            identifierIndustryCodeLabel.Location = new Point(161, 430);
             identifierIndustryCodeLabel.Margin = new Padding(4);
             identifierIndustryCodeLabel.Name = "identifierIndustryCodeLabel";
             identifierIndustryCodeLabel.RightToLeft = RightToLeft.Yes;
@@ -1647,14 +1647,14 @@
             identifierIndustryCodeTextBox.Margin = new Padding(4);
             identifierIndustryCodeTextBox.Name = "identifierIndustryCodeTextBox";
             identifierIndustryCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierIndustryCodeTextBox.Size = new Size(181, 31);
+            identifierIndustryCodeTextBox.Size = new Size(143, 31);
             identifierIndustryCodeTextBox.TabIndex = 10;
             // 
             // identifierIndustryLabel
             // 
             identifierIndustryLabel.Dock = DockStyle.Fill;
             identifierIndustryLabel.Font = new Font("Segoe UI", 10F);
-            identifierIndustryLabel.Location = new Point(199, 472);
+            identifierIndustryLabel.Location = new Point(161, 472);
             identifierIndustryLabel.Margin = new Padding(4);
             identifierIndustryLabel.Name = "identifierIndustryLabel";
             identifierIndustryLabel.RightToLeft = RightToLeft.Yes;
@@ -1670,14 +1670,14 @@
             identifierIndustryTextBox.Margin = new Padding(4);
             identifierIndustryTextBox.Name = "identifierIndustryTextBox";
             identifierIndustryTextBox.RightToLeft = RightToLeft.Yes;
-            identifierIndustryTextBox.Size = new Size(181, 31);
+            identifierIndustryTextBox.Size = new Size(143, 31);
             identifierIndustryTextBox.TabIndex = 11;
             // 
             // identifierSubIndustryCodeLabel
             // 
             identifierSubIndustryCodeLabel.Dock = DockStyle.Fill;
             identifierSubIndustryCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierSubIndustryCodeLabel.Location = new Point(199, 514);
+            identifierSubIndustryCodeLabel.Location = new Point(161, 514);
             identifierSubIndustryCodeLabel.Margin = new Padding(4);
             identifierSubIndustryCodeLabel.Name = "identifierSubIndustryCodeLabel";
             identifierSubIndustryCodeLabel.RightToLeft = RightToLeft.Yes;
@@ -1693,14 +1693,14 @@
             identifierSubIndustryCodeTextBox.Margin = new Padding(4);
             identifierSubIndustryCodeTextBox.Name = "identifierSubIndustryCodeTextBox";
             identifierSubIndustryCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryCodeTextBox.Size = new Size(181, 31);
+            identifierSubIndustryCodeTextBox.Size = new Size(143, 31);
             identifierSubIndustryCodeTextBox.TabIndex = 12;
             // 
             // identifierSubIndustryLabel
             // 
             identifierSubIndustryLabel.Dock = DockStyle.Fill;
             identifierSubIndustryLabel.Font = new Font("Segoe UI", 10F);
-            identifierSubIndustryLabel.Location = new Point(199, 556);
+            identifierSubIndustryLabel.Location = new Point(161, 556);
             identifierSubIndustryLabel.Margin = new Padding(4);
             identifierSubIndustryLabel.Name = "identifierSubIndustryLabel";
             identifierSubIndustryLabel.RightToLeft = RightToLeft.Yes;
@@ -1716,7 +1716,7 @@
             identifierSubIndustryTextBox.Margin = new Padding(4);
             identifierSubIndustryTextBox.Name = "identifierSubIndustryTextBox";
             identifierSubIndustryTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryTextBox.Size = new Size(181, 31);
+            identifierSubIndustryTextBox.Size = new Size(143, 31);
             identifierSubIndustryTextBox.TabIndex = 13;
             // 
             // identifierButtonsPanel
@@ -1733,7 +1733,7 @@
             identifierButtonsPanel.Name = "identifierButtonsPanel";
             identifierButtonsPanel.Padding = new Padding(4);
             identifierButtonsPanel.RightToLeft = RightToLeft.Yes;
-            identifierButtonsPanel.Size = new Size(376, 52);
+            identifierButtonsPanel.Size = new Size(338, 52);
             identifierButtonsPanel.TabIndex = 0;
             identifierButtonsPanel.WrapContents = false;
             // 
@@ -1788,7 +1788,7 @@
             marketsTabPage.Location = new Point(4, 34);
             marketsTabPage.Name = "marketsTabPage";
             marketsTabPage.Padding = new Padding(8);
-            marketsTabPage.Size = new Size(392, 895);
+            marketsTabPage.Size = new Size(354, 895);
             marketsTabPage.TabIndex = 3;
             marketsTabPage.Text = "بازارها";
             // 
@@ -1801,7 +1801,7 @@
             marketsMainGroup.Name = "marketsMainGroup";
             marketsMainGroup.Padding = new Padding(10);
             marketsMainGroup.RightToLeft = RightToLeft.Yes;
-            marketsMainGroup.Size = new Size(376, 266);
+            marketsMainGroup.Size = new Size(338, 266);
             marketsMainGroup.TabIndex = 0;
             marketsMainGroup.TabStop = false;
             marketsMainGroup.Text = "اطلاعات بازار";
@@ -1833,14 +1833,14 @@
             marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.Size = new Size(356, 222);
+            marketsLayout.Size = new Size(318, 222);
             marketsLayout.TabIndex = 0;
             // 
             // marketTypeLabel
             // 
             marketTypeLabel.Dock = DockStyle.Fill;
             marketTypeLabel.Font = new Font("Segoe UI", 10F);
-            marketTypeLabel.Location = new Point(199, 10);
+            marketTypeLabel.Location = new Point(161, 10);
             marketTypeLabel.Margin = new Padding(4);
             marketTypeLabel.Name = "marketTypeLabel";
             marketTypeLabel.RightToLeft = RightToLeft.Yes;
@@ -1856,14 +1856,14 @@
             marketTypeTextBox.Margin = new Padding(4);
             marketTypeTextBox.Name = "marketTypeTextBox";
             marketTypeTextBox.RightToLeft = RightToLeft.Yes;
-            marketTypeTextBox.Size = new Size(181, 31);
+            marketTypeTextBox.Size = new Size(143, 31);
             marketTypeTextBox.TabIndex = 0;
             // 
             // marketNameLabel
             // 
             marketNameLabel.Dock = DockStyle.Fill;
             marketNameLabel.Font = new Font("Segoe UI", 10F);
-            marketNameLabel.Location = new Point(199, 52);
+            marketNameLabel.Location = new Point(161, 52);
             marketNameLabel.Margin = new Padding(4);
             marketNameLabel.Name = "marketNameLabel";
             marketNameLabel.RightToLeft = RightToLeft.Yes;
@@ -1879,14 +1879,14 @@
             marketNameTextBox.Margin = new Padding(4);
             marketNameTextBox.Name = "marketNameTextBox";
             marketNameTextBox.RightToLeft = RightToLeft.Yes;
-            marketNameTextBox.Size = new Size(181, 31);
+            marketNameTextBox.Size = new Size(143, 31);
             marketNameTextBox.TabIndex = 1;
             // 
             // marketBoardLabel
             // 
             marketBoardLabel.Dock = DockStyle.Fill;
             marketBoardLabel.Font = new Font("Segoe UI", 10F);
-            marketBoardLabel.Location = new Point(199, 94);
+            marketBoardLabel.Location = new Point(161, 94);
             marketBoardLabel.Margin = new Padding(4);
             marketBoardLabel.Name = "marketBoardLabel";
             marketBoardLabel.RightToLeft = RightToLeft.Yes;
@@ -1902,14 +1902,14 @@
             marketBoardTextBox.Margin = new Padding(4);
             marketBoardTextBox.Name = "marketBoardTextBox";
             marketBoardTextBox.RightToLeft = RightToLeft.Yes;
-            marketBoardTextBox.Size = new Size(181, 31);
+            marketBoardTextBox.Size = new Size(143, 31);
             marketBoardTextBox.TabIndex = 2;
             // 
             // marketIndustryGroupLabel
             // 
             marketIndustryGroupLabel.Dock = DockStyle.Fill;
             marketIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
-            marketIndustryGroupLabel.Location = new Point(199, 136);
+            marketIndustryGroupLabel.Location = new Point(161, 136);
             marketIndustryGroupLabel.Margin = new Padding(4);
             marketIndustryGroupLabel.Name = "marketIndustryGroupLabel";
             marketIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
@@ -1925,14 +1925,14 @@
             marketIndustryGroupTextBox.Margin = new Padding(4);
             marketIndustryGroupTextBox.Name = "marketIndustryGroupTextBox";
             marketIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupTextBox.Size = new Size(181, 31);
+            marketIndustryGroupTextBox.Size = new Size(143, 31);
             marketIndustryGroupTextBox.TabIndex = 3;
             // 
             // marketSubIndustryGroupLabel
             // 
             marketSubIndustryGroupLabel.Dock = DockStyle.Fill;
             marketSubIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
-            marketSubIndustryGroupLabel.Location = new Point(199, 178);
+            marketSubIndustryGroupLabel.Location = new Point(161, 178);
             marketSubIndustryGroupLabel.Margin = new Padding(4);
             marketSubIndustryGroupLabel.Name = "marketSubIndustryGroupLabel";
             marketSubIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
@@ -1948,7 +1948,7 @@
             marketSubIndustryGroupTextBox.Margin = new Padding(4);
             marketSubIndustryGroupTextBox.Name = "marketSubIndustryGroupTextBox";
             marketSubIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
-            marketSubIndustryGroupTextBox.Size = new Size(181, 31);
+            marketSubIndustryGroupTextBox.Size = new Size(143, 31);
             marketSubIndustryGroupTextBox.TabIndex = 4;
             // 
             // chartPanel
@@ -1959,17 +1959,17 @@
             chartPanel.Dock = DockStyle.Fill;
             chartPanel.Location = new Point(0, 0);
             chartPanel.Name = "chartPanel";
-            chartPanel.Size = new Size(1239, 933);
+            chartPanel.Size = new Size(1125, 933);
             chartPanel.TabIndex = 0;
             // 
             // chartTabControl
             // 
             chartTabControl.Controls.Add(chartTabPage);
             chartTabControl.Dock = DockStyle.Fill;
-            chartTabControl.Location = new Point(0, 51);
+            chartTabControl.Location = new Point(0, 88);
             chartTabControl.Name = "chartTabControl";
             chartTabControl.SelectedIndex = 0;
-            chartTabControl.Size = new Size(1237, 880);
+            chartTabControl.Size = new Size(1123, 843);
             chartTabControl.TabIndex = 0;
             // 
             // chartTabPage
@@ -1979,7 +1979,7 @@
             chartTabPage.Location = new Point(4, 34);
             chartTabPage.Name = "chartTabPage";
             chartTabPage.Padding = new Padding(3);
-            chartTabPage.Size = new Size(1229, 842);
+            chartTabPage.Size = new Size(1115, 805);
             chartTabPage.TabIndex = 0;
             chartTabPage.Text = "نماد";
             // 
@@ -1990,7 +1990,7 @@
             chartInfoPanel.Dock = DockStyle.Top;
             chartInfoPanel.Location = new Point(3, 3);
             chartInfoPanel.Name = "chartInfoPanel";
-            chartInfoPanel.Size = new Size(1223, 30);
+            chartInfoPanel.Size = new Size(1109, 30);
             chartInfoPanel.TabIndex = 0;
             // 
             // chartInfoLabel
@@ -1999,7 +1999,7 @@
             chartInfoLabel.Location = new Point(0, 0);
             chartInfoLabel.Name = "chartInfoLabel";
             chartInfoLabel.Padding = new Padding(8, 0, 0, 0);
-            chartInfoLabel.Size = new Size(1223, 30);
+            chartInfoLabel.Size = new Size(1109, 30);
             chartInfoLabel.TabIndex = 0;
             chartInfoLabel.Text = "O: —    H: —    L: —    C: —    V: — تاریخ/زمان : —    ";
             chartInfoLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -2010,131 +2010,11 @@
             chartPlaceholderLabel.Font = new Font("Segoe UI", 14F);
             chartPlaceholderLabel.Location = new Point(3, 3);
             chartPlaceholderLabel.Name = "chartPlaceholderLabel";
-            chartPlaceholderLabel.Size = new Size(1223, 836);
+            chartPlaceholderLabel.Size = new Size(1109, 799);
             chartPlaceholderLabel.TabIndex = 1;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // 
-            // drawTrendLineButton
-            // 
-            drawTrendLineButton.Location = new Point(790, 7);
-            drawTrendLineButton.Name = "drawTrendLineButton";
-            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
-            drawTrendLineButton.Size = new Size(82, 34);
-            drawTrendLineButton.TabIndex = 20;
-            drawTrendLineButton.Text = "خط روند";
-            drawTrendLineButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTrendChannelButton
-            // 
-            drawTrendChannelButton.Location = new Point(877, 7);
-            drawTrendChannelButton.Name = "drawTrendChannelButton";
-            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
-            drawTrendChannelButton.Size = new Size(82, 34);
-            drawTrendChannelButton.TabIndex = 20;
-            drawTrendChannelButton.Text = "کانال روند";
-            drawTrendChannelButton.UseVisualStyleBackColor = true;
-            // 
-            // drawHorizontalDoubleButton
-            // 
-            drawHorizontalDoubleButton.Location = new Point(964, 7);
-            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
-            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
-            drawHorizontalDoubleButton.Size = new Size(82, 34);
-            drawHorizontalDoubleButton.TabIndex = 20;
-            drawHorizontalDoubleButton.Text = "افقی دو سر";
-            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawVerticalDoubleButton
-            // 
-            drawVerticalDoubleButton.Location = new Point(1051, 7);
-            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
-            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
-            drawVerticalDoubleButton.Size = new Size(82, 34);
-            drawVerticalDoubleButton.TabIndex = 20;
-            drawVerticalDoubleButton.Text = "عمودی دو سر";
-            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawHorizontalRayButton
-            // 
-            drawHorizontalRayButton.Location = new Point(1138, 7);
-            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
-            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
-            drawHorizontalRayButton.Size = new Size(82, 34);
-            drawHorizontalRayButton.TabIndex = 20;
-            drawHorizontalRayButton.Text = "نیم خط افقی";
-            drawHorizontalRayButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTrendLineArrowButton
-            // 
-            drawTrendLineArrowButton.Location = new Point(6, 51);
-            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
-            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
-            drawTrendLineArrowButton.Size = new Size(82, 34);
-            drawTrendLineArrowButton.TabIndex = 20;
-            drawTrendLineArrowButton.Text = "خط روند فلش";
-            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
-            // 
-            // drawRectangleButton
-            // 
-            drawRectangleButton.Location = new Point(93, 51);
-            drawRectangleButton.Name = "drawRectangleButton";
-            drawRectangleButton.RightToLeft = RightToLeft.Yes;
-            drawRectangleButton.Size = new Size(82, 34);
-            drawRectangleButton.TabIndex = 20;
-            drawRectangleButton.Text = "مستطیل";
-            drawRectangleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawFibonacciButton
-            // 
-            drawFibonacciButton.Location = new Point(180, 51);
-            drawFibonacciButton.Name = "drawFibonacciButton";
-            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
-            drawFibonacciButton.Size = new Size(82, 34);
-            drawFibonacciButton.TabIndex = 20;
-            drawFibonacciButton.Text = "فیبوناچی";
-            drawFibonacciButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTextButton
-            // 
-            drawTextButton.Location = new Point(267, 51);
-            drawTextButton.Name = "drawTextButton";
-            drawTextButton.RightToLeft = RightToLeft.Yes;
-            drawTextButton.Size = new Size(82, 34);
-            drawTextButton.TabIndex = 20;
-            drawTextButton.Text = "متن";
-            drawTextButton.UseVisualStyleBackColor = true;
-            // 
-            // drawPitchforkButton
-            // 
-            drawPitchforkButton.Location = new Point(354, 51);
-            drawPitchforkButton.Name = "drawPitchforkButton";
-            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
-            drawPitchforkButton.Size = new Size(82, 34);
-            drawPitchforkButton.TabIndex = 20;
-            drawPitchforkButton.Text = "چنگال";
-            drawPitchforkButton.UseVisualStyleBackColor = true;
-            // 
-            // drawFibonacciExtensionButton
-            // 
-            drawFibonacciExtensionButton.Location = new Point(441, 51);
-            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
-            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
-            drawFibonacciExtensionButton.Size = new Size(92, 34);
-            drawFibonacciExtensionButton.TabIndex = 20;
-            drawFibonacciExtensionButton.Text = "فیبو اکسپنشن";
-            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
-            // 
-            // drawMeasureButton
-            // 
-            drawMeasureButton.Location = new Point(528, 51);
-            drawMeasureButton.Name = "drawMeasureButton";
-            drawMeasureButton.RightToLeft = RightToLeft.Yes;
-            drawMeasureButton.Size = new Size(82, 34);
-            drawMeasureButton.TabIndex = 20;
-            drawMeasureButton.Text = "خط کش";
-            drawMeasureButton.UseVisualStyleBackColor = true;
             // chartToolbarPanel
             // 
             chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
@@ -2166,37 +2046,38 @@
             chartToolbarPanel.Name = "chartToolbarPanel";
             chartToolbarPanel.Padding = new Padding(6, 5, 6, 5);
             chartToolbarPanel.RightToLeft = RightToLeft.Yes;
-            chartToolbarPanel.Size = new Size(1237, 94);
+            chartToolbarPanel.Size = new Size(1123, 88);
             chartToolbarPanel.TabIndex = 1;
             // 
             // chartTypeComboBox
             // 
             chartTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
-            chartTypeComboBox.Location = new Point(6, 8);
+            chartTypeComboBox.Location = new Point(6, 7);
             chartTypeComboBox.Name = "chartTypeComboBox";
             chartTypeComboBox.Size = new Size(92, 33);
             chartTypeComboBox.TabIndex = 0;
             // 
             // gridButton
             // 
-            gridButton.Location = new Point(99, 7);
+            gridButton.Location = new Point(101, 7);
             gridButton.Name = "gridButton";
-            gridButton.Size = new Size(54, 34);
+            gridButton.Size = new Size(60, 34);
             gridButton.TabIndex = 1;
             gridButton.Text = "گرید";
             // 
             // crossButton
             // 
-            crossButton.Location = new Point(154, 7);
+            crossButton.AutoSize = true;
+            crossButton.Location = new Point(162, 8);
             crossButton.Name = "crossButton";
-            crossButton.Size = new Size(58, 34);
+            crossButton.Size = new Size(66, 35);
             crossButton.TabIndex = 2;
             crossButton.Text = "Cross";
             // 
             // zoomInButton
             // 
-            zoomInButton.Location = new Point(211, 7);
+            zoomInButton.Location = new Point(228, 9);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
             zoomInButton.TabIndex = 3;
@@ -2204,7 +2085,7 @@
             // 
             // zoomOutButton
             // 
-            zoomOutButton.Location = new Point(266, 7);
+            zoomOutButton.Location = new Point(283, 9);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
             zoomOutButton.TabIndex = 4;
@@ -2212,31 +2093,33 @@
             // 
             // resetChartButton
             // 
-            resetChartButton.Location = new Point(321, 7);
+            resetChartButton.AutoSize = true;
+            resetChartButton.Location = new Point(338, 9);
             resetChartButton.Name = "resetChartButton";
-            resetChartButton.Size = new Size(72, 34);
+            resetChartButton.Size = new Size(86, 35);
             resetChartButton.TabIndex = 5;
             resetChartButton.Text = "بازنشانی";
             // 
             // hideChartButton
             // 
-            hideChartButton.Location = new Point(394, 7);
+            hideChartButton.Location = new Point(424, 9);
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(66, 34);
             hideChartButton.TabIndex = 6;
             hideChartButton.Text = "پنهان";
+            hideChartButton.Click += hideChartButton_Click;
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(461, 7);
+            hideToolsButton.Location = new Point(490, 9);
             hideToolsButton.Name = "hideToolsButton";
-            hideToolsButton.Size = new Size(70, 34);
+            hideToolsButton.Size = new Size(67, 34);
             hideToolsButton.TabIndex = 7;
             hideToolsButton.Text = "ابزارها";
             // 
             // printChartButton
             // 
-            printChartButton.Location = new Point(532, 7);
+            printChartButton.Location = new Point(557, 9);
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(70, 34);
             printChartButton.TabIndex = 8;
@@ -2244,19 +2127,139 @@
             // 
             // snapshotChartButton
             // 
-            snapshotChartButton.Location = new Point(603, 7);
+            snapshotChartButton.Location = new Point(627, 10);
             snapshotChartButton.Name = "snapshotChartButton";
-            snapshotChartButton.Size = new Size(86, 34);
+            snapshotChartButton.Size = new Size(79, 34);
             snapshotChartButton.TabIndex = 9;
             snapshotChartButton.Text = "تصویر";
             // 
             // fullScreenChartButton
             // 
-            fullScreenChartButton.Location = new Point(690, 7);
+            fullScreenChartButton.Location = new Point(706, 10);
             fullScreenChartButton.Name = "fullScreenChartButton";
-            fullScreenChartButton.Size = new Size(95, 34);
+            fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
             fullScreenChartButton.Text = "تمام صفحه";
+            // 
+            // drawTrendLineButton
+            // 
+            drawTrendLineButton.Location = new Point(8, 46);
+            drawTrendLineButton.Name = "drawTrendLineButton";
+            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineButton.Size = new Size(82, 34);
+            drawTrendLineButton.TabIndex = 20;
+            drawTrendLineButton.Text = "خط روند";
+            drawTrendLineButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendChannelButton
+            // 
+            drawTrendChannelButton.Location = new Point(91, 46);
+            drawTrendChannelButton.Name = "drawTrendChannelButton";
+            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
+            drawTrendChannelButton.Size = new Size(68, 34);
+            drawTrendChannelButton.TabIndex = 20;
+            drawTrendChannelButton.Text = "کانال روند";
+            drawTrendChannelButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalDoubleButton
+            // 
+            drawHorizontalDoubleButton.Location = new Point(159, 46);
+            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
+            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalDoubleButton.Size = new Size(69, 34);
+            drawHorizontalDoubleButton.TabIndex = 20;
+            drawHorizontalDoubleButton.Text = "افقی";
+            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawVerticalDoubleButton
+            // 
+            drawVerticalDoubleButton.Location = new Point(227, 46);
+            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
+            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawVerticalDoubleButton.Size = new Size(74, 34);
+            drawVerticalDoubleButton.TabIndex = 20;
+            drawVerticalDoubleButton.Text = "عمودی";
+            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalRayButton
+            // 
+            drawHorizontalRayButton.Location = new Point(300, 46);
+            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
+            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalRayButton.Size = new Size(76, 34);
+            drawHorizontalRayButton.TabIndex = 20;
+            drawHorizontalRayButton.Text = "نیم خط افقی";
+            drawHorizontalRayButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendLineArrowButton
+            // 
+            drawTrendLineArrowButton.Location = new Point(375, 46);
+            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
+            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineArrowButton.Size = new Size(81, 34);
+            drawTrendLineArrowButton.TabIndex = 20;
+            drawTrendLineArrowButton.Text = "فلش";
+            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
+            // 
+            // drawRectangleButton
+            // 
+            drawRectangleButton.Location = new Point(456, 46);
+            drawRectangleButton.Name = "drawRectangleButton";
+            drawRectangleButton.RightToLeft = RightToLeft.Yes;
+            drawRectangleButton.Size = new Size(90, 34);
+            drawRectangleButton.TabIndex = 20;
+            drawRectangleButton.Text = "مستطیل";
+            drawRectangleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciButton
+            // 
+            drawFibonacciButton.Location = new Point(610, 46);
+            drawFibonacciButton.Name = "drawFibonacciButton";
+            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciButton.Size = new Size(95, 34);
+            drawFibonacciButton.TabIndex = 20;
+            drawFibonacciButton.Text = "فیبو R";
+            drawFibonacciButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTextButton
+            // 
+            drawTextButton.Location = new Point(801, 46);
+            drawTextButton.Name = "drawTextButton";
+            drawTextButton.RightToLeft = RightToLeft.Yes;
+            drawTextButton.Size = new Size(82, 34);
+            drawTextButton.TabIndex = 20;
+            drawTextButton.Text = "متن";
+            drawTextButton.UseVisualStyleBackColor = true;
+            // 
+            // drawPitchforkButton
+            // 
+            drawPitchforkButton.Location = new Point(545, 46);
+            drawPitchforkButton.Name = "drawPitchforkButton";
+            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
+            drawPitchforkButton.Size = new Size(65, 34);
+            drawPitchforkButton.TabIndex = 20;
+            drawPitchforkButton.Text = "چنگال";
+            drawPitchforkButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciExtensionButton
+            // 
+            drawFibonacciExtensionButton.Location = new Point(705, 46);
+            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
+            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciExtensionButton.Size = new Size(96, 34);
+            drawFibonacciExtensionButton.TabIndex = 20;
+            drawFibonacciExtensionButton.Text = "فیبو X";
+            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
+            // 
+            // drawMeasureButton
+            // 
+            drawMeasureButton.Location = new Point(883, 46);
+            drawMeasureButton.Name = "drawMeasureButton";
+            drawMeasureButton.RightToLeft = RightToLeft.Yes;
+            drawMeasureButton.Size = new Size(82, 34);
+            drawMeasureButton.TabIndex = 20;
+            drawMeasureButton.Text = "خط کش";
+            drawMeasureButton.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -2275,7 +2278,7 @@
             // 
             // MainForm
             // 
-            ClientSize = new Size(1643, 966);
+            ClientSize = new Size(1491, 966);
             Controls.Add(mainSplitContainer);
             Controls.Add(mainMenuStrip);
             MainMenuStrip = mainMenuStrip;
@@ -2330,6 +2333,7 @@
             chartTabPage.ResumeLayout(false);
             chartInfoPanel.ResumeLayout(false);
             chartToolbarPanel.ResumeLayout(false);
+            chartToolbarPanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
