@@ -151,7 +151,9 @@ namespace Trade.It
             verticalZoom = 1;
             verticalPanOffset = 0;
             horizontalPanOffset = 0;
+            chartPanCompensation = 0;
             crosshairIndex = -1;
+            EnsureChartPanCompensation();
             Invalidate();
         }
 
@@ -208,20 +210,12 @@ namespace Trade.It
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-
-            if (extraInputHandled)
-            {
-                extraInputHandled = false;
-                return;
-            }
-
+            if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Right)
             {
-                if (activeDrawingTool != ChartDrawingTool.None || drawingInProgress)
-                    CancelDrawing();
+                if (activeDrawingTool != ChartDrawingTool.None || drawingInProgress) CancelDrawing();
                 return;
             }
-
             if (e.Button != MouseButtons.Left) return;
 
             if (activeDrawingTool != ChartDrawingTool.None)
@@ -303,89 +297,45 @@ namespace Trade.It
                 Capture = true;
                 Cursor = Cursors.SizeAll;
             }
-
             Focus();
         }
 
         private void BeginOrCompleteDrawing(Point location)
         {
             if (!IsInsidePlot(location)) return;
-
-            if (activeDrawingTool == ChartDrawingTool.HorizontalDoubleArrow ||
-                activeDrawingTool == ChartDrawingTool.VerticalDoubleArrow)
+            if (activeDrawingTool == ChartDrawingTool.HorizontalDoubleArrow || activeDrawingTool == ChartDrawingTool.VerticalDoubleArrow)
             {
                 AddDrawing(location, location);
-                drawingInProgress = false;
-                drawingStage = 0;
-                drawingStartPoint = Point.Empty;
-                drawingCurrentPoint = Point.Empty;
-                activeDrawingTool = ChartDrawingTool.None;
-                Cursor = Cursors.Default;
-                Invalidate();
-                return;
+                drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
+                activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate(); return;
             }
-
             if (activeDrawingTool == ChartDrawingTool.TrendChannel)
             {
                 if (!drawingInProgress)
                 {
-                    drawingStartPoint = location;
-                    drawingCurrentPoint = location;
-                    drawingSecondPoint = Point.Empty;
-                    drawingStage = 1;
-                    drawingInProgress = true;
-                    Invalidate();
-                    return;
+                    drawingStartPoint = location; drawingCurrentPoint = location; drawingSecondPoint = Point.Empty; drawingStage = 1; drawingInProgress = true; Invalidate(); return;
                 }
-
                 if (drawingStage == 1)
                 {
-                    drawingSecondPoint = location;
-                    drawingCurrentPoint = location;
-                    drawingStage = 2;
-                    Invalidate();
-                    return;
+                    drawingSecondPoint = location; drawingCurrentPoint = location; drawingStage = 2; Invalidate(); return;
                 }
-
                 AddDrawing(drawingStartPoint, drawingSecondPoint, location);
-                drawingInProgress = false;
-                drawingStage = 0;
-                drawingStartPoint = Point.Empty;
-                drawingCurrentPoint = Point.Empty;
-                drawingSecondPoint = Point.Empty;
-                activeDrawingTool = ChartDrawingTool.None;
-                Cursor = Cursors.Default;
-                Invalidate();
-                return;
+                drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty; drawingSecondPoint = Point.Empty;
+                activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate(); return;
             }
-
             if (!drawingInProgress)
             {
-                drawingStartPoint = location;
-                drawingCurrentPoint = location;
-                drawingStage = 1;
-                drawingInProgress = true;
-                Invalidate();
-                return;
+                drawingStartPoint = location; drawingCurrentPoint = location; drawingStage = 1; drawingInProgress = true; Invalidate(); return;
             }
-
             drawingCurrentPoint = location;
             AddDrawing(drawingStartPoint, drawingCurrentPoint);
-            drawingInProgress = false;
-            drawingStage = 0;
-            drawingStartPoint = Point.Empty;
-            drawingCurrentPoint = Point.Empty;
-            activeDrawingTool = ChartDrawingTool.None;
-            Cursor = Cursors.Default;
-            Invalidate();
+            drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
+            activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate();
         }
 
         private bool IsInsidePlot(Point point) => GetPlotRectangle().Contains(point);
 
-        private void AddDrawing(Point start, Point end)
-        {
-            AddDrawing(start, end, Point.Empty);
-        }
+        private void AddDrawing(Point start, Point end) => AddDrawing(start, end, Point.Empty);
 
         private void AddDrawing(Point start, Point end, Point third)
         {
@@ -394,7 +344,6 @@ namespace Trade.It
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
-
             var x1 = ScreenToDataX(start.X, plot, visible.Count);
             var y1 = ScreenToPrice(start.Y, plot, min, max);
             var x2 = ScreenToDataX(end.X, plot, visible.Count);
@@ -405,39 +354,25 @@ namespace Trade.It
                 case ChartDrawingTool.TrendLine:
                 case ChartDrawingTool.TrendLineWithArrow:
                 case ChartDrawingTool.Rectangle:
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 });
-                    break;
-
+                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 }); break;
                 case ChartDrawingTool.TrendChannel:
                     if (third == Point.Empty) return;
                     var x3 = ScreenToDataX(third.X, plot, visible.Count);
                     var y3 = ScreenToPrice(third.Y, plot, min, max);
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 });
-                    break;
-
+                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 }); break;
                 case ChartDrawingTool.HorizontalDoubleArrow:
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 });
-                    break;
-
+                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
                 case ChartDrawingTool.VerticalDoubleArrow:
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x1, Y2 = y2 });
-                    break;
-
+                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x1, Y2 = y2 }); break;
                 case ChartDrawingTool.HorizontalRay:
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 });
-                    break;
+                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
             }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-
-            if (extraInputHandled)
-            {
-                extraInputHandled = false;
-                return;
-            }
+            if (extraInputHandled) { extraInputHandled = false; return; }
 
             if (showCrosshair)
             {
@@ -451,27 +386,15 @@ namespace Trade.It
                 var relativeX = e.X - plotLeft - initialOffset - horizontalPanOffset;
                 var nearest = (int)Math.Round(relativeX / step - 0.5);
                 crosshairIndex = Math.Clamp(nearest, 0, Math.Max(0, visibleCount - 1));
-                crosshairPoint = new Point(
-                    (int)Math.Round(plotLeft + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset),
-                    Math.Clamp(e.Y, plotTop, plotBottom));
+                crosshairPoint = new Point((int)Math.Round(plotLeft + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset), Math.Clamp(e.Y, plotTop, plotBottom));
                 Invalidate();
             }
 
-            if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None)
-            {
-                drawingCurrentPoint = e.Location;
-                Invalidate();
-                return;
-            }
-
+            if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None) { drawingCurrentPoint = e.Location; Invalidate(); return; }
             if (draggingDrawingIndex >= 0 && draggingDrawingIndex < drawings.Count && Capture)
             {
-                MoveOrResizeDrawing(draggingDrawingIndex, draggingHandle, e.Location);
-                draggingLastPoint = e.Location;
-                Invalidate();
-                return;
+                MoveOrResizeDrawing(draggingDrawingIndex, draggingHandle, e.Location); draggingLastPoint = e.Location; Invalidate(); return;
             }
-
             if (horizontalAxisDrag && Capture && points.Count > 1)
             {
                 var delta = e.X - horizontalAxisStartPoint.X;
@@ -479,19 +402,13 @@ namespace Trade.It
                 var newCount = Math.Clamp((int)Math.Round(horizontalAxisStartVisibleCount * factor), 2, points.Count);
                 visibleCount = newCount;
                 firstIndex = Math.Clamp((int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
-                crosshairIndex = -1;
-                Invalidate();
-                return;
+                crosshairIndex = -1; Invalidate(); return;
             }
-
             if (verticalAxisDrag && Capture && points.Count > 1)
             {
                 var delta = e.Y - verticalAxisStartPoint.Y;
-                verticalZoom = Math.Clamp(verticalAxisStartZoom * Math.Exp(delta / 200.0), 0.1, 20.0);
-                Invalidate();
-                return;
+                verticalZoom = Math.Clamp(verticalAxisStartZoom * Math.Exp(delta / 200.0), 0.1, 20.0); Invalidate(); return;
             }
-
             if (panning && Capture && points.Count > 1)
             {
                 var dx = e.X - panStartPoint.X;
@@ -508,33 +425,16 @@ namespace Trade.It
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-
-            if (extraInputHandled)
-            {
-                extraInputHandled = false;
-                return;
-            }
-
+            if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Left)
             {
                 if (draggingDrawingIndex >= 0)
                 {
-                    draggingDrawingIndex = -1;
-                    draggingHandle = 0;
-                    Capture = false;
-                    Cursor = Cursors.Default;
-                    Invalidate();
-                    return;
+                    draggingDrawingIndex = -1; draggingHandle = 0; Capture = false; Cursor = Cursors.Default; Invalidate(); return;
                 }
-
                 if (horizontalAxisDrag || verticalAxisDrag || panning)
                 {
-                    horizontalAxisDrag = false;
-                    verticalAxisDrag = false;
-                    panning = false;
-                    Capture = false;
-                    Cursor = Cursors.Default;
-                    Invalidate();
+                    horizontalAxisDrag = false; verticalAxisDrag = false; panning = false; Capture = false; Cursor = Cursors.Default; Invalidate();
                 }
             }
         }
