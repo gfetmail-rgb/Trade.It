@@ -19,6 +19,7 @@ namespace Trade.It
                 return;
 
             settingsMenuInitialized = true;
+            resetMenuItem.Visible = false;
             TradingChartControl.LoadChartAppearanceSettings();
             chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
             settingsMenuItem.Click += SettingsMenuItem_Click;
@@ -198,7 +199,7 @@ namespace Trade.It
             }
             catch (Exception ex)
             {
-                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}": {ex.Message}";
+                chartInfoLabel.Text = $"خطا در رسم چارت «{symbol}»: {ex.Message}";
                 chartPlaceholderLabel.Visible = true;
             }
         }
