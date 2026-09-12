@@ -2,11 +2,11 @@ namespace Trade.It
 {
     public partial class PortfolioManagementForm
     {
-        protected override void OnLoad(EventArgs e)
+        protected override void OnHandleCreated(EventArgs e)
         {
-            base.OnLoad(e);
+            base.OnHandleCreated(e);
 
-            // در فرم راست‌به‌چپ، Control Box (بستن/بیشینه/کمینه) در سمت چپ قرار بگیرد.
+            // فقط جای Control Box را تغییر می‌دهیم؛ جای هیچ کنترل داخلی فرم عوض نمی‌شود.
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
         }
