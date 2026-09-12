@@ -5,6 +5,18 @@ namespace Trade.It
     internal sealed partial class TradingChartControl
     {
         private double chartPanCompensation;
+        private bool chartOverlayPaintInitialized;
+
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+
+            if (!chartOverlayPaintInitialized)
+            {
+                Paint += TradingChartControl_PaintOverlay;
+                chartOverlayPaintInitialized = true;
+            }
+        }
 
         protected override void WndProc(ref Message m)
         {
@@ -43,9 +55,6 @@ namespace Trade.It
                     20.0);
                 Invalidate();
             }
-
-            if (m.Msg == WM_PAINT)
-                DrawChartBoundaryAndAxisOverlay();
         }
 
         private Point GetMousePointFromMessage(Message m)
@@ -99,7 +108,12 @@ namespace Trade.It
             chartPanCompensation = desired;
         }
 
-        private void DrawChartBoundaryAndAxisOverlay()
+        private void TradingChartControl_PaintOverlay(object? sender, PaintEventArgs e)
+        {
+            DrawChartBoundaryAndAxisOverlay(e.Graphics);
+        }
+
+        private void DrawChartBoundaryAndAxisOverlay(Graphics g)
         {
             if (points.Count == 0)
                 return;
@@ -112,7 +126,6 @@ namespace Trade.It
 
             GetVerticalRange(visible, out var min, out var max);
 
-            using var g = CreateGraphics();
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
             using var backgroundBrush = new SolidBrush(BackColor);
@@ -122,7 +135,9 @@ namespace Trade.It
             g.FillRectangle(backgroundBrush, 0, plot.Bottom, Width, Math.Max(0, Height - plot.Bottom));
 
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
-            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+
+            // Price axis belongs on the right side of the chart.
+            g.DrawLine(axisPen, plot.Right, plot.Top, plot.Right, plot.Bottom);
             g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
 
             using var textBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
