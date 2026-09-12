@@ -3,6 +3,19 @@ namespace Trade.It
     internal sealed partial class TradingChartControl
     {
         private const int WmLButtonDblClk = 0x0203;
+        private static bool verticalFitMessageFilterRegistered;
+        private readonly bool verticalFitFilterInitialized = RegisterVerticalFitMessageFilter();
+
+        private static bool RegisterVerticalFitMessageFilter()
+        {
+            if (!verticalFitMessageFilterRegistered)
+            {
+                Application.AddMessageFilter(new VerticalFitMessageFilter());
+                verticalFitMessageFilterRegistered = true;
+            }
+
+            return true;
+        }
 
         private void FitVerticalView()
         {
@@ -14,22 +27,28 @@ namespace Trade.It
             Invalidate();
         }
 
-        protected override void WndProc(ref Message m)
+        private sealed class VerticalFitMessageFilter : IMessageFilter
         {
-            if (m.Msg == WmLButtonDblClk)
+            public bool PreFilterMessage(ref Message m)
             {
+                if (m.Msg != WmLButtonDblClk)
+                    return false;
+
+                if (Control.FromHandle(m.HWnd) is not TradingChartControl chart)
+                    return false;
+
                 var lParam = m.LParam.ToInt64();
                 var x = (short)(lParam & 0xFFFF);
                 var y = (short)((lParam >> 16) & 0xFFFF);
 
-                if (x <= 55 && y >= 0 && y <= Height - 35)
+                if (x <= 55 && y >= 0 && y <= chart.Height - 35)
                 {
-                    FitVerticalView();
-                    return;
+                    chart.FitVerticalView();
+                    return true;
                 }
-            }
 
-            base.WndProc(ref m);
+                return false;
+            }
         }
     }
 }
