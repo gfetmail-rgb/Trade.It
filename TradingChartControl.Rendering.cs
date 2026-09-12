@@ -20,9 +20,11 @@ namespace Trade.It
             using var gridPen = new Pen(Color.FromArgb(225, 225, 225), 1);
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
             using var textBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
-            using var risingBrush = new SolidBrush(Color.FromArgb(35, 150, 80));
-            using var fallingBrush = new SolidBrush(Color.FromArgb(205, 70, 70));
-            using var linePen = new Pen(Color.FromArgb(35, 90, 160), 1.6f);
+            using var risingBrush = new SolidBrush(ChartAppearanceSettings.RisingCandleColor);
+            using var fallingBrush = new SolidBrush(ChartAppearanceSettings.FallingCandleColor);
+            using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, 1.2f);
+            using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, 1.2f);
+            using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, 1.6f);
             using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
 
             if (showGrid)
@@ -70,7 +72,8 @@ namespace Trade.It
                     var close = PriceToScreen(item.Close, plot, min, max);
                     var rising = item.Close >= item.Open;
                     var brush = rising ? risingBrush : fallingBrush;
-                    e.Graphics.DrawLine(linePen, x, high, x, low);
+                    var candlePen = rising ? risingPen : fallingPen;
+                    e.Graphics.DrawLine(candlePen, x, high, x, low);
 
                     if (chartType == TradingChartType.Candlestick)
                     {
@@ -78,13 +81,13 @@ namespace Trade.It
                         var bottom = Math.Max(open, close);
                         var rect = RectangleF.FromLTRB(x - candleWidth / 2, top, x + candleWidth / 2, Math.Max(top + 1, bottom));
                         e.Graphics.FillRectangle(brush, rect);
-                        e.Graphics.DrawRectangle(linePen, rect.X, rect.Y, rect.Width, rect.Height);
+                        e.Graphics.DrawRectangle(candlePen, rect.X, rect.Y, rect.Width, rect.Height);
                     }
                     else
                     {
                         var barLength = rising ? candleWidth : -candleWidth;
-                        e.Graphics.DrawLine(linePen, x, close, x + barLength, close);
-                        e.Graphics.DrawLine(linePen, x, open, x - barLength, open);
+                        e.Graphics.DrawLine(candlePen, x, close, x + barLength, close);
+                        e.Graphics.DrawLine(candlePen, x, open, x - barLength, open);
                     }
                 }
             }
@@ -95,7 +98,7 @@ namespace Trade.It
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
-                using var previewPen = new Pen(Color.FromArgb(30, 90, 160), 1.5f) { DashStyle = DashStyle.Dash };
+                using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), 1.5f) { DashStyle = DashStyle.Dash };
                 DrawDrawingPreview(e.Graphics, previewPen, plot, visible.Count, min, max);
             }
 
@@ -111,7 +114,10 @@ namespace Trade.It
             {
                 var value = max - (max - min) * i / 5.0;
                 var y = PriceToScreen(value, plot, min, max);
-                e.Graphics.DrawString(value.ToString("0.##"), axisTextFont, textBrush, plot.Right + 4, y - axisTextFont.Height / 2f);
+                var text = value.ToString("0.##");
+                var size = e.Graphics.MeasureString(text, axisTextFont);
+                var x = Math.Max(1f, plot.Left - size.Width - 4f);
+                e.Graphics.DrawString(text, axisTextFont, textBrush, x, y - size.Height / 2f);
             }
 
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
@@ -119,13 +125,12 @@ namespace Trade.It
 
         private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            using var drawingPen = new Pen(Color.FromArgb(30, 90, 160), 1.8f);
-            using var selectedPen = new Pen(Color.FromArgb(30, 90, 160), 3.2f);
-
             for (var i = 0; i < drawings.Count; i++)
             {
                 var selected = i == selectedDrawingIndex;
-                DrawSingleDrawing(g, selected ? selectedPen : drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
+                var color = GetDrawingColor(drawings[i].Tool);
+                using var drawingPen = new Pen(color, selected ? 3.2f : 1.8f);
+                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
                 if (selected)
                     DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
             }
@@ -154,7 +159,7 @@ namespace Trade.It
         private void DrawSelectionHandles(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             using var handleBrush = new SolidBrush(Color.White);
-            using var handlePen = new Pen(Color.FromArgb(30, 90, 160), 1.5f);
+            using var handlePen = new Pen(GetDrawingColor(drawing.Tool), 1.5f);
             const float radius = 4f;
 
             var handles = GetScreenHandles(drawing, plot, visibleCountForDrawing, min, max);
