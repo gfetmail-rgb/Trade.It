@@ -6,29 +6,28 @@ namespace Trade.It
         {
             base.OnShown(e);
 
-            // فرم تنظیمات باید روی نمایشگرهای با ارتفاع معمولی هم کامل دیده شود.
-            // چیدمان را فشرده می‌کنیم؛ پنل رنگ ابزارهای رسم خودش اسکرول دارد.
-            ClientSize = new Size(700, 750);
-            MinimumSize = new Size(700, 750);
+            // فرم تنظیمات باید فضای کافی برای همه کنترل‌ها، به‌خصوص تنظیمات ضخامت و استایل ابزارهای رسم، داشته باشد.
+            ClientSize = new Size(800, 920);
+            MinimumSize = new Size(800, 920);
             StartPosition = FormStartPosition.CenterParent;
 
             chartColorsGroupBox.Location = new Point(16, 226);
-            chartColorsGroupBox.Size = new Size(660, 105);
+            chartColorsGroupBox.Size = new Size(760, 145);
 
-            drawingColorsGroupBox.Location = new Point(16, 341);
-            drawingColorsGroupBox.Size = new Size(660, 195);
+            drawingColorsGroupBox.Location = new Point(16, 381);
+            drawingColorsGroupBox.Size = new Size(760, 250);
             drawingColorsPanel.Location = new Point(15, 28);
-            drawingColorsPanel.Size = new Size(555, 150);
+            drawingColorsPanel.Size = new Size(650, 165);
             drawingColorsPanel.AutoScroll = true;
 
             if (Controls["crosshairGridGroupBox"] is GroupBox crosshairGroup)
             {
-                crosshairGroup.Location = new Point(16, 545);
-                crosshairGroup.Size = new Size(660, 140);
+                crosshairGroup.Location = new Point(16, 641);
+                crosshairGroup.Size = new Size(760, 160);
             }
 
-            okButton.Location = new Point(500, 700);
-            cancelButton.Location = new Point(590, 700);
+            okButton.Location = new Point(610, 850);
+            cancelButton.Location = new Point(700, 850);
         }
     }
 }
