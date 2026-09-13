@@ -3,3 +3,6 @@ bin/
 obj/
 *.user
 *.suo
+*.log
+builddiag.txt
+grid-repair-trigger.txt
