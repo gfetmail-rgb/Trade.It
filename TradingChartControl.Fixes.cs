@@ -191,5 +191,20 @@ namespace Trade.It
                 g.DrawString(timeText, axisTextFont, textBrush, timeX, timeY);
             }
         }
+
+        public void ClearAllDrawings()
+        {
+            CancelDrawing();
+            CancelExtraDrawing();
+            advancedDrawings.Clear();
+            extraDrawings.Clear();
+            drawings.Clear();
+            selectedDrawingIndex = -1;
+            draggingDrawingIndex = -1;
+            draggingHandle = 0;
+            Capture = false;
+            Cursor = Cursors.Default;
+            Invalidate();
+        }
     }
 }
