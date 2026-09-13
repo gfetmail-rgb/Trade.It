@@ -31,7 +31,8 @@ namespace Trade.It
                         ForeColor = Color.White,
                         TextAlign = ContentAlignment.MiddleCenter,
                         Visible = false,
-                        TabStop = false
+                        TabStop = false,
+                        BorderStyle = BorderStyle.None
                     };
                     chart.noDateAxisLabel.MouseDown += (_, args) =>
                     {
@@ -83,8 +84,12 @@ namespace Trade.It
             var initialOffset = -plot.Width * 0.25;
             var x = plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset;
             var text = $"کندل {firstIndex + crosshairIndex + 1:N0}";
-            var width = Math.Max(64, TextRenderer.MeasureText(text, Font).Width + 8);
-            var height = Math.Max(18, Font.Height + 4);
+
+            // The renderer still has a legacy date-label path for the crosshair.
+            // Make this no-date label wide enough to fully cover that synthetic
+            // date so no fake calendar value can remain visible underneath it.
+            var width = Math.Max(170, TextRenderer.MeasureText(text, Font).Width + 18);
+            var height = Math.Max(20, Font.Height + 4);
             var left = (int)Math.Round(x - width / 2.0);
             left = Math.Clamp(left, plot.Left, Math.Max(plot.Left, plot.Right - width));
             var top = plot.Bottom + 2;
