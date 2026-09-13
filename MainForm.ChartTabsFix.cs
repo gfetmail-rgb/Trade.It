@@ -4,6 +4,7 @@ namespace Trade.It
     {
         private static readonly bool chartTabsLayoutFixInitialized = InitializeChartTabsLayoutFix();
         private static readonly HashSet<MainForm> chartTabsFixAttachedForms = new();
+        private bool chartTabsLayoutRestorePending;
 
         private static bool InitializeChartTabsLayoutFix()
         {
@@ -21,14 +22,36 @@ namespace Trade.It
                 if (!chartTabsFixAttachedForms.Add(mainForm))
                     continue;
 
-                mainForm.fullScreenChartButton.Click += (_, _) =>
-                {
-                    if (mainForm.IsDisposed)
-                        return;
+                mainForm.mainSplitContainer.Layout += mainForm.ChartTabsLayoutChanged;
+                mainForm.mainSplitContainer.SizeChanged += mainForm.ChartTabsLayoutChanged;
+                mainForm.chartPanel.SizeChanged += mainForm.ChartTabsLayoutChanged;
+                mainForm.fullScreenChartButton.Click += mainForm.ChartTabsLayoutChanged;
 
-                    mainForm.BeginInvoke(new Action(() => mainForm.RestoreChartTabsLayout()));
-                };
+                mainForm.ScheduleChartTabsLayoutRestore();
             }
+        }
+
+        private void ChartTabsLayoutChanged(object? sender, EventArgs e)
+        {
+            ScheduleChartTabsLayoutRestore();
+        }
+
+        private void ScheduleChartTabsLayoutRestore()
+        {
+            if (IsDisposed || chartTabsLayoutRestorePending)
+                return;
+
+            chartTabsLayoutRestorePending = true;
+
+            BeginInvoke(new Action(() =>
+            {
+                chartTabsLayoutRestorePending = false;
+
+                if (IsDisposed || !IsHandleCreated)
+                    return;
+
+                RestoreChartTabsLayout();
+            }));
         }
 
         private void RestoreChartTabsLayout()
@@ -39,20 +62,18 @@ namespace Trade.It
             chartPanel.SuspendLayout();
             try
             {
-                // Dock order is important: the toolbar consumes the top area,
-                // and the TabControl fills the remaining area including its tab headers.
-                chartPanel.Controls.SetChildIndex(chartToolbarPanel, 0);
-                chartPanel.Controls.SetChildIndex(chartTabControl, 1);
-
                 chartToolbarPanel.Dock = DockStyle.Top;
                 chartTabControl.Dock = DockStyle.Fill;
                 chartToolbarPanel.Visible = true;
                 chartTabControl.Visible = true;
 
+                // Explicit child order: toolbar occupies the top, TabControl fills
+                // the remaining area and its tab headers stay visible.
+                chartPanel.Controls.SetChildIndex(chartToolbarPanel, 0);
+                chartPanel.Controls.SetChildIndex(chartTabControl, 1);
+
                 chartPanel.PerformLayout();
                 chartTabControl.PerformLayout();
-                chartTabControl.BringToFront();
-                chartToolbarPanel.BringToFront();
             }
             finally
             {
