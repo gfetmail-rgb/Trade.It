@@ -2,8 +2,6 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
-        // Field initializers cannot call instance methods. Keep this initialization
-        // static and attach the per-control handler when the application is idle.
         private static readonly bool extraToolOutsideClickFixInitialized = InitializeExtraToolOutsideClickFix();
         private static readonly HashSet<TradingChartControl> extraToolOutsideClickFixControls = new();
 
@@ -24,7 +22,9 @@ namespace Trade.It
             foreach (Control control in parent.Controls)
             {
                 if (control is TradingChartControl chart && extraToolOutsideClickFixControls.Add(chart))
+                {
                     chart.MouseDown += chart.ExtraToolOutsideClickFix_MouseDown;
+                }
 
                 if (control.HasChildren)
                     AttachExtraToolOutsideClickFixes(control);
@@ -37,14 +37,16 @@ namespace Trade.It
                 return;
 
             if (!GetPlotRectangle().Contains(e.Location))
+            {
                 CancelExtraDrawing();
+                Capture = false;
+                extraInputHandled = true;
+            }
         }
     }
 
     public partial class MainForm
     {
-        // Field initializers cannot call instance methods. Use a static idle hook
-        // so the wait cursor is cleared without changing the Designer constructor.
         private static readonly bool waitCursorFixInitialized = InitializeWaitCursorFix();
 
         private static bool InitializeWaitCursorFix()
