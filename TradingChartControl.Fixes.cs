@@ -45,6 +45,16 @@ namespace Trade.It
 
             base.WndProc(ref m);
 
+            // Safety net for the third click: if the normal MouseDown state machine
+            // was interrupted but the third point has already been collected, finish
+            // the drawing here instead of leaving the control in a locked state.
+            if (m.Msg == WM_LBUTTONDOWN && ExtraDrawingActive &&
+                extraDrawingPoints.Count >= RequiredExtraPoints)
+            {
+                AddExtraDrawing();
+                CancelExtraDrawing();
+            }
+
             // All moving chart content, including the crosshair and its labels,
             // is rendered by OnPaint on the control's double-buffered surface.
             // Never call CreateGraphics() after WM_PAINT: that paints directly
