@@ -218,6 +218,18 @@ namespace Trade.It
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button != MouseButtons.Left) return;
 
+            // Extra tools (Pitchfork/Fibonacci Extension/Measure) use their own
+            // MouseDown state machine. Never let this base handler enter chart
+            // panning or axis dragging during any extra-tool click.
+            if (ExtraDrawingActive || extraDrawingInProgress || extraDraggingHandleActive)
+            {
+                panning = false;
+                horizontalAxisDrag = false;
+                verticalAxisDrag = false;
+                Capture = false;
+                return;
+            }
+
             if (activeDrawingTool != ChartDrawingTool.None)
             {
                 BeginOrCompleteDrawing(e.Location);
