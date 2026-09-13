@@ -16,6 +16,8 @@ namespace Trade.It
         {
             base.OnShown(e);
 
+            InitializeSettingsRuntime();
+
             if (fullScreenHandlerInitialized)
                 return;
 
