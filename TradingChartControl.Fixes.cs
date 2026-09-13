@@ -21,13 +21,14 @@ namespace Trade.It
                 EnsureInitialTopMargin();
             }
 
-            // An active three-point tool must be cancelled deterministically when
-            // the user clicks outside the plotting rectangle. Do this at message
-            // level, before the normal OnMouseDown path can start panning/axis drag.
+            // Cancel an active three-point tool with a single click in the chart's
+            // non-data blank area as well as outside the plotting rectangle.
+            // The right-side chart margin is intentionally empty, so it must not
+            // be interpreted as the next drawing point.
             if (m.Msg == WM_LBUTTONDOWN && ExtraDrawingActive)
             {
                 var location = GetMousePointFromMessage(m);
-                if (!GetPlotRectangle().Contains(location))
+                if (!GetPlotRectangle().Contains(location) || IsExtraToolBlankArea(location))
                 {
                     CancelExtraDrawing();
                     extraInputHandled = true;
@@ -72,6 +73,21 @@ namespace Trade.It
                 initialTopMarginApplied = false;
                 Invalidate();
             }
+        }
+
+        private bool IsExtraToolBlankArea(Point location)
+        {
+            var plot = GetPlotRectangle();
+            if (!plot.Contains(location) || points.Count == 0)
+                return false;
+
+            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var visibleCountForDrawing = Math.Max(1, endIndex - firstIndex);
+            var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
+            var lastCandleX = plot.Left + step * (visibleCountForDrawing - 0.5) + (-plot.Width * 0.25) + horizontalPanOffset;
+            var candleWidth = Math.Max(2.0, step * 0.65);
+
+            return location.X > lastCandleX + candleWidth / 2.0;
         }
 
         private Point GetMousePointFromMessage(Message m)
