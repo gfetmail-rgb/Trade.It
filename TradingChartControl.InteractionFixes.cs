@@ -2,17 +2,33 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
-        // This field initializer runs before the constructor body and lets us
-        // attach an additional mouse handler without changing the main control
-        // constructor. The existing extra-tool handler remains responsible for
-        // placing points; this handler only cancels an active tool when the user
-        // clicks outside the plot.
-        private readonly bool extraToolOutsideClickFixInitialized = InitializeExtraToolOutsideClickFix();
+        // Field initializers cannot call instance methods. Keep this initialization
+        // static and attach the per-control handler when the application is idle.
+        private static readonly bool extraToolOutsideClickFixInitialized = InitializeExtraToolOutsideClickFix();
+        private static readonly HashSet<TradingChartControl> extraToolOutsideClickFixControls = new();
 
-        private bool InitializeExtraToolOutsideClickFix()
+        private static bool InitializeExtraToolOutsideClickFix()
         {
-            MouseDown += ExtraToolOutsideClickFix_MouseDown;
+            Application.Idle += AttachExtraToolOutsideClickFixes;
             return true;
+        }
+
+        private static void AttachExtraToolOutsideClickFixes(object? sender, EventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+                AttachExtraToolOutsideClickFixes(form);
+        }
+
+        private static void AttachExtraToolOutsideClickFixes(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                if (control is TradingChartControl chart && extraToolOutsideClickFixControls.Add(chart))
+                    chart.MouseDown += chart.ExtraToolOutsideClickFix_MouseDown;
+
+                if (control.HasChildren)
+                    AttachExtraToolOutsideClickFixes(control);
+            }
         }
 
         private void ExtraToolOutsideClickFix_MouseDown(object? sender, MouseEventArgs e)
@@ -27,31 +43,32 @@ namespace Trade.It
 
     public partial class MainForm
     {
-        // The existing portfolio handler briefly enables UseWaitCursor while
-        // filling the grid. Latest-date loading is already asynchronous, so a
-        // persistent wait cursor after the grid is populated is misleading.
-        // Reset it on the next application idle cycle.
-        private readonly bool waitCursorFixInitialized = InitializeWaitCursorFix();
+        // Field initializers cannot call instance methods. Use a static idle hook
+        // so the wait cursor is cleared without changing the Designer constructor.
+        private static readonly bool waitCursorFixInitialized = InitializeWaitCursorFix();
 
-        private bool InitializeWaitCursorFix()
+        private static bool InitializeWaitCursorFix()
         {
             Application.Idle += MainForm_ResetStuckWaitCursor;
             return true;
         }
 
-        private void MainForm_ResetStuckWaitCursor(object? sender, EventArgs e)
+        private static void MainForm_ResetStuckWaitCursor(object? sender, EventArgs e)
         {
-            if (IsDisposed)
-                return;
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is not MainForm mainForm || mainForm.IsDisposed)
+                    continue;
 
-            if (UseWaitCursor)
-                UseWaitCursor = false;
+                if (mainForm.UseWaitCursor)
+                    mainForm.UseWaitCursor = false;
 
-            if (Cursor == Cursors.WaitCursor)
-                Cursor = Cursors.Default;
+                if (mainForm.Cursor == Cursors.WaitCursor)
+                    mainForm.Cursor = Cursors.Default;
 
-            if (Cursor.Current == Cursors.WaitCursor)
-                Cursor.Current = Cursors.Default;
+                if (Cursor.Current == Cursors.WaitCursor)
+                    Cursor.Current = Cursors.Default;
+            }
         }
     }
 }
