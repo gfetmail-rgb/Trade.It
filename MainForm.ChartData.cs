@@ -1,1 +1,0 @@
-// Merged into MainForm.Charts.cs; retained temporarily by this commit sequence.
