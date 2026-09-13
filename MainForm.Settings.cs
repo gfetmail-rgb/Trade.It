@@ -4,6 +4,7 @@ namespace Trade.It
     {
         private ChartDisplayMode chartDisplayMode = ChartDisplayMode.SeparateTabs;
         private double chartRightEmptyPercent = 25.0;
+        private double chartTopEmptyPercent = 10.0;
         private bool settingsMenuInitialized;
         private readonly System.Windows.Forms.Timer navigationTimer = new();
         private bool navigationRunning;
@@ -19,23 +20,27 @@ namespace Trade.It
             settingsMenuInitialized = true;
             TradingChartControl.LoadChartAppearanceSettings();
             chartRightEmptyPercent = TradingChartControl.ChartRightEmptyPercent;
+            chartTopEmptyPercent = TradingChartControl.ChartTopEmptyPercent;
             settingsMenuItem.Click += SettingsMenuItem_Click;
             navigationButton.Click += NavigationButton_Click;
             navigationTimer.Tick += NavigationTimer_Tick;
             portfolioComboBox.SelectedIndexChanged += NavigationPortfolioChanged;
             TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
+            TradingChartControl.ChartTopEmptyPercent = chartTopEmptyPercent;
             InitializeChartRuntime();
             InitializeChartDrawingTools();
         }
 
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
         {
-            using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent);
+            using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent, chartTopEmptyPercent);
             if (form.ShowDialog(this) == DialogResult.OK)
             {
                 chartDisplayMode = form.ChartDisplayMode;
                 chartRightEmptyPercent = form.ChartRightEmptyPercent;
+                chartTopEmptyPercent = form.ChartTopEmptyPercent;
                 TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
+                TradingChartControl.ChartTopEmptyPercent = chartTopEmptyPercent;
                 foreach (var chart in chartControls.Values.ToList())
                     chart.ResetView();
                 ApplyChartDisplayMode();
@@ -91,9 +96,7 @@ namespace Trade.It
 
             if (!string.IsNullOrWhiteSpace(selectedSymbol))
             {
-                var selectedIndex = navigationSymbols.FindIndex(symbol =>
-                    string.Equals(symbol, selectedSymbol, StringComparison.OrdinalIgnoreCase));
-
+                var selectedIndex = navigationSymbols.FindIndex(symbol => string.Equals(symbol, selectedSymbol, StringComparison.OrdinalIgnoreCase));
                 if (selectedIndex >= 0)
                     navigationIndex = selectedIndex;
             }
@@ -103,7 +106,6 @@ namespace Trade.It
             navigationButton.UseVisualStyleBackColor = false;
             navigationButton.BackColor = SystemColors.Highlight;
             navigationButton.ForeColor = SystemColors.HighlightText;
-
             ShowNavigationChart(navigationSymbols[navigationIndex]);
             navigationTimer.Start();
         }
@@ -112,11 +114,9 @@ namespace Trade.It
         {
             if (!navigationRunning || navigationSymbols.Count == 0)
                 return;
-
             navigationIndex++;
             if (navigationIndex >= navigationSymbols.Count)
                 navigationIndex = 0;
-
             ShowNavigationChart(navigationSymbols[navigationIndex]);
         }
 
@@ -128,8 +128,7 @@ namespace Trade.It
 
         private void ShowNavigationChart(string symbol)
         {
-            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
-                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 return;
 
             try
@@ -155,14 +154,9 @@ namespace Trade.It
                 if (!chart.CrosshairVisible)
                     chart.ToggleCrosshair();
 
-                if (navigationTabPage == null ||
-                    navigationTabPage.IsDisposed ||
-                    !chartTabControl.TabPages.Contains(navigationTabPage))
+                if (navigationTabPage == null || navigationTabPage.IsDisposed || !chartTabControl.TabPages.Contains(navigationTabPage))
                 {
-                    navigationTabPage = new TabPage("__AUTO_SCROLL__")
-                    {
-                        RightToLeft = RightToLeft.Yes
-                    };
+                    navigationTabPage = new TabPage("__AUTO_SCROLL__") { RightToLeft = RightToLeft.Yes };
                     chartTabControl.TabPages.Add(navigationTabPage);
                 }
 
@@ -172,11 +166,7 @@ namespace Trade.It
                 chartTabControl.SelectedTab = navigationTabPage;
 
                 var row = stocksDataGridView.Rows.Cast<DataGridViewRow>()
-                    .FirstOrDefault(r => !r.IsNewRow &&
-                        string.Equals(
-                            Convert.ToString(r.Cells[symbolColumn.Index].Value)?.Trim(),
-                            symbol,
-                            StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(r => !r.IsNewRow && string.Equals(Convert.ToString(r.Cells[symbolColumn.Index].Value)?.Trim(), symbol, StringComparison.OrdinalIgnoreCase));
 
                 if (row != null)
                 {
