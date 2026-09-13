@@ -43,6 +43,16 @@ namespace Trade.It
 
             base.WndProc(ref m);
 
+            // OnPaint calls base.OnPaint first, so the Paint event above runs
+            // before the custom chart rendering. Paint the overlay once more
+            // after WM_PAINT has completed so the OHLC-only index labels can
+            // cover the legacy date label rendered by TradingChartControl.Rendering.
+            if (m.Msg == WM_PAINT && IsHandleCreated && points.Count > 0)
+            {
+                using var graphics = CreateGraphics();
+                DrawChartBoundaryAndAxisOverlay(graphics);
+            }
+
             if (detachedExtraMouseDown)
                 MouseDown += ExtraDrawing_MouseDown;
 
