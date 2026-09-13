@@ -11,10 +11,8 @@ namespace Trade.It
         private int navigationIndex = -1;
         private TabPage? navigationTabPage;
 
-        protected override void OnShown(EventArgs e)
+        private void InitializeSettingsRuntime()
         {
-            base.OnShown(e);
-
             if (settingsMenuInitialized)
                 return;
 
