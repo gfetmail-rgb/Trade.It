@@ -27,6 +27,11 @@ namespace Trade.It
             Invalidate();
         }
 
+        private void FitVerticalRange()
+        {
+            ResetView();
+        }
+
         private sealed class VerticalFitMessageFilter : IMessageFilter
         {
             public bool PreFilterMessage(ref Message m)
