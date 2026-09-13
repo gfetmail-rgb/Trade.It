@@ -5,18 +5,6 @@ namespace Trade.It
     internal sealed partial class TradingChartControl
     {
         private double chartPanCompensation;
-        private bool chartOverlayPaintInitialized;
-
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-
-            if (!chartOverlayPaintInitialized)
-            {
-                Paint += TradingChartControl_PaintOverlay;
-                chartOverlayPaintInitialized = true;
-            }
-        }
 
         protected override void WndProc(ref Message m)
         {
@@ -43,11 +31,15 @@ namespace Trade.It
 
             base.WndProc(ref m);
 
-            // OnPaint calls base.OnPaint first, so the Paint event above runs
-            // before the custom chart rendering. Paint the overlay once more
-            // after WM_PAINT has completed so the OHLC-only index labels can
-            // cover the legacy date label rendered by TradingChartControl.Rendering.
-            if (m.Msg == WM_PAINT && IsHandleCreated && points.Count > 0)
+            // The chart renderer draws the crosshair and its labels through the
+            // normal double-buffered Paint pipeline. Do not paint those elements
+            // again with CreateGraphics(), because that bypasses the buffer and
+            // causes severe flicker while the mouse is moving.
+            //
+            // The overlay is still needed for OHLC-only charts to replace the
+            // generated DateTime axis labels with candle indexes. It now draws
+            // only the axis/index labels, not the moving crosshair.
+            if (m.Msg == WM_PAINT && IsHandleCreated && points.Count > 0 && IsSyntheticNoDateAxis())
             {
                 using var graphics = CreateGraphics();
                 DrawChartBoundaryAndAxisOverlay(graphics);
@@ -119,11 +111,6 @@ namespace Trade.It
             chartPanCompensation = desired;
         }
 
-        private void TradingChartControl_PaintOverlay(object? sender, PaintEventArgs e)
-        {
-            DrawChartBoundaryAndAxisOverlay(e.Graphics);
-        }
-
         private bool IsSyntheticNoDateAxis()
         {
             if (points.Count == 0 || points[0].Date != DateTime.UnixEpoch)
@@ -151,6 +138,8 @@ namespace Trade.It
 
             GetVerticalRange(visible, out var min, out var max);
             var syntheticNoDateAxis = IsSyntheticNoDateAxis();
+            if (!syntheticNoDateAxis)
+                return;
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -161,8 +150,6 @@ namespace Trade.It
             g.FillRectangle(backgroundBrush, 0, plot.Bottom, Width, Math.Max(0, Height - plot.Bottom));
 
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
-
-            // Price axis belongs on the left side of the chart.
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
             g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
 
@@ -189,35 +176,12 @@ namespace Trade.It
                     ? 0
                     : (int)Math.Round(n * (visible.Count - 1.0) / (timeLabelCount - 1.0));
                 var x = (float)(plot.Left + step * (index + 0.5) - 0.25 * plot.Width + horizontalPanOffset);
-                var text = syntheticNoDateAxis
-                    ? (firstIndex + index + 1).ToString()
-                    : visible[index].Date.ToString("yyyy/MM/dd");
+                var text = (firstIndex + index + 1).ToString();
                 var size = g.MeasureString(text, axisTextFont);
                 var left = Math.Clamp(x - size.Width / 2f, plot.Left, Math.Max(plot.Left, plot.Right - size.Width));
                 var top = plot.Bottom + 4f;
                 g.FillRectangle(labelBack, left - 2f, top - 1f, size.Width + 4f, size.Height + 2f);
                 g.DrawString(text, axisTextFont, textBrush, left, top);
-            }
-
-            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
-            {
-                var x = (float)(plot.Left + step * (crosshairIndex + 0.5) - 0.25 * plot.Width + horizontalPanOffset);
-                var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
-                var priceText = ScreenToPrice(y, plot, min, max).ToString("0.##");
-                var timeText = syntheticNoDateAxis
-                    ? (firstIndex + crosshairIndex + 1).ToString()
-                    : visible[crosshairIndex].Date.ToString("yyyy/MM/dd");
-
-                var priceSize = g.MeasureString(priceText, axisTextFont);
-                var priceX = Math.Max(1f, plot.Left - priceSize.Width - 4f);
-                g.FillRectangle(labelBack, priceX - 2f, y - priceSize.Height / 2f - 1f, priceSize.Width + 4f, priceSize.Height + 2f);
-                g.DrawString(priceText, axisTextFont, textBrush, priceX, y - priceSize.Height / 2f);
-
-                var timeSize = g.MeasureString(timeText, axisTextFont);
-                var timeX = Math.Clamp(x - timeSize.Width / 2f, plot.Left, Math.Max(plot.Left, plot.Right - timeSize.Width));
-                var timeY = plot.Bottom + 4f;
-                g.FillRectangle(labelBack, timeX - 2f, timeY - 1f, timeSize.Width + 4f, timeSize.Height + 2f);
-                g.DrawString(timeText, axisTextFont, textBrush, timeX, timeY);
             }
         }
 
