@@ -111,6 +111,16 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseDown(object? sender, MouseEventArgs e)
         {
+            // WndProc uses extraInputHandled to mark a click that has already
+            // cancelled an active extra tool (for example, a click in the blank
+            // area outside the plotting rectangle). Consume that event here so
+            // this handler cannot immediately revive the cancelled tool state.
+            if (extraInputHandled)
+            {
+                extraInputHandled = false;
+                return;
+            }
+
             extraInputHandled = false;
             SyncExtraDrawingData();
 
@@ -221,138 +231,59 @@ namespace Trade.It
 
         private void ExtraDrawing_MouseMove(object? sender, MouseEventArgs e)
         {
-            extraInputHandled = false;
-
             if (extraDraggingHandleActive && extraDraggingDrawingIndex >= 0 && extraDraggingDrawingIndex < extraDrawings.Count)
             {
-                extraInputHandled = true;
-                if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
-                    return;
-
-                var d = extraDrawings[extraDraggingDrawingIndex];
-                var x = ScreenToDataX(e.X, plot, visibleCountForDrawing);
-                var y = ScreenToPrice(e.Y, plot, min, max);
-
-                if (extraDraggingHandle == 1)
+                if (e.Button == MouseButtons.Left)
                 {
-                    d.X1 = x;
-                    d.Y1 = y;
+                    var plot = GetPlotRectangle();
+                    if (TryGetExtraContext(out _, out var visibleCountForDrawing, out var min, out var max))
+                    {
+                        var drawing = extraDrawings[extraDraggingDrawingIndex];
+                        var point = ScreenToData(e.Location, plot, visibleCountForDrawing, min, max);
+                        if (extraDraggingHandle == 1)
+                        {
+                            drawing.X1 = point.X;
+                            drawing.Y1 = point.Y;
+                        }
+                        else if (extraDraggingHandle == 2)
+                        {
+                            drawing.X2 = point.X;
+                            drawing.Y2 = point.Y;
+                        }
+                        else if (extraDraggingHandle == 3)
+                        {
+                            drawing.X3 = point.X;
+                            drawing.Y3 = point.Y;
+                        }
+                        Invalidate();
+                    }
                 }
-                else if (extraDraggingHandle == 2)
-                {
-                    d.X2 = x;
-                    d.Y2 = y;
-                }
-                else if (extraDraggingHandle == 3)
-                {
-                    d.X3 = x;
-                    d.Y3 = y;
-                }
-
-                Invalidate();
                 return;
             }
 
-            if (!ExtraDrawingActive)
-                return;
-
-            extraInputHandled = true;
-            panning = false;
-            horizontalAxisDrag = false;
-            verticalAxisDrag = false;
-            if (extraDrawingInProgress)
+            if (ExtraDrawingActive && extraDrawingInProgress)
             {
                 extraDrawingCurrentPoint = e.Location;
                 Invalidate();
-                DeferExtraMouseState();
             }
         }
 
         private void ExtraDrawing_MouseUp(object? sender, MouseEventArgs e)
         {
-            extraInputHandled = false;
             if (e.Button == MouseButtons.Left && extraDraggingHandleActive)
             {
-                extraInputHandled = true;
                 extraDraggingHandleActive = false;
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandle = 0;
                 Capture = false;
-                Cursor = Cursors.Default;
+                Cursor = ExtraDrawingActive ? Cursors.Cross : Cursors.Default;
                 Invalidate();
-                return;
             }
-
-            if (e.Button == MouseButtons.Left && ExtraDrawingActive)
-            {
-                extraInputHandled = true;
-                DeferExtraMouseState();
-            }
-        }
-
-        private int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
-        {
-            if (DistanceToPoint(location, p1) <= 10f) return 1;
-            if (DistanceToPoint(location, p2) <= 10f) return 2;
-            if (DistanceToPoint(location, p3) <= 10f) return 3;
-            return 0;
-        }
-
-        private bool HitTestFibonacciLevel(Point location, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
-        {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
-            var dy = b.Y - a.Y;
-            var leftX = Math.Min(a.X, c.X);
-            var rightX = Math.Max(a.X, c.X);
-            if (location.X < leftX - 6f || location.X > rightX + 6f)
-                return false;
-
-            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
-            {
-                var y = c.Y + dy * level;
-                if (Math.Abs(location.Y - y) <= 7f)
-                    return true;
-            }
-            return false;
-        }
-
-        private void DeferExtraMouseState()
-        {
-            if (!IsHandleCreated)
-                return;
-            BeginInvoke(new Action(() =>
-            {
-                if (IsDisposed)
-                    return;
-                panning = false;
-                horizontalAxisDrag = false;
-                verticalAxisDrag = false;
-                draggingDrawingIndex = -1;
-                draggingHandle = 0;
-                Capture = false;
-                if (ExtraDrawingActive)
-                    Cursor = Cursors.Cross;
-            }));
         }
 
         private void ExtraDrawing_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && selectedExtraDrawingIndex >= 0 && selectedExtraDrawingIndex < extraDrawings.Count)
-            {
-                extraDrawings.RemoveAt(selectedExtraDrawingIndex);
-                selectedExtraDrawingIndex = -1;
-                extraDraggingHandle = 0;
-                extraDraggingDrawingIndex = -1;
-                extraDraggingHandleActive = false;
-                Invalidate();
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                return;
-            }
-
-            if (e.KeyCode == Keys.Escape && ExtraDrawingActive)
+            if (e.KeyCode == Keys.Escape && (ExtraDrawingActive || extraDrawingInProgress || extraDraggingHandleActive))
             {
                 CancelExtraDrawing();
                 e.Handled = true;
@@ -362,27 +293,40 @@ namespace Trade.It
 
         private void AddExtraDrawing()
         {
-            if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
-                return;
             if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
             if (extraDrawingPoints.Count < RequiredExtraPoints)
                 return;
 
-            var p1 = extraDrawingPoints[0];
-            var p2 = extraDrawingPoints[1];
-            var p3 = RequiredExtraPoints == 3 ? extraDrawingPoints[2] : p2;
+            var pointsToUse = extraDrawingPoints.Take(RequiredExtraPoints).ToList();
+            var p1 = ScreenToData(pointsToUse[0], plot, visibleCountForDrawing, min, max);
+            var p2 = ScreenToData(pointsToUse[1], plot, visibleCountForDrawing, min, max);
+            var p3 = RequiredExtraPoints >= 3
+                ? ScreenToData(pointsToUse[2], plot, visibleCountForDrawing, min, max)
+                : p2;
+
             extraDrawings.Add(new ExtraDrawing
             {
                 Tool = activeExtraDrawingTool,
-                X1 = ScreenToDataX(p1.X, plot, visibleCountForDrawing),
-                Y1 = ScreenToPrice(p1.Y, plot, min, max),
-                X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing),
-                Y2 = ScreenToPrice(p2.Y, plot, min, max),
-                X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing),
-                Y3 = ScreenToPrice(p3.Y, plot, min, max)
+                X1 = p1.X,
+                Y1 = p1.Y,
+                X2 = p2.X,
+                Y2 = p2.Y,
+                X3 = p3.X,
+                Y3 = p3.Y
             });
-            selectedExtraDrawingIndex = -1;
+            selectedExtraDrawingIndex = extraDrawings.Count - 1;
+        }
+
+        private void DeferExtraMouseState()
+        {
+            BeginInvoke(new Action(() =>
+            {
+                if (IsDisposed || !IsHandleCreated)
+                    return;
+                extraInputHandled = false;
+                Invalidate();
+            }));
         }
 
         private bool TryGetExtraContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
@@ -400,224 +344,71 @@ namespace Trade.It
             return true;
         }
 
-        private void ExtraDrawing_Paint(object? sender, PaintEventArgs e)
+        private PointF ScreenToData(Point point, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            SyncExtraDrawingData();
-            if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
-                return;
-
-            using var normalPen = new Pen(Color.FromArgb(155, 80, 45), 1.3f);
-            using var selectedPen = new Pen(Color.FromArgb(190, 55, 35), 2f);
-            using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
-            using var labelBack = new SolidBrush(Color.FromArgb(248, 248, 248));
-            using var previewPen = new Pen(Color.FromArgb(155, 80, 45), 1.2f) { DashStyle = DashStyle.Dash };
-
-            for (var i = 0; i < extraDrawings.Count; i++)
-            {
-                var d = extraDrawings[i];
-                var pen = i == selectedExtraDrawingIndex ? selectedPen : normalPen;
-                if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
-                else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
-                    DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
-            }
-
-            if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
-            {
-                if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
-                    DrawMeasurePreview(e.Graphics, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot, visibleCountForDrawing, min, max);
-                else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchforkPreview(e.Graphics, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
-                else
-                    DrawFibonacciExtensionPreview(e.Graphics, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
-            }
+            var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
+            var x = (point.X - plot.Left - horizontalPanOffset - (-plot.Width * 0.25)) / Math.Max(0.0001, step) - 0.5 + firstIndex;
+            var y = max - ((point.Y - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
+            return new PointF((float)x, (float)y);
         }
 
-        private void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
+        private PointF DataToScreen(double x, double y, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
-            DrawPitchforkGeometry(g, pen, p1, p2, p3, plot);
-            if (selected)
-            {
-                DrawHandle(g, p1);
-                DrawHandle(g, p2);
-                DrawHandle(g, p3);
-            }
+            var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
+            var localX = x - firstIndex;
+            var screenX = plot.Left + step * (localX + 0.5) + (-plot.Width * 0.25) + horizontalPanOffset;
+            var screenY = PriceToScreen(y, plot, min, max);
+            return new PointF((float)screenX, (float)screenY);
         }
 
-        private static void DrawPitchforkPreview(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
+        private static int HitTestHandle(Point location, PointF p1, PointF p2, PointF p3)
         {
-            if (points.Count == 0) return;
-            var p1 = points[0];
-            var p2 = points.Count > 1 ? points[1] : current;
-            var p3 = points.Count > 2 ? points[2] : current;
-            DrawPitchforkGeometry(g, pen, p1, p2, p3, plot);
+            if (DistanceToPoint(location, p1) <= 10f) return 1;
+            if (DistanceToPoint(location, p2) <= 10f) return 2;
+            if (DistanceToPoint(location, p3) <= 10f) return 3;
+            return 0;
         }
 
-        private static void DrawPitchforkGeometry(Graphics g, Pen pen, PointF p1, PointF p2, PointF p3, Rectangle plot)
+        private static float DistanceToPoint(PointF p, PointF q)
         {
-            var midpoint = new PointF((p2.X + p3.X) / 2f, (p2.Y + p3.Y) / 2f);
-            var dx = midpoint.X - p1.X;
-            var dy = midpoint.Y - p1.Y;
-            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f) return;
-            DrawRayToRight(g, pen, p1, dx, dy, plot);
-            DrawRayToRight(g, pen, p2, dx, dy, plot);
-            DrawRayToRight(g, pen, p3, dx, dy, plot);
-            g.DrawLine(pen, p2, p3);
+            var dx = p.X - q.X;
+            var dy = p.Y - q.Y;
+            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private static void DrawRayToRight(Graphics g, Pen pen, PointF start, float dx, float dy, Rectangle plot)
+        private static float DistanceToPoint(Point p, PointF q)
         {
-            if (Math.Abs(dx) < 0.001f)
-            {
-                g.DrawLine(pen, start.X, start.Y, start.X, plot.Bottom);
-                return;
-            }
-            var targetX = plot.Right;
-            var targetY = start.Y + dy * ((targetX - start.X) / dx);
-            if (targetY >= plot.Top && targetY <= plot.Bottom)
-            {
-                g.DrawLine(pen, start, new PointF(targetX, targetY));
-                return;
-            }
-            if (Math.Abs(dy) > 0.001f)
-            {
-                var targetTopX = start.X + dx * ((plot.Top - start.Y) / dy);
-                if (targetTopX >= start.X && targetTopX <= plot.Right)
-                {
-                    g.DrawLine(pen, start, new PointF(targetTopX, plot.Top));
-                    return;
-                }
-                var targetBottomX = start.X + dx * ((plot.Bottom - start.Y) / dy);
-                if (targetBottomX >= start.X && targetBottomX <= plot.Right)
-                    g.DrawLine(pen, start, new PointF(targetBottomX, plot.Bottom));
-            }
+            return DistanceToPoint(new PointF(p.X, p.Y), q);
         }
 
-        private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
-        {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
-            var dy = b.Y - a.Y;
-            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
-            var leftX = Math.Min(a.X, c.X);
-            var rightX = Math.Max(a.X, c.X);
-            foreach (var level in levels)
-            {
-                var y = c.Y + dy * level;
-                g.DrawLine(pen, leftX, y, rightX, y);
-                var text = level switch
-                {
-                    0f => "0%",
-                    0.382f => "38.2%",
-                    0.618f => "61.8%",
-                    1f => "100%",
-                    1.272f => "127.2%",
-                    1.618f => "161.8%",
-                    2f => "200%",
-                    _ => "261.8%"
-                };
-                var size = g.MeasureString(text, SystemFonts.DefaultFont);
-                var labelX = Math.Min(rightX + 5f, plot.Right - size.Width - 2f);
-                if (labelX < leftX)
-                    labelX = leftX;
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
-            }
-            if (selected)
-            {
-                DrawHandle(g, a);
-                DrawHandle(g, b);
-                DrawHandle(g, c);
-            }
-        }
-
-        private static void DrawFibonacciExtensionPreview(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
-        {
-            if (points.Count == 0) return;
-            var a = points[0];
-            var b = points.Count > 1 ? points[1] : current;
-            var c = points.Count > 2 ? points[2] : current;
-            var dy = b.Y - a.Y;
-            var leftX = Math.Min(a.X, c.X);
-            var rightX = Math.Max(a.X, c.X);
-            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
-            {
-                var y = c.Y + dy * level;
-                g.DrawLine(pen, leftX, y, rightX, y);
-            }
-        }
-
-        private void DrawMeasurePreview(Graphics g, Pen pen, Brush labelBrush, Point a, Point b, Rectangle plot, int visibleCount, double min, double max)
-        {
-            g.DrawLine(pen, a, b);
-
-            var price1 = ScreenToPrice(a.Y, plot, min, max);
-            var price2 = ScreenToPrice(b.Y, plot, min, max);
-            var percent = Math.Abs(price1) > double.Epsilon ? ((price2 - price1) / price1) * 100.0 : 0.0;
-
-            var x1 = ScreenToDataX(a.X, plot, visibleCount);
-            var x2 = ScreenToDataX(b.X, plot, visibleCount);
-            var candleCount = Math.Abs((int)Math.Round(x2) - (int)Math.Round(x1)) + 1;
-
-            var sign = percent > 0 ? "+" : string.Empty;
-            var text = $"Δ قیمت: {sign}{percent:N2}%   |   تعداد کندل: {candleCount:N0}";
-            using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
-            var size = g.MeasureString(text, font);
-
-            var x = Math.Min(b.X + 10f, plot.Right - size.Width - 10f);
-            if (x < plot.Left + 5f) x = plot.Left + 5f;
-            var y = Math.Min(b.Y + 10f, plot.Bottom - size.Height - 10f);
-            if (y < plot.Top + 5f) y = plot.Top + 5f;
-
-            using var back = new SolidBrush(Color.FromArgb(245, 245, 245));
-            g.FillRectangle(back, x - 4f, y - 2f, size.Width + 8f, size.Height + 4f);
-            g.DrawString(text, font, labelBrush, x, y);
-        }
-
-        private static void DrawHandle(Graphics g, PointF p)
-        {
-            using var brush = new SolidBrush(Color.White);
-            using var pen = new Pen(Color.FromArgb(190, 55, 35), 1.2f);
-            const float r = 4f;
-            g.FillEllipse(brush, p.X - r, p.Y - r, r * 2f, r * 2f);
-            g.DrawEllipse(pen, p.X - r, p.Y - r, r * 2f, r * 2f);
-        }
-
-        private int HitTestExtraDrawing(Point location, Rectangle plot)
-        {
-            if (!TryGetExtraContext(out _, out var visibleCountForDrawing, out var min, out var max))
-                return -1;
-            for (var i = extraDrawings.Count - 1; i >= 0; i--)
-            {
-                var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
-                if (DistanceToPoint(location, p1) <= 10f || DistanceToPoint(location, p2) <= 10f || DistanceToPoint(location, p3) <= 10f)
-                    return i;
-            }
-            return -1;
-        }
-
-        private static float DistanceToPoint(Point location, PointF point)
-        {
-            var dx = location.X - point.X;
-            var dy = location.Y - point.Y;
-            return MathF.Sqrt(dx * dx + dy * dy);
-        }
-
-        private static float DistanceToSegment(Point location, PointF a, PointF b)
+        private static float DistanceToSegment(Point p, PointF a, PointF b)
         {
             var dx = b.X - a.X;
             var dy = b.Y - a.Y;
-            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
-                return DistanceToPoint(location, a);
-            var t = ((location.X - a.X) * dx + (location.Y - a.Y) * dy) / (dx * dx + dy * dy);
+            if (Math.Abs(dx) < 0.001f && Math.Abs(dy) < 0.001f)
+                return DistanceToPoint(p, a);
+            var t = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / (dx * dx + dy * dy);
             t = Math.Clamp(t, 0f, 1f);
-            return DistanceToPoint(location, new PointF(a.X + t * dx, a.Y + t * dy));
+            var projection = new PointF(a.X + t * dx, a.Y + t * dy);
+            return DistanceToPoint(p, projection);
+        }
+
+        private bool HitTestFibonacciLevel(Point location, ExtraDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            var p1 = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            var p2 = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            var p3 = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+            var priceRange = p1.Y - p2.Y;
+            if (Math.Abs(priceRange) < 0.001f)
+                return false;
+            var levels = new[] { 0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0, 1.272, 1.618, 2.0 };
+            foreach (var level in levels)
+            {
+                var y = p1.Y + (p2.Y - p1.Y) * level;
+                if (Math.Abs(location.Y - y) <= 7f)
+                    return true;
+            }
+            return false;
         }
     }
 }
