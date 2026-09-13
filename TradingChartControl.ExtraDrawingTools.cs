@@ -505,8 +505,6 @@ namespace Trade.It
             var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            g.DrawLine(pen, a, b);
-            g.DrawLine(pen, b, c);
             foreach (var level in levels)
             {
                 var y = c.Y + dy * level;
@@ -545,8 +543,6 @@ namespace Trade.It
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            g.DrawLine(pen, a, b);
-            g.DrawLine(pen, b, c);
             foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
             {
                 var y = c.Y + dy * level;
@@ -602,12 +598,26 @@ namespace Trade.It
                 var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f || DistanceToPoint(location, p2) <= 10f || DistanceToPoint(location, p3) <= 10f)
                     return i;
-                if (d.Tool == ExtraDrawingTool.FibonacciExtension && HitTestFibonacciLevel(location, d, plot, visibleCountForDrawing, min, max))
-                    return i;
-                if (d.Tool == ExtraDrawingTool.Measure && DistanceToSegment(location, p1, p2) <= 7f)
-                    return i;
             }
             return -1;
+        }
+
+        private static float DistanceToPoint(Point location, PointF point)
+        {
+            var dx = location.X - point.X;
+            var dy = location.Y - point.Y;
+            return MathF.Sqrt(dx * dx + dy * dy);
+        }
+
+        private static float DistanceToSegment(Point location, PointF a, PointF b)
+        {
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
+                return DistanceToPoint(location, a);
+            var t = ((location.X - a.X) * dx + (location.Y - a.Y) * dy) / (dx * dx + dy * dy);
+            t = Math.Clamp(t, 0f, 1f);
+            return DistanceToPoint(location, new PointF(a.X + t * dx, a.Y + t * dy));
         }
     }
 }
