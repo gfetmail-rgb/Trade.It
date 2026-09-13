@@ -20,9 +20,22 @@ namespace Trade.It
                 EnsureChartPanCompensation();
             }
 
+            // An active three-point tool must be cancelled deterministically when
+            // the user clicks outside the plotting rectangle. Do this at message
+            // level, before the normal OnMouseDown path can start panning/axis drag.
+            if (m.Msg == WM_LBUTTONDOWN && ExtraDrawingActive)
+            {
+                var location = GetMousePointFromMessage(m);
+                if (!GetPlotRectangle().Contains(location))
+                {
+                    CancelExtraDrawing();
+                    extraInputHandled = true;
+                }
+            }
+
             var detachedExtraMouseDown = false;
             if (m.Msg == WM_LBUTTONDOWN && !ExtraDrawingActive && !extraDraggingHandleActive &&
-                !IsExtraDrawingHit(GetMousePointFromMessage(m)))
+                !IsExtraDrawingHit(GetMousePointFromMessage(m)) && !extraInputHandled)
             {
                 MouseDown -= ExtraDrawing_MouseDown;
                 detachedExtraMouseDown = true;
@@ -31,20 +44,10 @@ namespace Trade.It
 
             base.WndProc(ref m);
 
-            // The chart renderer draws the crosshair and its labels through the
-            // normal double-buffered Paint pipeline. Do not paint those elements
-            // again with CreateGraphics(), because that bypasses the buffer and
-            // causes severe flicker while the mouse is moving.
-            //
-            // The overlay is still needed for OHLC-only charts to replace the
-            // generated DateTime axis labels with candle indexes. It now draws
-            // only the axis/index labels, not the moving crosshair.
-            if (m.Msg == WM_PAINT && IsHandleCreated && points.Count > 0 && IsSyntheticNoDateAxis())
-            {
-                using var graphics = CreateGraphics();
-                DrawChartBoundaryAndAxisOverlay(graphics);
-            }
-
+            // All moving chart content, including the crosshair and its labels,
+            // is rendered by OnPaint on the control's double-buffered surface.
+            // Never call CreateGraphics() after WM_PAINT: that paints directly
+            // over the already-presented buffer and causes visible flicker.
             if (detachedExtraMouseDown)
                 MouseDown += ExtraDrawing_MouseDown;
 
@@ -55,6 +58,7 @@ namespace Trade.It
                     verticalAxisStartZoom * Math.Exp(-delta / 200.0),
                     0.1,
                     20.0);
+                initialTopMarginActive = false;
                 Invalidate();
             }
         }
@@ -123,66 +127,6 @@ namespace Trade.It
             }
 
             return true;
-        }
-
-        private void DrawChartBoundaryAndAxisOverlay(Graphics g)
-        {
-            if (points.Count == 0)
-                return;
-
-            var plot = GetPlotRectangle();
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
-            if (visible.Count == 0)
-                return;
-
-            GetVerticalRange(visible, out var min, out var max);
-            var syntheticNoDateAxis = IsSyntheticNoDateAxis();
-            if (!syntheticNoDateAxis)
-                return;
-
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            using var backgroundBrush = new SolidBrush(BackColor);
-            g.FillRectangle(backgroundBrush, 0, 0, Width, plot.Top);
-            g.FillRectangle(backgroundBrush, 0, plot.Top, plot.Left, plot.Height);
-            g.FillRectangle(backgroundBrush, plot.Right, plot.Top, Math.Max(0, Width - plot.Right), plot.Height);
-            g.FillRectangle(backgroundBrush, 0, plot.Bottom, Width, Math.Max(0, Height - plot.Bottom));
-
-            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
-            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
-            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
-
-            using var textBrush = new SolidBrush(Color.FromArgb(70, 70, 70));
-            using var labelBack = new SolidBrush(Color.FromArgb(248, 248, 248));
-            using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
-
-            for (var i = 0; i <= 5; i++)
-            {
-                var value = max - (max - min) * i / 5.0;
-                var y = PriceToScreen(value, plot, min, max);
-                var text = value.ToString("0.##");
-                var size = g.MeasureString(text, axisTextFont);
-                var x = Math.Max(1f, plot.Left - size.Width - 4f);
-                g.FillRectangle(labelBack, x - 2f, y - size.Height / 2f - 1f, size.Width + 4f, size.Height + 2f);
-                g.DrawString(text, axisTextFont, textBrush, x, y - size.Height / 2f);
-            }
-
-            var step = plot.Width / (double)Math.Max(1, visible.Count);
-            var timeLabelCount = Math.Min(6, visible.Count);
-            for (var n = 0; n < timeLabelCount; n++)
-            {
-                var index = timeLabelCount == 1
-                    ? 0
-                    : (int)Math.Round(n * (visible.Count - 1.0) / (timeLabelCount - 1.0));
-                var x = (float)(plot.Left + step * (index + 0.5) - 0.25 * plot.Width + horizontalPanOffset);
-                var text = (firstIndex + index + 1).ToString();
-                var size = g.MeasureString(text, axisTextFont);
-                var left = Math.Clamp(x - size.Width / 2f, plot.Left, Math.Max(plot.Left, plot.Right - size.Width));
-                var top = plot.Bottom + 4f;
-                g.FillRectangle(labelBack, left - 2f, top - 1f, size.Width + 4f, size.Height + 2f);
-                g.DrawString(text, axisTextFont, textBrush, left, top);
-            }
         }
 
         public void ClearAllDrawings()
