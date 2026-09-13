@@ -20,9 +20,6 @@ namespace Trade.It
                 return;
             }
 
-            if (initialTopMarginApplied && Math.Abs(initialTopMarginPercentApplied - percent) < 0.0001)
-                return;
-
             if (points.Count == 0)
                 return;
 
