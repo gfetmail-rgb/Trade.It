@@ -378,8 +378,7 @@ namespace Trade.It
             var result = new List<TradingChartPoint>();
 
             if (definition == null || string.IsNullOrWhiteSpace(symbol) ||
-                string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath) ||
-                definition.NoDateTime)
+                string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
                 return result;
 
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -396,10 +395,11 @@ namespace Trade.It
             var volumeColumn = GetMappingColumn(definition, "حجم");
             if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
 
-            if (dateColumn <= 0 || openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
+            if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
                 return result;
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
+            var syntheticIndex = 0L;
 
             try
             {
@@ -425,14 +425,25 @@ namespace Trade.It
                             continue;
 
                         var requiredMaxColumn = Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn));
-                        if (dateColumn > row.Length || requiredMaxColumn > row.Length)
+                        if (requiredMaxColumn > row.Length)
                             continue;
 
-                        if (!TryParseChartDate(row[dateColumn - 1], definition, out var date))
-                            continue;
+                        DateTime date;
+                        if (!definition.NoDateTime)
+                        {
+                            if (dateColumn <= 0 || dateColumn > row.Length ||
+                                !TryParseChartDate(row[dateColumn - 1], definition, out date))
+                                continue;
 
-                        if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
-                            date = date.Date.Add(time);
+                            if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
+                                date = date.Date.Add(time);
+                        }
+                        else
+                        {
+                            // OHLC-only data has no real time axis. Use a stable synthetic index
+                            // solely for ordering/rendering; it is not presented as source data.
+                            date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
+                        }
 
                         if (!TryParseTradingNumber(row[openColumn - 1], out var open) ||
                             !TryParseTradingNumber(row[highColumn - 1], out var high) ||
