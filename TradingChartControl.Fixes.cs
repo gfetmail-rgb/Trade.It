@@ -114,6 +114,20 @@ namespace Trade.It
             DrawChartBoundaryAndAxisOverlay(e.Graphics);
         }
 
+        private bool IsSyntheticNoDateAxis()
+        {
+            if (points.Count == 0 || points[0].Date != DateTime.UnixEpoch)
+                return false;
+
+            for (var i = 1; i < points.Count; i++)
+            {
+                if (points[i].Date != DateTime.UnixEpoch.AddDays(i))
+                    return false;
+            }
+
+            return true;
+        }
+
         private void DrawChartBoundaryAndAxisOverlay(Graphics g)
         {
             if (points.Count == 0)
@@ -126,6 +140,7 @@ namespace Trade.It
                 return;
 
             GetVerticalRange(visible, out var min, out var max);
+            var syntheticNoDateAxis = IsSyntheticNoDateAxis();
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -164,7 +179,9 @@ namespace Trade.It
                     ? 0
                     : (int)Math.Round(n * (visible.Count - 1.0) / (timeLabelCount - 1.0));
                 var x = (float)(plot.Left + step * (index + 0.5) - 0.25 * plot.Width + horizontalPanOffset);
-                var text = visible[index].Date.ToString("yyyy/MM/dd");
+                var text = syntheticNoDateAxis
+                    ? (firstIndex + index + 1).ToString()
+                    : visible[index].Date.ToString("yyyy/MM/dd");
                 var size = g.MeasureString(text, axisTextFont);
                 var left = Math.Clamp(x - size.Width / 2f, plot.Left, Math.Max(plot.Left, plot.Right - size.Width));
                 var top = plot.Bottom + 4f;
@@ -177,7 +194,9 @@ namespace Trade.It
                 var x = (float)(plot.Left + step * (crosshairIndex + 0.5) - 0.25 * plot.Width + horizontalPanOffset);
                 var y = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
                 var priceText = ScreenToPrice(y, plot, min, max).ToString("0.##");
-                var timeText = visible[crosshairIndex].Date.ToString("yyyy/MM/dd");
+                var timeText = syntheticNoDateAxis
+                    ? (firstIndex + crosshairIndex + 1).ToString()
+                    : visible[crosshairIndex].Date.ToString("yyyy/MM/dd");
 
                 var priceSize = g.MeasureString(priceText, axisTextFont);
                 var priceX = Math.Max(1f, plot.Left - priceSize.Width - 4f);
