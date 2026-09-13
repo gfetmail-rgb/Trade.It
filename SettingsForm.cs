@@ -45,11 +45,37 @@ namespace Trade.It
             ChartRightEmptyPercent = chartRightEmptyPercent;
             ChartTopEmptyPercent = chartTopEmptyPercent;
             LoadColorButtons();
+            InitializeLineSettingsControls();
             AttachColorEvents();
             AttachLineSettingsEvents();
             okButton.Click += okButton_Click;
             cancelButton.Click += cancelButton_Click;
         }
+
+        private void InitializeLineSettingsControls()
+        {
+            chartLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.ChartLineWidth, 0.5f, 8.0f);
+            chartLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.ChartLineStyle);
+
+            drawingLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.DrawingLineWidth, 0.5f, 8.0f);
+            drawingLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.DrawingLineStyle);
+
+            crosshairLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.CrosshairLineWidth, 0.5f, 8.0f);
+            crosshairLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.CrosshairLineStyle);
+
+            gridLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.GridLineWidth, 0.5f, 8.0f);
+            gridLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.GridLineStyle);
+        }
+
+        private static int StyleToIndex(DashStyle style) => style switch
+        {
+            DashStyle.Solid => 0,
+            DashStyle.Dash => 1,
+            DashStyle.Dot => 2,
+            DashStyle.DashDot => 3,
+            DashStyle.DashDotDot => 4,
+            _ => 0
+        };
 
         private void AddTopMarginControl(double value)
         {
