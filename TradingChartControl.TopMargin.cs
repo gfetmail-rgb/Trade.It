@@ -3,6 +3,7 @@ namespace Trade.It
     internal sealed partial class TradingChartControl
     {
         private bool initialTopMarginApplied;
+        private double initialTopMarginPercentApplied = -1.0;
 
         private void EnsureInitialTopMargin()
         {
@@ -19,7 +20,10 @@ namespace Trade.It
                 return;
             }
 
-            if (initialTopMarginApplied || points.Count == 0)
+            if (initialTopMarginApplied && Math.Abs(initialTopMarginPercentApplied - percent) < 0.0001)
+                return;
+
+            if (points.Count == 0)
                 return;
 
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
@@ -34,13 +38,10 @@ namespace Trade.It
             if (factor <= 0.0)
                 return;
 
-            // GetVerticalRange divides range by verticalZoom and centers it at
-            // (min+max)/2 + verticalPanOffset. These values make dataMin remain
-            // at the bottom while leaving exactly 'percent' of the plot above
-            // dataMax.
             verticalZoom = factor;
             verticalPanOffset = range * percent / (2.0 * factor);
             initialTopMarginApplied = true;
+            initialTopMarginPercentApplied = percent;
         }
     }
 }
