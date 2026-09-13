@@ -2,11 +2,16 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
-        // Chart appearance/settings support.
         internal static double ChartRightEmptyPercent
         {
             get => ChartAppearanceSettings.ChartRightEmptyPercent;
             set => ChartAppearanceSettings.SetChartRightEmptyPercent(value);
+        }
+
+        internal static double ChartTopEmptyPercent
+        {
+            get => ChartAppearanceSettings.ChartTopEmptyPercent;
+            set => ChartAppearanceSettings.SetChartTopEmptyPercent(value);
         }
 
         internal static void LoadChartAppearanceSettings() => ChartAppearanceSettings.Load();
