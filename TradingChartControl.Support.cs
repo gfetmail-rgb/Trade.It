@@ -21,7 +21,7 @@ namespace Trade.It
         {
             ChartDrawingTool.TrendLine => ChartAppearanceSettings.TrendLineColor,
             ChartDrawingTool.TrendChannel => ChartAppearanceSettings.TrendChannelColor,
-            ChartDrawingTool.HorizontalDoubleArrow => ChartAppearanceSettings.HorizontalDoubleDoubleArrowColor,
+            ChartDrawingTool.HorizontalDoubleArrow => ChartAppearanceSettings.HorizontalDoubleArrowColor,
             ChartDrawingTool.VerticalDoubleArrow => ChartAppearanceSettings.VerticalDoubleArrowColor,
             ChartDrawingTool.HorizontalRay => ChartAppearanceSettings.HorizontalRayColor,
             ChartDrawingTool.TrendLineWithArrow => ChartAppearanceSettings.TrendLineWithArrowColor,
@@ -226,9 +226,6 @@ namespace Trade.It
             if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
                 return;
 
-            // A standard Andrews pitchfork consists of the median and two
-            // parallel tines. The segment connecting points 2 and 3 is not
-            // drawn as a fourth line.
             DrawRayToRight(g, pen, p1, dx, dy, plot);
             DrawRayToRight(g, pen, p2, dx, dy, plot);
             DrawRayToRight(g, pen, p3, dx, dy, plot);
