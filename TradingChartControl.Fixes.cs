@@ -18,6 +18,7 @@ namespace Trade.It
                 m.Msg == WM_LBUTTONDOWN || m.Msg == WM_LBUTTONUP)
             {
                 EnsureChartPanCompensation();
+                EnsureInitialTopMargin();
             }
 
             // An active three-point tool must be cancelled deterministically when
@@ -58,7 +59,7 @@ namespace Trade.It
                     verticalAxisStartZoom * Math.Exp(-delta / 200.0),
                     0.1,
                     20.0);
-                initialTopMarginActive = false;
+                initialTopMarginApplied = false;
                 Invalidate();
             }
         }
