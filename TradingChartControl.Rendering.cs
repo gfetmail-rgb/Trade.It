@@ -53,6 +53,13 @@ namespace Trade.It
             var step = plot.Width / (double)Math.Max(1, visible.Count);
             var initialOffset = -plot.Width * 0.25;
 
+            // Rectangle interiors are deliberately painted before the chart data.
+            // The candle/line chart therefore remains visible on top of the fill.
+            DrawRectangleFillsBehindChart(e.Graphics, plot, visible.Count, min, max);
+
+            if (drawingInProgress && activeDrawingTool == ChartDrawingTool.Rectangle && IsInsidePlot(drawingCurrentPoint))
+                DrawRectanglePreviewFillBehindChart(e.Graphics, drawingStartPoint, drawingCurrentPoint);
+
             if (chartType == TradingChartType.Line)
             {
                 var linePoints = new List<PointF>();
@@ -162,6 +169,40 @@ namespace Trade.It
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
         }
 
+        private void DrawRectangleFillsBehindChart(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            if (drawings.Count == 0)
+                return;
+
+            using var fill = new SolidBrush(Color.FromArgb(242, 248, 255));
+            foreach (var drawing in drawings)
+            {
+                if (drawing.Tool != ChartDrawingTool.Rectangle)
+                    continue;
+
+                GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
+                var left = Math.Min(start.X, end.X);
+                var top = Math.Min(start.Y, end.Y);
+                var right = Math.Max(start.X, end.X);
+                var bottom = Math.Max(start.Y, end.Y);
+                if (right > left && bottom > top)
+                    g.FillRectangle(fill, RectangleF.FromLTRB(left, top, right, bottom));
+            }
+        }
+
+        private static void DrawRectanglePreviewFillBehindChart(Graphics g, Point start, Point end)
+        {
+            var left = Math.Min(start.X, end.X);
+            var top = Math.Min(start.Y, end.Y);
+            var right = Math.Max(start.X, end.X);
+            var bottom = Math.Max(start.Y, end.Y);
+            if (right <= left || bottom <= top)
+                return;
+
+            using var fill = new SolidBrush(Color.FromArgb(242, 248, 255));
+            g.FillRectangle(fill, RectangleF.FromLTRB(left, top, right, bottom));
+        }
+
         private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             for (var i = 0; i < drawings.Count; i++)
@@ -241,9 +282,8 @@ namespace Trade.It
                     var top = Math.Min(start.Y, end.Y);
                     var right = Math.Max(start.X, end.X);
                     var bottom = Math.Max(start.Y, end.Y);
-                    var rect = RectangleF.FromLTRB(left, top, right, bottom);
-                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, rect);
-                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle }) g.DrawRectangle(rectanglePen, rect.X, rect.Y, rect.Width, rect.Height);
+                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle })
+                        g.DrawRectangle(rectanglePen, left, top, right - left, bottom - top);
                     break;
             }
         }
@@ -269,8 +309,8 @@ namespace Trade.It
                     var top = Math.Min(start.Y, end.Y);
                     var width = Math.Abs(end.X - start.X);
                     var height = Math.Abs(end.Y - start.Y);
-                    using (var fill = new SolidBrush(Color.FromArgb(242, 248, 255))) g.FillRectangle(fill, left, top, width, height);
-                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle }) g.DrawRectangle(rectanglePen, left, top, width, height);
+                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle })
+                        g.DrawRectangle(rectanglePen, left, top, width, height);
                     break;
             }
         }
