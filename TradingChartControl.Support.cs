@@ -177,7 +177,7 @@ namespace Trade.It
                 var width = i == selectedExtraDrawingIndex ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
                 using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchfork(g, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawPitchforkFixed(g, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
                     DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
             }
@@ -188,10 +188,50 @@ namespace Trade.It
                 if (activeExtraDrawingTool == ExtraDrawingTool.Measure)
                     DrawMeasurePreview(g, previewPen, labelBrush, extraDrawingPoints[0], extraDrawingCurrentPoint, plot, visibleCountForDrawing, min, max);
                 else if (activeExtraDrawingTool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchforkPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
+                    DrawPitchforkPreviewFixed(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
                 else
                     DrawThreePointFibonacciPreview(g, previewPen, extraDrawingPoints, extraDrawingCurrentPoint, plot);
             }
+        }
+
+        private static void DrawPitchforkFixed(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
+        {
+            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
+            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
+            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            DrawPitchforkGeometryFixed(g, pen, p1, p2, p3, plot);
+            if (selected)
+            {
+                DrawAdvancedHandle(g, p1);
+                DrawAdvancedHandle(g, p2);
+                DrawAdvancedHandle(g, p3);
+            }
+        }
+
+        private static void DrawPitchforkPreviewFixed(Graphics g, Pen pen, List<Point> points, Point current, Rectangle plot)
+        {
+            if (points.Count == 0)
+                return;
+            var p1 = points[0];
+            var p2 = points.Count > 1 ? points[1] : current;
+            var p3 = points.Count > 2 ? points[2] : current;
+            DrawPitchforkGeometryFixed(g, pen, p1, p2, p3, plot);
+        }
+
+        private static void DrawPitchforkGeometryFixed(Graphics g, Pen pen, PointF p1, PointF p2, PointF p3, Rectangle plot)
+        {
+            var midpoint = new PointF((p2.X + p3.X) / 2f, (p2.Y + p3.Y) / 2f);
+            var dx = midpoint.X - p1.X;
+            var dy = midpoint.Y - p1.Y;
+            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
+                return;
+
+            // A standard Andrews pitchfork consists of the median and two
+            // parallel tines. The segment connecting points 2 and 3 is not
+            // drawn as a fourth line.
+            DrawRayToRight(g, pen, p1, dx, dy, plot);
+            DrawRayToRight(g, pen, p2, dx, dy, plot);
+            DrawRayToRight(g, pen, p3, dx, dy, plot);
         }
 
         private void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
