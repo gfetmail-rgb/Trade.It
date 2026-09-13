@@ -126,7 +126,7 @@ namespace Trade.It
             // 
             // reloadButton
             // 
-            reloadButton.Location = new Point(650, 939);
+            reloadButton.Location = new Point(728, 947);
             reloadButton.Name = "reloadButton";
             reloadButton.Size = new Size(110, 41);
             reloadButton.TabIndex = 1;
@@ -326,7 +326,7 @@ namespace Trade.It
             // existingTitleLabel
             // 
             existingTitleLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            existingTitleLabel.Location = new Point(368, 12);
+            existingTitleLabel.Location = new Point(1213, 9);
             existingTitleLabel.Name = "existingTitleLabel";
             existingTitleLabel.Size = new Size(180, 34);
             existingTitleLabel.TabIndex = 25;
@@ -338,17 +338,17 @@ namespace Trade.It
             portfoliosListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             portfoliosListBox.IntegralHeight = false;
             portfoliosListBox.ItemHeight = 28;
-            portfoliosListBox.Location = new Point(177, 49);
+            portfoliosListBox.Location = new Point(996, 49);
             portfoliosListBox.Name = "portfoliosListBox";
-            portfoliosListBox.Size = new Size(337, 269);
+            portfoliosListBox.Size = new Size(366, 269);
             portfoliosListBox.TabIndex = 26;
             // 
             // deletePortfoliosButton
             // 
             deletePortfoliosButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deletePortfoliosButton.Location = new Point(47, 159);
+            deletePortfoliosButton.Location = new Point(905, 142);
             deletePortfoliosButton.Name = "deletePortfoliosButton";
-            deletePortfoliosButton.Size = new Size(110, 40);
+            deletePortfoliosButton.Size = new Size(72, 69);
             deletePortfoliosButton.TabIndex = 27;
             deletePortfoliosButton.Text = "حذف سبد";
             // 
@@ -369,14 +369,14 @@ namespace Trade.It
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.ColumnHeadersHeight = 34;
             symbolsGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowColumn, symbolNameColumn });
-            symbolsGrid.Location = new Point(177, 390);
+            symbolsGrid.Location = new Point(102, 390);
             symbolsGrid.Name = "symbolsGrid";
             symbolsGrid.ReadOnly = true;
             symbolsGrid.RightToLeft = RightToLeft.Yes;
             symbolsGrid.RowHeadersVisible = false;
             symbolsGrid.RowHeadersWidth = 62;
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            symbolsGrid.Size = new Size(1211, 250);
+            symbolsGrid.Size = new Size(1286, 250);
             symbolsGrid.TabIndex = 29;
             // 
             // symbolRowColumn
@@ -398,9 +398,9 @@ namespace Trade.It
             // deleteSymbolsButton
             // 
             deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteSymbolsButton.Location = new Point(32, 498);
+            deleteSymbolsButton.Location = new Point(23, 476);
             deleteSymbolsButton.Name = "deleteSymbolsButton";
-            deleteSymbolsButton.Size = new Size(125, 40);
+            deleteSymbolsButton.Size = new Size(64, 74);
             deleteSymbolsButton.TabIndex = 30;
             deleteSymbolsButton.Text = "حذف نماد";
             // 
@@ -408,7 +408,7 @@ namespace Trade.It
             // 
             statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             statusLabel.Font = new Font("Segoe UI", 9F);
-            statusLabel.Location = new Point(202, 321);
+            statusLabel.Location = new Point(1054, 319);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(294, 34);
             statusLabel.TabIndex = 31;
@@ -418,7 +418,7 @@ namespace Trade.It
             // closeButton
             // 
             closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            closeButton.Location = new Point(508, 939);
+            closeButton.Location = new Point(579, 947);
             closeButton.Name = "closeButton";
             closeButton.Size = new Size(125, 41);
             closeButton.TabIndex = 32;
@@ -620,7 +620,7 @@ namespace Trade.It
             groupBox1.Controls.Add(headerLabel);
             groupBox1.Controls.Add(timeFormatLabel);
             groupBox1.Controls.Add(symbolSourceLabel);
-            groupBox1.Location = new Point(520, 12);
+            groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(868, 306);
             groupBox1.TabIndex = 33;

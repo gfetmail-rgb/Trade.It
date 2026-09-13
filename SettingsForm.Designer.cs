@@ -212,7 +212,7 @@ namespace Trade.It
             // 
             risingColorButton.Location = new Point(570, 28);
             risingColorButton.Name = "risingColorButton";
-            risingColorButton.Size = new Size(175, 34);
+            risingColorButton.Size = new Size(175, 50);
             risingColorButton.TabIndex = 0;
             risingColorButton.Text = "رنگ کندل و میله صعودی";
             risingColorButton.UseVisualStyleBackColor = false;
@@ -221,7 +221,7 @@ namespace Trade.It
             // 
             fallingColorButton.Location = new Point(380, 28);
             fallingColorButton.Name = "fallingColorButton";
-            fallingColorButton.Size = new Size(175, 34);
+            fallingColorButton.Size = new Size(175, 50);
             fallingColorButton.TabIndex = 1;
             fallingColorButton.Text = "رنگ کندل و میله نزولی";
             fallingColorButton.UseVisualStyleBackColor = false;
@@ -230,25 +230,25 @@ namespace Trade.It
             // 
             lineColorButton.Location = new Point(190, 28);
             lineColorButton.Name = "lineColorButton";
-            lineColorButton.Size = new Size(175, 34);
+            lineColorButton.Size = new Size(175, 50);
             lineColorButton.TabIndex = 2;
             lineColorButton.Text = "رنگ چارت خطی";
             lineColorButton.UseVisualStyleBackColor = false;
             // 
             // resetChartColorsButton
             // 
-            resetChartColorsButton.Location = new Point(20, 28);
+            resetChartColorsButton.Location = new Point(20, 22);
             resetChartColorsButton.Name = "resetChartColorsButton";
-            resetChartColorsButton.Size = new Size(145, 34);
+            resetChartColorsButton.Size = new Size(145, 46);
             resetChartColorsButton.TabIndex = 3;
-            resetChartColorsButton.Text = "بازنشانی رنگ‌های نمودار";
+            resetChartColorsButton.Text = "بازنشانی ";
             resetChartColorsButton.UseVisualStyleBackColor = true;
             // 
             // chartLineWidthNumeric
             // 
             chartLineWidthNumeric.DecimalPlaces = 1;
             chartLineWidthNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            chartLineWidthNumeric.Location = new Point(505, 79);
+            chartLineWidthNumeric.Location = new Point(505, 84);
             chartLineWidthNumeric.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             chartLineWidthNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
             chartLineWidthNumeric.Name = "chartLineWidthNumeric";
@@ -261,7 +261,7 @@ namespace Trade.It
             // 
             chartLineStyleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             chartLineStyleCombo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            chartLineStyleCombo.Location = new Point(250, 79);
+            chartLineStyleCombo.Location = new Point(250, 84);
             chartLineStyleCombo.Name = "chartLineStyleCombo";
             chartLineStyleCombo.RightToLeft = RightToLeft.Yes;
             chartLineStyleCombo.Size = new Size(130, 33);
@@ -270,7 +270,7 @@ namespace Trade.It
             // chartLineWidthLabel
             // 
             chartLineWidthLabel.AutoSize = true;
-            chartLineWidthLabel.Location = new Point(590, 83);
+            chartLineWidthLabel.Location = new Point(590, 88);
             chartLineWidthLabel.Name = "chartLineWidthLabel";
             chartLineWidthLabel.Size = new Size(79, 25);
             chartLineWidthLabel.TabIndex = 6;
@@ -279,7 +279,7 @@ namespace Trade.It
             // chartLineStyleLabel
             // 
             chartLineStyleLabel.AutoSize = true;
-            chartLineStyleLabel.Location = new Point(395, 83);
+            chartLineStyleLabel.Location = new Point(395, 88);
             chartLineStyleLabel.Name = "chartLineStyleLabel";
             chartLineStyleLabel.Size = new Size(67, 25);
             chartLineStyleLabel.TabIndex = 7;
@@ -314,102 +314,102 @@ namespace Trade.It
             // 
             // trendLineColorButton
             // 
-            trendLineColorButton.Location = new Point(0, 0);
+            trendLineColorButton.Location = new Point(625, 51);
             trendLineColorButton.Name = "trendLineColorButton";
-            trendLineColorButton.Size = new Size(75, 23);
+            trendLineColorButton.Size = new Size(115, 45);
             trendLineColorButton.TabIndex = 0;
             // 
             // trendChannelColorButton
             // 
-            trendChannelColorButton.Location = new Point(0, 0);
+            trendChannelColorButton.Location = new Point(504, 51);
             trendChannelColorButton.Name = "trendChannelColorButton";
-            trendChannelColorButton.Size = new Size(75, 23);
+            trendChannelColorButton.Size = new Size(115, 45);
             trendChannelColorButton.TabIndex = 1;
             // 
             // horizontalDoubleArrowColorButton
             // 
-            horizontalDoubleArrowColorButton.Location = new Point(0, 0);
+            horizontalDoubleArrowColorButton.Location = new Point(383, 51);
             horizontalDoubleArrowColorButton.Name = "horizontalDoubleArrowColorButton";
-            horizontalDoubleArrowColorButton.Size = new Size(75, 23);
+            horizontalDoubleArrowColorButton.Size = new Size(115, 45);
             horizontalDoubleArrowColorButton.TabIndex = 2;
             // 
             // verticalDoubleArrowColorButton
             // 
-            verticalDoubleArrowColorButton.Location = new Point(0, 0);
+            verticalDoubleArrowColorButton.Location = new Point(264, 51);
             verticalDoubleArrowColorButton.Name = "verticalDoubleArrowColorButton";
-            verticalDoubleArrowColorButton.Size = new Size(75, 23);
+            verticalDoubleArrowColorButton.Size = new Size(115, 45);
             verticalDoubleArrowColorButton.TabIndex = 3;
             // 
             // horizontalRayColorButton
             // 
-            horizontalRayColorButton.Location = new Point(0, 0);
+            horizontalRayColorButton.Location = new Point(143, 51);
             horizontalRayColorButton.Name = "horizontalRayColorButton";
-            horizontalRayColorButton.Size = new Size(75, 23);
+            horizontalRayColorButton.Size = new Size(115, 45);
             horizontalRayColorButton.TabIndex = 4;
             // 
             // trendLineWithArrowColorButton
             // 
-            trendLineWithArrowColorButton.Location = new Point(0, 0);
+            trendLineWithArrowColorButton.Location = new Point(20, 51);
             trendLineWithArrowColorButton.Name = "trendLineWithArrowColorButton";
-            trendLineWithArrowColorButton.Size = new Size(75, 23);
+            trendLineWithArrowColorButton.Size = new Size(115, 45);
             trendLineWithArrowColorButton.TabIndex = 5;
             // 
             // rectangleColorButton
             // 
-            rectangleColorButton.Location = new Point(0, 0);
+            rectangleColorButton.Location = new Point(625, 112);
             rectangleColorButton.Name = "rectangleColorButton";
-            rectangleColorButton.Size = new Size(75, 23);
+            rectangleColorButton.Size = new Size(115, 46);
             rectangleColorButton.TabIndex = 6;
             // 
             // fibonacciRetracementColorButton
             // 
-            fibonacciRetracementColorButton.Location = new Point(0, 0);
+            fibonacciRetracementColorButton.Location = new Point(504, 112);
             fibonacciRetracementColorButton.Name = "fibonacciRetracementColorButton";
-            fibonacciRetracementColorButton.Size = new Size(75, 23);
+            fibonacciRetracementColorButton.Size = new Size(115, 47);
             fibonacciRetracementColorButton.TabIndex = 7;
             // 
             // textLabelColorButton
             // 
-            textLabelColorButton.Location = new Point(0, 0);
+            textLabelColorButton.Location = new Point(383, 111);
             textLabelColorButton.Name = "textLabelColorButton";
-            textLabelColorButton.Size = new Size(75, 23);
+            textLabelColorButton.Size = new Size(115, 47);
             textLabelColorButton.TabIndex = 8;
             // 
             // pitchforkColorButton
             // 
-            pitchforkColorButton.Location = new Point(0, 0);
+            pitchforkColorButton.Location = new Point(264, 111);
             pitchforkColorButton.Name = "pitchforkColorButton";
-            pitchforkColorButton.Size = new Size(75, 23);
+            pitchforkColorButton.Size = new Size(116, 47);
             pitchforkColorButton.TabIndex = 9;
             // 
             // fibonacciExtensionColorButton
             // 
-            fibonacciExtensionColorButton.Location = new Point(0, 0);
+            fibonacciExtensionColorButton.Location = new Point(143, 111);
             fibonacciExtensionColorButton.Name = "fibonacciExtensionColorButton";
-            fibonacciExtensionColorButton.Size = new Size(75, 23);
+            fibonacciExtensionColorButton.Size = new Size(115, 47);
             fibonacciExtensionColorButton.TabIndex = 10;
             // 
             // measureColorButton
             // 
-            measureColorButton.Location = new Point(0, 0);
+            measureColorButton.Location = new Point(20, 111);
             measureColorButton.Name = "measureColorButton";
-            measureColorButton.Size = new Size(75, 23);
+            measureColorButton.Size = new Size(115, 47);
             measureColorButton.TabIndex = 11;
             // 
             // resetDrawingColorsButton
             // 
-            resetDrawingColorsButton.Location = new Point(565, 168);
+            resetDrawingColorsButton.Location = new Point(39, 198);
             resetDrawingColorsButton.Name = "resetDrawingColorsButton";
-            resetDrawingColorsButton.Size = new Size(175, 34);
+            resetDrawingColorsButton.Size = new Size(145, 54);
             resetDrawingColorsButton.TabIndex = 12;
-            resetDrawingColorsButton.Text = "بازنشانی رنگ‌های ابزارها";
+            resetDrawingColorsButton.Text = "بازنشانی";
             resetDrawingColorsButton.UseVisualStyleBackColor = true;
             // 
             // drawingLineWidthNumeric
             // 
             drawingLineWidthNumeric.DecimalPlaces = 1;
             drawingLineWidthNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            drawingLineWidthNumeric.Location = new Point(410, 215);
+            drawingLineWidthNumeric.Location = new Point(529, 209);
             drawingLineWidthNumeric.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             drawingLineWidthNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
             drawingLineWidthNumeric.Name = "drawingLineWidthNumeric";
@@ -422,7 +422,7 @@ namespace Trade.It
             // 
             drawingLineStyleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             drawingLineStyleCombo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            drawingLineStyleCombo.Location = new Point(155, 215);
+            drawingLineStyleCombo.Location = new Point(274, 209);
             drawingLineStyleCombo.Name = "drawingLineStyleCombo";
             drawingLineStyleCombo.RightToLeft = RightToLeft.Yes;
             drawingLineStyleCombo.Size = new Size(130, 33);
@@ -431,7 +431,7 @@ namespace Trade.It
             // drawingLineWidthLabel
             // 
             drawingLineWidthLabel.AutoSize = true;
-            drawingLineWidthLabel.Location = new Point(495, 219);
+            drawingLineWidthLabel.Location = new Point(614, 213);
             drawingLineWidthLabel.Name = "drawingLineWidthLabel";
             drawingLineWidthLabel.Size = new Size(79, 25);
             drawingLineWidthLabel.TabIndex = 15;
@@ -440,7 +440,7 @@ namespace Trade.It
             // drawingLineStyleLabel
             // 
             drawingLineStyleLabel.AutoSize = true;
-            drawingLineStyleLabel.Location = new Point(300, 219);
+            drawingLineStyleLabel.Location = new Point(419, 213);
             drawingLineStyleLabel.Name = "drawingLineStyleLabel";
             drawingLineStyleLabel.Size = new Size(67, 25);
             drawingLineStyleLabel.TabIndex = 16;
@@ -478,7 +478,7 @@ namespace Trade.It
             // crosshairLineWidthLabel
             // 
             crosshairLineWidthLabel.AutoSize = true;
-            crosshairLineWidthLabel.Location = new Point(490, 80);
+            crosshairLineWidthLabel.Location = new Point(432, 33);
             crosshairLineWidthLabel.Name = "crosshairLineWidthLabel";
             crosshairLineWidthLabel.Size = new Size(127, 25);
             crosshairLineWidthLabel.TabIndex = 1;
@@ -488,7 +488,7 @@ namespace Trade.It
             // 
             crosshairLineWidthNumeric.DecimalPlaces = 1;
             crosshairLineWidthNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            crosshairLineWidthNumeric.Location = new Point(405, 76);
+            crosshairLineWidthNumeric.Location = new Point(347, 29);
             crosshairLineWidthNumeric.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             crosshairLineWidthNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
             crosshairLineWidthNumeric.Name = "crosshairLineWidthNumeric";
@@ -500,7 +500,7 @@ namespace Trade.It
             // crosshairLineStyleLabel
             // 
             crosshairLineStyleLabel.AutoSize = true;
-            crosshairLineStyleLabel.Location = new Point(300, 80);
+            crosshairLineStyleLabel.Location = new Point(242, 33);
             crosshairLineStyleLabel.Name = "crosshairLineStyleLabel";
             crosshairLineStyleLabel.Size = new Size(115, 25);
             crosshairLineStyleLabel.TabIndex = 3;
@@ -510,7 +510,7 @@ namespace Trade.It
             // 
             crosshairLineStyleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             crosshairLineStyleCombo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            crosshairLineStyleCombo.Location = new Point(155, 76);
+            crosshairLineStyleCombo.Location = new Point(97, 29);
             crosshairLineStyleCombo.Name = "crosshairLineStyleCombo";
             crosshairLineStyleCombo.RightToLeft = RightToLeft.Yes;
             crosshairLineStyleCombo.Size = new Size(130, 33);
@@ -518,7 +518,7 @@ namespace Trade.It
             // 
             // gridColorButton
             // 
-            gridColorButton.Location = new Point(570, 112);
+            gridColorButton.Location = new Point(570, 88);
             gridColorButton.Name = "gridColorButton";
             gridColorButton.Size = new Size(175, 34);
             gridColorButton.TabIndex = 5;
@@ -528,7 +528,7 @@ namespace Trade.It
             // gridLineWidthLabel
             // 
             gridLineWidthLabel.AutoSize = true;
-            gridLineWidthLabel.Location = new Point(490, 118);
+            gridLineWidthLabel.Location = new Point(435, 92);
             gridLineWidthLabel.Name = "gridLineWidthLabel";
             gridLineWidthLabel.Size = new Size(120, 25);
             gridLineWidthLabel.TabIndex = 6;
@@ -538,7 +538,7 @@ namespace Trade.It
             // 
             gridLineWidthNumeric.DecimalPlaces = 1;
             gridLineWidthNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            gridLineWidthNumeric.Location = new Point(405, 114);
+            gridLineWidthNumeric.Location = new Point(350, 88);
             gridLineWidthNumeric.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             gridLineWidthNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
             gridLineWidthNumeric.Name = "gridLineWidthNumeric";
@@ -550,7 +550,7 @@ namespace Trade.It
             // gridLineStyleLabel
             // 
             gridLineStyleLabel.AutoSize = true;
-            gridLineStyleLabel.Location = new Point(300, 118);
+            gridLineStyleLabel.Location = new Point(245, 92);
             gridLineStyleLabel.Name = "gridLineStyleLabel";
             gridLineStyleLabel.Size = new Size(108, 25);
             gridLineStyleLabel.TabIndex = 8;
@@ -560,7 +560,7 @@ namespace Trade.It
             // 
             gridLineStyleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             gridLineStyleCombo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            gridLineStyleCombo.Location = new Point(155, 114);
+            gridLineStyleCombo.Location = new Point(100, 88);
             gridLineStyleCombo.Name = "gridLineStyleCombo";
             gridLineStyleCombo.RightToLeft = RightToLeft.Yes;
             gridLineStyleCombo.Size = new Size(130, 33);
@@ -568,18 +568,18 @@ namespace Trade.It
             // 
             // okButton
             // 
-            okButton.Location = new Point(610, 820);
+            okButton.Location = new Point(276, 816);
             okButton.Name = "okButton";
-            okButton.Size = new Size(80, 34);
+            okButton.Size = new Size(98, 43);
             okButton.TabIndex = 0;
             okButton.Text = "تأیید";
             okButton.UseVisualStyleBackColor = true;
             // 
             // cancelButton
             // 
-            cancelButton.Location = new Point(520, 820);
+            cancelButton.Location = new Point(389, 816);
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(80, 34);
+            cancelButton.Size = new Size(98, 43);
             cancelButton.TabIndex = 1;
             cancelButton.Text = "انصراف";
             cancelButton.UseVisualStyleBackColor = true;
