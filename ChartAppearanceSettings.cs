@@ -7,6 +7,7 @@ namespace Trade.It
         private sealed class StoredSettings
         {
             public double ChartRightEmptyPercent { get; set; } = 25.0;
+            public double ChartTopEmptyPercent { get; set; } = 10.0;
             public int RisingCandleColor { get; set; } = Color.FromArgb(35, 150, 80).ToArgb();
             public int FallingCandleColor { get; set; } = Color.FromArgb(205, 70, 70).ToArgb();
             public int LineChartColor { get; set; } = Color.FromArgb(35, 90, 160).ToArgb();
@@ -30,6 +31,7 @@ namespace Trade.It
             "ChartAppearance.json");
 
         public static double ChartRightEmptyPercent { get; private set; } = 25.0;
+        public static double ChartTopEmptyPercent { get; private set; } = 10.0;
         public static Color RisingCandleColor { get; private set; } = Color.FromArgb(35, 150, 80);
         public static Color FallingCandleColor { get; private set; } = Color.FromArgb(205, 70, 70);
         public static Color LineChartColor { get; private set; } = Color.FromArgb(35, 90, 160);
@@ -55,10 +57,7 @@ namespace Trade.It
                 if (stored == null) return;
                 Apply(stored);
             }
-            catch
-            {
-                // Keep defaults if settings cannot be read.
-            }
+            catch { }
         }
 
         public static void Save()
@@ -70,6 +69,7 @@ namespace Trade.It
                 var stored = new StoredSettings
                 {
                     ChartRightEmptyPercent = ChartRightEmptyPercent,
+                    ChartTopEmptyPercent = ChartTopEmptyPercent,
                     RisingCandleColor = RisingCandleColor.ToArgb(),
                     FallingCandleColor = FallingCandleColor.ToArgb(),
                     LineChartColor = LineChartColor.ToArgb(),
@@ -88,10 +88,7 @@ namespace Trade.It
                 };
                 File.WriteAllText(FilePath, JsonSerializer.Serialize(stored, new JsonSerializerOptions { WriteIndented = true }));
             }
-            catch
-            {
-                // Settings are non-critical; keep the running configuration.
-            }
+            catch { }
         }
 
         public static void ResetChartColors()
@@ -148,6 +145,7 @@ namespace Trade.It
         private static void Apply(StoredSettings stored)
         {
             ChartRightEmptyPercent = Math.Clamp(stored.ChartRightEmptyPercent, 0, 90);
+            ChartTopEmptyPercent = Math.Clamp(stored.ChartTopEmptyPercent, 0, 50);
             RisingCandleColor = Color.FromArgb(stored.RisingCandleColor);
             FallingCandleColor = Color.FromArgb(stored.FallingCandleColor);
             LineChartColor = Color.FromArgb(stored.LineChartColor);
@@ -166,5 +164,6 @@ namespace Trade.It
         }
 
         public static void SetChartRightEmptyPercent(double value) => ChartRightEmptyPercent = Math.Clamp(value, 0, 90);
+        public static void SetChartTopEmptyPercent(double value) => ChartTopEmptyPercent = Math.Clamp(value, 0, 50);
     }
 }
