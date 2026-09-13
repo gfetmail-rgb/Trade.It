@@ -21,7 +21,7 @@ namespace Trade.It
         {
             ChartDrawingTool.TrendLine => ChartAppearanceSettings.TrendLineColor,
             ChartDrawingTool.TrendChannel => ChartAppearanceSettings.TrendChannelColor,
-            ChartDrawingTool.HorizontalDoubleArrow => ChartAppearanceSettings.HorizontalDoubleArrowColor,
+            ChartDrawingTool.HorizontalDoubleArrow => ChartAppearanceSettings.HorizontalDoubleDoubleArrowColor,
             ChartDrawingTool.VerticalDoubleArrow => ChartAppearanceSettings.VerticalDoubleArrowColor,
             ChartDrawingTool.HorizontalRay => ChartAppearanceSettings.HorizontalRayColor,
             ChartDrawingTool.TrendLineWithArrow => ChartAppearanceSettings.TrendLineWithArrowColor,
@@ -194,7 +194,7 @@ namespace Trade.It
             }
         }
 
-        private static void DrawPitchforkFixed(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
+        private void DrawPitchforkFixed(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
             var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
             var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
