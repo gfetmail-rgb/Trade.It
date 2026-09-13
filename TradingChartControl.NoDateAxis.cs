@@ -27,8 +27,8 @@ namespace Trade.It
                     chart.noDateAxisLabel = new Label
                     {
                         AutoSize = false,
-                        BackColor = chart.BackColor,
-                        ForeColor = Color.FromArgb(255, 255, 255),
+                        BackColor = LineAppearanceSettings.CrosshairColor,
+                        ForeColor = Color.White,
                         TextAlign = ContentAlignment.MiddleCenter,
                         Visible = false,
                         TabStop = false
