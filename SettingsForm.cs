@@ -11,6 +11,7 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
+        private TextBox chartTopEmptyPercentTextBox = null!;
 
         public ChartDisplayMode ChartDisplayMode
         {
@@ -28,18 +29,67 @@ namespace Trade.It
             set => chartRightEmptyPercentTextBox.Text = value.ToString("0.##");
         }
 
-        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0)
+        public double ChartTopEmptyPercent
+        {
+            get => double.TryParse(chartTopEmptyPercentTextBox.Text.Trim(), out var value) ? value : 10.0;
+            set => chartTopEmptyPercentTextBox.Text = value.ToString("0.##");
+        }
+
+        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0)
         {
             InitializeComponent();
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
+            AddTopMarginControl(chartTopEmptyPercent);
             ChartDisplayMode = currentMode;
             ChartRightEmptyPercent = chartRightEmptyPercent;
+            ChartTopEmptyPercent = chartTopEmptyPercent;
             LoadColorButtons();
             AttachColorEvents();
             AttachLineSettingsEvents();
             okButton.Click += okButton_Click;
             cancelButton.Click += cancelButton_Click;
+        }
+
+        private void AddTopMarginControl(double value)
+        {
+            const int shift = 32;
+
+            chartMarginGroupBox.Height += shift;
+            chartColorsGroupBox.Top += shift;
+            drawingColorsGroupBox.Top += shift;
+            crosshairGridGroupBox.Top += shift;
+            okButton.Top += shift;
+            cancelButton.Top += shift;
+            ClientSize = new Size(ClientSize.Width, ClientSize.Height + shift);
+
+            var label = new Label
+            {
+                AutoSize = true,
+                Location = new Point(500, 64),
+                RightToLeft = RightToLeft.Yes,
+                Text = "درصد فضای خالی بالای نمودار:"
+            };
+            chartTopEmptyPercentTextBox = new TextBox
+            {
+                Location = new Point(390, 60),
+                Size = new Size(90, 33),
+                TextAlign = HorizontalAlignment.Center,
+                RightToLeft = RightToLeft.No
+            };
+            var hint = new Label
+            {
+                AutoSize = true,
+                Location = new Point(70, 93),
+                RightToLeft = RightToLeft.Yes,
+                Text = "۰ تا ۵۰ درصد؛ این فاصله فقط در رسم اولیه و بازنشانی چارت اعمال می‌شود."
+            };
+
+            chartMarginGroupBox.Text = "حاشیه خالی اطراف چارت";
+            chartMarginGroupBox.Controls.Add(label);
+            chartMarginGroupBox.Controls.Add(chartTopEmptyPercentTextBox);
+            chartMarginGroupBox.Controls.Add(hint);
+            chartMarginGroupBox.BringToFront();
         }
 
         private void LoadColorButtons()
@@ -109,24 +159,10 @@ namespace Trade.It
         {
             if (chartLineWidthNumeric == null) return;
 
-            LineAppearanceSettings.SetChartLine(
-                (float)chartLineWidthNumeric.Value,
-                IndexToStyle(chartLineStyleCombo.SelectedIndex));
-
-            LineAppearanceSettings.SetDrawingLine(
-                (float)drawingLineWidthNumeric.Value,
-                IndexToStyle(drawingLineStyleCombo.SelectedIndex));
-
-            LineAppearanceSettings.SetCrosshair(
-                LineAppearanceSettings.CrosshairColor,
-                (float)crosshairLineWidthNumeric.Value,
-                IndexToStyle(crosshairLineStyleCombo.SelectedIndex));
-
-            LineAppearanceSettings.SetGrid(
-                LineAppearanceSettings.GridColor,
-                (float)gridLineWidthNumeric.Value,
-                IndexToStyle(gridLineStyleCombo.SelectedIndex));
-
+            LineAppearanceSettings.SetChartLine((float)chartLineWidthNumeric.Value, IndexToStyle(chartLineStyleCombo.SelectedIndex));
+            LineAppearanceSettings.SetDrawingLine((float)drawingLineWidthNumeric.Value, IndexToStyle(drawingLineStyleCombo.SelectedIndex));
+            LineAppearanceSettings.SetCrosshair(LineAppearanceSettings.CrosshairColor, (float)crosshairLineWidthNumeric.Value, IndexToStyle(crosshairLineStyleCombo.SelectedIndex));
+            LineAppearanceSettings.SetGrid(LineAppearanceSettings.GridColor, (float)gridLineWidthNumeric.Value, IndexToStyle(gridLineStyleCombo.SelectedIndex));
             RefreshOwnerCharts();
         }
 
@@ -135,14 +171,11 @@ namespace Trade.It
             var current = crosshair ? LineAppearanceSettings.CrosshairColor : LineAppearanceSettings.GridColor;
             using var dialog = new ColorDialog { Color = current, FullOpen = true };
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
-
             SetColorButton(button, dialog.Color);
-
             if (crosshair)
                 LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
             else
                 LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
-
             RefreshOwnerCharts();
         }
 
@@ -158,7 +191,6 @@ namespace Trade.It
                     ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, dialog.Color, ChartAppearanceSettings.LineChartColor);
                 else
                     ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, ChartAppearanceSettings.FallingCandleColor, dialog.Color);
-
                 RefreshOwnerCharts();
             }
         }
@@ -222,8 +254,17 @@ namespace Trade.It
                 return;
             }
 
+            if (ChartTopEmptyPercent < 0 || ChartTopEmptyPercent > 50)
+            {
+                MessageBox.Show(this, "درصد فضای خالی بالای نمودار باید بین ۰ تا ۵۰ باشد.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                chartTopEmptyPercentTextBox.Focus();
+                chartTopEmptyPercentTextBox.SelectAll();
+                return;
+            }
+
             ApplyLineSettingsFromControls();
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
+            ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
             ChartAppearanceSettings.Save();
             LineAppearanceSettings.Save();
             DialogResult = DialogResult.OK;
