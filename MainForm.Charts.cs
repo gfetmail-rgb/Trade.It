@@ -429,8 +429,7 @@ namespace Trade.It
                             continue;
 
                         DateTime date;
-                        var hasRealDate = !definition.NoDateTime;
-                        if (hasRealDate)
+                        if (!definition.NoDateTime)
                         {
                             if (dateColumn <= 0 || dateColumn > row.Length ||
                                 !TryParseChartDate(row[dateColumn - 1], definition, out date))
@@ -441,6 +440,8 @@ namespace Trade.It
                         }
                         else
                         {
+                            // OHLC-only data has no real time axis. Use a stable synthetic index
+                            // solely for ordering/rendering; it is not presented as source data.
                             date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
                         }
 
@@ -463,7 +464,6 @@ namespace Trade.It
                         result.Add(new TradingChartPoint
                         {
                             Date = date,
-                            HasRealDate = hasRealDate,
                             Open = open,
                             High = high,
                             Low = low,
