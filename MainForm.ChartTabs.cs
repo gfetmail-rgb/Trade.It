@@ -5,11 +5,16 @@ namespace Trade.It
     public partial class MainForm
     {
         private bool chartTabCloseHandlerInitialized;
+        private readonly bool chartTabCloseHandlerHooked = RegisterChartTabCloseHandler();
 
-        protected override void OnHandleCreated(EventArgs e)
+        private bool RegisterChartTabCloseHandler()
         {
-            base.OnHandleCreated(e);
+            HandleCreated += MainForm_HandleCreatedForChartTabs;
+            return true;
+        }
 
+        private void MainForm_HandleCreatedForChartTabs(object? sender, EventArgs e)
+        {
             if (chartTabCloseHandlerInitialized ||
                 System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
