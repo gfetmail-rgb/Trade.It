@@ -72,9 +72,9 @@ namespace Trade.It
 
             fullScreenChartButton.Text = "بازگشت";
 
-            chartPanel.BringToFront();
-            chartTabControl.BringToFront();
-
+            // Keep the designer z-order. chartToolbarPanel is Dock.Top and
+            // chartTabControl is Dock.Fill; changing sibling z-order here causes
+            // the tab header to disappear after returning from fullscreen.
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
             chartTabControl.Invalidate();
@@ -104,9 +104,12 @@ namespace Trade.It
 
             fullScreenChartButton.Text = "تمام صفحه";
 
+            // Restore the exact designer sibling order: toolbar first, tabs second.
+            chartPanel.Controls.SetChildIndex(chartToolbarPanel, 0);
+            chartPanel.Controls.SetChildIndex(chartTabControl, 1);
+
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
-            chartTabControl.BringToFront();
             chartTabControl.Invalidate();
         }
     }
