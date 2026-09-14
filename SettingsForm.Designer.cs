@@ -175,7 +175,7 @@ namespace Trade.It
             // 
             // chartRightEmptyPercentTextBox
             // 
-            chartRightEmptyPercentTextBox.Location = new Point(390, 28);
+            chartRightEmptyPercentTextBox.Location = new Point(404, 29);
             chartRightEmptyPercentTextBox.Name = "chartRightEmptyPercentTextBox";
             chartRightEmptyPercentTextBox.Size = new Size(90, 33);
             chartRightEmptyPercentTextBox.TabIndex = 1;
@@ -318,6 +318,7 @@ namespace Trade.It
             trendLineColorButton.Name = "trendLineColorButton";
             trendLineColorButton.Size = new Size(115, 45);
             trendLineColorButton.TabIndex = 0;
+            trendLineColorButton.Text = "خط روند";
             // 
             // trendChannelColorButton
             // 
@@ -325,6 +326,7 @@ namespace Trade.It
             trendChannelColorButton.Name = "trendChannelColorButton";
             trendChannelColorButton.Size = new Size(115, 45);
             trendChannelColorButton.TabIndex = 1;
+            trendChannelColorButton.Text = "کانال";
             // 
             // horizontalDoubleArrowColorButton
             // 
@@ -332,6 +334,7 @@ namespace Trade.It
             horizontalDoubleArrowColorButton.Name = "horizontalDoubleArrowColorButton";
             horizontalDoubleArrowColorButton.Size = new Size(115, 45);
             horizontalDoubleArrowColorButton.TabIndex = 2;
+            horizontalDoubleArrowColorButton.Text = "خط افق";
             // 
             // verticalDoubleArrowColorButton
             // 
@@ -339,6 +342,7 @@ namespace Trade.It
             verticalDoubleArrowColorButton.Name = "verticalDoubleArrowColorButton";
             verticalDoubleArrowColorButton.Size = new Size(115, 45);
             verticalDoubleArrowColorButton.TabIndex = 3;
+            verticalDoubleArrowColorButton.Text = "خط عمود";
             // 
             // horizontalRayColorButton
             // 
@@ -346,6 +350,7 @@ namespace Trade.It
             horizontalRayColorButton.Name = "horizontalRayColorButton";
             horizontalRayColorButton.Size = new Size(115, 45);
             horizontalRayColorButton.TabIndex = 4;
+            horizontalRayColorButton.Text = "نیم خط";
             // 
             // trendLineWithArrowColorButton
             // 
@@ -353,6 +358,7 @@ namespace Trade.It
             trendLineWithArrowColorButton.Name = "trendLineWithArrowColorButton";
             trendLineWithArrowColorButton.Size = new Size(115, 45);
             trendLineWithArrowColorButton.TabIndex = 5;
+            trendLineWithArrowColorButton.Text = "فلش";
             // 
             // rectangleColorButton
             // 
@@ -360,6 +366,7 @@ namespace Trade.It
             rectangleColorButton.Name = "rectangleColorButton";
             rectangleColorButton.Size = new Size(115, 46);
             rectangleColorButton.TabIndex = 6;
+            rectangleColorButton.Text = "مستطیل";
             // 
             // fibonacciRetracementColorButton
             // 
@@ -367,6 +374,7 @@ namespace Trade.It
             fibonacciRetracementColorButton.Name = "fibonacciRetracementColorButton";
             fibonacciRetracementColorButton.Size = new Size(115, 47);
             fibonacciRetracementColorButton.TabIndex = 7;
+            fibonacciRetracementColorButton.Text = " R فیبو";
             // 
             // textLabelColorButton
             // 
@@ -374,6 +382,7 @@ namespace Trade.It
             textLabelColorButton.Name = "textLabelColorButton";
             textLabelColorButton.Size = new Size(115, 47);
             textLabelColorButton.TabIndex = 8;
+            textLabelColorButton.Text = "متن";
             // 
             // pitchforkColorButton
             // 
@@ -381,6 +390,7 @@ namespace Trade.It
             pitchforkColorButton.Name = "pitchforkColorButton";
             pitchforkColorButton.Size = new Size(116, 47);
             pitchforkColorButton.TabIndex = 9;
+            pitchforkColorButton.Text = "چنگال";
             // 
             // fibonacciExtensionColorButton
             // 
@@ -388,6 +398,7 @@ namespace Trade.It
             fibonacciExtensionColorButton.Name = "fibonacciExtensionColorButton";
             fibonacciExtensionColorButton.Size = new Size(115, 47);
             fibonacciExtensionColorButton.TabIndex = 10;
+            fibonacciExtensionColorButton.Text = "X فیبو";
             // 
             // measureColorButton
             // 
@@ -395,6 +406,7 @@ namespace Trade.It
             measureColorButton.Name = "measureColorButton";
             measureColorButton.Size = new Size(115, 47);
             measureColorButton.TabIndex = 11;
+            measureColorButton.Text = "خط کش";
             // 
             // resetDrawingColorsButton
             // 
