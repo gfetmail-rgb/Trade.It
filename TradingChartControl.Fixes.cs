@@ -9,9 +9,10 @@ namespace Trade.It
         protected override void WndProc(ref Message m)
         {
             const int WM_PAINT = 0x000F;
-            const int WM_LBUTTONDOWN = 0x0201;
             const int WM_MOUSEMOVE = 0x0200;
+            const int WM_LBUTTONDOWN = 0x0201;
             const int WM_LBUTTONUP = 0x0202;
+            const int WM_RBUTTONDOWN = 0x0204;
             const int WM_SIZE = 0x0005;
 
             if (m.Msg == WM_SIZE || m.Msg == WM_PAINT || m.Msg == WM_MOUSEMOVE ||
@@ -21,41 +22,49 @@ namespace Trade.It
                 EnsureInitialTopMargin();
             }
 
-            // Cancel an active three-point tool with a single click in the chart's
-            // non-data blank area as well as outside the plotting rectangle.
-            // The right-side chart margin is intentionally empty, so it must not
-            // be interpreted as the next drawing point.
-            if (m.Msg == WM_LBUTTONDOWN && ExtraDrawingActive)
+            var location = GetMousePointFromMessage(m);
+
+            // Extra drawing tools own their mouse input completely. Do not pass
+            // these messages to Control.WndProc because the normal chart handler
+            // would interpret the same click as pan/axis-drag input.
+            if (ExtraDrawingActive || extraDrawingInProgress || extraDraggingHandleActive)
             {
-                var location = GetMousePointFromMessage(m);
-                if (!GetPlotRectangle().Contains(location) || IsExtraToolBlankArea(location))
+                if (m.Msg == WM_LBUTTONDOWN)
                 {
-                    CancelExtraDrawing();
-                    extraInputHandled = true;
+                    ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, location.X, location.Y, 0));
+                    return;
+                }
+
+                if (m.Msg == WM_RBUTTONDOWN)
+                {
+                    ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Right, 1, location.X, location.Y, 0));
+                    return;
+                }
+
+                if (m.Msg == WM_MOUSEMOVE)
+                {
+                    ExtraDrawing_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, location.X, location.Y, 0));
+                    return;
+                }
+
+                if (m.Msg == WM_LBUTTONUP)
+                {
+                    ExtraDrawing_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, location.X, location.Y, 0));
                     return;
                 }
             }
 
-            var detachedExtraMouseDown = false;
-            if (m.Msg == WM_LBUTTONDOWN && !ExtraDrawingActive && !extraDraggingHandleActive &&
-                !IsExtraDrawingHit(GetMousePointFromMessage(m)) && !extraInputHandled)
+            // Once an extra drawing is completed, clicks on the drawing or while
+            // it is selected must also be handled before the normal chart handler.
+            // A blank click then cleanly deselects it instead of starting a pan.
+            if (m.Msg == WM_LBUTTONDOWN && !extraInputHandled &&
+                (selectedExtraDrawingIndex >= 0 || IsExtraDrawingHit(location)))
             {
-                MouseDown -= ExtraDrawing_MouseDown;
-                detachedExtraMouseDown = true;
-                extraInputHandled = false;
+                ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, location.X, location.Y, 0));
+                return;
             }
 
             base.WndProc(ref m);
-
-            if (m.Msg == WM_LBUTTONDOWN && ExtraDrawingActive &&
-                extraDrawingPoints.Count >= RequiredExtraPoints)
-            {
-                AddExtraDrawing();
-                CancelExtraDrawing();
-            }
-
-            if (detachedExtraMouseDown)
-                MouseDown += ExtraDrawing_MouseDown;
 
             if (m.Msg == WM_MOUSEMOVE && verticalAxisDrag && Capture && points.Count > 1)
             {
@@ -113,6 +122,10 @@ namespace Trade.It
 
                 if (d.Tool == ExtraDrawingTool.FibonacciExtension &&
                     HitTestFibonacciLevel(location, d, plot, visibleCountForDrawing, min, max))
+                    return true;
+
+                if (d.Tool == ExtraDrawingTool.Pitchfork &&
+                    IsExtraDrawingBodyHit(location, d, plot, visibleCountForDrawing, min, max))
                     return true;
 
                 if (d.Tool == ExtraDrawingTool.Measure &&
