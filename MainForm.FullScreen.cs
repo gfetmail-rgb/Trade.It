@@ -9,6 +9,10 @@ namespace Trade.It
         private bool savedTopMost;
         private bool savedMenuVisible;
         private Point savedSplitLocation;
+        private DockStyle savedChartPanelDock;
+        private DockStyle savedChartTabDock;
+        private bool savedChartTabVisible;
+        private bool savedChartToolbarVisible;
 
         private bool fullScreenHandlerInitialized;
 
@@ -23,13 +27,9 @@ namespace Trade.It
 
             fullScreenHandlerInitialized = true;
 
-            // Keep the fullscreen button in the chart toolbar, regardless of any
-            // designer-generated layout changes.
             chartToolbarPanel.Controls.Add(fullScreenChartButton);
             fullScreenChartButton.BringToFront();
 
-            // MainForm already attaches FullScreenChartButton_Click in its constructor.
-            // Replace that handler with the real full-window fullscreen behavior.
             fullScreenChartButton.Click -= FullScreenChartButton_Click;
             fullScreenChartButton.Click += FullScreenChartButtonFullWindow_Click;
         }
@@ -48,6 +48,10 @@ namespace Trade.It
             savedTopMost = TopMost;
             savedMenuVisible = mainMenuStrip.Visible;
             savedSplitLocation = mainSplitContainer.Location;
+            savedChartPanelDock = chartPanel.Dock;
+            savedChartTabDock = chartTabControl.Dock;
+            savedChartTabVisible = chartTabControl.Visible;
+            savedChartToolbarVisible = chartToolbarPanel.Visible;
 
             chartFullScreen = true;
 
@@ -60,9 +64,21 @@ namespace Trade.It
             Bounds = Screen.FromControl(this).Bounds;
             TopMost = true;
 
+            chartPanel.Dock = DockStyle.Fill;
+            chartPanel.Visible = true;
+            chartToolbarPanel.Visible = true;
+            chartTabControl.Dock = DockStyle.Fill;
+            chartTabControl.Visible = true;
+
             fullScreenChartButton.Text = "بازگشت";
+
             chartPanel.BringToFront();
+            chartTabControl.BringToFront();
             chartToolbarPanel.BringToFront();
+
+            chartPanel.PerformLayout();
+            chartTabControl.PerformLayout();
+            chartTabControl.Invalidate();
         }
 
         private void ExitChartFullScreen()
@@ -73,14 +89,27 @@ namespace Trade.It
             FormBorderStyle = savedFormBorderStyle;
             WindowState = FormWindowState.Normal;
             Bounds = savedBounds;
+
             mainSplitContainer.Location = savedSplitLocation;
             mainMenuStrip.Visible = savedMenuVisible;
             mainSplitContainer.Panel1Collapsed = false;
+
+            chartPanel.Dock = savedChartPanelDock;
+            chartTabControl.Dock = savedChartTabDock;
+            chartToolbarPanel.Visible = savedChartToolbarVisible;
+            chartPanel.Visible = true;
+            chartTabControl.Visible = true;
 
             if (savedWindowState != FormWindowState.Normal)
                 WindowState = savedWindowState;
 
             fullScreenChartButton.Text = "تمام صفحه";
+
+            chartPanel.PerformLayout();
+            chartTabControl.PerformLayout();
+            chartTabControl.BringToFront();
+            chartToolbarPanel.BringToFront();
+            chartTabControl.Invalidate();
         }
     }
 }
