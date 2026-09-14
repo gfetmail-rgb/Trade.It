@@ -53,8 +53,6 @@ namespace Trade.It
             var step = plot.Width / (double)Math.Max(1, visible.Count);
             var initialOffset = -plot.Width * 0.25;
 
-            // Rectangle interiors are deliberately painted before the chart data.
-            // The candle/line chart therefore remains visible on top of the fill.
             DrawRectangleFillsBehindChart(e.Graphics, plot, visible.Count, min, max);
 
             if (drawingInProgress && activeDrawingTool == ChartDrawingTool.Rectangle && IsInsidePlot(drawingCurrentPoint))
@@ -152,18 +150,21 @@ namespace Trade.It
                 e.Graphics.FillRectangle(crosshairLabelBrush, priceRect);
                 e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3f, priceRect.Y + 2f);
 
-                var date = visible[crosshairIndex].Date;
-                var calendar = new PersianCalendar();
-                var timeText = $"\u200E{calendar.GetYear(date):0000}/{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00} {date.Hour:00}:{date.Minute:00}";
-                var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
-                var timeRect = new RectangleF(
-                    Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
-                    plot.Bottom + 2f,
-                    timeSize.Width + 6f,
-                    timeSize.Height + 4f);
+                if (!IsSyntheticNoDateAxis())
+                {
+                    var date = visible[crosshairIndex].Date;
+                    var calendar = new PersianCalendar();
+                    var timeText = $"\u200E{calendar.GetYear(date):0000}/{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00} {date.Hour:00}:{date.Minute:00}";
+                    var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
+                    var timeRect = new RectangleF(
+                        Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
+                        plot.Bottom + 2f,
+                        timeSize.Width + 6f,
+                        timeSize.Height + 4f);
 
-                e.Graphics.FillRectangle(crosshairLabelBrush, timeRect);
-                e.Graphics.DrawString(timeText, axisTextFont, crosshairLabelTextBrush, timeRect.X + 3f, timeRect.Y + 2f);
+                    e.Graphics.FillRectangle(crosshairLabelBrush, timeRect);
+                    e.Graphics.DrawString(timeText, axisTextFont, crosshairLabelTextBrush, timeRect.X + 3f, timeRect.Y + 2f);
+                }
             }
 
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
