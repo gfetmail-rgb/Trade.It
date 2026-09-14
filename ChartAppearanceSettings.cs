@@ -8,6 +8,7 @@ namespace Trade.It
         {
             public double ChartRightEmptyPercent { get; set; } = 25.0;
             public double ChartTopEmptyPercent { get; set; } = 10.0;
+            public int InitialVisibleCandleCount { get; set; } = 200;
             public int RisingCandleColor { get; set; } = Color.FromArgb(35, 150, 80).ToArgb();
             public int FallingCandleColor { get; set; } = Color.FromArgb(205, 70, 70).ToArgb();
             public int LineChartColor { get; set; } = Color.FromArgb(35, 90, 160).ToArgb();
@@ -32,6 +33,7 @@ namespace Trade.It
 
         public static double ChartRightEmptyPercent { get; private set; } = 25.0;
         public static double ChartTopEmptyPercent { get; private set; } = 10.0;
+        public static int InitialVisibleCandleCount { get; private set; } = 200;
         public static Color RisingCandleColor { get; private set; } = Color.FromArgb(35, 150, 80);
         public static Color FallingCandleColor { get; private set; } = Color.FromArgb(205, 70, 70);
         public static Color LineChartColor { get; private set; } = Color.FromArgb(35, 90, 160);
@@ -70,6 +72,7 @@ namespace Trade.It
                 {
                     ChartRightEmptyPercent = ChartRightEmptyPercent,
                     ChartTopEmptyPercent = ChartTopEmptyPercent,
+                    InitialVisibleCandleCount = InitialVisibleCandleCount,
                     RisingCandleColor = RisingCandleColor.ToArgb(),
                     FallingCandleColor = FallingCandleColor.ToArgb(),
                     LineChartColor = LineChartColor.ToArgb(),
@@ -146,6 +149,7 @@ namespace Trade.It
         {
             ChartRightEmptyPercent = Math.Clamp(stored.ChartRightEmptyPercent, 0, 90);
             ChartTopEmptyPercent = Math.Clamp(stored.ChartTopEmptyPercent, 0, 50);
+            InitialVisibleCandleCount = Math.Clamp(stored.InitialVisibleCandleCount, 10, 5000);
             RisingCandleColor = Color.FromArgb(stored.RisingCandleColor);
             FallingCandleColor = Color.FromArgb(stored.FallingCandleColor);
             LineChartColor = Color.FromArgb(stored.LineChartColor);
@@ -165,5 +169,6 @@ namespace Trade.It
 
         public static void SetChartRightEmptyPercent(double value) => ChartRightEmptyPercent = Math.Clamp(value, 0, 90);
         public static void SetChartTopEmptyPercent(double value) => ChartTopEmptyPercent = Math.Clamp(value, 0, 50);
+        public static void SetInitialVisibleCandleCount(int value) => InitialVisibleCandleCount = Math.Clamp(value, 10, 5000);
     }
 }
