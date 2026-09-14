@@ -429,7 +429,8 @@ namespace Trade.It
                             continue;
 
                         DateTime date;
-                        if (!definition.NoDateTime)
+                        var hasRealDate = !definition.NoDateTime;
+                        if (hasRealDate)
                         {
                             if (dateColumn <= 0 || dateColumn > row.Length ||
                                 !TryParseChartDate(row[dateColumn - 1], definition, out date))
@@ -440,8 +441,8 @@ namespace Trade.It
                         }
                         else
                         {
-                            // OHLC-only data has no real time axis. Use a stable synthetic index
-                            // solely for ordering/rendering; it is not presented as source data.
+                            // NoDateTime data has no source date. This value is only an internal
+                            // ordering key and is never presented to the user as a date/time.
                             date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
                         }
 
@@ -464,6 +465,7 @@ namespace Trade.It
                         result.Add(new TradingChartPoint
                         {
                             Date = date,
+                            HasRealDate = hasRealDate,
                             Open = open,
                             High = high,
                             Low = low,
@@ -524,35 +526,6 @@ namespace Trade.It
             {
                 return false;
             }
-        }
-
-        private static bool TryParseChartTime(string value, out TimeSpan time)
-        {
-            time = TimeSpan.Zero;
-            var normalized = NormalizeTradingDigits(value).Trim();
-            if (string.IsNullOrWhiteSpace(normalized))
-                return false;
-
-            if (TimeSpan.TryParse(normalized, CultureInfo.InvariantCulture, out time))
-                return time >= TimeSpan.Zero && time < TimeSpan.FromDays(1);
-
-            var digits = new string(normalized.Where(char.IsDigit).ToArray());
-            if (digits.Length < 4)
-                return false;
-
-            if (!int.TryParse(digits[..2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hour) ||
-                !int.TryParse(digits.Substring(2, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out var minute))
-                return false;
-
-            var second = 0;
-            if (digits.Length >= 6 && !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out second))
-                return false;
-
-            if (hour is < 0 or > 23 || minute is < 0 or > 59 || second is < 0 or > 59)
-                return false;
-
-            time = new TimeSpan(hour, minute, second);
-            return true;
         }
     }
 }
