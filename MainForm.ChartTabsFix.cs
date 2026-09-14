@@ -26,7 +26,6 @@ namespace Trade.It
                 mainForm.mainSplitContainer.SizeChanged += mainForm.ChartTabsLayoutChanged;
                 mainForm.chartPanel.SizeChanged += mainForm.ChartTabsLayoutChanged;
                 mainForm.fullScreenChartButton.Click += mainForm.ChartTabsLayoutChanged;
-
                 mainForm.ScheduleChartTabsLayoutRestore();
             }
         }
@@ -38,15 +37,13 @@ namespace Trade.It
 
         private void ScheduleChartTabsLayoutRestore()
         {
-            if (IsDisposed || chartTabsLayoutRestorePending)
+            if (IsDisposed || !IsHandleCreated || chartTabsLayoutRestorePending)
                 return;
 
             chartTabsLayoutRestorePending = true;
-
             BeginInvoke(new Action(() =>
             {
                 chartTabsLayoutRestorePending = false;
-
                 if (IsDisposed || !IsHandleCreated)
                     return;
 
@@ -62,15 +59,30 @@ namespace Trade.It
             chartPanel.SuspendLayout();
             try
             {
-                chartToolbarPanel.Dock = DockStyle.Top;
-                chartTabControl.Dock = DockStyle.Fill;
                 chartToolbarPanel.Visible = true;
                 chartTabControl.Visible = true;
 
-                // Explicit child order: toolbar occupies the top, TabControl fills
-                // the remaining area and its tab headers stay visible.
-                chartPanel.Controls.SetChildIndex(chartToolbarPanel, 0);
-                chartPanel.Controls.SetChildIndex(chartTabControl, 1);
+                // Do not let the Dock layout engine decide the TabControl's final
+                // position after the splitter is collapsed/restored. Set the two
+                // regions explicitly so the tab header area can never be covered.
+                chartToolbarPanel.Dock = DockStyle.None;
+                chartTabControl.Dock = DockStyle.None;
+
+                var width = Math.Max(0, chartPanel.ClientSize.Width);
+                var height = Math.Max(0, chartPanel.ClientSize.Height);
+                var toolbarHeight = Math.Max(0, chartToolbarPanel.Height);
+                toolbarHeight = Math.Min(toolbarHeight, height);
+
+                chartToolbarPanel.Bounds = new Rectangle(0, 0, width, toolbarHeight);
+                chartTabControl.Bounds = new Rectangle(
+                    0,
+                    toolbarHeight,
+                    width,
+                    Math.Max(0, height - toolbarHeight));
+
+                chartToolbarPanel.BringToFront();
+                chartTabControl.BringToFront();
+                chartToolbarPanel.BringToFront();
 
                 chartPanel.PerformLayout();
                 chartTabControl.PerformLayout();
