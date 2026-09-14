@@ -61,13 +61,10 @@ namespace Trade.It
         {
             chartLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.ChartLineWidth, 0.5f, 8.0f);
             chartLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.ChartLineStyle);
-
             drawingLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.DrawingLineWidth, 0.5f, 8.0f);
             drawingLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.DrawingLineStyle);
-
             crosshairLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.CrosshairLineWidth, 0.5f, 8.0f);
             crosshairLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.CrosshairLineStyle);
-
             gridLineWidthNumeric.Value = (decimal)Math.Clamp(LineAppearanceSettings.GridLineWidth, 0.5f, 8.0f);
             gridLineStyleCombo.SelectedIndex = StyleToIndex(LineAppearanceSettings.GridLineStyle);
         }
@@ -87,7 +84,6 @@ namespace Trade.It
             SetColorButton(risingColorButton, ChartAppearanceSettings.RisingCandleColor);
             SetColorButton(fallingColorButton, ChartAppearanceSettings.FallingCandleColor);
             SetColorButton(lineColorButton, ChartAppearanceSettings.LineChartColor);
-
             drawingColorKeys.Clear();
             drawingColorKeys[trendLineColorButton] = nameof(ChartAppearanceSettings.TrendLineColor);
             drawingColorKeys[trendChannelColorButton] = nameof(ChartAppearanceSettings.TrendChannelColor);
@@ -101,9 +97,7 @@ namespace Trade.It
             drawingColorKeys[pitchforkColorButton] = nameof(ChartAppearanceSettings.PitchforkColor);
             drawingColorKeys[fibonacciExtensionColorButton] = nameof(ChartAppearanceSettings.FibonacciExtensionColor);
             drawingColorKeys[measureColorButton] = nameof(ChartAppearanceSettings.MeasureColor);
-
-            foreach (var pair in drawingColorKeys)
-                SetColorButton(pair.Key, GetDrawingColor(pair.Value));
+            foreach (var pair in drawingColorKeys) SetColorButton(pair.Key, GetDrawingColor(pair.Value));
         }
 
         private void AttachColorEvents()
@@ -111,30 +105,15 @@ namespace Trade.It
             risingColorButton.Click += (_, _) => PickColor(risingColorButton, ChartAppearanceSettings.RisingCandleColor);
             fallingColorButton.Click += (_, _) => PickColor(fallingColorButton, ChartAppearanceSettings.FallingCandleColor);
             lineColorButton.Click += (_, _) => PickColor(lineColorButton, ChartAppearanceSettings.LineChartColor);
-
-            foreach (var pair in drawingColorKeys)
-                pair.Key.Click += (_, _) => PickDrawingColor(pair.Key, pair.Value);
-
-            resetChartColorsButton.Click += (_, _) =>
-            {
-                ChartAppearanceSettings.ResetChartColors();
-                LoadColorButtons();
-                RefreshOwnerCharts();
-            };
-
-            resetDrawingColorsButton.Click += (_, _) =>
-            {
-                ChartAppearanceSettings.ResetDrawingColors();
-                LoadColorButtons();
-                RefreshOwnerCharts();
-            };
+            foreach (var pair in drawingColorKeys) pair.Key.Click += (_, _) => PickDrawingColor(pair.Key, pair.Value);
+            resetChartColorsButton.Click += (_, _) => { ChartAppearanceSettings.ResetChartColors(); LoadColorButtons(); RefreshOwnerCharts(); };
+            resetDrawingColorsButton.Click += (_, _) => { ChartAppearanceSettings.ResetDrawingColors(); LoadColorButtons(); RefreshOwnerCharts(); };
         }
 
         private void AttachLineSettingsEvents()
         {
             crosshairColorButton.Click += (_, _) => PickLineColor(crosshairColorButton, true);
             gridColorButton.Click += (_, _) => PickLineColor(gridColorButton, false);
-
             chartLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
             chartLineStyleCombo.SelectedIndexChanged += (_, _) => ApplyLineSettingsFromControls();
             drawingLineWidthNumeric.ValueChanged += (_, _) => ApplyLineSettingsFromControls();
@@ -148,7 +127,6 @@ namespace Trade.It
         private void ApplyLineSettingsFromControls()
         {
             if (chartLineWidthNumeric == null) return;
-
             LineAppearanceSettings.SetChartLine((float)chartLineWidthNumeric.Value, IndexToStyle(chartLineStyleCombo.SelectedIndex));
             LineAppearanceSettings.SetDrawingLine((float)drawingLineWidthNumeric.Value, IndexToStyle(drawingLineStyleCombo.SelectedIndex));
             LineAppearanceSettings.SetCrosshair(LineAppearanceSettings.CrosshairColor, (float)crosshairLineWidthNumeric.Value, IndexToStyle(crosshairLineStyleCombo.SelectedIndex));
@@ -162,44 +140,34 @@ namespace Trade.It
             using var dialog = new ColorDialog { Color = current, FullOpen = true };
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
             SetColorButton(button, dialog.Color);
-            if (crosshair)
-                LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
-            else
-                LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
+            if (crosshair) LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
+            else LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
             RefreshOwnerCharts();
         }
 
         private void PickColor(Button button, Color current)
         {
             using var dialog = new ColorDialog { Color = current, FullOpen = true };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                SetColorButton(button, dialog.Color);
-                if (button == risingColorButton)
-                    ChartAppearanceSettings.SetChartColors(dialog.Color, ChartAppearanceSettings.FallingCandleColor, ChartAppearanceSettings.LineChartColor);
-                else if (button == fallingColorButton)
-                    ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, dialog.Color, ChartAppearanceSettings.LineChartColor);
-                else
-                    ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, ChartAppearanceSettings.FallingCandleColor, dialog.Color);
-                RefreshOwnerCharts();
-            }
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
+            SetColorButton(button, dialog.Color);
+            if (button == risingColorButton) ChartAppearanceSettings.SetChartColors(dialog.Color, ChartAppearanceSettings.FallingCandleColor, ChartAppearanceSettings.LineChartColor);
+            else if (button == fallingColorButton) ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, dialog.Color, ChartAppearanceSettings.LineChartColor);
+            else ChartAppearanceSettings.SetChartColors(ChartAppearanceSettings.RisingCandleColor, ChartAppearanceSettings.FallingCandleColor, dialog.Color);
+            RefreshOwnerCharts();
         }
 
         private void PickDrawingColor(Button button, string key)
         {
             using var dialog = new ColorDialog { Color = GetDrawingColor(key), FullOpen = true };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                ChartAppearanceSettings.SetDrawingColor(key, dialog.Color);
-                SetColorButton(button, dialog.Color);
-                RefreshOwnerCharts();
-            }
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
+            ChartAppearanceSettings.SetDrawingColor(key, dialog.Color);
+            SetColorButton(button, dialog.Color);
+            RefreshOwnerCharts();
         }
 
         private void RefreshOwnerCharts()
         {
-            if (Owner is MainForm mainForm && !mainForm.IsDisposed)
-                mainForm.Refresh();
+            if (Owner is MainForm mainForm && !mainForm.IsDisposed) mainForm.Refresh();
         }
 
         private static void SetColorButton(Button button, Color color)
@@ -239,19 +207,13 @@ namespace Trade.It
             if (ChartRightEmptyPercent < 0 || ChartRightEmptyPercent > 90)
             {
                 MessageBox.Show(this, "درصد فضای خالی سمت راست باید بین ۰ تا ۹۰ باشد.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                chartRightEmptyPercentTextBox.Focus();
-                chartRightEmptyPercentTextBox.SelectAll();
-                return;
+                chartRightEmptyPercentTextBox.Focus(); chartRightEmptyPercentTextBox.SelectAll(); return;
             }
-
             if (ChartTopEmptyPercent < 0 || ChartTopEmptyPercent > 50)
             {
                 MessageBox.Show(this, "درصد فضای خالی بالای نمودار باید بین ۰ تا ۵۰ باشد.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                chartTopEmptyPercentTextBox.Focus();
-                chartTopEmptyPercentTextBox.SelectAll();
-                return;
+                chartTopEmptyPercentTextBox.Focus(); chartTopEmptyPercentTextBox.SelectAll(); return;
             }
-
             ApplyLineSettingsFromControls();
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
             ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
