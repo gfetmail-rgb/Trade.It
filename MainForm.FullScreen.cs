@@ -74,7 +74,6 @@ namespace Trade.It
 
             chartPanel.BringToFront();
             chartTabControl.BringToFront();
-            chartToolbarPanel.BringToFront();
 
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
@@ -98,7 +97,7 @@ namespace Trade.It
             chartTabControl.Dock = savedChartTabDock;
             chartToolbarPanel.Visible = savedChartToolbarVisible;
             chartPanel.Visible = true;
-            chartTabControl.Visible = true;
+            chartTabControl.Visible = savedChartTabVisible;
 
             if (savedWindowState != FormWindowState.Normal)
                 WindowState = savedWindowState;
@@ -108,7 +107,6 @@ namespace Trade.It
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
             chartTabControl.BringToFront();
-            chartToolbarPanel.BringToFront();
             chartTabControl.Invalidate();
         }
     }
