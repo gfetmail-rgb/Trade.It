@@ -5,13 +5,6 @@ namespace Trade.It
     public partial class MainForm
     {
         private bool chartTabCloseHandlerInitialized;
-        private readonly bool chartTabCloseHandlerHooked = RegisterChartTabCloseHandler();
-
-        private bool RegisterChartTabCloseHandler()
-        {
-            HandleCreated += MainForm_HandleCreatedForChartTabs;
-            return true;
-        }
 
         private void MainForm_HandleCreatedForChartTabs(object? sender, EventArgs e)
         {
