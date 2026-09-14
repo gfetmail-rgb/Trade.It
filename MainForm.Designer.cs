@@ -639,7 +639,7 @@
             groupBox3.Controls.Add(comparisonOperatorComboBox3);
             groupBox3.Controls.Add(comparisonSecondComboBox3);
             groupBox3.Controls.Add(filterComparison9ClearButton);
-            groupBox3.Location = new Point(8, 743);
+            groupBox3.Location = new Point(8, 631);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(341, 111);
             groupBox3.TabIndex = 10;
@@ -649,7 +649,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(80, 73);
+            label7.Location = new Point(73, 77);
             label7.Name = "label7";
             label7.Size = new Size(101, 25);
             label7.TabIndex = 0;
@@ -658,9 +658,9 @@
             // comparisonSecondTextBox3
             // 
             comparisonSecondTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonSecondTextBox3.Location = new Point(182, 69);
+            comparisonSecondTextBox3.Location = new Point(172, 74);
             comparisonSecondTextBox3.Name = "comparisonSecondTextBox3";
-            comparisonSecondTextBox3.Size = new Size(22, 31);
+            comparisonSecondTextBox3.Size = new Size(32, 31);
             comparisonSecondTextBox3.TabIndex = 1;
             comparisonSecondTextBox3.Text = "5";
             comparisonSecondTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -668,7 +668,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(83, 37);
+            label8.Location = new Point(76, 41);
             label8.Name = "label8";
             label8.Size = new Size(101, 25);
             label8.TabIndex = 3;
@@ -677,9 +677,9 @@
             // comparisonFirstTextBox3
             // 
             comparisonFirstTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonFirstTextBox3.Location = new Point(182, 32);
+            comparisonFirstTextBox3.Location = new Point(172, 37);
             comparisonFirstTextBox3.Name = "comparisonFirstTextBox3";
-            comparisonFirstTextBox3.Size = new Size(22, 31);
+            comparisonFirstTextBox3.Size = new Size(32, 31);
             comparisonFirstTextBox3.TabIndex = 4;
             comparisonFirstTextBox3.Text = "5";
             comparisonFirstTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -688,7 +688,7 @@
             // 
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label9.AutoSize = true;
-            label9.Location = new Point(281, 35);
+            label9.Location = new Point(277, 38);
             label9.Name = "label9";
             label9.Size = new Size(55, 25);
             label9.TabIndex = 5;
@@ -699,7 +699,7 @@
             comparisonFirstComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox3.Location = new Point(206, 29);
+            comparisonFirstComboBox3.Location = new Point(204, 34);
             comparisonFirstComboBox3.Name = "comparisonFirstComboBox3";
             comparisonFirstComboBox3.Size = new Size(75, 33);
             comparisonFirstComboBox3.TabIndex = 6;
@@ -708,9 +708,9 @@
             // 
             comparisonOperatorComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonOperatorComboBox3.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            comparisonOperatorComboBox3.Location = new Point(8, 35);
+            comparisonOperatorComboBox3.Location = new Point(8, 40);
             comparisonOperatorComboBox3.Name = "comparisonOperatorComboBox3";
-            comparisonOperatorComboBox3.Size = new Size(73, 33);
+            comparisonOperatorComboBox3.Size = new Size(65, 33);
             comparisonOperatorComboBox3.TabIndex = 7;
             // 
             // comparisonSecondComboBox3
@@ -718,30 +718,31 @@
             comparisonSecondComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox3.Location = new Point(206, 68);
+            comparisonSecondComboBox3.Location = new Point(204, 73);
             comparisonSecondComboBox3.Name = "comparisonSecondComboBox3";
             comparisonSecondComboBox3.Size = new Size(75, 33);
             comparisonSecondComboBox3.TabIndex = 8;
             // 
             // filterComparison9ClearButton
             // 
+            filterComparison9ClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterComparison9ClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterComparison9ClearButton.Location = new Point(8, 2);
+            filterComparison9ClearButton.Location = new Point(15, 0);
             filterComparison9ClearButton.Name = "filterComparison9ClearButton";
             filterComparison9ClearButton.RightToLeft = RightToLeft.Yes;
-            filterComparison9ClearButton.Size = new Size(42, 24);
+            filterComparison9ClearButton.Size = new Size(51, 32);
             filterComparison9ClearButton.TabIndex = 0;
             filterComparison9ClearButton.TabStop = false;
             filterComparison9ClearButton.Tag = "comparison9";
             filterComparison9ClearButton.Text = "پاک";
-            filterComparison9ClearButton.UseVisualStyleBackColor = true;
+            filterComparison9ClearButton.UseVisualStyleBackColor = false;
             filterComparison9ClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // clearFiltersButton
             // 
             clearFiltersButton.Location = new Point(8, 858);
             clearFiltersButton.Name = "clearFiltersButton";
-            clearFiltersButton.Size = new Size(138, 36);
+            clearFiltersButton.Size = new Size(100, 36);
             clearFiltersButton.TabIndex = 9;
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
@@ -749,10 +750,10 @@
             // filterCountLabel
             // 
             filterCountLabel.Font = new Font("Segoe UI", 9F);
-            filterCountLabel.Location = new Point(150, 858);
+            filterCountLabel.Location = new Point(112, 858);
             filterCountLabel.Name = "filterCountLabel";
             filterCountLabel.RightToLeft = RightToLeft.Yes;
-            filterCountLabel.Size = new Size(205, 36);
+            filterCountLabel.Size = new Size(237, 36);
             filterCountLabel.TabIndex = 11;
             filterCountLabel.Text = "کل: ۰    پیدا شده: ۰";
             filterCountLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -768,7 +769,7 @@
             ohlcChangeFilterGroup.Controls.Add(ohlcChangePercentTextBox);
             ohlcChangeFilterGroup.Controls.Add(ohlcChangeDirectionComboBox);
             ohlcChangeFilterGroup.Controls.Add(filterOhlcChangeClearButton);
-            ohlcChangeFilterGroup.Location = new Point(8, 638);
+            ohlcChangeFilterGroup.Location = new Point(8, 750);
             ohlcChangeFilterGroup.Name = "ohlcChangeFilterGroup";
             ohlcChangeFilterGroup.Size = new Size(341, 105);
             ohlcChangeFilterGroup.TabIndex = 8;
@@ -779,7 +780,7 @@
             // 
             ohlcChangeFieldLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldLabel.AutoSize = true;
-            ohlcChangeFieldLabel.Location = new Point(254, 31);
+            ohlcChangeFieldLabel.Location = new Point(281, 31);
             ohlcChangeFieldLabel.Name = "ohlcChangeFieldLabel";
             ohlcChangeFieldLabel.Size = new Size(55, 25);
             ohlcChangeFieldLabel.TabIndex = 0;
@@ -790,7 +791,7 @@
             ohlcChangeFieldComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "پایانی" });
-            ohlcChangeFieldComboBox.Location = new Point(171, 27);
+            ohlcChangeFieldComboBox.Location = new Point(198, 27);
             ohlcChangeFieldComboBox.Name = "ohlcChangeFieldComboBox";
             ohlcChangeFieldComboBox.Size = new Size(79, 33);
             ohlcChangeFieldComboBox.TabIndex = 1;
@@ -798,7 +799,7 @@
             // ohlcChangeDaysLabel
             // 
             ohlcChangeDaysLabel.AutoSize = true;
-            ohlcChangeDaysLabel.Location = new Point(123, 31);
+            ohlcChangeDaysLabel.Location = new Point(3, 36);
             ohlcChangeDaysLabel.Name = "ohlcChangeDaysLabel";
             ohlcChangeDaysLabel.Size = new Size(80, 25);
             ohlcChangeDaysLabel.TabIndex = 2;
@@ -806,7 +807,7 @@
             // 
             // ohlcChangeDaysTextBox
             // 
-            ohlcChangeDaysTextBox.Location = new Point(60, 28);
+            ohlcChangeDaysTextBox.Location = new Point(130, 30);
             ohlcChangeDaysTextBox.Name = "ohlcChangeDaysTextBox";
             ohlcChangeDaysTextBox.Size = new Size(57, 31);
             ohlcChangeDaysTextBox.TabIndex = 3;
@@ -816,7 +817,7 @@
             // ohlcChangePercentLabel
             // 
             ohlcChangePercentLabel.AutoSize = true;
-            ohlcChangePercentLabel.Location = new Point(74, 68);
+            ohlcChangePercentLabel.Location = new Point(109, 73);
             ohlcChangePercentLabel.Name = "ohlcChangePercentLabel";
             ohlcChangePercentLabel.Size = new Size(27, 25);
             ohlcChangePercentLabel.TabIndex = 4;
@@ -824,9 +825,9 @@
             // 
             // ohlcChangePercentTextBox
             // 
-            ohlcChangePercentTextBox.Location = new Point(111, 65);
+            ohlcChangePercentTextBox.Location = new Point(148, 70);
             ohlcChangePercentTextBox.Name = "ohlcChangePercentTextBox";
-            ohlcChangePercentTextBox.Size = new Size(60, 31);
+            ohlcChangePercentTextBox.Size = new Size(76, 31);
             ohlcChangePercentTextBox.TabIndex = 5;
             ohlcChangePercentTextBox.Text = "5";
             ohlcChangePercentTextBox.TextAlign = HorizontalAlignment.Center;
@@ -836,23 +837,24 @@
             ohlcChangeDirectionComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            ohlcChangeDirectionComboBox.Location = new Point(160, 66);
+            ohlcChangeDirectionComboBox.Location = new Point(230, 68);
             ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
-            ohlcChangeDirectionComboBox.Size = new Size(142, 33);
+            ohlcChangeDirectionComboBox.Size = new Size(98, 33);
             ohlcChangeDirectionComboBox.TabIndex = 6;
             // 
             // filterOhlcChangeClearButton
             // 
+            filterOhlcChangeClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterOhlcChangeClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterOhlcChangeClearButton.Location = new Point(8, 2);
+            filterOhlcChangeClearButton.Location = new Point(15, 1);
             filterOhlcChangeClearButton.Name = "filterOhlcChangeClearButton";
             filterOhlcChangeClearButton.RightToLeft = RightToLeft.Yes;
-            filterOhlcChangeClearButton.Size = new Size(42, 24);
+            filterOhlcChangeClearButton.Size = new Size(53, 32);
             filterOhlcChangeClearButton.TabIndex = 0;
             filterOhlcChangeClearButton.TabStop = false;
             filterOhlcChangeClearButton.Tag = "ohlcChange";
             filterOhlcChangeClearButton.Text = "پاک";
-            filterOhlcChangeClearButton.UseVisualStyleBackColor = true;
+            filterOhlcChangeClearButton.UseVisualStyleBackColor = false;
             filterOhlcChangeClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // comparisonGroup8
@@ -877,7 +879,7 @@
             // label8_8
             // 
             label8_8.AutoSize = true;
-            label8_8.Location = new Point(80, 74);
+            label8_8.Location = new Point(67, 74);
             label8_8.Name = "label8_8";
             label8_8.Size = new Size(101, 25);
             label8_8.TabIndex = 0;
@@ -886,9 +888,9 @@
             // comparisonSecondTextBox1
             // 
             comparisonSecondTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonSecondTextBox1.Location = new Point(182, 70);
+            comparisonSecondTextBox1.Location = new Point(172, 70);
             comparisonSecondTextBox1.Name = "comparisonSecondTextBox1";
-            comparisonSecondTextBox1.Size = new Size(22, 31);
+            comparisonSecondTextBox1.Size = new Size(32, 31);
             comparisonSecondTextBox1.TabIndex = 1;
             comparisonSecondTextBox1.Text = "5";
             comparisonSecondTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -896,7 +898,7 @@
             // label6_8
             // 
             label6_8.AutoSize = true;
-            label6_8.Location = new Point(83, 38);
+            label6_8.Location = new Point(70, 38);
             label6_8.Name = "label6_8";
             label6_8.Size = new Size(101, 25);
             label6_8.TabIndex = 3;
@@ -905,9 +907,9 @@
             // comparisonFirstTextBox1
             // 
             comparisonFirstTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonFirstTextBox1.Location = new Point(182, 33);
+            comparisonFirstTextBox1.Location = new Point(172, 33);
             comparisonFirstTextBox1.Name = "comparisonFirstTextBox1";
-            comparisonFirstTextBox1.Size = new Size(22, 31);
+            comparisonFirstTextBox1.Size = new Size(32, 31);
             comparisonFirstTextBox1.TabIndex = 4;
             comparisonFirstTextBox1.Text = "5";
             comparisonFirstTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -916,7 +918,7 @@
             // 
             label5_8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5_8.AutoSize = true;
-            label5_8.Location = new Point(281, 36);
+            label5_8.Location = new Point(278, 31);
             label5_8.Name = "label5_8";
             label5_8.Size = new Size(55, 25);
             label5_8.TabIndex = 5;
@@ -927,7 +929,7 @@
             comparisonFirstComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox2.Location = new Point(206, 30);
+            comparisonFirstComboBox2.Location = new Point(204, 30);
             comparisonFirstComboBox2.Name = "comparisonFirstComboBox2";
             comparisonFirstComboBox2.Size = new Size(75, 33);
             comparisonFirstComboBox2.TabIndex = 6;
@@ -938,7 +940,7 @@
             comparisonOperatorComboBox1.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
             comparisonOperatorComboBox1.Location = new Point(8, 36);
             comparisonOperatorComboBox1.Name = "comparisonOperatorComboBox1";
-            comparisonOperatorComboBox1.Size = new Size(73, 33);
+            comparisonOperatorComboBox1.Size = new Size(65, 33);
             comparisonOperatorComboBox1.TabIndex = 7;
             // 
             // comparisonSecondComboBox2
@@ -946,23 +948,24 @@
             comparisonSecondComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox2.Location = new Point(206, 69);
+            comparisonSecondComboBox2.Location = new Point(204, 69);
             comparisonSecondComboBox2.Name = "comparisonSecondComboBox2";
             comparisonSecondComboBox2.Size = new Size(75, 33);
             comparisonSecondComboBox2.TabIndex = 8;
             // 
             // filterComparison8ClearButton
             // 
+            filterComparison8ClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterComparison8ClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterComparison8ClearButton.Location = new Point(8, 2);
+            filterComparison8ClearButton.Location = new Point(15, -11);
             filterComparison8ClearButton.Name = "filterComparison8ClearButton";
             filterComparison8ClearButton.RightToLeft = RightToLeft.Yes;
-            filterComparison8ClearButton.Size = new Size(42, 24);
+            filterComparison8ClearButton.Size = new Size(51, 37);
             filterComparison8ClearButton.TabIndex = 0;
             filterComparison8ClearButton.TabStop = false;
             filterComparison8ClearButton.Tag = "comparison8";
             filterComparison8ClearButton.Text = "پاک";
-            filterComparison8ClearButton.UseVisualStyleBackColor = true;
+            filterComparison8ClearButton.UseVisualStyleBackColor = false;
             filterComparison8ClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // comparisonGroup7
@@ -987,7 +990,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(83, 77);
+            label1.Location = new Point(70, 82);
             label1.Name = "label1";
             label1.Size = new Size(101, 25);
             label1.TabIndex = 9;
@@ -996,9 +999,9 @@
             // comparisonSecondTextBox2
             // 
             comparisonSecondTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonSecondTextBox2.Location = new Point(185, 73);
+            comparisonSecondTextBox2.Location = new Point(172, 79);
             comparisonSecondTextBox2.Name = "comparisonSecondTextBox2";
-            comparisonSecondTextBox2.Size = new Size(22, 31);
+            comparisonSecondTextBox2.Size = new Size(35, 31);
             comparisonSecondTextBox2.TabIndex = 10;
             comparisonSecondTextBox2.Text = "5";
             comparisonSecondTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -1006,7 +1009,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(86, 41);
+            label5.Location = new Point(74, 47);
             label5.Name = "label5";
             label5.Size = new Size(101, 25);
             label5.TabIndex = 11;
@@ -1015,9 +1018,9 @@
             // comparisonFirstTextBox2
             // 
             comparisonFirstTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            comparisonFirstTextBox2.Location = new Point(185, 36);
+            comparisonFirstTextBox2.Location = new Point(172, 42);
             comparisonFirstTextBox2.Name = "comparisonFirstTextBox2";
-            comparisonFirstTextBox2.Size = new Size(22, 31);
+            comparisonFirstTextBox2.Size = new Size(35, 31);
             comparisonFirstTextBox2.TabIndex = 12;
             comparisonFirstTextBox2.Text = "5";
             comparisonFirstTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -1026,7 +1029,7 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(284, 39);
+            label6.Location = new Point(279, 42);
             label6.Name = "label6";
             label6.Size = new Size(55, 25);
             label6.TabIndex = 13;
@@ -1037,7 +1040,7 @@
             comparisonFirstComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox1.Location = new Point(209, 33);
+            comparisonFirstComboBox1.Location = new Point(207, 39);
             comparisonFirstComboBox1.Name = "comparisonFirstComboBox1";
             comparisonFirstComboBox1.Size = new Size(75, 33);
             comparisonFirstComboBox1.TabIndex = 14;
@@ -1046,9 +1049,9 @@
             // 
             comparisonOperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonOperatorComboBox2.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            comparisonOperatorComboBox2.Location = new Point(11, 39);
+            comparisonOperatorComboBox2.Location = new Point(11, 45);
             comparisonOperatorComboBox2.Name = "comparisonOperatorComboBox2";
-            comparisonOperatorComboBox2.Size = new Size(73, 33);
+            comparisonOperatorComboBox2.Size = new Size(62, 33);
             comparisonOperatorComboBox2.TabIndex = 15;
             // 
             // comparisonSecondComboBox1
@@ -1056,23 +1059,24 @@
             comparisonSecondComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox1.Location = new Point(209, 72);
+            comparisonSecondComboBox1.Location = new Point(207, 78);
             comparisonSecondComboBox1.Name = "comparisonSecondComboBox1";
             comparisonSecondComboBox1.Size = new Size(75, 33);
             comparisonSecondComboBox1.TabIndex = 16;
             // 
             // filterComparison7ClearButton
             // 
+            filterComparison7ClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterComparison7ClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterComparison7ClearButton.Location = new Point(8, 2);
+            filterComparison7ClearButton.Location = new Point(15, 7);
             filterComparison7ClearButton.Name = "filterComparison7ClearButton";
             filterComparison7ClearButton.RightToLeft = RightToLeft.Yes;
-            filterComparison7ClearButton.Size = new Size(42, 24);
+            filterComparison7ClearButton.Size = new Size(55, 32);
             filterComparison7ClearButton.TabIndex = 0;
             filterComparison7ClearButton.TabStop = false;
             filterComparison7ClearButton.Tag = "comparison7";
             filterComparison7ClearButton.Text = "پاک";
-            filterComparison7ClearButton.UseVisualStyleBackColor = true;
+            filterComparison7ClearButton.UseVisualStyleBackColor = false;
             filterComparison7ClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // pastDaysGroup
@@ -1086,7 +1090,7 @@
             pastDaysGroup.Controls.Add(filterPastDaysClearButton);
             pastDaysGroup.Location = new Point(8, 281);
             pastDaysGroup.Name = "pastDaysGroup";
-            pastDaysGroup.Size = new Size(341, 119);
+            pastDaysGroup.Size = new Size(341, 86);
             pastDaysGroup.TabIndex = 3;
             pastDaysGroup.TabStop = false;
             pastDaysGroup.Text = "4. وضعیت معامله در روزهای گذشته:";
@@ -1103,16 +1107,16 @@
             // label3
             // 
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label3.Location = new Point(129, 45);
+            label3.Location = new Point(163, 45);
             label3.Name = "label3";
-            label3.Size = new Size(93, 34);
+            label3.Size = new Size(61, 34);
             label3.TabIndex = 1;
             label3.Text = "گذشته معامله";
             // 
             // pastDaysTextBox
             // 
             pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pastDaysTextBox.Location = new Point(228, 44);
+            pastDaysTextBox.Location = new Point(232, 44);
             pastDaysTextBox.Name = "pastDaysTextBox";
             pastDaysTextBox.Size = new Size(63, 31);
             pastDaysTextBox.TabIndex = 2;
@@ -1121,30 +1125,31 @@
             // 
             pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             pastDaysStatusComboBox.Items.AddRange(new object[] { "داشته", "نداشته" });
-            pastDaysStatusComboBox.Location = new Point(28, 42);
+            pastDaysStatusComboBox.Location = new Point(67, 44);
             pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";
             pastDaysStatusComboBox.Size = new Size(95, 33);
             pastDaysStatusComboBox.TabIndex = 3;
             // 
             // label5_7
             // 
-            label5_7.Location = new Point(46, 56);
+            label5_7.Location = new Point(172, 79);
             label5_7.Name = "label5_7";
             label5_7.Size = new Size(100, 23);
             label5_7.TabIndex = 4;
             // 
             // filterPastDaysClearButton
             // 
+            filterPastDaysClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterPastDaysClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterPastDaysClearButton.Location = new Point(8, 2);
+            filterPastDaysClearButton.Location = new Point(15, 17);
             filterPastDaysClearButton.Name = "filterPastDaysClearButton";
             filterPastDaysClearButton.RightToLeft = RightToLeft.Yes;
-            filterPastDaysClearButton.Size = new Size(42, 24);
+            filterPastDaysClearButton.Size = new Size(52, 32);
             filterPastDaysClearButton.TabIndex = 0;
             filterPastDaysClearButton.TabStop = false;
             filterPastDaysClearButton.Tag = "pastDays";
             filterPastDaysClearButton.Text = "پاک";
-            filterPastDaysClearButton.UseVisualStyleBackColor = true;
+            filterPastDaysClearButton.UseVisualStyleBackColor = false;
             filterPastDaysClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // volumeRatioGroup
@@ -1165,7 +1170,7 @@
             // label2
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label2.Location = new Point(191, 32);
+            label2.Location = new Point(191, 43);
             label2.Name = "label2";
             label2.Size = new Size(69, 31);
             label2.TabIndex = 0;
@@ -1175,7 +1180,7 @@
             // 
             volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             volumeRatioOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            volumeRatioOperatorComboBox.Location = new Point(104, 30);
+            volumeRatioOperatorComboBox.Location = new Point(104, 41);
             volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";
             volumeRatioOperatorComboBox.Size = new Size(121, 33);
             volumeRatioOperatorComboBox.TabIndex = 4;
@@ -1183,30 +1188,31 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            textBox1.Location = new Point(263, 30);
+            textBox1.Location = new Point(263, 45);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(59, 31);
             textBox1.TabIndex = 2;
             // 
             // volumeRatioTextBox
             // 
-            volumeRatioTextBox.Location = new Point(14, 32);
+            volumeRatioTextBox.Location = new Point(14, 42);
             volumeRatioTextBox.Name = "volumeRatioTextBox";
             volumeRatioTextBox.Size = new Size(86, 31);
             volumeRatioTextBox.TabIndex = 3;
             // 
             // filterVolumeClearButton
             // 
+            filterVolumeClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterVolumeClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterVolumeClearButton.Location = new Point(8, 2);
+            filterVolumeClearButton.Location = new Point(15, 2);
             filterVolumeClearButton.Name = "filterVolumeClearButton";
             filterVolumeClearButton.RightToLeft = RightToLeft.Yes;
-            filterVolumeClearButton.Size = new Size(42, 24);
+            filterVolumeClearButton.Size = new Size(53, 34);
             filterVolumeClearButton.TabIndex = 0;
             filterVolumeClearButton.TabStop = false;
             filterVolumeClearButton.Tag = "volume";
             filterVolumeClearButton.Text = "پاک";
-            filterVolumeClearButton.UseVisualStyleBackColor = true;
+            filterVolumeClearButton.UseVisualStyleBackColor = false;
             filterVolumeClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // nameFilterGroup
@@ -1226,31 +1232,32 @@
             // 
             nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             nameComboBox.Items.AddRange(new object[] { "در ابتدا", "در انتها", "در میانه", "در هرجا", "در هیچ جا" });
-            nameComboBox.Location = new Point(20, 28);
+            nameComboBox.Location = new Point(20, 38);
             nameComboBox.Name = "nameComboBox";
-            nameComboBox.Size = new Size(188, 33);
+            nameComboBox.Size = new Size(167, 33);
             nameComboBox.TabIndex = 0;
             // 
             // nameTextBox
             // 
             nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nameTextBox.Location = new Point(179, 30);
+            nameTextBox.Location = new Point(191, 40);
             nameTextBox.Name = "nameTextBox";
-            nameTextBox.Size = new Size(149, 31);
+            nameTextBox.Size = new Size(137, 31);
             nameTextBox.TabIndex = 1;
             // 
             // filterNameClearButton
             // 
+            filterNameClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterNameClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterNameClearButton.Location = new Point(8, 2);
+            filterNameClearButton.Location = new Point(15, 6);
             filterNameClearButton.Name = "filterNameClearButton";
             filterNameClearButton.RightToLeft = RightToLeft.Yes;
-            filterNameClearButton.Size = new Size(42, 24);
+            filterNameClearButton.Size = new Size(53, 30);
             filterNameClearButton.TabIndex = 0;
             filterNameClearButton.TabStop = false;
             filterNameClearButton.Tag = "name";
             filterNameClearButton.Text = "پاک";
-            filterNameClearButton.UseVisualStyleBackColor = true;
+            filterNameClearButton.UseVisualStyleBackColor = false;
             filterNameClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // tradingStatusGroup
@@ -1270,7 +1277,7 @@
             // statusAllRadio
             // 
             statusAllRadio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            statusAllRadio.Location = new Point(191, 49);
+            statusAllRadio.Location = new Point(230, 49);
             statusAllRadio.Name = "statusAllRadio";
             statusAllRadio.Size = new Size(90, 29);
             statusAllRadio.TabIndex = 0;
@@ -1279,15 +1286,15 @@
             // statusPositiveRadio
             // 
             statusPositiveRadio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            statusPositiveRadio.Location = new Point(154, 47);
+            statusPositiveRadio.Location = new Point(148, 47);
             statusPositiveRadio.Name = "statusPositiveRadio";
-            statusPositiveRadio.Size = new Size(36, 33);
+            statusPositiveRadio.Size = new Size(76, 33);
             statusPositiveRadio.TabIndex = 1;
             statusPositiveRadio.Text = "دارد";
             // 
             // statusNegativeRadio
             // 
-            statusNegativeRadio.Location = new Point(63, 48);
+            statusNegativeRadio.Location = new Point(55, 47);
             statusNegativeRadio.Name = "statusNegativeRadio";
             statusNegativeRadio.Size = new Size(81, 33);
             statusNegativeRadio.TabIndex = 2;
@@ -1295,16 +1302,17 @@
             // 
             // filterTradingClearButton
             // 
+            filterTradingClearButton.BackColor = SystemColors.GradientInactiveCaption;
             filterTradingClearButton.Font = new Font("Segoe UI", 8.5F);
-            filterTradingClearButton.Location = new Point(8, 2);
+            filterTradingClearButton.Location = new Point(15, 9);
             filterTradingClearButton.Name = "filterTradingClearButton";
             filterTradingClearButton.RightToLeft = RightToLeft.Yes;
-            filterTradingClearButton.Size = new Size(42, 24);
+            filterTradingClearButton.Size = new Size(53, 31);
             filterTradingClearButton.TabIndex = 0;
             filterTradingClearButton.TabStop = false;
             filterTradingClearButton.Tag = "trading";
             filterTradingClearButton.Text = "پاک";
-            filterTradingClearButton.UseVisualStyleBackColor = true;
+            filterTradingClearButton.UseVisualStyleBackColor = false;
             filterTradingClearButton.Click += IndividualFilterClearButton_Click;
             // 
             // tabPage3
