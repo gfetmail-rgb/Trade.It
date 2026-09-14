@@ -123,7 +123,6 @@ namespace Trade.It
         private void NavigationPortfolioChanged(object? sender, EventArgs e)
         {
             StopNavigation();
-            CloseAllChartTabs();
         }
 
         private void ShowNavigationChart(string symbol)
