@@ -64,6 +64,30 @@ namespace Trade.It
                 return;
             }
 
+            // ExtraDrawing_MouseDown currently marks every left-click as handled
+            // whenever at least one extra drawing exists, even when the click is
+            // on an ordinary chart drawing or on an empty chart area. In that case
+            // the normal OnMouseDown logic must receive the message so that regular
+            // drawings remain selectable/movable and new drawing tools can be used.
+            // Temporarily hide the extra drawings only for this dispatch; clicks on
+            // an actual extra drawing were already intercepted above.
+            if ((m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN) &&
+                !ExtraDrawingActive && !extraDrawingInProgress && !extraDraggingHandleActive &&
+                extraDrawings.Count > 0 && !IsExtraDrawingHit(location))
+            {
+                var savedExtraDrawings = extraDrawings.ToArray();
+                extraDrawings.Clear();
+                try
+                {
+                    base.WndProc(ref m);
+                }
+                finally
+                {
+                    extraDrawings.AddRange(savedExtraDrawings);
+                }
+                return;
+            }
+
             base.WndProc(ref m);
 
             if (m.Msg == WM_MOUSEMOVE && verticalAxisDrag && Capture && points.Count > 1)
