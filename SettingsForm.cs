@@ -43,7 +43,6 @@ namespace Trade.It
         public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0, int initialVisibleCandleCount = 200)
         {
             InitializeComponent();
-            InitializeChartViewDesignerControls();
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
             ChartDisplayMode = currentMode;
