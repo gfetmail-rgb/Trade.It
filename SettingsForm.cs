@@ -11,7 +11,6 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
-        private TextBox chartTopEmptyPercentTextBox = null!;
 
         public ChartDisplayMode ChartDisplayMode
         {
@@ -35,15 +34,21 @@ namespace Trade.It
             set => chartTopEmptyPercentTextBox.Text = value.ToString("0.##");
         }
 
-        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0)
+        public int InitialVisibleCandleCount
+        {
+            get => (int)initialVisibleCandleCountNumeric.Value;
+            set => initialVisibleCandleCountNumeric.Value = Math.Clamp(value, 10, 5000);
+        }
+
+        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0, int initialVisibleCandleCount = 200)
         {
             InitializeComponent();
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
-            AddTopMarginControl(chartTopEmptyPercent);
             ChartDisplayMode = currentMode;
             ChartRightEmptyPercent = chartRightEmptyPercent;
             ChartTopEmptyPercent = chartTopEmptyPercent;
+            InitialVisibleCandleCount = initialVisibleCandleCount;
             LoadColorButtons();
             InitializeLineSettingsControls();
             AttachColorEvents();
@@ -76,47 +81,6 @@ namespace Trade.It
             DashStyle.DashDotDot => 4,
             _ => 0
         };
-
-        private void AddTopMarginControl(double value)
-        {
-            const int shift = 32;
-
-            chartMarginGroupBox.Height += shift;
-            chartColorsGroupBox.Top += shift;
-            drawingColorsGroupBox.Top += shift;
-            crosshairGridGroupBox.Top += shift;
-            okButton.Top += shift;
-            cancelButton.Top += shift;
-            ClientSize = new Size(ClientSize.Width, ClientSize.Height + shift);
-
-            var label = new Label
-            {
-                AutoSize = true,
-                Location = new Point(500, 64),
-                RightToLeft = RightToLeft.Yes,
-                Text = "درصد فضای خالی بالای نمودار:"
-            };
-            chartTopEmptyPercentTextBox = new TextBox
-            {
-                Location = new Point(390, 60),
-                Size = new Size(90, 33),
-                TextAlign = HorizontalAlignment.Center,
-                RightToLeft = RightToLeft.No
-            };
-            var hint = new Label
-            {
-                AutoSize = true,
-                Location = new Point(70, 93),
-                RightToLeft = RightToLeft.Yes,
-                Text = "۰ تا ۵۰ درصد؛ این فاصله فقط در رسم اولیه و بازنشانی چارت اعمال می‌شود."
-            };
-
-            chartMarginGroupBox.Text = "حاشیه خالی اطراف چارت";
-            chartMarginGroupBox.Controls.Add(label);
-            chartMarginGroupBox.Controls.Add(chartTopEmptyPercentTextBox);
-            chartMarginGroupBox.Controls.Add(hint);
-            chartMarginGroupBox.BringToFront();
-        }
 
         private void LoadColorButtons()
         {
@@ -291,6 +255,7 @@ namespace Trade.It
             ApplyLineSettingsFromControls();
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
             ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
+            ChartAppearanceSettings.SetInitialVisibleCandleCount(InitialVisibleCandleCount);
             ChartAppearanceSettings.Save();
             LineAppearanceSettings.Save();
             DialogResult = DialogResult.OK;
