@@ -104,12 +104,9 @@ namespace Trade.It
 
             fullScreenChartButton.Text = "تمام صفحه";
 
-            // Restore the exact designer sibling order: toolbar first, tabs second.
-            chartPanel.Controls.SetChildIndex(chartToolbarPanel, 0);
-            chartPanel.Controls.SetChildIndex(chartTabControl, 1);
-
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
+            chartTabControl.BringToFront();
             chartTabControl.Invalidate();
         }
     }
