@@ -38,8 +38,8 @@ namespace Trade.It
             closeAllChartsToolbarButton = new Button
             {
                 Name = "closeAllChartsToolbarButton",
-                Text = "بستن همه",
-                Size = new Size(88, 34),
+                Text = "✕ بستن همه",
+                Size = new Size(105, 34),
                 Location = new Point(820, 9),
                 RightToLeft = RightToLeft.Yes,
                 TabIndex = 11,
@@ -48,9 +48,6 @@ namespace Trade.It
             closeAllChartsToolbarButton.Click += CloseAllChartsToolbarButton_Click;
             chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
             closeAllChartsToolbarButton.BringToFront();
-
-            hideToolsButton.MouseDown += HideToolsButton_ConfirmMouseDown;
-            hideToolsButton.KeyDown += HideToolsButton_ConfirmKeyDown;
 
             chartTabControl.SelectedIndexChanged += ChartToolbarTabChanged;
             chartTypeComboBox.SelectedIndexChanged += ChartToolbarTypeChanged;
@@ -81,46 +78,6 @@ namespace Trade.It
             pendingChartStateSymbol = null;
             pendingChartState = null;
             CloseAllChartTabs();
-        }
-
-        private void HideToolsButton_ConfirmMouseDown(object? sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-                return;
-
-            if (ConfirmDeleteDrawingTools())
-                return;
-
-            hideToolsButton.Capture = false;
-            hideToolsButton.Enabled = false;
-            BeginInvoke(new Action(() =>
-            {
-                if (!IsDisposed)
-                    hideToolsButton.Enabled = true;
-            }));
-        }
-
-        private void HideToolsButton_ConfirmKeyDown(object? sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter && e.KeyCode != Keys.Space)
-                return;
-
-            if (ConfirmDeleteDrawingTools())
-                return;
-
-            e.Handled = true;
-            e.SuppressKeyPress = true;
-        }
-
-        private bool ConfirmDeleteDrawingTools()
-        {
-            return MessageBox.Show(
-                this,
-                "آیا از حذف همه ابزارهای رسم روی این چارت مطمئن هستید؟",
-                "حذف ابزارها",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2) == DialogResult.Yes;
         }
 
         private void ChartToolbarTabChanged(object? sender, EventArgs e)
