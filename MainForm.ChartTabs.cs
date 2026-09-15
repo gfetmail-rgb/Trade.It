@@ -92,6 +92,10 @@ namespace Trade.It
             var page = chartTabControl.TabPages[index];
             var chart = page.Controls.OfType<TradingChartControl>().FirstOrDefault();
             var wasSelected = ReferenceEquals(page, chartTabControl.SelectedTab);
+            var selectedReplacement = -1;
+
+            if (wasSelected && ReferenceEquals(page, chartTabPage) && chartTabControl.TabPages.Count > 1)
+                selectedReplacement = index == chartTabControl.TabPages.Count - 1 ? index - 1 : index + 1;
 
             if (chart != null)
             {
@@ -104,6 +108,9 @@ namespace Trade.It
 
             if (ReferenceEquals(page, chartTabPage))
             {
+                if (selectedReplacement >= 0 && selectedReplacement < chartTabControl.TabPages.Count)
+                    chartTabControl.SelectedIndex = selectedReplacement;
+
                 chartTabPage.Controls.Clear();
                 chartTabPage.Controls.Add(chartInfoPanel);
                 chartTabPage.Controls.Add(chartPlaceholderLabel);
