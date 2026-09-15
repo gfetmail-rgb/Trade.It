@@ -330,6 +330,7 @@
             drawMeasureButton = new Button();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
+            closeAllChartsToolbarButton = new Button();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -2019,6 +2020,7 @@
             // chartToolbarPanel
             // 
             chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
+            chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
@@ -2070,7 +2072,7 @@
             // crossButton
             // 
             crossButton.AutoSize = true;
-            crossButton.Location = new Point(162, 8);
+            crossButton.Location = new Point(162, 7);
             crossButton.Name = "crossButton";
             crossButton.Size = new Size(66, 35);
             crossButton.TabIndex = 2;
@@ -2078,7 +2080,7 @@
             // 
             // zoomInButton
             // 
-            zoomInButton.Location = new Point(228, 9);
+            zoomInButton.Location = new Point(228, 7);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
             zoomInButton.TabIndex = 3;
@@ -2086,7 +2088,7 @@
             // 
             // zoomOutButton
             // 
-            zoomOutButton.Location = new Point(283, 9);
+            zoomOutButton.Location = new Point(283, 7);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
             zoomOutButton.TabIndex = 4;
@@ -2095,7 +2097,7 @@
             // resetChartButton
             // 
             resetChartButton.AutoSize = true;
-            resetChartButton.Location = new Point(338, 9);
+            resetChartButton.Location = new Point(338, 7);
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(86, 35);
             resetChartButton.TabIndex = 5;
@@ -2103,24 +2105,24 @@
             // 
             // hideChartButton
             // 
-            hideChartButton.Location = new Point(424, 9);
+            hideChartButton.Location = new Point(689, 7);
             hideChartButton.Name = "hideChartButton";
-            hideChartButton.Size = new Size(66, 34);
+            hideChartButton.Size = new Size(104, 34);
             hideChartButton.TabIndex = 6;
-            hideChartButton.Text = "پنهان";
+            hideChartButton.Text = "چارت پنهان";
             hideChartButton.Click += hideChartButton_Click;
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(490, 9);
+            hideToolsButton.Location = new Point(799, 7);
             hideToolsButton.Name = "hideToolsButton";
-            hideToolsButton.Size = new Size(67, 34);
+            hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
-            hideToolsButton.Text = "حذف";
+            hideToolsButton.Text = "حذف ابزارها";
             // 
             // printChartButton
             // 
-            printChartButton.Location = new Point(557, 9);
+            printChartButton.Location = new Point(430, 7);
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(70, 34);
             printChartButton.TabIndex = 8;
@@ -2128,7 +2130,7 @@
             // 
             // snapshotChartButton
             // 
-            snapshotChartButton.Location = new Point(627, 10);
+            snapshotChartButton.Location = new Point(500, 7);
             snapshotChartButton.Name = "snapshotChartButton";
             snapshotChartButton.Size = new Size(79, 34);
             snapshotChartButton.TabIndex = 9;
@@ -2136,7 +2138,7 @@
             // 
             // fullScreenChartButton
             // 
-            fullScreenChartButton.Location = new Point(706, 10);
+            fullScreenChartButton.Location = new Point(581, 7);
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
@@ -2277,6 +2279,15 @@
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
             // 
+            // closeAllChartsToolbarButton
+            // 
+            closeAllChartsToolbarButton.Location = new Point(925, 7);
+            closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
+            closeAllChartsToolbarButton.Size = new Size(114, 34);
+            closeAllChartsToolbarButton.TabIndex = 21;
+            closeAllChartsToolbarButton.Text = "بستن چارتها";
+            closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             ClientSize = new Size(1491, 966);
@@ -2369,5 +2380,6 @@
         private ComboBox comparisonFirstComboBox3;
         private ComboBox comparisonOperatorComboBox3;
         private ComboBox comparisonSecondComboBox3;
+        private Button closeAllChartsToolbarButton;
     }
 }
