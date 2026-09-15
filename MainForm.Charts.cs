@@ -406,132 +406,162 @@ namespace Trade.It
             var volumeColumn = GetMappingColumn(definition, "حجم");
             if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
 
-            if (dateColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
+            if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
                 return result;
 
-            var files = Directory.GetFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly)
-                .Where(f => Path.GetFileNameWithoutExtension(f).Contains(symbol, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            var syntheticIndex = 0L;
 
-            if (files.Count == 0)
-                return result;
-
-            foreach (var file in files)
-            {
-                foreach (var row in ReadDataRows(file, definition.Separator))
-                {
-                    if (row.Length < Math.Max(Math.Max(Math.Max(dateColumn, highColumn), lowColumn), closeColumn))
-                        continue;
-
-                    if (!TryParseChartDate(row, dateColumn, timeColumn, out var date))
-                        continue;
-
-                    if (!TryParseDouble(row[highColumn - 1], out var high) ||
-                        !TryParseDouble(row[lowColumn - 1], out var low) ||
-                        !TryParseDouble(row[closeColumn - 1], out var close))
-                        continue;
-
-                    var open = close;
-                    if (openColumn > 0 && openColumn <= row.Length)
-                        TryParseDouble(row[openColumn - 1], out open);
-
-                    var volume = 0d;
-                    if (volumeColumn > 0 && volumeColumn <= row.Length)
-                        TryParseDouble(row[volumeColumn - 1], out volume);
-
-                    result.Add(new TradingChartPoint(date, open, high, low, close, volume));
-                }
-            }
-
-            return result.OrderBy(x => x.DateTime).ToList();
-        }
-
-        private static IEnumerable<string[]> ReadDataRows(string file, char separator)
-        {
-            using var reader = new StreamReader(file, Encoding.UTF8, true);
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-                yield return line.Split(separator);
-            }
-        }
-
-        private static bool TryParseChartDate(string[] row, int dateColumn, int timeColumn, out DateTime value)
-        {
-            value = default;
-            var dateText = row[dateColumn - 1].Trim();
-            var timeText = timeColumn > 0 && timeColumn <= row.Length ? row[timeColumn - 1].Trim() : string.Empty;
-
-            var formats = new[]
-            {
-                "yyyyMMdd", "yyyy/MM/dd", "yyyy-MM-dd", "yyyyMMddHHmmss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss",
-                "HH:mm:ss"
-            };
-
-            if (DateTime.TryParseExact(dateText, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
-            {
-                if (!string.IsNullOrWhiteSpace(timeText) && TimeSpan.TryParse(timeText, CultureInfo.InvariantCulture, out var time))
-                    value = value.Date.Add(time);
-                return true;
-            }
-
-            return DateTime.TryParse($"{dateText} {timeText}".Trim(), CultureInfo.InvariantCulture, DateTimeStyles.None, out value);
-        }
-
-        private static bool TryParseDouble(string text, out double value)
-        {
-            text = text.Replace(",", string.Empty).Trim();
-            return double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value) ||
-                   double.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out value);
-        }
-
-        private static int GetMappingColumn(PortfolioDefinition definition, string field)
-        {
-            var mapping = definition.Mappings?.FirstOrDefault(x => string.Equals(x.Field?.Trim(), field, StringComparison.OrdinalIgnoreCase));
-            return mapping?.Column ?? 0;
-        }
-
-        private static bool HasDateColumn(PortfolioDefinition definition) => GetMappingColumn(definition, "تاریخ") > 0 || GetMappingColumn(definition, "تاریخ لاتین") > 0;
-
-        private static string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)
-        {
             try
             {
-                var points = LoadLatestDatePoints(definition, symbol);
-                if (points == null) return string.Empty;
-                return points.Value.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                foreach (var filePath in GetSymbolFiles(definition, symbol))
+                {
+                    var firstLine = true;
+                    foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+                    {
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
+
+                        var row = SplitTradingDataLine(line, definition.Separator);
+                        if (firstLine && definition.HasHeader)
+                        {
+                            firstLine = false;
+                            continue;
+                        }
+                        firstLine = false;
+
+                        if (definition.SymbolSource == SymbolSource.InsideFile &&
+                            (symbolColumn <= 0 || symbolColumn > row.Length ||
+                             !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                            continue;
+
+                        var requiredMaxColumn = Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn));
+                        if (requiredMaxColumn > row.Length)
+                            continue;
+
+                        DateTime date;
+                        if (!definition.NoDateTime)
+                        {
+                            if (dateColumn <= 0 || dateColumn > row.Length ||
+                                !TryParseChartDate(row[dateColumn - 1], definition, out date))
+                                continue;
+
+                            if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
+                                date = date.Date.Add(time);
+                        }
+                        else
+                        {
+                            date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
+                        }
+
+                        if (!TryParseTradingNumber(row[openColumn - 1], out var open) ||
+                            !TryParseTradingNumber(row[highColumn - 1], out var high) ||
+                            !TryParseTradingNumber(row[lowColumn - 1], out var low) ||
+                            !TryParseTradingNumber(row[closeColumn - 1], out var close))
+                            continue;
+
+                        var volume = 0d;
+                        if (volumeColumn > 0 && volumeColumn <= row.Length)
+                            TryParseTradingNumber(row[volumeColumn - 1], out volume);
+
+                        if (double.IsNaN(open) || double.IsInfinity(open) ||
+                            double.IsNaN(high) || double.IsInfinity(high) ||
+                            double.IsNaN(low) || double.IsInfinity(low) ||
+                            double.IsNaN(close) || double.IsInfinity(close))
+                            continue;
+
+                        result.Add(new TradingChartPoint
+                        {
+                            Date = date,
+                            Open = open,
+                            High = high,
+                            Low = low,
+                            Close = close,
+                            Volume = double.IsNaN(volume) || double.IsInfinity(volume) ? 0d : volume
+                        });
+                    }
+                }
             }
             catch
             {
-                return string.Empty;
+                return new List<TradingChartPoint>();
+            }
+
+            return result
+                .OrderBy(x => x.Date)
+                .ToList();
+        }
+
+        private static bool TryParseChartDate(string value, PortfolioDefinition definition, out DateTime date)
+        {
+            date = default;
+            var normalized = NormalizeTradingDigits(value).Trim();
+            if (string.IsNullOrWhiteSpace(normalized))
+                return false;
+
+            var parts = normalized.Split(new[] { '/', '-', '.', '\\', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            int year;
+            int month;
+            int day;
+
+            if (parts.Length >= 3 &&
+                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) &&
+                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out month) &&
+                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+            {
+            }
+            else
+            {
+                var digits = new string(normalized.Where(char.IsDigit).ToArray());
+                if (digits.Length < 8)
+                    return false;
+
+                if (!int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) ||
+                    !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) ||
+                    !int.TryParse(digits.Substring(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+                    return false;
+            }
+
+            try
+            {
+                date = definition.Calendar == InputCalendar.Gregorian
+                    ? new DateTime(year, month, day)
+                    : new PersianCalendar().ToDateTime(year, month, day, 0, 0, 0, 0);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
-        private static DateTime? LoadLatestDatePoints(PortfolioDefinition definition, string symbol)
+        private static bool TryParseChartTime(string value, out TimeSpan time)
         {
-            var dateColumn = GetMappingColumn(definition, "تاریخ");
-            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-            if (dateColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
-                return null;
+            time = TimeSpan.Zero;
+            var normalized = NormalizeTradingDigits(value).Trim();
+            if (string.IsNullOrWhiteSpace(normalized))
+                return false;
 
-            DateTime? latest = null;
-            foreach (var file in Directory.GetFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly)
-                         .Where(f => Path.GetFileNameWithoutExtension(f).Contains(symbol, StringComparison.OrdinalIgnoreCase)))
-            {
-                foreach (var row in ReadDataRows(file, definition.Separator))
-                {
-                    if (row.Length < dateColumn)
-                        continue;
-                    if (DateTime.TryParse(row[dateColumn - 1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) &&
-                        (!latest.HasValue || date > latest.Value))
-                        latest = date;
-                }
-            }
+            if (TimeSpan.TryParse(normalized, CultureInfo.InvariantCulture, out time))
+                return time >= TimeSpan.Zero && time < TimeSpan.FromDays(1);
 
-            return latest;
+            var digits = new string(normalized.Where(char.IsDigit).ToArray());
+            if (digits.Length < 4)
+                return false;
+
+            if (!int.TryParse(digits[..2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hour) ||
+                !int.TryParse(digits.Substring(2, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out var minute))
+                return false;
+
+            var second = 0;
+            if (digits.Length >= 6 && !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out second))
+                return false;
+
+            if (hour is < 0 or > 23 || minute is < 0 or > 59 || second is < 0 or > 59)
+                return false;
+
+            time = new TimeSpan(hour, minute, second);
+            return true;
         }
     }
 }
