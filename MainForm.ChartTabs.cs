@@ -17,6 +17,8 @@ namespace Trade.It
             chartTabControl.DrawItem += ChartTabControl_DrawItem;
             chartTabControl.MouseDown += ChartTabControl_MouseDownForClose;
             chartTabControl.Invalidate();
+
+            BeginInvoke(new Action(InitializeChartToolbarStateFixes));
         }
 
         private void ChartTabControl_DrawItem(object? sender, DrawItemEventArgs e)
