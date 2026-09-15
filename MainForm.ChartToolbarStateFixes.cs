@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace Trade.It
@@ -7,7 +6,6 @@ namespace Trade.It
     {
         private bool chartToolbarStateFixesInitialized;
         private bool chartToolbarStateSyncing;
-        private Button? closeAllChartsToolbarButton;
 
         private readonly Dictionary<string, ChartToolbarState> chartToolbarStates =
             new(StringComparer.OrdinalIgnoreCase);
@@ -35,19 +33,7 @@ namespace Trade.It
             if (mainMenuStrip.Items.Contains(closeAllChartsMenuItem))
                 mainMenuStrip.Items.Remove(closeAllChartsMenuItem);
 
-            closeAllChartsToolbarButton = new Button
-            {
-                Name = "closeAllChartsToolbarButton",
-                Text = "✕ بستن همه",
-                Size = new Size(105, 34),
-                Location = new Point(820, 9),
-                RightToLeft = RightToLeft.Yes,
-                TabIndex = 11,
-                UseVisualStyleBackColor = true
-            };
             closeAllChartsToolbarButton.Click += CloseAllChartsToolbarButton_Click;
-            chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
-            closeAllChartsToolbarButton.BringToFront();
 
             chartTabControl.SelectedIndexChanged += ChartToolbarTabChanged;
             chartTypeComboBox.SelectedIndexChanged += ChartToolbarTypeChanged;
