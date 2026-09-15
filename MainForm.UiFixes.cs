@@ -45,7 +45,7 @@ namespace Trade.It
             SetToolbarToolTip(drawHorizontalRayButton, "نیم‌خط افقی");
             SetToolbarToolTip(drawTrendLineArrowButton, "فلش");
             SetToolbarToolTip(drawRectangleButton, "مستطیل");
-            SetToolbarToolTip(drawFibonacciButton, " اصلاحیفیبوناچی");
+            SetToolbarToolTip(drawFibonacciButton, "فیبوناچی اصلاحی");
             SetToolbarToolTip(drawTextButton, "متن");
             SetToolbarToolTip(drawPitchforkButton, "چنگال");
             SetToolbarToolTip(drawFibonacciExtensionButton, "فیبوناچی اکسپنشن");
