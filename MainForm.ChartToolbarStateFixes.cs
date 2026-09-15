@@ -30,9 +30,6 @@ namespace Trade.It
 
             chartToolbarStateFixesInitialized = true;
 
-            if (mainMenuStrip.Items.Contains(closeAllChartsMenuItem))
-                mainMenuStrip.Items.Remove(closeAllChartsMenuItem);
-
             closeAllChartsToolbarButton.Click += CloseAllChartsToolbarButton_Click;
 
             chartTabControl.SelectedIndexChanged += ChartToolbarTabChanged;
