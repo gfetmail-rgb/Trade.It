@@ -91,18 +91,12 @@ namespace Trade.It
 
             var page = chartTabControl.TabPages[index];
             var chart = page.Controls.OfType<TradingChartControl>().FirstOrDefault();
+            var wasSelected = ReferenceEquals(page, chartTabControl.SelectedTab);
 
             if (chart != null)
             {
                 foreach (var item in chartControls.Where(x => ReferenceEquals(x.Value, chart)).ToList())
                     chartControls.Remove(item.Key);
-
-                if (ReferenceEquals(chart, GetActiveChart()))
-                {
-                    activeChartSymbol = null;
-                    chartInfoLabel.Text = "هنوز سهمی برای نمایش انتخاب نشده است.";
-                    chartPlaceholderLabel.Visible = true;
-                }
 
                 page.Controls.Remove(chart);
                 chart.Dispose();
@@ -114,22 +108,32 @@ namespace Trade.It
                 chartTabPage.Controls.Add(chartInfoPanel);
                 chartTabPage.Controls.Add(chartPlaceholderLabel);
                 chartTabPage.Text = "چارت";
-                chartTabControl.SelectedTab = chartTabPage;
             }
             else
             {
                 chartTabControl.TabPages.Remove(page);
                 page.Dispose();
+            }
 
-                if (chartTabControl.TabPages.Count == 1 &&
-                    chartTabControl.TabPages[0] == chartTabPage &&
-                    chartTabPage.Controls.OfType<TradingChartControl>().Count() == 0)
+            if (wasSelected)
+            {
+                var active = GetActiveChart();
+                if (active != null)
                 {
-                    chartTabPage.Text = "چارت";
+                    activeChartSymbol = chartTabControl.SelectedTab?.Text?.Trim();
+                    chartInfoLabel.Text = $"{activeChartSymbol}   |   چارت باز است";
+                    chartPlaceholderLabel.Visible = false;
+                }
+                else
+                {
+                    activeChartSymbol = null;
+                    chartInfoLabel.Text = "هنوز سهمی برای نمایش انتخاب نشده است.";
+                    chartPlaceholderLabel.Visible = true;
                 }
             }
 
             chartTabControl.Invalidate();
+            SyncChartToolbarFromActiveChart();
         }
     }
 }
