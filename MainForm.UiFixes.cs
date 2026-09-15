@@ -12,6 +12,7 @@ namespace Trade.It
                 InitializeToolbarToolTips();
 
             InitializeChartDrawingTools();
+            MainForm_HandleCreatedForChartTabs(this, EventArgs.Empty);
         }
 
         private void InitializeToolbarToolTips()
