@@ -27,28 +27,28 @@ namespace Trade.It
                 ShowAlways = true
             };
 
-            SetToolbarToolTip(gridButton, "گرید");
-            SetToolbarToolTip(crossButton, "کراس‌هیر");
+            SetToolbarToolTip(gridButton, "گرید شبکه");
+            SetToolbarToolTip(crossButton, "خطوط کراس");
             SetToolbarToolTip(zoomInButton, "بزرگ‌نمایی");
             SetToolbarToolTip(zoomOutButton, "کوچک‌نمایی");
             SetToolbarToolTip(resetChartButton, "بازنشانی نمودار");
-            SetToolbarToolTip(hideChartButton, "مخفی کردن نمودار");
-            SetToolbarToolTip(hideToolsButton, "مخفی کردن ابزارها");
+            SetToolbarToolTip(hideChartButton, "مخفی کردن نمودار و ابزارها");
+            SetToolbarToolTip(hideToolsButton, "حذف کردن ابزارها");
             SetToolbarToolTip(printChartButton, "چاپ نمودار");
             SetToolbarToolTip(snapshotChartButton, "تصویر از نمودار");
             SetToolbarToolTip(fullScreenChartButton, "تمام صفحه");
 
             SetToolbarToolTip(drawTrendLineButton, "خط روند");
             SetToolbarToolTip(drawTrendChannelButton, "کانال روند");
-            SetToolbarToolTip(drawHorizontalDoubleButton, "خط افقی دو سر");
-            SetToolbarToolTip(drawVerticalDoubleButton, "خط عمودی دو سر");
+            SetToolbarToolTip(drawHorizontalDoubleButton, "خط افقی");
+            SetToolbarToolTip(drawVerticalDoubleButton, "خط عمودی");
             SetToolbarToolTip(drawHorizontalRayButton, "نیم‌خط افقی");
-            SetToolbarToolTip(drawTrendLineArrowButton, "خط روند فلش‌دار");
+            SetToolbarToolTip(drawTrendLineArrowButton, "فلش");
             SetToolbarToolTip(drawRectangleButton, "مستطیل");
-            SetToolbarToolTip(drawFibonacciButton, "فیبوناچی");
+            SetToolbarToolTip(drawFibonacciButton, " اصلاحیفیبوناچی");
             SetToolbarToolTip(drawTextButton, "متن");
             SetToolbarToolTip(drawPitchforkButton, "چنگال");
-            SetToolbarToolTip(drawFibonacciExtensionButton, "فیبو اکسپنشن");
+            SetToolbarToolTip(drawFibonacciExtensionButton, "فیبوناچی اکسپنشن");
             SetToolbarToolTip(drawMeasureButton, "خط‌کش");
         }
 

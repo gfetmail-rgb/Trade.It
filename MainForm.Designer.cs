@@ -2116,7 +2116,7 @@
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(67, 34);
             hideToolsButton.TabIndex = 7;
-            hideToolsButton.Text = "ابزارها";
+            hideToolsButton.Text = "حذف";
             // 
             // printChartButton
             // 
@@ -2288,6 +2288,7 @@
             RightToLeftLayout = true;
             Text = "Trade.It";
             WindowState = FormWindowState.Maximized;
+            Load += MainForm_Load;
             mainMenuStrip.ResumeLayout(false);
             mainMenuStrip.PerformLayout();
             mainSplitContainer.Panel1.ResumeLayout(false);
