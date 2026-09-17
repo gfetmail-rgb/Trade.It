@@ -29,6 +29,7 @@ public sealed partial class SymbolDefinitionForm : Form
         marketComboBox.SelectedIndex = 0;
         boardComboBox.SelectedIndex = 0;
         assetComboBox.SelectedIndex = 0;
+        groupTextBox.SelectedIndex = 0;
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -83,7 +84,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Clear();
         nameTextBox.Clear();
         SetComboDefaults();
-        groupTextBox.Clear();
+        groupTextBox.SelectedIndex = 0;
         symbolTextBox.Focus();
     }
 
@@ -341,7 +342,6 @@ internal static class ExcelSymbolReader
                 if (details.Count < 20) details.Add($"ردیف {excelRow}: عنوان نماد خالی است.");
                 continue;
             }
-
             var exchange = V(Headers[2]);
             var market = V(Headers[3]);
             var board = V(Headers[4]);
@@ -350,7 +350,6 @@ internal static class ExcelSymbolReader
             if (string.IsNullOrWhiteSpace(market)) market = SymbolDefinitionRules.EmptyOption;
             if (string.IsNullOrWhiteSpace(board)) board = SymbolDefinitionRules.EmptyOption;
             if (string.IsNullOrWhiteSpace(asset)) asset = SymbolDefinitionRules.EmptyOption;
-
             var errors = new List<string>();
             if (!SymbolDefinitionRules.IsAllowed(exchange, SymbolDefinitionRules.Exchanges, out var standardExchange)) errors.Add("عنوان بورس");
             if (!SymbolDefinitionRules.IsAllowed(market, SymbolDefinitionRules.Markets, out var standardMarket)) errors.Add("نوع بازار");
