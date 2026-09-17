@@ -10,6 +10,7 @@ partial class SymbolDefinitionForm
     private ComboBox boardComboBox = null!;
     private ComboBox assetComboBox = null!;
     private ComboBox groupComboBox = null!;
+    private ComboBox industryGroupComboBox = null!;
     private Button newButton = null!;
     private Button saveButton = null!;
     private Button deleteButton = null!;
@@ -32,6 +33,7 @@ partial class SymbolDefinitionForm
     private Label label01 = null!;
     private Label label11 = null!;
     private Label label21 = null!;
+    private Label label22 = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -48,6 +50,7 @@ partial class SymbolDefinitionForm
         boardComboBox = new ComboBox();
         assetComboBox = new ComboBox();
         groupComboBox = new ComboBox();
+        industryGroupComboBox = new ComboBox();
         newButton = new Button();
         saveButton = new Button();
         deleteButton = new Button();
@@ -70,6 +73,7 @@ partial class SymbolDefinitionForm
         label01 = new Label();
         label11 = new Label();
         label21 = new Label();
+        label22 = new Label();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
         // 
@@ -117,7 +121,7 @@ partial class SymbolDefinitionForm
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF سهامی" , "صندوق ETF کالایی" });
+        assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(447, 76);
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(210, 30);
@@ -126,11 +130,20 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-" ,"صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "-", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
         groupComboBox.Location = new Point(872, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(385, 30);
         groupComboBox.TabIndex = 6;
+        // 
+        // industryGroupComboBox
+        // 
+        industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        industryGroupComboBox.Items.AddRange(new object[] { "-" });
+        industryGroupComboBox.Location = new Point(300, 118);
+        industryGroupComboBox.Name = "industryGroupComboBox";
+        industryGroupComboBox.Size = new Size(250, 30);
+        industryGroupComboBox.TabIndex = 7;
         // 
         // newButton
         // 
@@ -138,7 +151,7 @@ partial class SymbolDefinitionForm
         newButton.Location = new Point(701, 118);
         newButton.Name = "newButton";
         newButton.Size = new Size(75, 35);
-        newButton.TabIndex = 7;
+        newButton.TabIndex = 8;
         newButton.Text = "جدید";
         newButton.UseVisualStyleBackColor = true;
         // 
@@ -148,7 +161,7 @@ partial class SymbolDefinitionForm
         saveButton.Location = new Point(787, 118);
         saveButton.Name = "saveButton";
         saveButton.Size = new Size(75, 35);
-        saveButton.TabIndex = 8;
+        saveButton.TabIndex = 9;
         saveButton.Text = "ذخیره";
         saveButton.UseVisualStyleBackColor = true;
         // 
@@ -158,7 +171,7 @@ partial class SymbolDefinitionForm
         deleteButton.Location = new Point(994, 118);
         deleteButton.Name = "deleteButton";
         deleteButton.Size = new Size(75, 35);
-        deleteButton.TabIndex = 9;
+        deleteButton.TabIndex = 10;
         deleteButton.Text = "حذف";
         deleteButton.UseVisualStyleBackColor = true;
         // 
@@ -168,7 +181,7 @@ partial class SymbolDefinitionForm
         deleteAllButton.Location = new Point(1075, 118);
         deleteAllButton.Name = "deleteAllButton";
         deleteAllButton.Size = new Size(100, 35);
-        deleteAllButton.TabIndex = 10;
+        deleteAllButton.TabIndex = 11;
         deleteAllButton.Text = "حذف همه";
         deleteAllButton.UseVisualStyleBackColor = true;
         // 
@@ -178,7 +191,7 @@ partial class SymbolDefinitionForm
         importButton.Location = new Point(868, 118);
         importButton.Name = "importButton";
         importButton.Size = new Size(120, 35);
-        importButton.TabIndex = 11;
+        importButton.TabIndex = 12;
         importButton.Text = "ورود از Excel";
         importButton.UseVisualStyleBackColor = true;
         // 
@@ -188,7 +201,7 @@ partial class SymbolDefinitionForm
         closeButton.Location = new Point(1186, 118);
         closeButton.Name = "closeButton";
         closeButton.Size = new Size(75, 35);
-        closeButton.TabIndex = 12;
+        closeButton.TabIndex = 13;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
@@ -198,7 +211,7 @@ partial class SymbolDefinitionForm
         countLabel.Location = new Point(22, 131);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
-        countLabel.TabIndex = 13;
+        countLabel.TabIndex = 14;
         countLabel.Text = "تعداد: 0";
         // 
         // symbolsDataGridView
@@ -285,7 +298,7 @@ partial class SymbolDefinitionForm
         label00.Location = new Point(12, 18);
         label00.Name = "label00";
         label00.Size = new Size(57, 30);
-        label00.TabIndex = 14;
+        label00.TabIndex = 15;
         label00.Text = "نماد";
         label00.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -294,7 +307,7 @@ partial class SymbolDefinitionForm
         label10.Location = new Point(229, 19);
         label10.Name = "label10";
         label10.Size = new Size(90, 30);
-        label10.TabIndex = 15;
+        label10.TabIndex = 16;
         label10.Text = "نام";
         label10.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -303,7 +316,7 @@ partial class SymbolDefinitionForm
         label20.Location = new Point(701, 19);
         label20.Name = "label20";
         label20.Size = new Size(113, 30);
-        label20.TabIndex = 16;
+        label20.TabIndex = 17;
         label20.Text = "عنوان بورس";
         label20.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -312,7 +325,7 @@ partial class SymbolDefinitionForm
         label30.Location = new Point(997, 20);
         label30.Name = "label30";
         label30.Size = new Size(76, 30);
-        label30.TabIndex = 17;
+        label30.TabIndex = 18;
         label30.Text = "نوع بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -321,7 +334,7 @@ partial class SymbolDefinitionForm
         label01.Location = new Point(22, 75);
         label01.Name = "label01";
         label01.Size = new Size(47, 30);
-        label01.TabIndex = 18;
+        label01.TabIndex = 19;
         label01.Text = "تابلو";
         label01.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -330,7 +343,7 @@ partial class SymbolDefinitionForm
         label11.Location = new Point(351, 76);
         label11.Name = "label11";
         label11.Size = new Size(90, 30);
-        label11.TabIndex = 19;
+        label11.TabIndex = 20;
         label11.Text = "نوع دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -339,9 +352,18 @@ partial class SymbolDefinitionForm
         label21.Location = new Point(671, 75);
         label21.Name = "label21";
         label21.Size = new Size(195, 30);
-        label21.TabIndex = 20;
-        label21.Text = "گروه صنعت/نوع صندوق";
+        label21.TabIndex = 21;
+        label21.Text = "نوع صندوق";
         label21.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // label22
+        // 
+        label22.Location = new Point(560, 118);
+        label22.Name = "label22";
+        label22.Size = new Size(130, 30);
+        label22.TabIndex = 22;
+        label22.Text = "گروه صنعت";
+        label22.TextAlign = ContentAlignment.MiddleRight;
         // 
         // SymbolDefinitionForm
         // 
@@ -353,6 +375,7 @@ partial class SymbolDefinitionForm
         Controls.Add(boardComboBox);
         Controls.Add(assetComboBox);
         Controls.Add(groupComboBox);
+        Controls.Add(industryGroupComboBox);
         Controls.Add(newButton);
         Controls.Add(saveButton);
         Controls.Add(deleteButton);
@@ -368,6 +391,7 @@ partial class SymbolDefinitionForm
         Controls.Add(label01);
         Controls.Add(label11);
         Controls.Add(label21);
+        Controls.Add(label22);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);
         Name = "SymbolDefinitionForm";
