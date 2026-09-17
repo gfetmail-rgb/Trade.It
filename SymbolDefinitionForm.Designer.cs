@@ -19,6 +19,14 @@ partial class SymbolDefinitionForm
     private Button closeButton = null!;
     private Label countLabel = null!;
     private DataGridView symbolsDataGridView = null!;
+    private DataGridViewTextBoxColumn rowNumberColumn = null!;
+    private DataGridViewTextBoxColumn symbolTitleColumn = null!;
+    private DataGridViewTextBoxColumn nameColumn = null!;
+    private DataGridViewTextBoxColumn exchangeColumn = null!;
+    private DataGridViewTextBoxColumn marketColumn = null!;
+    private DataGridViewTextBoxColumn boardColumn = null!;
+    private DataGridViewTextBoxColumn assetColumn = null!;
+    private DataGridViewTextBoxColumn groupColumn = null!;
     private Label label00 = null!;
     private Label label10 = null!;
     private Label label20 = null!;
@@ -52,6 +60,14 @@ partial class SymbolDefinitionForm
         closeButton = new Button();
         countLabel = new Label();
         symbolsDataGridView = new DataGridView();
+        rowNumberColumn = new DataGridViewTextBoxColumn();
+        symbolTitleColumn = new DataGridViewTextBoxColumn();
+        nameColumn = new DataGridViewTextBoxColumn();
+        exchangeColumn = new DataGridViewTextBoxColumn();
+        marketColumn = new DataGridViewTextBoxColumn();
+        boardColumn = new DataGridViewTextBoxColumn();
+        assetColumn = new DataGridViewTextBoxColumn();
+        groupColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label20 = new Label();
@@ -61,86 +77,52 @@ partial class SymbolDefinitionForm
         label21 = new Label();
         label22 = new Label();
         label1 = new Label();
-        symbolTitleColumn = new DataGridViewTextBoxColumn();
-        nameColumn = new DataGridViewTextBoxColumn();
-        exchangeColumn = new DataGridViewTextBoxColumn();
-        marketColumn = new DataGridViewTextBoxColumn();
-        boardColumn = new DataGridViewTextBoxColumn();
-        assetColumn = new DataGridViewTextBoxColumn();
-        groupColumn = new DataGridViewTextBoxColumn();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
-        // 
-        // symbolTextBox
-        // 
         symbolTextBox.Location = new Point(75, 19);
         symbolTextBox.Name = "symbolTextBox";
         symbolTextBox.Size = new Size(201, 29);
         symbolTextBox.TabIndex = 0;
-        // 
-        // nameTextBox
-        // 
         nameTextBox.Location = new Point(325, 19);
         nameTextBox.Name = "nameTextBox";
         nameTextBox.Size = new Size(370, 29);
         nameTextBox.TabIndex = 1;
-        // 
-        // exchangeComboBox
-        // 
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         exchangeComboBox.Items.AddRange(new object[] { "-", "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
         exchangeComboBox.Location = new Point(814, 20);
         exchangeComboBox.Name = "exchangeComboBox";
         exchangeComboBox.Size = new Size(180, 30);
         exchangeComboBox.TabIndex = 2;
-        // 
-        // marketComboBox
-        // 
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         marketComboBox.Items.AddRange(new object[] { "-", "اول", "دوم", "پایه", "SMD", "نوآفرین" });
         marketComboBox.Location = new Point(1075, 20);
         marketComboBox.Name = "marketComboBox";
         marketComboBox.Size = new Size(186, 30);
         marketComboBox.TabIndex = 3;
-        // 
-        // boardComboBox
-        // 
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         boardComboBox.Items.AddRange(new object[] { "-", "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
         boardComboBox.Location = new Point(75, 76);
         boardComboBox.Name = "boardComboBox";
         boardComboBox.Size = new Size(176, 30);
         boardComboBox.TabIndex = 4;
-        // 
-        // assetComboBox
-        // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(359, 76);
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(175, 30);
         assetComboBox.TabIndex = 5;
-        // 
-        // groupComboBox
-        // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         groupComboBox.Items.AddRange(new object[] { "-", "صندوق سهامی در سهام", "صندوق سهامی اهرمی", "صندوق سهامی بخشی", "صندوق سهامی مختلط", "صندوق سهامی درآمد ثابت", "", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
         groupComboBox.TabIndex = 6;
-        // 
-        // industryGroupComboBox
-        // 
         industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         industryGroupComboBox.Items.AddRange(new object[] { "-", "استخراج کانه های فلزی", "واسطه‌گریهای مالی و پولی", "مواد و محصولات دارویی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات شیمیایی" });
         industryGroupComboBox.Location = new Point(1008, 75);
         industryGroupComboBox.Name = "industryGroupComboBox";
         industryGroupComboBox.Size = new Size(253, 30);
         industryGroupComboBox.TabIndex = 7;
-        // 
-        // newButton
-        // 
         newButton.AutoSize = true;
         newButton.Location = new Point(701, 118);
         newButton.Name = "newButton";
@@ -148,9 +130,6 @@ partial class SymbolDefinitionForm
         newButton.TabIndex = 8;
         newButton.Text = "جدید";
         newButton.UseVisualStyleBackColor = true;
-        // 
-        // saveButton
-        // 
         saveButton.AutoSize = true;
         saveButton.Location = new Point(787, 118);
         saveButton.Name = "saveButton";
@@ -158,9 +137,6 @@ partial class SymbolDefinitionForm
         saveButton.TabIndex = 9;
         saveButton.Text = "ذخیره";
         saveButton.UseVisualStyleBackColor = true;
-        // 
-        // deleteButton
-        // 
         deleteButton.AutoSize = true;
         deleteButton.Location = new Point(994, 118);
         deleteButton.Name = "deleteButton";
@@ -168,9 +144,6 @@ partial class SymbolDefinitionForm
         deleteButton.TabIndex = 10;
         deleteButton.Text = "حذف";
         deleteButton.UseVisualStyleBackColor = true;
-        // 
-        // deleteAllButton
-        // 
         deleteAllButton.AutoSize = true;
         deleteAllButton.Location = new Point(1075, 118);
         deleteAllButton.Name = "deleteAllButton";
@@ -178,9 +151,6 @@ partial class SymbolDefinitionForm
         deleteAllButton.TabIndex = 11;
         deleteAllButton.Text = "حذف همه";
         deleteAllButton.UseVisualStyleBackColor = true;
-        // 
-        // importButton
-        // 
         importButton.AutoSize = true;
         importButton.Location = new Point(868, 118);
         importButton.Name = "importButton";
@@ -188,9 +158,6 @@ partial class SymbolDefinitionForm
         importButton.TabIndex = 12;
         importButton.Text = "ورود از Excel";
         importButton.UseVisualStyleBackColor = true;
-        // 
-        // closeButton
-        // 
         closeButton.AutoSize = true;
         closeButton.Location = new Point(1186, 118);
         closeButton.Name = "closeButton";
@@ -198,25 +165,19 @@ partial class SymbolDefinitionForm
         closeButton.TabIndex = 13;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
-        // 
-        // countLabel
-        // 
         countLabel.AutoSize = true;
         countLabel.Location = new Point(22, 131);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
         countLabel.TabIndex = 14;
         countLabel.Text = "تعداد: 0";
-        // 
-        // symbolsDataGridView
-        // 
         symbolsDataGridView.AllowUserToAddRows = false;
         symbolsDataGridView.AllowUserToDeleteRows = false;
         symbolsDataGridView.AllowUserToResizeRows = false;
         symbolsDataGridView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         symbolsDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, groupColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, groupColumn });
         symbolsDataGridView.Location = new Point(10, 165);
         symbolsDataGridView.MultiSelect = false;
         symbolsDataGridView.Name = "symbolsDataGridView";
@@ -227,149 +188,104 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         symbolsDataGridView.Size = new Size(1279, 520);
         symbolsDataGridView.TabIndex = 0;
-        // 
-        // label00
-        // 
-        label00.Location = new Point(12, 18);
-        label00.Name = "label00";
-        label00.Size = new Size(57, 30);
-        label00.TabIndex = 15;
-        label00.Text = "نماد";
-        label00.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label10
-        // 
-        label10.Location = new Point(229, 19);
-        label10.Name = "label10";
-        label10.Size = new Size(90, 30);
-        label10.TabIndex = 16;
-        label10.Text = "نام";
-        label10.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label20
-        // 
-        label20.Location = new Point(701, 19);
-        label20.Name = "label20";
-        label20.Size = new Size(113, 30);
-        label20.TabIndex = 17;
-        label20.Text = "بورس";
-        label20.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label30
-        // 
-        label30.Location = new Point(997, 20);
-        label30.Name = "label30";
-        label30.Size = new Size(76, 30);
-        label30.TabIndex = 18;
-        label30.Text = "بازار";
-        label30.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label01
-        // 
-        label01.Location = new Point(22, 75);
-        label01.Name = "label01";
-        label01.Size = new Size(47, 30);
-        label01.TabIndex = 19;
-        label01.Text = "تابلو";
-        label01.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label11
-        // 
-        label11.Location = new Point(262, 76);
-        label11.Name = "label11";
-        label11.Size = new Size(90, 30);
-        label11.TabIndex = 20;
-        label11.Text = "دارایی";
-        label11.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label21
-        // 
-        label21.Location = new Point(536, 75);
-        label21.Name = "label21";
-        label21.Size = new Size(108, 30);
-        label21.TabIndex = 21;
-        label21.Text = "نوع صندوق";
-        label21.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label22
-        // 
-        label22.Location = new Point(560, 118);
-        label22.Name = "label22";
-        label22.Size = new Size(130, 30);
-        label22.TabIndex = 22;
-        label22.Text = "گروه صنعت";
-        label22.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label1
-        // 
-        label1.Location = new Point(901, 76);
-        label1.Name = "label1";
-        label1.Size = new Size(101, 30);
-        label1.TabIndex = 23;
-        label1.Text = "گروه صنعت";
-        label1.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // symbolTitleColumn
-        // 
-        symbolTitleColumn.HeaderText = "نماد";
+        rowNumberColumn.FillWeight = 45F;
+        rowNumberColumn.HeaderText = "ردیف";
+        rowNumberColumn.MinimumWidth = 45;
+        rowNumberColumn.Name = "rowNumberColumn";
+        rowNumberColumn.ReadOnly = true;
+        rowNumberColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        symbolTitleColumn.HeaderText = "عنوان نماد";
         symbolTitleColumn.MinimumWidth = 8;
         symbolTitleColumn.Name = "symbolTitleColumn";
         symbolTitleColumn.ReadOnly = true;
         symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // nameColumn
-        // 
         nameColumn.FillWeight = 150F;
-        nameColumn.HeaderText = "نام";
+        nameColumn.HeaderText = "نام نماد";
         nameColumn.MinimumWidth = 8;
         nameColumn.Name = "nameColumn";
         nameColumn.ReadOnly = true;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // exchangeColumn
-        // 
-        exchangeColumn.HeaderText = "بورس";
+        exchangeColumn.HeaderText = "عنوان بورس";
         exchangeColumn.MinimumWidth = 8;
         exchangeColumn.Name = "exchangeColumn";
         exchangeColumn.ReadOnly = true;
         exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // marketColumn
-        // 
-        marketColumn.HeaderText = "بازار";
+        marketColumn.HeaderText = "نوع بازار";
         marketColumn.MinimumWidth = 8;
         marketColumn.Name = "marketColumn";
         marketColumn.ReadOnly = true;
         marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // boardColumn
-        // 
-        boardColumn.HeaderText = "تابلو";
+        boardColumn.HeaderText = "نوع تابلو";
         boardColumn.MinimumWidth = 8;
         boardColumn.Name = "boardColumn";
         boardColumn.ReadOnly = true;
         boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // assetColumn
-        // 
         assetColumn.FillWeight = 80F;
-        assetColumn.HeaderText = "دارایی";
+        assetColumn.HeaderText = "نوع دارایی";
         assetColumn.MinimumWidth = 8;
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // groupColumn
-        // 
         groupColumn.FillWeight = 150F;
         groupColumn.HeaderText = "گروه صنعت / نوع صندوق";
         groupColumn.MinimumWidth = 8;
         groupColumn.Name = "groupColumn";
         groupColumn.ReadOnly = true;
         groupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // SymbolDefinitionForm
-        // 
+        label00.Location = new Point(12, 18);
+        label00.Name = "label00";
+        label00.Size = new Size(57, 30);
+        label00.TabIndex = 15;
+        label00.Text = "نماد";
+        label00.TextAlign = ContentAlignment.MiddleRight;
+        label10.Location = new Point(229, 19);
+        label10.Name = "label10";
+        label10.Size = new Size(90, 30);
+        label10.TabIndex = 16;
+        label10.Text = "نام";
+        label10.TextAlign = ContentAlignment.MiddleRight;
+        label20.Location = new Point(701, 19);
+        label20.Name = "label20";
+        label20.Size = new Size(113, 30);
+        label20.TabIndex = 17;
+        label20.Text = "عنوان بورس";
+        label20.TextAlign = ContentAlignment.MiddleRight;
+        label30.Location = new Point(997, 20);
+        label30.Name = "label30";
+        label30.Size = new Size(76, 30);
+        label30.TabIndex = 18;
+        label30.Text = "نوع بازار";
+        label30.TextAlign = ContentAlignment.MiddleRight;
+        label01.Location = new Point(22, 75);
+        label01.Name = "label01";
+        label01.Size = new Size(47, 30);
+        label01.TabIndex = 19;
+        label01.Text = "تابلو";
+        label01.TextAlign = ContentAlignment.MiddleRight;
+        label11.Location = new Point(262, 76);
+        label11.Name = "label11";
+        label11.Size = new Size(90, 30);
+        label11.TabIndex = 20;
+        label11.Text = "نوع دارایی";
+        label11.TextAlign = ContentAlignment.MiddleRight;
+        label21.Location = new Point(536, 75);
+        label21.Name = "label21";
+        label21.Size = new Size(108, 30);
+        label21.TabIndex = 21;
+        label21.Text = "نوع صندوق";
+        label21.TextAlign = ContentAlignment.MiddleRight;
+        label22.Location = new Point(560, 118);
+        label22.Name = "label22";
+        label22.Size = new Size(130, 30);
+        label22.TabIndex = 22;
+        label22.Text = "گروه صنعت";
+        label22.TextAlign = ContentAlignment.MiddleRight;
+        label1.Location = new Point(901, 76);
+        label1.Name = "label1";
+        label1.Size = new Size(101, 30);
+        label1.TabIndex = 23;
+        label1.Text = "گروه صنعت";
+        label1.TextAlign = ContentAlignment.MiddleRight;
         ClientSize = new Size(1293, 700);
         Controls.Add(label1);
         Controls.Add(symbolTextBox);
@@ -408,11 +324,4 @@ partial class SymbolDefinitionForm
         PerformLayout();
     }
     private Label label1;
-    private DataGridViewTextBoxColumn symbolTitleColumn;
-    private DataGridViewTextBoxColumn nameColumn;
-    private DataGridViewTextBoxColumn exchangeColumn;
-    private DataGridViewTextBoxColumn marketColumn;
-    private DataGridViewTextBoxColumn boardColumn;
-    private DataGridViewTextBoxColumn assetColumn;
-    private DataGridViewTextBoxColumn groupColumn;
 }
