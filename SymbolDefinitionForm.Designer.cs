@@ -19,15 +19,6 @@ partial class SymbolDefinitionForm
     private Button closeButton = null!;
     private Label countLabel = null!;
     private DataGridView symbolsDataGridView = null!;
-    private DataGridViewTextBoxColumn rowNumberColumn = null!;
-    private DataGridViewTextBoxColumn symbolTitleColumn = null!;
-    private DataGridViewTextBoxColumn nameColumn = null!;
-    private DataGridViewTextBoxColumn exchangeColumn = null!;
-    private DataGridViewTextBoxColumn marketColumn = null!;
-    private DataGridViewTextBoxColumn boardColumn = null!;
-    private DataGridViewTextBoxColumn assetColumn = null!;
-    private DataGridViewTextBoxColumn fundTypeColumn = null!;
-    private DataGridViewTextBoxColumn industryGroupColumn = null!;
     private Label label00 = null!;
     private Label label10 = null!;
     private Label label20 = null!;
@@ -111,7 +102,7 @@ partial class SymbolDefinitionForm
         // marketComboBox
         // 
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "-", "اول", "دوم", "پایه", "SMD", "نوآفرین" });
+        marketComboBox.Items.AddRange(new object[] { "-", "اول", "دوم", "پایه", "SME", "نوآفرین" });
         marketComboBox.Location = new Point(1075, 20);
         marketComboBox.Name = "marketComboBox";
         marketComboBox.Size = new Size(186, 30);
@@ -138,7 +129,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-", "صندوق سهامی در سهام", "صندوق سهامی اهرمی", "صندوق سهامی بخشی", "صندوق سهامی مختلط", "صندوق سهامی درآمد ثابت", "", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "-", "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
@@ -147,7 +138,7 @@ partial class SymbolDefinitionForm
         // industryGroupComboBox
         // 
         industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        industryGroupComboBox.Items.AddRange(new object[] { "-", "استخراج کانه های فلزی", "واسطه‌گریهای مالی و پولی", "مواد و محصولات دارویی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات شیمیایی" });
+        industryGroupComboBox.Items.AddRange(new object[] { "-", "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
         industryGroupComboBox.Location = new Point(1008, 75);
         industryGroupComboBox.Name = "industryGroupComboBox";
         industryGroupComboBox.Size = new Size(253, 30);
@@ -254,7 +245,7 @@ partial class SymbolDefinitionForm
         // 
         // symbolTitleColumn
         // 
-        symbolTitleColumn.HeaderText = "عنوان نماد";
+        symbolTitleColumn.HeaderText = "نماد";
         symbolTitleColumn.MinimumWidth = 8;
         symbolTitleColumn.Name = "symbolTitleColumn";
         symbolTitleColumn.ReadOnly = true;
@@ -263,7 +254,7 @@ partial class SymbolDefinitionForm
         // nameColumn
         // 
         nameColumn.FillWeight = 150F;
-        nameColumn.HeaderText = "نام نماد";
+        nameColumn.HeaderText = "نام";
         nameColumn.MinimumWidth = 8;
         nameColumn.Name = "nameColumn";
         nameColumn.ReadOnly = true;
@@ -271,7 +262,7 @@ partial class SymbolDefinitionForm
         // 
         // exchangeColumn
         // 
-        exchangeColumn.HeaderText = "عنوان بورس";
+        exchangeColumn.HeaderText = "بورس";
         exchangeColumn.MinimumWidth = 8;
         exchangeColumn.Name = "exchangeColumn";
         exchangeColumn.ReadOnly = true;
@@ -279,7 +270,7 @@ partial class SymbolDefinitionForm
         // 
         // marketColumn
         // 
-        marketColumn.HeaderText = "نوع بازار";
+        marketColumn.HeaderText = "بازار";
         marketColumn.MinimumWidth = 8;
         marketColumn.Name = "marketColumn";
         marketColumn.ReadOnly = true;
@@ -287,7 +278,7 @@ partial class SymbolDefinitionForm
         // 
         // boardColumn
         // 
-        boardColumn.HeaderText = "نوع تابلو";
+        boardColumn.HeaderText = "تابلو";
         boardColumn.MinimumWidth = 8;
         boardColumn.Name = "boardColumn";
         boardColumn.ReadOnly = true;
@@ -296,7 +287,7 @@ partial class SymbolDefinitionForm
         // assetColumn
         // 
         assetColumn.FillWeight = 80F;
-        assetColumn.HeaderText = "نوع دارایی";
+        assetColumn.HeaderText = "دارایی";
         assetColumn.MinimumWidth = 8;
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
@@ -403,7 +394,10 @@ partial class SymbolDefinitionForm
         // 
         // toolTip1
         // 
+        toolTip1.AutoPopDelay = 5000;
+        toolTip1.InitialDelay = 800;
         toolTip1.IsBalloon = true;
+        toolTip1.ReshowDelay = 100;
         toolTip1.ToolTipIcon = ToolTipIcon.Info;
         toolTip1.ToolTipTitle = "هشدار";
         // 
@@ -448,4 +442,13 @@ partial class SymbolDefinitionForm
     }
     private Label label1;
     private ToolTip toolTip1;
+    private DataGridViewTextBoxColumn rowNumberColumn;
+    private DataGridViewTextBoxColumn symbolTitleColumn;
+    private DataGridViewTextBoxColumn nameColumn;
+    private DataGridViewTextBoxColumn exchangeColumn;
+    private DataGridViewTextBoxColumn marketColumn;
+    private DataGridViewTextBoxColumn boardColumn;
+    private DataGridViewTextBoxColumn assetColumn;
+    private DataGridViewTextBoxColumn fundTypeColumn;
+    private DataGridViewTextBoxColumn industryGroupColumn;
 }

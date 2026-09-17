@@ -339,7 +339,7 @@ internal static class SymbolDefinitionRules
 
 internal static class ExcelSymbolReader
 {
-    private static readonly string[] Headers = { "عنوان نماد", "نام نماد", "عنوان بورس", "نوع بازار", "نوع تابلو", "نوع دارایی (سهام یا صندوق)", "نوع صندوق", "گروه صنعت" };
+    private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "نوع صندوق", "گروه صنعت" };
 
     public static List<SymbolDefinition> Read(
         string path,

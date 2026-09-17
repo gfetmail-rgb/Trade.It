@@ -139,19 +139,6 @@
         private System.Windows.Forms.Button identifierDeleteAllButton;
         private System.Windows.Forms.Button identifierImportExcelButton;
 
-        private System.Windows.Forms.Label marketTypeLabel;
-        private System.Windows.Forms.TextBox marketTypeTextBox;
-        private System.Windows.Forms.Label marketNameLabel;
-        private System.Windows.Forms.TextBox marketNameTextBox;
-        private System.Windows.Forms.Label marketBoardLabel;
-        private System.Windows.Forms.TextBox marketBoardTextBox;
-        private System.Windows.Forms.Label marketIndustryGroupLabel;
-        private System.Windows.Forms.TextBox marketIndustryGroupTextBox;
-        private System.Windows.Forms.Label marketSubIndustryGroupLabel;
-        private System.Windows.Forms.TextBox marketSubIndustryGroupTextBox;
-        private System.Windows.Forms.GroupBox marketsMainGroup;
-        private System.Windows.Forms.TableLayoutPanel marketsLayout;
-
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null)) components.Dispose();
@@ -165,6 +152,7 @@
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             closeAllChartsMenuItem = new ToolStripMenuItem();
+            symbolDefinitionMenuItem = new ToolStripMenuItem();
             mainSplitContainer = new SplitContainer();
             controlTabControl = new TabControl();
             stocksTabPage = new TabPage();
@@ -286,18 +274,20 @@
             identifierSaveButton = new Button();
             identifierNewButton = new Button();
             marketsTabPage = new TabPage();
-            marketsMainGroup = new GroupBox();
-            marketsLayout = new TableLayoutPanel();
-            marketTypeLabel = new Label();
-            marketTypeTextBox = new TextBox();
-            marketNameLabel = new Label();
-            marketNameTextBox = new TextBox();
-            marketBoardLabel = new Label();
-            marketBoardTextBox = new TextBox();
-            marketIndustryGroupLabel = new Label();
-            marketIndustryGroupTextBox = new TextBox();
-            marketSubIndustryGroupLabel = new Label();
-            marketSubIndustryGroupTextBox = new TextBox();
+            marketClearButton = new Button();
+            marketApplyButton = new Button();
+            marketTypeComboBox = new ComboBox();
+            marketBoardComboBox = new ComboBox();
+            marketAssetComboBox = new ComboBox();
+            marketFundTypeComboBox = new ComboBox();
+            marketIndustryGroupComboBox = new ComboBox();
+            marketExchangeComboBox = new ComboBox();
+            label18 = new Label();
+            label17 = new Label();
+            label16 = new Label();
+            label15 = new Label();
+            label14 = new Label();
+            label13 = new Label();
             chartPanel = new Panel();
             chartTabControl = new TabControl();
             chartTabPage = new TabPage();
@@ -334,7 +324,6 @@
             drawMeasureButton = new Button();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
-            symbolDefinitionMenuItem = new ToolStripMenuItem();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -358,8 +347,6 @@
             identifierLayout.SuspendLayout();
             identifierButtonsPanel.SuspendLayout();
             marketsTabPage.SuspendLayout();
-            marketsMainGroup.SuspendLayout();
-            marketsLayout.SuspendLayout();
             chartPanel.SuspendLayout();
             chartTabControl.SuspendLayout();
             chartTabPage.SuspendLayout();
@@ -401,6 +388,13 @@
             closeAllChartsMenuItem.Name = "closeAllChartsMenuItem";
             closeAllChartsMenuItem.Size = new Size(104, 29);
             closeAllChartsMenuItem.Text = "بستن همه";
+            // 
+            // symbolDefinitionMenuItem
+            // 
+            symbolDefinitionMenuItem.Name = "symbolDefinitionMenuItem";
+            symbolDefinitionMenuItem.Size = new Size(132, 29);
+            symbolDefinitionMenuItem.Text = "تعریف نمادها";
+            symbolDefinitionMenuItem.Click += symbolDefinitionMenuItem_Click;
             // 
             // mainSplitContainer
             // 
@@ -1790,7 +1784,20 @@
             // 
             // marketsTabPage
             // 
-            marketsTabPage.Controls.Add(marketsMainGroup);
+            marketsTabPage.Controls.Add(marketClearButton);
+            marketsTabPage.Controls.Add(marketApplyButton);
+            marketsTabPage.Controls.Add(marketTypeComboBox);
+            marketsTabPage.Controls.Add(marketBoardComboBox);
+            marketsTabPage.Controls.Add(marketAssetComboBox);
+            marketsTabPage.Controls.Add(marketFundTypeComboBox);
+            marketsTabPage.Controls.Add(marketIndustryGroupComboBox);
+            marketsTabPage.Controls.Add(marketExchangeComboBox);
+            marketsTabPage.Controls.Add(label18);
+            marketsTabPage.Controls.Add(label17);
+            marketsTabPage.Controls.Add(label16);
+            marketsTabPage.Controls.Add(label15);
+            marketsTabPage.Controls.Add(label14);
+            marketsTabPage.Controls.Add(label13);
             marketsTabPage.Location = new Point(4, 34);
             marketsTabPage.Name = "marketsTabPage";
             marketsTabPage.Padding = new Padding(8);
@@ -1798,164 +1805,138 @@
             marketsTabPage.TabIndex = 3;
             marketsTabPage.Text = "بازارها";
             // 
-            // marketsMainGroup
+            // marketClearButton
             // 
-            marketsMainGroup.AutoSize = true;
-            marketsMainGroup.Controls.Add(marketsLayout);
-            marketsMainGroup.Dock = DockStyle.Top;
-            marketsMainGroup.Location = new Point(8, 8);
-            marketsMainGroup.Name = "marketsMainGroup";
-            marketsMainGroup.Padding = new Padding(10);
-            marketsMainGroup.RightToLeft = RightToLeft.Yes;
-            marketsMainGroup.Size = new Size(338, 266);
-            marketsMainGroup.TabIndex = 0;
-            marketsMainGroup.TabStop = false;
-            marketsMainGroup.Text = "اطلاعات بازار";
+            marketClearButton.Location = new Point(87, 530);
+            marketClearButton.Name = "marketClearButton";
+            marketClearButton.Size = new Size(85, 35);
+            marketClearButton.TabIndex = 13;
+            marketClearButton.Text = "حذف";
+            marketClearButton.UseVisualStyleBackColor = true;
             // 
-            // marketsLayout
+            // marketApplyButton
             // 
-            marketsLayout.AutoSize = true;
-            marketsLayout.ColumnCount = 2;
-            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
-            marketsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            marketsLayout.Controls.Add(marketTypeLabel, 0, 0);
-            marketsLayout.Controls.Add(marketTypeTextBox, 1, 0);
-            marketsLayout.Controls.Add(marketNameLabel, 0, 1);
-            marketsLayout.Controls.Add(marketNameTextBox, 1, 1);
-            marketsLayout.Controls.Add(marketBoardLabel, 0, 2);
-            marketsLayout.Controls.Add(marketBoardTextBox, 1, 2);
-            marketsLayout.Controls.Add(marketIndustryGroupLabel, 0, 3);
-            marketsLayout.Controls.Add(marketIndustryGroupTextBox, 1, 3);
-            marketsLayout.Controls.Add(marketSubIndustryGroupLabel, 0, 4);
-            marketsLayout.Controls.Add(marketSubIndustryGroupTextBox, 1, 4);
-            marketsLayout.Dock = DockStyle.Top;
-            marketsLayout.Location = new Point(10, 34);
-            marketsLayout.Name = "marketsLayout";
-            marketsLayout.Padding = new Padding(6);
-            marketsLayout.RightToLeft = RightToLeft.Yes;
-            marketsLayout.RowCount = 5;
-            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            marketsLayout.Size = new Size(318, 222);
-            marketsLayout.TabIndex = 0;
+            marketApplyButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            marketApplyButton.Location = new Point(200, 530);
+            marketApplyButton.Name = "marketApplyButton";
+            marketApplyButton.Size = new Size(85, 35);
+            marketApplyButton.TabIndex = 12;
+            marketApplyButton.Text = "تایید";
+            marketApplyButton.UseVisualStyleBackColor = true;
             // 
-            // marketTypeLabel
+            // marketTypeComboBox
             // 
-            marketTypeLabel.Dock = DockStyle.Fill;
-            marketTypeLabel.Font = new Font("Segoe UI", 10F);
-            marketTypeLabel.Location = new Point(161, 10);
-            marketTypeLabel.Margin = new Padding(4);
-            marketTypeLabel.Name = "marketTypeLabel";
-            marketTypeLabel.RightToLeft = RightToLeft.Yes;
-            marketTypeLabel.Size = new Size(147, 34);
-            marketTypeLabel.TabIndex = 0;
-            marketTypeLabel.Text = "نوع بازار";
-            marketTypeLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketTypeComboBox.FormattingEnabled = true;
+            marketTypeComboBox.Location = new Point(11, 132);
+            marketTypeComboBox.Name = "marketTypeComboBox";
+            marketTypeComboBox.Size = new Size(198, 33);
+            marketTypeComboBox.TabIndex = 11;
             // 
-            // marketTypeTextBox
+            // marketBoardComboBox
             // 
-            marketTypeTextBox.Dock = DockStyle.Fill;
-            marketTypeTextBox.Location = new Point(10, 10);
-            marketTypeTextBox.Margin = new Padding(4);
-            marketTypeTextBox.Name = "marketTypeTextBox";
-            marketTypeTextBox.RightToLeft = RightToLeft.Yes;
-            marketTypeTextBox.Size = new Size(143, 31);
-            marketTypeTextBox.TabIndex = 0;
+            marketBoardComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketBoardComboBox.FormattingEnabled = true;
+            marketBoardComboBox.Location = new Point(11, 197);
+            marketBoardComboBox.Name = "marketBoardComboBox";
+            marketBoardComboBox.Size = new Size(198, 33);
+            marketBoardComboBox.TabIndex = 10;
             // 
-            // marketNameLabel
+            // marketAssetComboBox
             // 
-            marketNameLabel.Dock = DockStyle.Fill;
-            marketNameLabel.Font = new Font("Segoe UI", 10F);
-            marketNameLabel.Location = new Point(161, 52);
-            marketNameLabel.Margin = new Padding(4);
-            marketNameLabel.Name = "marketNameLabel";
-            marketNameLabel.RightToLeft = RightToLeft.Yes;
-            marketNameLabel.Size = new Size(147, 34);
-            marketNameLabel.TabIndex = 1;
-            marketNameLabel.Text = "نام بازار";
-            marketNameLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketAssetComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetComboBox.FormattingEnabled = true;
+            marketAssetComboBox.Location = new Point(11, 266);
+            marketAssetComboBox.Name = "marketAssetComboBox";
+            marketAssetComboBox.Size = new Size(198, 33);
+            marketAssetComboBox.TabIndex = 9;
             // 
-            // marketNameTextBox
+            // marketFundTypeComboBox
             // 
-            marketNameTextBox.Dock = DockStyle.Fill;
-            marketNameTextBox.Location = new Point(10, 52);
-            marketNameTextBox.Margin = new Padding(4);
-            marketNameTextBox.Name = "marketNameTextBox";
-            marketNameTextBox.RightToLeft = RightToLeft.Yes;
-            marketNameTextBox.Size = new Size(143, 31);
-            marketNameTextBox.TabIndex = 1;
+            marketFundTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFundTypeComboBox.FormattingEnabled = true;
+            marketFundTypeComboBox.Location = new Point(11, 339);
+            marketFundTypeComboBox.Name = "marketFundTypeComboBox";
+            marketFundTypeComboBox.Size = new Size(198, 33);
+            marketFundTypeComboBox.TabIndex = 8;
             // 
-            // marketBoardLabel
+            // marketIndustryGroupComboBox
             // 
-            marketBoardLabel.Dock = DockStyle.Fill;
-            marketBoardLabel.Font = new Font("Segoe UI", 10F);
-            marketBoardLabel.Location = new Point(161, 94);
-            marketBoardLabel.Margin = new Padding(4);
-            marketBoardLabel.Name = "marketBoardLabel";
-            marketBoardLabel.RightToLeft = RightToLeft.Yes;
-            marketBoardLabel.Size = new Size(147, 34);
-            marketBoardLabel.TabIndex = 2;
-            marketBoardLabel.Text = "تابلو";
-            marketBoardLabel.TextAlign = ContentAlignment.MiddleRight;
+            marketIndustryGroupComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketIndustryGroupComboBox.FormattingEnabled = true;
+            marketIndustryGroupComboBox.Location = new Point(11, 408);
+            marketIndustryGroupComboBox.Name = "marketIndustryGroupComboBox";
+            marketIndustryGroupComboBox.Size = new Size(198, 33);
+            marketIndustryGroupComboBox.TabIndex = 7;
             // 
-            // marketBoardTextBox
+            // marketExchangeComboBox
             // 
-            marketBoardTextBox.Dock = DockStyle.Fill;
-            marketBoardTextBox.Location = new Point(10, 94);
-            marketBoardTextBox.Margin = new Padding(4);
-            marketBoardTextBox.Name = "marketBoardTextBox";
-            marketBoardTextBox.RightToLeft = RightToLeft.Yes;
-            marketBoardTextBox.Size = new Size(143, 31);
-            marketBoardTextBox.TabIndex = 2;
+            marketExchangeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketExchangeComboBox.FormattingEnabled = true;
+            marketExchangeComboBox.Location = new Point(11, 66);
+            marketExchangeComboBox.Name = "marketExchangeComboBox";
+            marketExchangeComboBox.Size = new Size(198, 33);
+            marketExchangeComboBox.TabIndex = 6;
             // 
-            // marketIndustryGroupLabel
+            // label18
             // 
-            marketIndustryGroupLabel.Dock = DockStyle.Fill;
-            marketIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
-            marketIndustryGroupLabel.Location = new Point(161, 136);
-            marketIndustryGroupLabel.Margin = new Padding(4);
-            marketIndustryGroupLabel.Name = "marketIndustryGroupLabel";
-            marketIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupLabel.Size = new Size(147, 34);
-            marketIndustryGroupLabel.TabIndex = 3;
-            marketIndustryGroupLabel.Text = "گروه صنعت";
-            marketIndustryGroupLabel.TextAlign = ContentAlignment.MiddleRight;
+            label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label18.AutoSize = true;
+            label18.Location = new Point(239, 416);
+            label18.Name = "label18";
+            label18.Size = new Size(106, 25);
+            label18.TabIndex = 5;
+            label18.Text = "گروه صنعت:";
             // 
-            // marketIndustryGroupTextBox
+            // label17
             // 
-            marketIndustryGroupTextBox.Dock = DockStyle.Fill;
-            marketIndustryGroupTextBox.Location = new Point(10, 136);
-            marketIndustryGroupTextBox.Margin = new Padding(4);
-            marketIndustryGroupTextBox.Name = "marketIndustryGroupTextBox";
-            marketIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupTextBox.Size = new Size(143, 31);
-            marketIndustryGroupTextBox.TabIndex = 3;
+            label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label17.AutoSize = true;
+            label17.Location = new Point(249, 132);
+            label17.Name = "label17";
+            label17.Size = new Size(77, 25);
+            label17.TabIndex = 4;
+            label17.Text = "نوع بازار:";
             // 
-            // marketSubIndustryGroupLabel
+            // label16
             // 
-            marketSubIndustryGroupLabel.Dock = DockStyle.Fill;
-            marketSubIndustryGroupLabel.Font = new Font("Segoe UI", 10F);
-            marketSubIndustryGroupLabel.Location = new Point(161, 178);
-            marketSubIndustryGroupLabel.Margin = new Padding(4);
-            marketSubIndustryGroupLabel.Name = "marketSubIndustryGroupLabel";
-            marketSubIndustryGroupLabel.RightToLeft = RightToLeft.Yes;
-            marketSubIndustryGroupLabel.Size = new Size(147, 34);
-            marketSubIndustryGroupLabel.TabIndex = 4;
-            marketSubIndustryGroupLabel.Text = "زیر گروه صنعت";
-            marketSubIndustryGroupLabel.TextAlign = ContentAlignment.MiddleRight;
+            label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label16.AutoSize = true;
+            label16.Location = new Point(249, 269);
+            label16.Name = "label16";
+            label16.Size = new Size(93, 25);
+            label16.TabIndex = 3;
+            label16.Text = "نوع دارایی:";
             // 
-            // marketSubIndustryGroupTextBox
+            // label15
             // 
-            marketSubIndustryGroupTextBox.Dock = DockStyle.Fill;
-            marketSubIndustryGroupTextBox.Location = new Point(10, 178);
-            marketSubIndustryGroupTextBox.Margin = new Padding(4);
-            marketSubIndustryGroupTextBox.Name = "marketSubIndustryGroupTextBox";
-            marketSubIndustryGroupTextBox.RightToLeft = RightToLeft.Yes;
-            marketSubIndustryGroupTextBox.Size = new Size(143, 31);
-            marketSubIndustryGroupTextBox.TabIndex = 4;
+            label15.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label15.AutoSize = true;
+            label15.Location = new Point(249, 197);
+            label15.Name = "label15";
+            label15.Size = new Size(79, 25);
+            label15.TabIndex = 2;
+            label15.Text = "نوع تابلو:";
+            // 
+            // label14
+            // 
+            label14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label14.AutoSize = true;
+            label14.Location = new Point(239, 342);
+            label14.Name = "label14";
+            label14.Size = new Size(103, 25);
+            label14.TabIndex = 1;
+            label14.Text = "نوع صندوق:";
+            // 
+            // label13
+            // 
+            label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label13.AutoSize = true;
+            label13.Location = new Point(253, 66);
+            label13.Name = "label13";
+            label13.Size = new Size(89, 25);
+            label13.TabIndex = 0;
+            label13.Text = "نوع بورس:";
             // 
             // chartPanel
             // 
@@ -2322,13 +2303,6 @@
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
             // 
-            // symbolDefinitionMenuItem
-            // 
-            symbolDefinitionMenuItem.Name = "symbolDefinitionMenuItem";
-            symbolDefinitionMenuItem.Size = new Size(132, 29);
-            symbolDefinitionMenuItem.Text = "تعریف نمادها";
-            symbolDefinitionMenuItem.Click += symbolDefinitionMenuItem_Click;
-            // 
             // MainForm
             // 
             ClientSize = new Size(1491, 966);
@@ -2378,10 +2352,6 @@
             identifierButtonsPanel.ResumeLayout(false);
             marketsTabPage.ResumeLayout(false);
             marketsTabPage.PerformLayout();
-            marketsMainGroup.ResumeLayout(false);
-            marketsMainGroup.PerformLayout();
-            marketsLayout.ResumeLayout(false);
-            marketsLayout.PerformLayout();
             chartPanel.ResumeLayout(false);
             chartTabControl.ResumeLayout(false);
             chartTabPage.ResumeLayout(false);
@@ -2426,5 +2396,19 @@
         private Label label11;
         private Label label10;
         private ToolStripMenuItem symbolDefinitionMenuItem;
+        private Label label18;
+        private Label label17;
+        private Label label16;
+        private Label label15;
+        private Label label14;
+        private Label label13;
+        private ComboBox marketTypeComboBox;
+        private ComboBox marketBoardComboBox;
+        private ComboBox marketAssetComboBox;
+        private ComboBox marketFundTypeComboBox;
+        private ComboBox marketIndustryGroupComboBox;
+        private ComboBox marketExchangeComboBox;
+        private Button marketClearButton;
+        private Button marketApplyButton;
     }
 }
