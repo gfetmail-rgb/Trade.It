@@ -292,6 +292,7 @@ internal static class ExcelSymbolReader
     public static List<SymbolDefinition> Read(string path, out int invalidRows, out string invalidDetails)
     {
         invalidRows = 0;
+        invalidDetails = "";
         var details = new List<string>();
         using var zip = ZipFile.OpenRead(path);
         XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";

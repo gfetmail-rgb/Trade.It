@@ -93,13 +93,13 @@ partial class SymbolDefinitionForm
         AddDesignerField(2, 1, "گروه صنعت / نوع صندوق", groupTextBox);
 
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        exchangeComboBox.Items.AddRange(new object[] { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" });
+        exchangeComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" });
+        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار ابزارهای نوین" });
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         boardComboBox.Items.AddRange(new object[] { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "etf صندوق" });
+        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق" });
 
         buttonsFlowLayoutPanel.Dock = DockStyle.Fill;
         buttonsFlowLayoutPanel.FlowDirection = FlowDirection.RightToLeft;
