@@ -97,7 +97,7 @@ partial class SymbolDefinitionForm
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDown;
         boardComboBox.Items.AddRange(new object[] { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق" });
+        assetComboBox.Items.AddRange(new object[] { "سهام", "etf صندوق" });
 
         buttonsFlowLayoutPanel.Dock = DockStyle.Fill;
         buttonsFlowLayoutPanel.FlowDirection = FlowDirection.RightToLeft;
