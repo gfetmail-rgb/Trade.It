@@ -276,20 +276,15 @@
             identifierSaveButton = new Button();
             identifierNewButton = new Button();
             marketsTabPage = new TabPage();
+            marketCountLabel = new Label();
             marketClearButton = new Button();
             marketApplyButton = new Button();
-            marketTypeComboBox = new ComboBox();
-            marketBoardComboBox = new ComboBox();
-            marketAssetComboBox = new ComboBox();
-            marketFundTypeComboBox = new ComboBox();
-            marketIndustryGroupComboBox = new ComboBox();
-            marketExchangeComboBox = new ComboBox();
-            marketExchangeCheckedListBox = new CheckedListBox();
-            marketTypeCheckedListBox = new CheckedListBox();
-            marketBoardCheckedListBox = new CheckedListBox();
-            marketAssetCheckedListBox = new CheckedListBox();
-            marketFundTypeCheckedListBox = new CheckedListBox();
             marketIndustryGroupCheckedListBox = new CheckedListBox();
+            marketFundTypeCheckedListBox = new CheckedListBox();
+            marketAssetCheckedListBox = new CheckedListBox();
+            marketBoardCheckedListBox = new CheckedListBox();
+            marketTypeCheckedListBox = new CheckedListBox();
+            marketExchangeCheckedListBox = new CheckedListBox();
             label18 = new Label();
             label17 = new Label();
             label16 = new Label();
@@ -330,8 +325,15 @@
             drawPitchforkButton = new Button();
             drawFibonacciExtensionButton = new Button();
             drawMeasureButton = new Button();
+            marketTypeComboBox = new ComboBox();
+            marketBoardComboBox = new ComboBox();
+            marketAssetComboBox = new ComboBox();
+            marketFundTypeComboBox = new ComboBox();
+            marketIndustryGroupComboBox = new ComboBox();
+            marketExchangeComboBox = new ComboBox();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
+            stocksGridCountLabel = new Label();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -597,23 +599,10 @@
             // 
             portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            portfolioComboBox.Location = new Point(8, 3);
+            portfolioComboBox.Location = new Point(122, 6);
             portfolioComboBox.Name = "portfolioComboBox";
             portfolioComboBox.Size = new Size(155, 33);
             portfolioComboBox.TabIndex = 2;
-            // 
-            // stocksGridCountLabel
-            // 
-            stocksGridCountLabel = new Label();
-            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(166, 6);
-            stocksGridCountLabel.Name = "stocksGridCountLabel";
-            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
-            stocksGridCountLabel.Size = new Size(108, 25);
-            stocksGridCountLabel.TabIndex = 4;
-            stocksGridCountLabel.Text = "نمادها: ۰";
-            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
             // portfolioLabel
             // 
@@ -766,18 +755,6 @@
             clearFiltersButton.TabIndex = 9;
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
-            // 
-            // marketCountLabel
-            // 
-            marketCountLabel = new Label();
-            marketCountLabel.Font = new Font("Segoe UI", 9F);
-            marketCountLabel.Location = new Point(20, 680);
-            marketCountLabel.Name = "marketCountLabel";
-            marketCountLabel.RightToLeft = RightToLeft.Yes;
-            marketCountLabel.Size = new Size(400, 36);
-            marketCountLabel.TabIndex = 20;
-            marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
-            marketCountLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // filterCountLabel
             // 
@@ -1839,9 +1816,22 @@
             marketsTabPage.TabIndex = 3;
             marketsTabPage.Text = "بازارها";
             // 
+            // marketCountLabel
+            // 
+            marketCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            marketCountLabel.Font = new Font("Segoe UI", 9F);
+            marketCountLabel.Location = new Point(16, 843);
+            marketCountLabel.Name = "marketCountLabel";
+            marketCountLabel.RightToLeft = RightToLeft.Yes;
+            marketCountLabel.Size = new Size(318, 36);
+            marketCountLabel.TabIndex = 20;
+            marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
+            marketCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // marketClearButton
             // 
-            marketClearButton.Location = new Point(87, 635);
+            marketClearButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            marketClearButton.Location = new Point(83, 800);
             marketClearButton.Name = "marketClearButton";
             marketClearButton.Size = new Size(85, 35);
             marketClearButton.TabIndex = 13;
@@ -1850,152 +1840,97 @@
             // 
             // marketApplyButton
             // 
-            marketApplyButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            marketApplyButton.Location = new Point(200, 635);
+            marketApplyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            marketApplyButton.Location = new Point(196, 800);
             marketApplyButton.Name = "marketApplyButton";
             marketApplyButton.Size = new Size(85, 35);
             marketApplyButton.TabIndex = 12;
             marketApplyButton.Text = "تایید";
             marketApplyButton.UseVisualStyleBackColor = true;
             // 
-            // marketTypeComboBox
-            // 
-            marketTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketTypeComboBox.FormattingEnabled = true;
-            marketTypeComboBox.Location = new Point(11, 132);
-            marketTypeComboBox.Name = "marketTypeComboBox";
-            marketTypeComboBox.Size = new Size(198, 33);
-            marketTypeComboBox.TabIndex = 11;
-            // 
-            // marketBoardComboBox
-            // 
-            marketBoardComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketBoardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketBoardComboBox.FormattingEnabled = true;
-            marketBoardComboBox.Location = new Point(11, 197);
-            marketBoardComboBox.Name = "marketBoardComboBox";
-            marketBoardComboBox.Size = new Size(198, 33);
-            marketBoardComboBox.TabIndex = 10;
-            // 
-            // marketAssetComboBox
-            // 
-            marketAssetComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketAssetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketAssetComboBox.FormattingEnabled = true;
-            marketAssetComboBox.Location = new Point(11, 266);
-            marketAssetComboBox.Name = "marketAssetComboBox";
-            marketAssetComboBox.Size = new Size(198, 33);
-            marketAssetComboBox.TabIndex = 9;
-            // 
-            // marketFundTypeComboBox
-            // 
-            marketFundTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketFundTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketFundTypeComboBox.FormattingEnabled = true;
-            marketFundTypeComboBox.Location = new Point(11, 339);
-            marketFundTypeComboBox.Name = "marketFundTypeComboBox";
-            marketFundTypeComboBox.Size = new Size(198, 33);
-            marketFundTypeComboBox.TabIndex = 8;
-            // 
-            // marketIndustryGroupComboBox
-            // 
-            marketIndustryGroupComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketIndustryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketIndustryGroupComboBox.FormattingEnabled = true;
-            marketIndustryGroupComboBox.Location = new Point(11, 408);
-            marketIndustryGroupComboBox.Name = "marketIndustryGroupComboBox";
-            marketIndustryGroupComboBox.Size = new Size(198, 33);
-            marketIndustryGroupComboBox.TabIndex = 7;
-            // 
-            // marketExchangeComboBox
-            // 
-            marketExchangeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketExchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            marketExchangeComboBox.FormattingEnabled = true;
-            marketExchangeComboBox.Location = new Point(11, 66);
-            marketExchangeComboBox.Name = "marketExchangeComboBox";
-            marketExchangeComboBox.Size = new Size(198, 33);
-            marketExchangeComboBox.TabIndex = 6;
-            // 
-            // marketExchangeCheckedListBox
-            // 
-            marketExchangeCheckedListBox.CheckOnClick = true;
-            marketExchangeCheckedListBox.FormattingEnabled = true;
-            marketExchangeCheckedListBox.HorizontalScrollbar = true;
-            marketExchangeCheckedListBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
-            marketExchangeCheckedListBox.Location = new Point(11, 45);
-            marketExchangeCheckedListBox.Name = "marketExchangeCheckedListBox";
-            marketExchangeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketExchangeCheckedListBox.Size = new Size(210, 68);
-            marketExchangeCheckedListBox.TabIndex = 6;
-            // 
-            // marketTypeCheckedListBox
-            // 
-            marketTypeCheckedListBox.CheckOnClick = true;
-            marketTypeCheckedListBox.FormattingEnabled = true;
-            marketTypeCheckedListBox.HorizontalScrollbar = true;
-            marketTypeCheckedListBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SME", "نوآفرین" });
-            marketTypeCheckedListBox.Location = new Point(11, 145);
-            marketTypeCheckedListBox.Name = "marketTypeCheckedListBox";
-            marketTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketTypeCheckedListBox.Size = new Size(210, 68);
-            marketTypeCheckedListBox.TabIndex = 7;
-            // 
-            // marketBoardCheckedListBox
-            // 
-            marketBoardCheckedListBox.CheckOnClick = true;
-            marketBoardCheckedListBox.FormattingEnabled = true;
-            marketBoardCheckedListBox.HorizontalScrollbar = true;
-            marketBoardCheckedListBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
-            marketBoardCheckedListBox.Location = new Point(11, 245);
-            marketBoardCheckedListBox.Name = "marketBoardCheckedListBox";
-            marketBoardCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketBoardCheckedListBox.Size = new Size(210, 68);
-            marketBoardCheckedListBox.TabIndex = 8;
-            // 
-            // marketAssetCheckedListBox
-            // 
-            marketAssetCheckedListBox.CheckOnClick = true;
-            marketAssetCheckedListBox.FormattingEnabled = true;
-            marketAssetCheckedListBox.HorizontalScrollbar = true;
-            marketAssetCheckedListBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
-            marketAssetCheckedListBox.Location = new Point(11, 345);
-            marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
-            marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketAssetCheckedListBox.Size = new Size(210, 68);
-            marketAssetCheckedListBox.TabIndex = 9;
-            // 
-            // marketFundTypeCheckedListBox
-            // 
-            marketFundTypeCheckedListBox.CheckOnClick = true;
-            marketFundTypeCheckedListBox.FormattingEnabled = true;
-            marketFundTypeCheckedListBox.HorizontalScrollbar = true;
-            marketFundTypeCheckedListBox.Items.AddRange(new object[] { "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
-            marketFundTypeCheckedListBox.Location = new Point(11, 445);
-            marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
-            marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketFundTypeCheckedListBox.Size = new Size(210, 68);
-            marketFundTypeCheckedListBox.TabIndex = 10;
-            // 
             // marketIndustryGroupCheckedListBox
             // 
+            marketIndustryGroupCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             marketIndustryGroupCheckedListBox.CheckOnClick = true;
             marketIndustryGroupCheckedListBox.FormattingEnabled = true;
             marketIndustryGroupCheckedListBox.HorizontalScrollbar = true;
             marketIndustryGroupCheckedListBox.Items.AddRange(new object[] { "-", "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیکی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
-            marketIndustryGroupCheckedListBox.Location = new Point(11, 545);
+            marketIndustryGroupCheckedListBox.Location = new Point(6, 656);
             marketIndustryGroupCheckedListBox.Name = "marketIndustryGroupCheckedListBox";
             marketIndustryGroupCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupCheckedListBox.Size = new Size(210, 68);
+            marketIndustryGroupCheckedListBox.Size = new Size(237, 116);
             marketIndustryGroupCheckedListBox.TabIndex = 11;
             // 
+            // marketFundTypeCheckedListBox
+            // 
+            marketFundTypeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFundTypeCheckedListBox.CheckOnClick = true;
+            marketFundTypeCheckedListBox.FormattingEnabled = true;
+            marketFundTypeCheckedListBox.HorizontalScrollbar = true;
+            marketFundTypeCheckedListBox.Items.AddRange(new object[] { "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+            marketFundTypeCheckedListBox.Location = new Point(6, 532);
+            marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
+            marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketFundTypeCheckedListBox.Size = new Size(237, 116);
+            marketFundTypeCheckedListBox.TabIndex = 10;
+            // 
+            // marketAssetCheckedListBox
+            // 
+            marketAssetCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetCheckedListBox.CheckOnClick = true;
+            marketAssetCheckedListBox.FormattingEnabled = true;
+            marketAssetCheckedListBox.HorizontalScrollbar = true;
+            marketAssetCheckedListBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
+            marketAssetCheckedListBox.Location = new Point(6, 409);
+            marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
+            marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketAssetCheckedListBox.Size = new Size(237, 116);
+            marketAssetCheckedListBox.TabIndex = 9;
+            // 
+            // marketBoardCheckedListBox
+            // 
+            marketBoardCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketBoardCheckedListBox.CheckOnClick = true;
+            marketBoardCheckedListBox.FormattingEnabled = true;
+            marketBoardCheckedListBox.HorizontalScrollbar = true;
+            marketBoardCheckedListBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
+            marketBoardCheckedListBox.Location = new Point(9, 258);
+            marketBoardCheckedListBox.Name = "marketBoardCheckedListBox";
+            marketBoardCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketBoardCheckedListBox.Size = new Size(237, 144);
+            marketBoardCheckedListBox.TabIndex = 8;
+            // 
+            // marketTypeCheckedListBox
+            // 
+            marketTypeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketTypeCheckedListBox.CheckOnClick = true;
+            marketTypeCheckedListBox.FormattingEnabled = true;
+            marketTypeCheckedListBox.HorizontalScrollbar = true;
+            marketTypeCheckedListBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SME", "نوآفرین" });
+            marketTypeCheckedListBox.Location = new Point(9, 134);
+            marketTypeCheckedListBox.Name = "marketTypeCheckedListBox";
+            marketTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketTypeCheckedListBox.Size = new Size(237, 116);
+            marketTypeCheckedListBox.TabIndex = 7;
+            // 
+            // marketExchangeCheckedListBox
+            // 
+            marketExchangeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketExchangeCheckedListBox.CheckOnClick = true;
+            marketExchangeCheckedListBox.FormattingEnabled = true;
+            marketExchangeCheckedListBox.HorizontalScrollbar = true;
+            marketExchangeCheckedListBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
+            marketExchangeCheckedListBox.Location = new Point(9, 11);
+            marketExchangeCheckedListBox.Name = "marketExchangeCheckedListBox";
+            marketExchangeCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketExchangeCheckedListBox.Size = new Size(237, 116);
+            marketExchangeCheckedListBox.TabIndex = 6;
             // 
             // label18
             // 
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label18.AutoSize = true;
-            label18.Location = new Point(235, 545);
+            label18.Location = new Point(244, 694);
             label18.Name = "label18";
             label18.Size = new Size(106, 25);
             label18.TabIndex = 5;
@@ -2005,17 +1940,18 @@
             // 
             label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label17.AutoSize = true;
-            label17.Location = new Point(235, 145);
+            label17.Location = new Point(251, 182);
             label17.Name = "label17";
             label17.Size = new Size(77, 25);
             label17.TabIndex = 4;
             label17.Text = "نوع بازار:";
+            label17.Click += label17_Click;
             // 
             // label16
             // 
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label16.AutoSize = true;
-            label16.Location = new Point(235, 345);
+            label16.Location = new Point(248, 455);
             label16.Name = "label16";
             label16.Size = new Size(93, 25);
             label16.TabIndex = 3;
@@ -2025,7 +1961,7 @@
             // 
             label15.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label15.AutoSize = true;
-            label15.Location = new Point(235, 245);
+            label15.Location = new Point(252, 331);
             label15.Name = "label15";
             label15.Size = new Size(79, 25);
             label15.TabIndex = 2;
@@ -2035,7 +1971,7 @@
             // 
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Location = new Point(235, 445);
+            label14.Location = new Point(246, 581);
             label14.Name = "label14";
             label14.Size = new Size(103, 25);
             label14.TabIndex = 1;
@@ -2045,7 +1981,7 @@
             // 
             label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label13.AutoSize = true;
-            label13.Location = new Point(235, 45);
+            label13.Location = new Point(252, 59);
             label13.Name = "label13";
             label13.Size = new Size(89, 25);
             label13.TabIndex = 0;
@@ -2401,6 +2337,66 @@
             drawMeasureButton.Text = "خط کش";
             drawMeasureButton.UseVisualStyleBackColor = true;
             // 
+            // marketTypeComboBox
+            // 
+            marketTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketTypeComboBox.FormattingEnabled = true;
+            marketTypeComboBox.Location = new Point(11, 132);
+            marketTypeComboBox.Name = "marketTypeComboBox";
+            marketTypeComboBox.Size = new Size(198, 33);
+            marketTypeComboBox.TabIndex = 11;
+            // 
+            // marketBoardComboBox
+            // 
+            marketBoardComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketBoardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketBoardComboBox.FormattingEnabled = true;
+            marketBoardComboBox.Location = new Point(11, 197);
+            marketBoardComboBox.Name = "marketBoardComboBox";
+            marketBoardComboBox.Size = new Size(198, 33);
+            marketBoardComboBox.TabIndex = 10;
+            // 
+            // marketAssetComboBox
+            // 
+            marketAssetComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketAssetComboBox.FormattingEnabled = true;
+            marketAssetComboBox.Location = new Point(11, 266);
+            marketAssetComboBox.Name = "marketAssetComboBox";
+            marketAssetComboBox.Size = new Size(198, 33);
+            marketAssetComboBox.TabIndex = 9;
+            // 
+            // marketFundTypeComboBox
+            // 
+            marketFundTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFundTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketFundTypeComboBox.FormattingEnabled = true;
+            marketFundTypeComboBox.Location = new Point(11, 339);
+            marketFundTypeComboBox.Name = "marketFundTypeComboBox";
+            marketFundTypeComboBox.Size = new Size(198, 33);
+            marketFundTypeComboBox.TabIndex = 8;
+            // 
+            // marketIndustryGroupComboBox
+            // 
+            marketIndustryGroupComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketIndustryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketIndustryGroupComboBox.FormattingEnabled = true;
+            marketIndustryGroupComboBox.Location = new Point(11, 408);
+            marketIndustryGroupComboBox.Name = "marketIndustryGroupComboBox";
+            marketIndustryGroupComboBox.Size = new Size(198, 33);
+            marketIndustryGroupComboBox.TabIndex = 7;
+            // 
+            // marketExchangeComboBox
+            // 
+            marketExchangeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketExchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketExchangeComboBox.FormattingEnabled = true;
+            marketExchangeComboBox.Location = new Point(11, 66);
+            marketExchangeComboBox.Name = "marketExchangeComboBox";
+            marketExchangeComboBox.Size = new Size(198, 33);
+            marketExchangeComboBox.TabIndex = 6;
+            // 
             // groupBox1
             // 
             groupBox1.Location = new Point(0, 0);
@@ -2415,6 +2411,18 @@
             refreshButtonPortfolio.Name = "refreshButtonPortfolio";
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
+            // 
+            // stocksGridCountLabel
+            // 
+            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stocksGridCountLabel.AutoSize = true;
+            stocksGridCountLabel.Location = new Point(166, 6);
+            stocksGridCountLabel.Name = "stocksGridCountLabel";
+            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
+            stocksGridCountLabel.Size = new Size(108, 25);
+            stocksGridCountLabel.TabIndex = 4;
+            stocksGridCountLabel.Text = "نمادها: ۰";
+            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 
