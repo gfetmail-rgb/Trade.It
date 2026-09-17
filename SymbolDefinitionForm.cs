@@ -30,6 +30,7 @@ public sealed partial class SymbolDefinitionForm : Form
         boardComboBox.SelectedIndex = 0;
         assetComboBox.SelectedIndex = 0;
         groupComboBox.SelectedIndex = 0;
+        industryGroupComboBox.SelectedIndex = 0;
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -40,7 +41,13 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolsDataGridView.Rows.Clear();
             foreach (var item in SymbolDefinitionStore.Load().OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase))
             {
-                int r = symbolsDataGridView.Rows.Add(item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, item.IndustryGroupOrFundType);
+                var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
+                    ? item.FundType
+                    : string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
+                        ? item.IndustryGroup
+                        : $"{item.IndustryGroup} / {item.FundType}";
+
+                int r = symbolsDataGridView.Rows.Add(item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
                 symbolsDataGridView.Rows[r].Tag = item;
             }
             countLabel.Text = $"تعداد: {symbolsDataGridView.Rows.Count}";
@@ -60,7 +67,14 @@ public sealed partial class SymbolDefinitionForm : Form
         SelectComboValue(marketComboBox, x.MarketType);
         SelectComboValue(boardComboBox, x.BoardType);
         SelectComboValue(assetComboBox, x.AssetType);
-        groupComboBox.Text = SymbolDefinitionRules.NormalizeText(x.IndustryGroupOrFundType);
+
+        var fundType = x.FundType;
+        var industryGroup = x.IndustryGroup;
+        if (string.IsNullOrWhiteSpace(fundType) && string.IsNullOrWhiteSpace(industryGroup) && !string.IsNullOrWhiteSpace(x.IndustryGroupOrFundType))
+            fundType = x.IndustryGroupOrFundType;
+
+        SelectComboValue(groupComboBox, fundType);
+        SelectComboValue(industryGroupComboBox, industryGroup);
     }
 
     private static void SelectComboValue(ComboBox comboBox, string value)
@@ -84,7 +98,6 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Clear();
         nameTextBox.Clear();
         SetComboDefaults();
-        groupComboBox.SelectedIndex = 0;
         symbolTextBox.Focus();
     }
 
@@ -129,7 +142,9 @@ public sealed partial class SymbolDefinitionForm : Form
             MarketType = market,
             BoardType = board,
             AssetType = asset,
-            IndustryGroupOrFundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text)
+            FundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text),
+            IndustryGroup = SymbolDefinitionRules.NormalizeText(industryGroupComboBox.Text),
+            IndustryGroupOrFundType = ""
         };
     }
 
@@ -153,7 +168,9 @@ public sealed partial class SymbolDefinitionForm : Form
             existing.MarketType = item.MarketType;
             existing.BoardType = item.BoardType;
             existing.AssetType = item.AssetType;
-            existing.IndustryGroupOrFundType = item.IndustryGroupOrFundType;
+            existing.FundType = item.FundType;
+            existing.IndustryGroup = item.IndustryGroup;
+            existing.IndustryGroupOrFundType = "";
         }
         SymbolDefinitionStore.Save(all);
         LoadGrid(item.SymbolTitle);
@@ -225,6 +242,8 @@ public sealed class SymbolDefinition
     public string MarketType { get; set; } = "";
     public string BoardType { get; set; } = "";
     public string AssetType { get; set; } = "";
+    public string FundType { get; set; } = "";
+    public string IndustryGroup { get; set; } = "";
     public string IndustryGroupOrFundType { get; set; } = "";
 }
 
@@ -282,6 +301,8 @@ internal static class SymbolDefinitionRules
         x.MarketType = NormalizeText(x.MarketType);
         x.BoardType = NormalizeText(x.BoardType);
         x.AssetType = NormalizeText(x.AssetType);
+        x.FundType = NormalizeText(x.FundType);
+        x.IndustryGroup = NormalizeText(x.IndustryGroup);
         x.IndustryGroupOrFundType = NormalizeText(x.IndustryGroupOrFundType);
     }
 
@@ -297,7 +318,7 @@ internal static class SymbolDefinitionRules
 
 internal static class ExcelSymbolReader
 {
-    private static readonly string[] Headers = { "عنوان نماد", "نام نماد", "عنوان بورس", "نوع بازار", "نوع تابلو", "نوع دارایی (سهام یا صندوق)", "گروه صنعت یا نوع صندوق" };
+    private static readonly string[] Headers = { "عنوان نماد", "نام نماد", "عنوان بورس", "نوع بازار", "نوع تابلو", "نوع دارایی (سهام یا صندوق)", "نوع صندوق", "گروه صنعت" };
 
     public static List<SymbolDefinition> Read(string path, out int invalidRows, out string invalidDetails)
     {
@@ -369,7 +390,9 @@ internal static class ExcelSymbolReader
                 MarketType = standardMarket,
                 BoardType = standardBoard,
                 AssetType = standardAsset,
-                IndustryGroupOrFundType = V(Headers[6])
+                FundType = V(Headers[6]),
+                IndustryGroup = V(Headers[7]),
+                IndustryGroupOrFundType = ""
             });
         }
         invalidDetails = details.Count == 0 ? "" : string.Join(Environment.NewLine, details) + (invalidRows > details.Count ? Environment.NewLine + "..." : "");
