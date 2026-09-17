@@ -409,6 +409,7 @@ namespace Trade.It
             try
             {
                 PopulateStocksGrid(definition);
+                UpdateMarketFilterCounts(definition);
             }
             finally
             {
