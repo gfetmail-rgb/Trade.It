@@ -18,35 +18,33 @@ namespace Trade.It
         private TextBox textBox1;
 
 
-        private string appliedMarketExchange = "-";
-        private string appliedMarketType = "-";
-        private string appliedMarketBoard = "-";
-        private string appliedMarketAsset = "-";
-        private string appliedMarketFundType = "-";
-        private string appliedMarketIndustryGroup = "-";
+        private readonly HashSet<string> appliedMarketExchanges = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketTypes = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketBoards = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketFundTypes = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketIndustryGroups = new(StringComparer.OrdinalIgnoreCase);
+        private bool updatingMarketCascade;
 
         public MainForm()
         {
             InitializeComponent();
 
-            using (var sourceForm = new SymbolDefinitionForm())
-            {
-                sourceForm.CopyFilterItemsTo(
-                    marketExchangeComboBox,
-                    marketTypeComboBox,
-                    marketBoardComboBox,
-                    marketAssetComboBox,
-                    marketFundTypeComboBox,
-                    marketIndustryGroupComboBox);
-            }
+            marketExchangeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+            marketTypeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+            marketBoardCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+            marketAssetCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+            marketFundTypeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+            marketIndustryGroupCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
+
             marketApplyButton.Click += (_, _) =>
             {
-                appliedMarketExchange = marketExchangeComboBox.Text;
-                appliedMarketType = marketTypeComboBox.Text;
-                appliedMarketBoard = marketBoardComboBox.Text;
-                appliedMarketAsset = marketAssetComboBox.Text;
-                appliedMarketFundType = marketFundTypeComboBox.Text;
-                appliedMarketIndustryGroup = marketIndustryGroupComboBox.Text;
+                CopyCheckedItems(appliedMarketExchanges, marketExchangeCheckedListBox);
+                CopyCheckedItems(appliedMarketTypes, marketTypeCheckedListBox);
+                CopyCheckedItems(appliedMarketBoards, marketBoardCheckedListBox);
+                CopyCheckedItems(appliedMarketAssets, marketAssetCheckedListBox);
+                CopyCheckedItems(appliedMarketFundTypes, marketFundTypeCheckedListBox);
+                CopyCheckedItems(appliedMarketIndustryGroups, marketIndustryGroupCheckedListBox);
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
@@ -55,22 +53,9 @@ namespace Trade.It
                 }
             };
 
-
             marketClearButton.Click += (_, _) =>
             {
-                marketExchangeComboBox.SelectedIndex = 0;
-                marketTypeComboBox.SelectedIndex = 0;
-                marketBoardComboBox.SelectedIndex = 0;
-                marketAssetComboBox.SelectedIndex = 0;
-                marketFundTypeComboBox.SelectedIndex = 0;
-                marketIndustryGroupComboBox.SelectedIndex = 0;
-
-                appliedMarketExchange = "-";
-                appliedMarketType = "-";
-                appliedMarketBoard = "-";
-                appliedMarketAsset = "-";
-                appliedMarketFundType = "-";
-                appliedMarketIndustryGroup = "-";
+                ClearMarketSelections();
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
@@ -122,12 +107,212 @@ namespace Trade.It
 
         private void RestoreAppliedMarketFilters()
         {
-            marketExchangeComboBox.SelectedItem = appliedMarketExchange;
-            marketTypeComboBox.SelectedItem = appliedMarketType;
-            marketBoardComboBox.SelectedItem = appliedMarketBoard;
-            marketAssetComboBox.SelectedItem = appliedMarketAsset;
-            marketFundTypeComboBox.SelectedItem = appliedMarketFundType;
-            marketIndustryGroupComboBox.SelectedItem = appliedMarketIndustryGroup;
+            SetCheckedItems(marketExchangeCheckedListBox, appliedMarketExchanges);
+            SetCheckedItems(marketTypeCheckedListBox, appliedMarketTypes);
+            SetCheckedItems(marketBoardCheckedListBox, appliedMarketBoards);
+            SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
+            SetCheckedItems(marketFundTypeCheckedListBox, appliedMarketFundTypes);
+            SetCheckedItems(marketIndustryGroupCheckedListBox, appliedMarketIndustryGroups);
+            UpdateMarketCascadeLists();
+        }
+
+        private void MarketCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
+        {
+            if (updatingMarketCascade || IsDisposed || !IsHandleCreated)
+                return;
+
+            BeginInvoke(new Action(UpdateMarketCascadeLists));
+        }
+
+        private void ClearMarketSelections()
+        {
+            appliedMarketExchanges.Clear();
+            appliedMarketTypes.Clear();
+            appliedMarketBoards.Clear();
+            appliedMarketAssets.Clear();
+            appliedMarketFundTypes.Clear();
+            appliedMarketIndustryGroups.Clear();
+
+            updatingMarketCascade = true;
+            try
+            {
+                ClearCheckedListBox(marketExchangeCheckedListBox);
+                ClearCheckedListBox(marketTypeCheckedListBox);
+                ClearCheckedListBox(marketBoardCheckedListBox);
+                ClearCheckedListBox(marketAssetCheckedListBox);
+                ClearCheckedListBox(marketFundTypeCheckedListBox);
+                ClearCheckedListBox(marketIndustryGroupCheckedListBox);
+            }
+            finally
+            {
+                updatingMarketCascade = false;
+            }
+
+            UpdateMarketCascadeLists();
+        }
+
+        private static void ClearCheckedListBox(CheckedListBox listBox)
+        {
+            for (var i = 0; i < listBox.Items.Count; i++)
+                listBox.SetItemCheckState(i, CheckState.Unchecked);
+        }
+
+        private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)
+        {
+            target.Clear();
+
+            foreach (var item in source.CheckedItems.Cast<object>())
+            {
+                var value = item?.ToString()?.Trim();
+                if (!string.IsNullOrWhiteSpace(value) && value != "-")
+                    target.Add(SymbolDefinitionRules.NormalizeText(value));
+            }
+        }
+
+        private static HashSet<string> GetCheckedValues(CheckedListBox listBox)
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in listBox.CheckedItems.Cast<object>())
+            {
+                var value = item?.ToString()?.Trim();
+                if (!string.IsNullOrWhiteSpace(value) && value != "-")
+                    result.Add(SymbolDefinitionRules.NormalizeText(value));
+            }
+
+            return result;
+        }
+
+        private static void SetCheckedItems(CheckedListBox listBox, HashSet<string> values)
+        {
+            for (var i = 0; i < listBox.Items.Count; i++)
+            {
+                var value = SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
+                listBox.SetItemChecked(i, values.Contains(value));
+            }
+        }
+
+        private void UpdateMarketCascadeLists()
+        {
+            if (updatingMarketCascade)
+                return;
+
+            var definitions = SymbolDefinitionStore.Load();
+            if (definitions == null || definitions.Count == 0)
+                return;
+
+            var exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+            var types = GetCheckedValues(marketTypeCheckedListBox);
+            var boards = GetCheckedValues(marketBoardCheckedListBox);
+            var assets = GetCheckedValues(marketAssetCheckedListBox);
+            var fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
+            var industryGroups = GetCheckedValues(marketIndustryGroupCheckedListBox);
+
+            updatingMarketCascade = true;
+            try
+            {
+                var allowedTypes = definitions
+                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
+                    .Select(x => x.MarketType)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var allowedBoards = definitions
+                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
+                    .Where(x => MatchesSelection(x.MarketType, types))
+                    .Select(x => x.BoardType)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var allowedAssets = definitions
+                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
+                    .Where(x => MatchesSelection(x.MarketType, types))
+                    .Where(x => MatchesSelection(x.BoardType, boards))
+                    .Select(x => x.AssetType)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var allowedFundTypes = definitions
+                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
+                    .Where(x => MatchesSelection(x.MarketType, types))
+                    .Where(x => MatchesSelection(x.BoardType, boards))
+                    .Where(x => MatchesSelection(x.AssetType, assets))
+                    .Select(x => x.FundType)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var allowedIndustryGroups = definitions
+                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
+                    .Where(x => MatchesSelection(x.MarketType, types))
+                    .Where(x => MatchesSelection(x.BoardType, boards))
+                    .Where(x => MatchesSelection(x.AssetType, assets))
+                    .Where(x => MatchesSelection(x.FundType, fundTypes))
+                    .Select(x => x.IndustryGroup)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                // The first list is the root of the cascade. Its available values
+                // come directly from the symbol-definition data.
+                var allowedExchanges = definitions
+                    .Select(x => x.ExchangeTitle)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                UpdateCheckedListBoxItems(marketExchangeCheckedListBox, allowedExchanges, exchanges);
+                UpdateCheckedListBoxItems(marketTypeCheckedListBox, allowedTypes, types);
+                UpdateCheckedListBoxItems(marketBoardCheckedListBox, allowedBoards, boards);
+                UpdateCheckedListBoxItems(marketAssetCheckedListBox, allowedAssets, assets);
+                UpdateCheckedListBoxItems(marketFundTypeCheckedListBox, allowedFundTypes, fundTypes);
+                UpdateCheckedListBoxItems(marketIndustryGroupCheckedListBox, allowedIndustryGroups, industryGroups);
+            }
+            finally
+            {
+                updatingMarketCascade = false;
+            }
+        }
+
+        private static bool MatchesSelection(string? value, HashSet<string> selected)
+        {
+            if (selected.Count == 0)
+                return true;
+
+            return selected.Contains(SymbolDefinitionRules.NormalizeText(value));
+        }
+
+        private static void UpdateCheckedListBoxItems(
+            CheckedListBox listBox,
+            IEnumerable<string?> allowedValues,
+            HashSet<string> selectedValues)
+        {
+            var allowed = allowedValues
+                .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                .Select(SymbolDefinitionRules.NormalizeText)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var selected = new HashSet<string>(
+                selectedValues.Where(allowed.Contains),
+                StringComparer.OrdinalIgnoreCase);
+
+            listBox.BeginUpdate();
+            try
+            {
+                listBox.Items.Clear();
+
+                foreach (var value in allowed)
+                    listBox.Items.Add(value, selected.Contains(value));
+            }
+            finally
+            {
+                listBox.EndUpdate();
+            }
         }
 
         private void InitializeFilterComboEmptyOptions()
@@ -376,19 +561,7 @@ namespace Trade.It
                 return;
 
             // با تغییر سبد، فیلترهای بازار سبد قبلی باید کاملاً پاک شوند.
-            appliedMarketExchange = "-";
-            appliedMarketType = "-";
-            appliedMarketBoard = "-";
-            appliedMarketAsset = "-";
-            appliedMarketFundType = "-";
-            appliedMarketIndustryGroup = "-";
-
-            marketExchangeComboBox.SelectedIndex = 0;
-            marketTypeComboBox.SelectedIndex = 0;
-            marketBoardComboBox.SelectedIndex = 0;
-            marketAssetComboBox.SelectedIndex = 0;
-            marketFundTypeComboBox.SelectedIndex = 0;
-            marketIndustryGroupComboBox.SelectedIndex = 0;
+            ClearMarketSelections();
 
             if (portfolioComboBox.SelectedItem is not string name ||
                 !loadedPortfolios.TryGetValue(name, out var definition))
@@ -423,12 +596,12 @@ namespace Trade.It
                 .ToList();
 
             var hasMarketFilter =
-                appliedMarketExchange != "-" ||
-                appliedMarketType != "-" ||
-                appliedMarketBoard != "-" ||
-                appliedMarketAsset != "-" ||
-                appliedMarketFundType != "-" ||
-                appliedMarketIndustryGroup != "-";
+                appliedMarketExchanges.Count > 0 ||
+                appliedMarketTypes.Count > 0 ||
+                appliedMarketBoards.Count > 0 ||
+                appliedMarketAssets.Count > 0 ||
+                appliedMarketFundTypes.Count > 0 ||
+                appliedMarketIndustryGroups.Count > 0;
 
             if (!hasMarketFilter)
                 return portfolioSymbols;
@@ -447,33 +620,15 @@ namespace Trade.It
                         return false;
 
                     return
-                        (appliedMarketExchange == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.ExchangeTitle) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketExchange))
-                        &&
-                        (appliedMarketType == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.MarketType) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketType))
-                        &&
-                        (appliedMarketBoard == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.BoardType) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketBoard))
-                        &&
-                        (appliedMarketAsset == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.AssetType) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketAsset))
-                        &&
-                        (appliedMarketFundType == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.FundType) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketFundType))
-                        &&
-                        (appliedMarketIndustryGroup == "-" ||
-                         SymbolDefinitionRules.NormalizeText(item.IndustryGroup) ==
-                         SymbolDefinitionRules.NormalizeText(appliedMarketIndustryGroup));
+                        MatchesSelection(item.ExchangeTitle, appliedMarketExchanges) &&
+                        MatchesSelection(item.MarketType, appliedMarketTypes) &&
+                        MatchesSelection(item.BoardType, appliedMarketBoards) &&
+                        MatchesSelection(item.AssetType, appliedMarketAssets) &&
+                        MatchesSelection(item.FundType, appliedMarketFundTypes) &&
+                        MatchesSelection(item.IndustryGroup, appliedMarketIndustryGroups);
                 })
                 .ToList();
         }
-
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
         {
@@ -764,19 +919,7 @@ namespace Trade.It
 
                 // فیلترهای بازار نیز باید از وضعیت اعمال‌شده پاک شوند؛
                 // سپس کل زنجیره فیلترها یک‌بار از ابتدا اجرا می‌شود.
-                appliedMarketExchange = "-";
-                appliedMarketType = "-";
-                appliedMarketBoard = "-";
-                appliedMarketAsset = "-";
-                appliedMarketFundType = "-";
-                appliedMarketIndustryGroup = "-";
-
-                marketExchangeComboBox.SelectedIndex = 0;
-                marketTypeComboBox.SelectedIndex = 0;
-                marketBoardComboBox.SelectedIndex = 0;
-                marketAssetComboBox.SelectedIndex = 0;
-                marketFundTypeComboBox.SelectedIndex = 0;
-                marketIndustryGroupComboBox.SelectedIndex = 0;
+                ClearMarketSelections();
             }
             finally
             {
