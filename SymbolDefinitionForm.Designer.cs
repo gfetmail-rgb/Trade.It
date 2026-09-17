@@ -84,22 +84,22 @@ partial class SymbolDefinitionForm
         fieldsTableLayoutPanel.Padding = new Padding(4);
         rootTableLayoutPanel.Controls.Add(fieldsTableLayoutPanel, 0, 0);
 
-        AddDesignerField(0, 0, "عنوان نماد", symbolTextBox);
-        AddDesignerField(1, 0, "نام نماد", nameTextBox);
-        AddDesignerField(2, 0, "عنوان بورس", exchangeComboBox);
-        AddDesignerField(3, 0, "نوع بازار", marketComboBox);
-        AddDesignerField(0, 1, "نوع تابلو", boardComboBox);
-        AddDesignerField(1, 1, "نوع دارایی", assetComboBox);
-        AddDesignerField(2, 1, "گروه صنعت / نوع صندوق", groupTextBox);
+        AddDesignerField(0, 0, "نماد", symbolTextBox);
+        AddDesignerField(1, 0, "نماد", nameTextBox);
+        AddDesignerField(2, 0, "بورس", exchangeComboBox);
+        AddDesignerField(3, 0, "بازار", marketComboBox);
+        AddDesignerField(0, 1, "تابلو", boardComboBox);
+        AddDesignerField(1, 1, "دارایی", assetComboBox);
+        AddDesignerField(2, 1, "گروه صنعت/نوع صندوق", groupTextBox);
 
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         exchangeComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار ابزارهای نوین" });
+        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SMD", "ابزارهای نوین مالی" });
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        boardComboBox.Items.AddRange(new object[] { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
+        boardComboBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش ینیان", "زرد", "نارنجی", "قرمز" });
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق" });
+        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق ETF" });
 
         buttonsFlowLayoutPanel.Dock = DockStyle.Fill;
         buttonsFlowLayoutPanel.FlowDirection = FlowDirection.RightToLeft;
