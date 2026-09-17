@@ -9,9 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="SymbolDefinitionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="SymbolDefinitionForm.cs" />
     <Compile Update="SymbolDefinitionForm.Designer.cs">
       <DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
     </Compile>
