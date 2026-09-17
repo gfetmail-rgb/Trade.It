@@ -3,7 +3,6 @@ namespace Trade.It
     public partial class MainForm
     {
         private System.Windows.Forms.ToolTip? toolbarToolTip;
-        private bool symbolDefinitionMenuInitialized;
 
         protected override void OnCreateControl()
         {
@@ -12,30 +11,10 @@ namespace Trade.It
             if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
             {
                 InitializeToolbarToolTips();
-                InitializeSymbolDefinitionMenu();
             }
 
             InitializeChartDrawingTools();
             MainForm_HandleCreatedForChartTabs(this, EventArgs.Empty);
-        }
-
-        private void InitializeSymbolDefinitionMenu()
-        {
-            if (symbolDefinitionMenuInitialized || mainMenuStrip == null)
-                return;
-
-            symbolDefinitionMenuInitialized = true;
-            var item = new ToolStripMenuItem("تعریف نمادها")
-            {
-                Name = "symbolDefinitionMenuItem",
-                RightToLeft = RightToLeft.Yes
-            };
-            item.Click += (_, _) =>
-            {
-                using var form = new SymbolDefinitionForm();
-                form.ShowDialog(this);
-            };
-            mainMenuStrip.Items.Add(item);
         }
 
         private void InitializeToolbarToolTips()
