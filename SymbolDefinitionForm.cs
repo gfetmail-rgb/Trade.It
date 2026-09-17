@@ -79,7 +79,8 @@ public sealed partial class SymbolDefinitionForm : Form
         if (loading || symbolsDataGridView.SelectedRows.Count == 0 || symbolsDataGridView.SelectedRows[0].Tag is not SymbolDefinition x) return;
         symbolTextBox.Text = x.SymbolTitle;
         nameTextBox.Text = x.Name;
-        exchangeTextBox.Text = x.ExchangeTitle;
+        exchangeComboBox.SelectedItem = x.ExchangeTitle;
+        if (exchangeComboBox.SelectedIndex < 0) exchangeComboBox.Text = x.ExchangeTitle;
         marketComboBox.Text = x.MarketType;
         boardComboBox.Text = x.BoardType;
         assetComboBox.SelectedItem = x.AssetType;
@@ -91,7 +92,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.ClearSelection();
         symbolTextBox.Clear();
         nameTextBox.Clear();
-        exchangeTextBox.Clear();
+        exchangeComboBox.SelectedIndex = -1;
         marketComboBox.Text = "";
         boardComboBox.Text = "";
         assetComboBox.SelectedIndex = -1;
@@ -117,7 +118,7 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             SymbolTitle = symbolTextBox.Text.Trim(),
             Name = nameTextBox.Text.Trim(),
-            ExchangeTitle = exchangeTextBox.Text.Trim(),
+            ExchangeTitle = exchangeComboBox.Text.Trim(),
             MarketType = marketComboBox.Text.Trim(),
             BoardType = boardComboBox.Text.Trim(),
             AssetType = assetComboBox.Text.Trim(),
