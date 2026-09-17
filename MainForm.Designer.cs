@@ -456,16 +456,16 @@
             groupBox2.Controls.Add(deleteButton);
             groupBox2.Controls.Add(newPortfolioButton);
             groupBox2.Controls.Add(navigationSpeedTextBox);
-            groupBox2.Location = new Point(8, 720);
+            groupBox2.Location = new Point(8, 736);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(338, 170);
+            groupBox2.Size = new Size(338, 154);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             // 
             // navigationButton
             // 
             navigationButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            navigationButton.Location = new Point(236, 33);
+            navigationButton.Location = new Point(236, 17);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(87, 34);
             navigationButton.TabIndex = 0;
@@ -475,7 +475,7 @@
             // 
             selectAllCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(227, 78);
+            selectAllCheckBox.Location = new Point(227, 62);
             selectAllCheckBox.Name = "selectAllCheckBox";
             selectAllCheckBox.Size = new Size(70, 29);
             selectAllCheckBox.TabIndex = 0;
@@ -485,7 +485,7 @@
             // 
             selectNoneCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             selectNoneCheckBox.AutoSize = true;
-            selectNoneCheckBox.Location = new Point(53, 78);
+            selectNoneCheckBox.Location = new Point(53, 62);
             selectNoneCheckBox.Name = "selectNoneCheckBox";
             selectNoneCheckBox.Size = new Size(101, 29);
             selectNoneCheckBox.TabIndex = 1;
@@ -495,7 +495,7 @@
             // 
             speedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(112, 36);
+            speedLabel.Location = new Point(112, 20);
             speedLabel.Name = "speedLabel";
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 2;
@@ -504,7 +504,7 @@
             // refreshButton
             // 
             refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            refreshButton.Location = new Point(114, 113);
+            refreshButton.Location = new Point(114, 97);
             refreshButton.Name = "refreshButton";
             refreshButton.Size = new Size(121, 34);
             refreshButton.TabIndex = 2;
@@ -513,7 +513,7 @@
             // deleteButton
             // 
             deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deleteButton.Location = new Point(250, 113);
+            deleteButton.Location = new Point(250, 97);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
             deleteButton.TabIndex = 3;
@@ -522,7 +522,7 @@
             // newPortfolioButton
             // 
             newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            newPortfolioButton.Location = new Point(24, 113);
+            newPortfolioButton.Location = new Point(24, 97);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(69, 34);
             newPortfolioButton.TabIndex = 1;
@@ -531,7 +531,7 @@
             // navigationSpeedTextBox
             // 
             navigationSpeedTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            navigationSpeedTextBox.Location = new Point(24, 35);
+            navigationSpeedTextBox.Location = new Point(24, 19);
             navigationSpeedTextBox.Name = "navigationSpeedTextBox";
             navigationSpeedTextBox.Size = new Size(87, 31);
             navigationSpeedTextBox.TabIndex = 3;
@@ -551,7 +551,7 @@
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
-            stocksDataGridView.Size = new Size(335, 672);
+            stocksDataGridView.Size = new Size(335, 669);
             stocksDataGridView.TabIndex = 0;
             // 
             // rowColumn

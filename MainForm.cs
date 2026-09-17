@@ -39,7 +39,6 @@ namespace Trade.It
                     marketFundTypeComboBox,
                     marketIndustryGroupComboBox);
             }
-
             marketApplyButton.Click += (_, _) =>
             {
                 appliedMarketExchange = marketExchangeComboBox.Text;
@@ -48,6 +47,12 @@ namespace Trade.It
                 appliedMarketAsset = marketAssetComboBox.Text;
                 appliedMarketFundType = marketFundTypeComboBox.Text;
                 appliedMarketIndustryGroup = marketIndustryGroupComboBox.Text;
+
+                if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
+                    loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                {
+                    PopulateStocksGrid(definition);
+                }
             };
 
 
@@ -66,6 +71,12 @@ namespace Trade.It
                 appliedMarketAsset = "-";
                 appliedMarketFundType = "-";
                 appliedMarketIndustryGroup = "-";
+
+                if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
+                    loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                {
+                    PopulateStocksGrid(definition);
+                }
             };
             // The WinForms designer creates MainForm inside the design-tools process.
             // Runtime-only initialization must not execute while the designer is loading.
@@ -361,7 +372,23 @@ namespace Trade.It
             if (internalPortfolioUpdate)
                 return;
 
-            if (portfolioComboBox.SelectedItem is not string name || !loadedPortfolios.TryGetValue(name, out var definition))
+            // با تغییر سبد، فیلترهای بازار سبد قبلی باید کاملاً پاک شوند.
+            appliedMarketExchange = "-";
+            appliedMarketType = "-";
+            appliedMarketBoard = "-";
+            appliedMarketAsset = "-";
+            appliedMarketFundType = "-";
+            appliedMarketIndustryGroup = "-";
+
+            marketExchangeComboBox.SelectedIndex = 0;
+            marketTypeComboBox.SelectedIndex = 0;
+            marketBoardComboBox.SelectedIndex = 0;
+            marketAssetComboBox.SelectedIndex = 0;
+            marketFundTypeComboBox.SelectedIndex = 0;
+            marketIndustryGroupComboBox.SelectedIndex = 0;
+
+            if (portfolioComboBox.SelectedItem is not string name ||
+                !loadedPortfolios.TryGetValue(name, out var definition))
             {
                 stocksDataGridView.Rows.Clear();
                 displayedPortfolioName = null;
@@ -373,6 +400,7 @@ namespace Trade.It
             UseWaitCursor = true;
             Cursor.Current = Cursors.WaitCursor;
             Application.DoEvents();
+
             try
             {
                 PopulateStocksGrid(definition);
@@ -384,11 +412,68 @@ namespace Trade.It
             }
         }
 
-        private void PopulateStocksGrid(PortfolioDefinition definition)
+        private List<string> GetMarketFilteredSymbols(PortfolioDefinition definition)
         {
-            var symbols = (definition.Symbols ?? new List<string>())
+            var portfolioSymbols = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToList();
+
+            var hasMarketFilter =
+                appliedMarketExchange != "-" ||
+                appliedMarketType != "-" ||
+                appliedMarketBoard != "-" ||
+                appliedMarketAsset != "-" ||
+                appliedMarketFundType != "-" ||
+                appliedMarketIndustryGroup != "-";
+
+            if (!hasMarketFilter)
+                return portfolioSymbols;
+
+            var definitions = SymbolDefinitionStore.Load()
+                .ToDictionary(
+                    x => SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                    StringComparer.OrdinalIgnoreCase);
+
+            return portfolioSymbols
+                .Where(symbol =>
+                {
+                    var key = SymbolDefinitionRules.NormalizeText(symbol);
+
+                    if (!definitions.TryGetValue(key, out var item))
+                        return false;
+
+                    return
+                        (appliedMarketExchange == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.ExchangeTitle) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketExchange))
+                        &&
+                        (appliedMarketType == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.MarketType) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketType))
+                        &&
+                        (appliedMarketBoard == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.BoardType) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketBoard))
+                        &&
+                        (appliedMarketAsset == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.AssetType) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketAsset))
+                        &&
+                        (appliedMarketFundType == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.FundType) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketFundType))
+                        &&
+                        (appliedMarketIndustryGroup == "-" ||
+                         SymbolDefinitionRules.NormalizeText(item.IndustryGroup) ==
+                         SymbolDefinitionRules.NormalizeText(appliedMarketIndustryGroup));
+                })
+                .ToList();
+        }
+
+
+        private void PopulateStocksGrid(PortfolioDefinition definition)
+        {
+            var symbols = GetMarketFilteredSymbols(definition);
             var loadVersion = ++latestTradeDateLoadVersion;
 
             internalPortfolioUpdate = true;
@@ -655,6 +740,7 @@ namespace Trade.It
         {
             if (controlTabControl.SelectedTab == tabPage2)
             {
+                RestoreAppliedMarketFilters();
                 UpdateFilterControlAvailability();
             }
         }
