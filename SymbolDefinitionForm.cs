@@ -44,10 +44,11 @@ public static class SymbolDefinitionStore
 
 internal static class SymbolDefinitionRules
 {
-    public static readonly string[] Exchanges = { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
-    public static readonly string[] Markets = { "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
-    public static readonly string[] Boards = { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
-    public static readonly string[] Assets = { "سهام", "صندوق" };
+    public const string EmptyOption = "-";
+    public static readonly string[] Exchanges = { EmptyOption, "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
+    public static readonly string[] Markets = { EmptyOption, "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
+    public static readonly string[] Boards = { EmptyOption, "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
+    public static readonly string[] Assets = { EmptyOption, "سهام", "صندوق" };
 
     public static string NormalizeText(string value)
     {
@@ -55,8 +56,8 @@ internal static class SymbolDefinitionRules
             .Replace('\u064A', '\u06CC') // ي -> ی
             .Replace('\u0649', '\u06CC') // ى -> ی
             .Replace('\u0643', '\u06A9') // ك -> ک
-            .Replace('\u200C', ' ')       // ZWNJ -> space
-            .Replace('\u200D', ' ')       // ZWJ -> space
+            .Replace('\u200C', ' ')
+            .Replace('\u200D', ' ')
             .Replace('\uFEFF', ' ')
             .Trim();
     }
@@ -75,6 +76,7 @@ internal static class SymbolDefinitionRules
     public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
     {
         var normalized = NormalizeText(value);
+        if (string.IsNullOrWhiteSpace(normalized)) normalized = EmptyOption;
         var match = allowed.FirstOrDefault(x => string.Equals(NormalizeText(x), normalized, StringComparison.Ordinal));
         standardValue = match ?? "";
         return match != null;
@@ -88,6 +90,7 @@ public sealed partial class SymbolDefinitionForm : Form
     public SymbolDefinitionForm()
     {
         InitializeComponent();
+        SetComboDefaults();
         LoadGrid();
         newButton.Click += (_, _) => ClearEditor();
         saveButton.Click += (_, _) => SaveCurrent();
@@ -96,6 +99,14 @@ public sealed partial class SymbolDefinitionForm : Form
         importButton.Click += (_, _) => ImportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
+    }
+
+    private void SetComboDefaults()
+    {
+        exchangeComboBox.SelectedIndex = 0;
+        marketComboBox.SelectedIndex = 0;
+        boardComboBox.SelectedIndex = 0;
+        assetComboBox.SelectedIndex = 0;
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -132,6 +143,7 @@ public sealed partial class SymbolDefinitionForm : Form
     private static void SelectComboValue(ComboBox comboBox, string value)
     {
         var normalized = SymbolDefinitionRules.NormalizeText(value);
+        if (string.IsNullOrWhiteSpace(normalized)) normalized = SymbolDefinitionRules.EmptyOption;
         for (int i = 0; i < comboBox.Items.Count; i++)
         {
             if (string.Equals(SymbolDefinitionRules.NormalizeText(Convert.ToString(comboBox.Items[i]) ?? ""), normalized, StringComparison.Ordinal))
@@ -140,7 +152,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 return;
             }
         }
-        comboBox.SelectedIndex = -1;
+        comboBox.SelectedIndex = 0;
     }
 
     private void ClearEditor()
@@ -148,10 +160,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.ClearSelection();
         symbolTextBox.Clear();
         nameTextBox.Clear();
-        exchangeComboBox.SelectedIndex = -1;
-        marketComboBox.SelectedIndex = -1;
-        boardComboBox.SelectedIndex = -1;
-        assetComboBox.SelectedIndex = -1;
+        SetComboDefaults();
         groupTextBox.Clear();
         symbolTextBox.Focus();
     }
@@ -167,25 +176,25 @@ public sealed partial class SymbolDefinitionForm : Form
         }
         if (!SymbolDefinitionRules.IsAllowed(exchangeComboBox.Text, SymbolDefinitionRules.Exchanges, out var exchange))
         {
-            MessageBox.Show(this, "عنوان بورس را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "عنوان بورس را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             exchangeComboBox.Focus();
             return null;
         }
         if (!SymbolDefinitionRules.IsAllowed(marketComboBox.Text, SymbolDefinitionRules.Markets, out var market))
         {
-            MessageBox.Show(this, "نوع بازار را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "نوع بازار را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketComboBox.Focus();
             return null;
         }
         if (!SymbolDefinitionRules.IsAllowed(boardComboBox.Text, SymbolDefinitionRules.Boards, out var board))
         {
-            MessageBox.Show(this, "نوع تابلو را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "نوع تابلو را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             boardComboBox.Focus();
             return null;
         }
         if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, SymbolDefinitionRules.Assets, out var asset))
         {
-            MessageBox.Show(this, "نوع دارایی را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "نوع دارایی را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             assetComboBox.Focus();
             return null;
         }
@@ -326,12 +335,22 @@ internal static class ExcelSymbolReader
             var cells = Row(xmlRow, s, shared);
             string V(string h) => cells.TryGetValue(indexByHeader[h], out var value) ? SymbolDefinitionRules.NormalizeText(value) : "";
             var symbol = V(Headers[0]);
-            if (string.IsNullOrWhiteSpace(symbol)) continue;
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                invalidRows++;
+                if (details.Count < 20) details.Add($"ردیف {excelRow}: عنوان نماد خالی است.");
+                continue;
+            }
 
             var exchange = V(Headers[2]);
             var market = V(Headers[3]);
             var board = V(Headers[4]);
             var asset = V(Headers[5]);
+            if (string.IsNullOrWhiteSpace(exchange)) exchange = SymbolDefinitionRules.EmptyOption;
+            if (string.IsNullOrWhiteSpace(market)) market = SymbolDefinitionRules.EmptyOption;
+            if (string.IsNullOrWhiteSpace(board)) board = SymbolDefinitionRules.EmptyOption;
+            if (string.IsNullOrWhiteSpace(asset)) asset = SymbolDefinitionRules.EmptyOption;
+
             var errors = new List<string>();
             if (!SymbolDefinitionRules.IsAllowed(exchange, SymbolDefinitionRules.Exchanges, out var standardExchange)) errors.Add("عنوان بورس");
             if (!SymbolDefinitionRules.IsAllowed(market, SymbolDefinitionRules.Markets, out var standardMarket)) errors.Add("نوع بازار");
