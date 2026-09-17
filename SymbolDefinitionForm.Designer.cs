@@ -8,7 +8,7 @@ partial class SymbolDefinitionForm
     private FlowLayoutPanel buttonsFlowLayoutPanel = null!;
     private TextBox symbolTextBox = null!;
     private TextBox nameTextBox = null!;
-    private TextBox exchangeTextBox = null!;
+    private ComboBox exchangeComboBox = null!;
     private ComboBox marketComboBox = null!;
     private ComboBox boardComboBox = null!;
     private ComboBox assetComboBox = null!;
@@ -43,7 +43,7 @@ partial class SymbolDefinitionForm
         buttonsFlowLayoutPanel = new FlowLayoutPanel();
         symbolTextBox = new TextBox();
         nameTextBox = new TextBox();
-        exchangeTextBox = new TextBox();
+        exchangeComboBox = new ComboBox();
         marketComboBox = new ComboBox();
         boardComboBox = new ComboBox();
         assetComboBox = new ComboBox();
@@ -86,14 +86,16 @@ partial class SymbolDefinitionForm
 
         AddDesignerField(0, 0, "عنوان نماد", symbolTextBox);
         AddDesignerField(1, 0, "نام نماد", nameTextBox);
-        AddDesignerField(2, 0, "عنوان بورس", exchangeTextBox);
+        AddDesignerField(2, 0, "عنوان بورس", exchangeComboBox);
         AddDesignerField(3, 0, "نوع بازار", marketComboBox);
         AddDesignerField(0, 1, "نوع تابلو", boardComboBox);
         AddDesignerField(1, 1, "نوع دارایی", assetComboBox);
         AddDesignerField(2, 1, "گروه صنعت / نوع صندوق", groupTextBox);
 
+        exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        exchangeComboBox.Items.AddRange(new object[] { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" });
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDown;
-        marketComboBox.Items.AddRange(new object[] { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" });
+        marketComboBox.Items.AddRange(new object[] { "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" });
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDown;
         boardComboBox.Items.AddRange(new object[] { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
