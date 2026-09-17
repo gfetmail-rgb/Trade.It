@@ -750,12 +750,29 @@ namespace Trade.It
             resettingFilters = true;
             try
             {
+                // «پاک کردن» همه فیلترهای تب فیلترها را پاک می‌کند.
                 statusAllRadio.Checked = true;
                 statusPositiveRadio.Checked = false;
                 statusNegativeRadio.Checked = false;
                 ResetFilterControls(tabPage2);
                 statusAllRadio.Checked = true;
                 nameComboBox.SelectedIndex = -1;
+
+                // فیلترهای بازار نیز باید از وضعیت اعمال‌شده پاک شوند؛
+                // سپس کل زنجیره فیلترها یک‌بار از ابتدا اجرا می‌شود.
+                appliedMarketExchange = "-";
+                appliedMarketType = "-";
+                appliedMarketBoard = "-";
+                appliedMarketAsset = "-";
+                appliedMarketFundType = "-";
+                appliedMarketIndustryGroup = "-";
+
+                marketExchangeComboBox.SelectedIndex = 0;
+                marketTypeComboBox.SelectedIndex = 0;
+                marketBoardComboBox.SelectedIndex = 0;
+                marketAssetComboBox.SelectedIndex = 0;
+                marketFundTypeComboBox.SelectedIndex = 0;
+                marketIndustryGroupComboBox.SelectedIndex = 0;
             }
             finally
             {
