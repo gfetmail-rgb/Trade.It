@@ -59,6 +59,8 @@
         private System.Windows.Forms.Label chartPlaceholderLabel;
         private System.Windows.Forms.Button refreshButtonPortfolio;
         private System.Windows.Forms.Label filterCountLabel;
+        private System.Windows.Forms.Label marketCountLabel;
+        private System.Windows.Forms.Label stocksGridCountLabel;
 
         private System.Windows.Forms.Button filterTradingClearButton;
         private System.Windows.Forms.Button filterNameClearButton;
@@ -594,6 +596,19 @@
             portfolioComboBox.Size = new Size(274, 33);
             portfolioComboBox.TabIndex = 2;
             // 
+            // stocksGridCountLabel
+            // 
+            stocksGridCountLabel = new Label();
+            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stocksGridCountLabel.AutoSize = true;
+            stocksGridCountLabel.Location = new Point(650, 6);
+            stocksGridCountLabel.Name = "stocksGridCountLabel";
+            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
+            stocksGridCountLabel.Size = new Size(150, 25);
+            stocksGridCountLabel.TabIndex = 4;
+            stocksGridCountLabel.Text = "نمادها: ۰";
+            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
             // portfolioLabel
             // 
             portfolioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -745,6 +760,18 @@
             clearFiltersButton.TabIndex = 9;
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
+            // 
+            // marketCountLabel
+            // 
+            marketCountLabel = new Label();
+            marketCountLabel.Font = new Font("Segoe UI", 9F);
+            marketCountLabel.Location = new Point(20, 250);
+            marketCountLabel.Name = "marketCountLabel";
+            marketCountLabel.RightToLeft = RightToLeft.Yes;
+            marketCountLabel.Size = new Size(400, 36);
+            marketCountLabel.TabIndex = 20;
+            marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
+            marketCountLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // filterCountLabel
             // 
@@ -1784,6 +1811,7 @@
             // 
             // marketsTabPage
             // 
+            marketsTabPage.Controls.Add(marketCountLabel);
             marketsTabPage.Controls.Add(marketClearButton);
             marketsTabPage.Controls.Add(marketApplyButton);
             marketsTabPage.Controls.Add(marketTypeComboBox);
