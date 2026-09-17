@@ -74,44 +74,154 @@ partial class SymbolDefinitionForm
         rootTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
         rootTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
         rootTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        rootTableLayoutPanel.Controls.Add(fieldsTableLayoutPanel, 0, 0);
+        rootTableLayoutPanel.Controls.Add(buttonsFlowLayoutPanel, 0, 1);
+        rootTableLayoutPanel.Controls.Add(symbolsDataGridView, 0, 2);
 
         fieldsTableLayoutPanel.ColumnCount = 4;
-        for (int i = 0; i < 4; i++) fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
         fieldsTableLayoutPanel.RowCount = 2;
         fieldsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
         fieldsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
         fieldsTableLayoutPanel.Dock = DockStyle.Fill;
         fieldsTableLayoutPanel.Padding = new Padding(4);
-        rootTableLayoutPanel.Controls.Add(fieldsTableLayoutPanel, 0, 0);
 
-        AddDesignerField(0, 0, "نماد", symbolTextBox);
-        AddDesignerField(1, 0, "نماد", nameTextBox);
-        AddDesignerField(2, 0, "بورس", exchangeComboBox);
-        AddDesignerField(3, 0, "بازار", marketComboBox);
-        AddDesignerField(0, 1, "تابلو", boardComboBox);
-        AddDesignerField(1, 1, "دارایی", assetComboBox);
-        AddDesignerField(2, 1, "گروه صنعت/نوع صندوق", groupTextBox);
+        var panel00 = new Panel();
+        var label00 = new Label();
+        panel00.Dock = DockStyle.Fill;
+        panel00.Padding = new Padding(4);
+        label00.Dock = DockStyle.Right;
+        label00.Width = 135;
+        label00.Text = "عنوان نماد";
+        label00.TextAlign = ContentAlignment.MiddleRight;
+        symbolTextBox.Dock = DockStyle.Fill;
+        panel00.Controls.Add(symbolTextBox);
+        panel00.Controls.Add(label00);
+        fieldsTableLayoutPanel.Controls.Add(panel00, 0, 0);
 
+        var panel10 = new Panel();
+        var label10 = new Label();
+        panel10.Dock = DockStyle.Fill;
+        panel10.Padding = new Padding(4);
+        label10.Dock = DockStyle.Right;
+        label10.Width = 135;
+        label10.Text = "نام نماد";
+        label10.TextAlign = ContentAlignment.MiddleRight;
+        nameTextBox.Dock = DockStyle.Fill;
+        panel10.Controls.Add(nameTextBox);
+        panel10.Controls.Add(label10);
+        fieldsTableLayoutPanel.Controls.Add(panel10, 1, 0);
+
+        var panel20 = new Panel();
+        var label20 = new Label();
+        panel20.Dock = DockStyle.Fill;
+        panel20.Padding = new Padding(4);
+        label20.Dock = DockStyle.Right;
+        label20.Width = 135;
+        label20.Text = "عنوان بورس";
+        label20.TextAlign = ContentAlignment.MiddleRight;
+        exchangeComboBox.Dock = DockStyle.Fill;
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        exchangeComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
+        exchangeComboBox.Items.AddRange(new object[] { "-", "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" });
+        panel20.Controls.Add(exchangeComboBox);
+        panel20.Controls.Add(label20);
+        fieldsTableLayoutPanel.Controls.Add(panel20, 2, 0);
+
+        var panel30 = new Panel();
+        var label30 = new Label();
+        panel30.Dock = DockStyle.Fill;
+        panel30.Padding = new Padding(4);
+        label30.Dock = DockStyle.Right;
+        label30.Width = 135;
+        label30.Text = "نوع بازار";
+        label30.TextAlign = ContentAlignment.MiddleRight;
+        marketComboBox.Dock = DockStyle.Fill;
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SMD", "ابزارهای نوین مالی" });
+        marketComboBox.Items.AddRange(new object[] { "-", "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" });
+        panel30.Controls.Add(marketComboBox);
+        panel30.Controls.Add(label30);
+        fieldsTableLayoutPanel.Controls.Add(panel30, 3, 0);
+
+        var panel01 = new Panel();
+        var label01 = new Label();
+        panel01.Dock = DockStyle.Fill;
+        panel01.Padding = new Padding(4);
+        label01.Dock = DockStyle.Right;
+        label01.Width = 135;
+        label01.Text = "نوع تابلو";
+        label01.TextAlign = ContentAlignment.MiddleRight;
+        boardComboBox.Dock = DockStyle.Fill;
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        boardComboBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش ینیان", "زرد", "نارنجی", "قرمز" });
+        boardComboBox.Items.AddRange(new object[] { "-", "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
+        panel01.Controls.Add(boardComboBox);
+        panel01.Controls.Add(label01);
+        fieldsTableLayoutPanel.Controls.Add(panel01, 0, 1);
+
+        var panel11 = new Panel();
+        var label11 = new Label();
+        panel11.Dock = DockStyle.Fill;
+        panel11.Padding = new Padding(4);
+        label11.Dock = DockStyle.Right;
+        label11.Width = 135;
+        label11.Text = "نوع دارایی";
+        label11.TextAlign = ContentAlignment.MiddleRight;
+        assetComboBox.Dock = DockStyle.Fill;
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق ETF" });
+        assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق" });
+        panel11.Controls.Add(assetComboBox);
+        panel11.Controls.Add(label11);
+        fieldsTableLayoutPanel.Controls.Add(panel11, 1, 1);
+
+        var panel21 = new Panel();
+        var label21 = new Label();
+        panel21.Dock = DockStyle.Fill;
+        panel21.Padding = new Padding(4);
+        label21.Dock = DockStyle.Right;
+        label21.Width = 135;
+        label21.Text = "گروه صنعت / نوع صندوق";
+        label21.TextAlign = ContentAlignment.MiddleRight;
+        groupTextBox.Dock = DockStyle.Fill;
+        panel21.Controls.Add(groupTextBox);
+        panel21.Controls.Add(label21);
+        fieldsTableLayoutPanel.Controls.Add(panel21, 2, 1);
 
         buttonsFlowLayoutPanel.Dock = DockStyle.Fill;
         buttonsFlowLayoutPanel.FlowDirection = FlowDirection.RightToLeft;
         buttonsFlowLayoutPanel.WrapContents = false;
-        rootTableLayoutPanel.Controls.Add(buttonsFlowLayoutPanel, 0, 1);
 
-        ConfigureDesignerButton(newButton, "جدید");
-        ConfigureDesignerButton(saveButton, "ذخیره");
-        ConfigureDesignerButton(deleteButton, "حذف");
-        ConfigureDesignerButton(deleteAllButton, "حذف همه");
-        ConfigureDesignerButton(importButton, "ورود از Excel");
-        ConfigureDesignerButton(closeButton, "بستن");
+        newButton.AutoSize = true;
+        newButton.Height = 32;
+        newButton.Margin = new Padding(4);
+        newButton.Text = "جدید";
+        newButton.UseVisualStyleBackColor = true;
+        saveButton.AutoSize = true;
+        saveButton.Height = 32;
+        saveButton.Margin = new Padding(4);
+        saveButton.Text = "ذخیره";
+        saveButton.UseVisualStyleBackColor = true;
+        deleteButton.AutoSize = true;
+        deleteButton.Height = 32;
+        deleteButton.Margin = new Padding(4);
+        deleteButton.Text = "حذف";
+        deleteButton.UseVisualStyleBackColor = true;
+        deleteAllButton.AutoSize = true;
+        deleteAllButton.Height = 32;
+        deleteAllButton.Margin = new Padding(4);
+        deleteAllButton.Text = "حذف همه";
+        deleteAllButton.UseVisualStyleBackColor = true;
+        importButton.AutoSize = true;
+        importButton.Height = 32;
+        importButton.Margin = new Padding(4);
+        importButton.Text = "ورود از Excel";
+        importButton.UseVisualStyleBackColor = true;
+        closeButton.AutoSize = true;
+        closeButton.Height = 32;
+        closeButton.Margin = new Padding(4);
+        closeButton.Text = "بستن";
+        closeButton.UseVisualStyleBackColor = true;
         countLabel.AutoSize = true;
         countLabel.Margin = new Padding(20, 9, 10, 3);
         countLabel.Text = "تعداد: 0";
@@ -129,7 +239,6 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.RightToLeft = RightToLeft.Yes;
         symbolsDataGridView.RowHeadersVisible = false;
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        rootTableLayoutPanel.Controls.Add(symbolsDataGridView, 0, 2);
 
         symbolTitleColumn.FillWeight = 100F;
         symbolTitleColumn.HeaderText = "عنوان نماد";
@@ -171,24 +280,5 @@ partial class SymbolDefinitionForm
         Text = "تعریف نمادها";
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).EndInit();
         ResumeLayout(false);
-    }
-
-    private void AddDesignerField(int column, int row, string caption, Control control)
-    {
-        var panel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(4) };
-        var label = new Label { Dock = DockStyle.Right, Width = 135, Text = caption, TextAlign = ContentAlignment.MiddleRight };
-        control.Dock = DockStyle.Fill;
-        panel.Controls.Add(control);
-        panel.Controls.Add(label);
-        fieldsTableLayoutPanel.Controls.Add(panel, column, row);
-    }
-
-    private static void ConfigureDesignerButton(Button button, string text)
-    {
-        button.AutoSize = true;
-        button.Height = 32;
-        button.Margin = new Padding(4);
-        button.Text = text;
-        button.UseVisualStyleBackColor = true;
     }
 }
