@@ -26,7 +26,9 @@ public static class SymbolDefinitionStore
         try
         {
             if (!File.Exists(FilePath)) return new();
-            return JsonSerializer.Deserialize<List<SymbolDefinition>>(File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
+            var items = JsonSerializer.Deserialize<List<SymbolDefinition>>(File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
+            foreach (var x in items) SymbolDefinitionRules.Normalize(x);
+            return items;
         }
         catch { return new(); }
     }
@@ -34,7 +36,48 @@ public static class SymbolDefinitionStore
     public static void Save(IEnumerable<SymbolDefinition> items)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-        File.WriteAllText(FilePath, JsonSerializer.Serialize(items.OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase).ToList(), Options), new UTF8Encoding(false));
+        var normalized = items.ToList();
+        foreach (var x in normalized) SymbolDefinitionRules.Normalize(x);
+        File.WriteAllText(FilePath, JsonSerializer.Serialize(normalized.OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase).ToList(), Options), new UTF8Encoding(false));
+    }
+}
+
+internal static class SymbolDefinitionRules
+{
+    public static readonly string[] Exchanges = { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
+    public static readonly string[] Markets = { "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
+    public static readonly string[] Boards = { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
+    public static readonly string[] Assets = { "سهام", "صندوق" };
+
+    public static string NormalizeText(string value)
+    {
+        return value
+            .Replace('\u064A', '\u06CC') // ي -> ی
+            .Replace('\u0649', '\u06CC') // ى -> ی
+            .Replace('\u0643', '\u06A9') // ك -> ک
+            .Replace('\u200C', ' ')       // ZWNJ -> space
+            .Replace('\u200D', ' ')       // ZWJ -> space
+            .Replace('\uFEFF', ' ')
+            .Trim();
+    }
+
+    public static void Normalize(SymbolDefinition x)
+    {
+        x.SymbolTitle = NormalizeText(x.SymbolTitle);
+        x.Name = NormalizeText(x.Name);
+        x.ExchangeTitle = NormalizeText(x.ExchangeTitle);
+        x.MarketType = NormalizeText(x.MarketType);
+        x.BoardType = NormalizeText(x.BoardType);
+        x.AssetType = NormalizeText(x.AssetType);
+        x.IndustryGroupOrFundType = NormalizeText(x.IndustryGroupOrFundType);
+    }
+
+    public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
+    {
+        var normalized = NormalizeText(value);
+        var match = allowed.FirstOrDefault(x => string.Equals(NormalizeText(x), normalized, StringComparison.Ordinal));
+        standardValue = match ?? "";
+        return match != null;
     }
 }
 
@@ -77,13 +120,27 @@ public sealed partial class SymbolDefinitionForm : Form
     private void LoadSelected()
     {
         if (loading || symbolsDataGridView.SelectedRows.Count == 0 || symbolsDataGridView.SelectedRows[0].Tag is not SymbolDefinition x) return;
-        symbolTextBox.Text = x.SymbolTitle;
-        nameTextBox.Text = x.Name;
-        exchangeTextBox.Text = x.ExchangeTitle;
-        marketComboBox.Text = x.MarketType;
-        boardComboBox.Text = x.BoardType;
-        assetComboBox.SelectedItem = x.AssetType;
-        groupTextBox.Text = x.IndustryGroupOrFundType;
+        symbolTextBox.Text = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
+        nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
+        SelectComboValue(exchangeComboBox, x.ExchangeTitle);
+        SelectComboValue(marketComboBox, x.MarketType);
+        SelectComboValue(boardComboBox, x.BoardType);
+        SelectComboValue(assetComboBox, x.AssetType);
+        groupTextBox.Text = SymbolDefinitionRules.NormalizeText(x.IndustryGroupOrFundType);
+    }
+
+    private static void SelectComboValue(ComboBox comboBox, string value)
+    {
+        var normalized = SymbolDefinitionRules.NormalizeText(value);
+        for (int i = 0; i < comboBox.Items.Count; i++)
+        {
+            if (string.Equals(SymbolDefinitionRules.NormalizeText(Convert.ToString(comboBox.Items[i]) ?? ""), normalized, StringComparison.Ordinal))
+            {
+                comboBox.SelectedIndex = i;
+                return;
+            }
+        }
+        comboBox.SelectedIndex = -1;
     }
 
     private void ClearEditor()
@@ -91,9 +148,9 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.ClearSelection();
         symbolTextBox.Clear();
         nameTextBox.Clear();
-        exchangeTextBox.Clear();
-        marketComboBox.Text = "";
-        boardComboBox.Text = "";
+        exchangeComboBox.SelectedIndex = -1;
+        marketComboBox.SelectedIndex = -1;
+        boardComboBox.SelectedIndex = -1;
         assetComboBox.SelectedIndex = -1;
         groupTextBox.Clear();
         symbolTextBox.Focus();
@@ -101,27 +158,46 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private SymbolDefinition? ReadEditor()
     {
-        if (string.IsNullOrWhiteSpace(symbolTextBox.Text))
+        var symbol = SymbolDefinitionRules.NormalizeText(symbolTextBox.Text);
+        if (string.IsNullOrWhiteSpace(symbol))
         {
             MessageBox.Show(this, "عنوان نماد را وارد کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             symbolTextBox.Focus();
             return null;
         }
-        if (string.IsNullOrWhiteSpace(assetComboBox.Text))
+        if (!SymbolDefinitionRules.IsAllowed(exchangeComboBox.Text, SymbolDefinitionRules.Exchanges, out var exchange))
         {
-            MessageBox.Show(this, "نوع دارایی را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "عنوان بورس را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            exchangeComboBox.Focus();
+            return null;
+        }
+        if (!SymbolDefinitionRules.IsAllowed(marketComboBox.Text, SymbolDefinitionRules.Markets, out var market))
+        {
+            MessageBox.Show(this, "نوع بازار را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            marketComboBox.Focus();
+            return null;
+        }
+        if (!SymbolDefinitionRules.IsAllowed(boardComboBox.Text, SymbolDefinitionRules.Boards, out var board))
+        {
+            MessageBox.Show(this, "نوع تابلو را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            boardComboBox.Focus();
+            return null;
+        }
+        if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, SymbolDefinitionRules.Assets, out var asset))
+        {
+            MessageBox.Show(this, "نوع دارایی را از فهرست انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             assetComboBox.Focus();
             return null;
         }
         return new SymbolDefinition
         {
-            SymbolTitle = symbolTextBox.Text.Trim(),
-            Name = nameTextBox.Text.Trim(),
-            ExchangeTitle = exchangeTextBox.Text.Trim(),
-            MarketType = marketComboBox.Text.Trim(),
-            BoardType = boardComboBox.Text.Trim(),
-            AssetType = assetComboBox.Text.Trim(),
-            IndustryGroupOrFundType = groupTextBox.Text.Trim()
+            SymbolTitle = symbol,
+            Name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text),
+            ExchangeTitle = exchange,
+            MarketType = market,
+            BoardType = board,
+            AssetType = asset,
+            IndustryGroupOrFundType = SymbolDefinitionRules.NormalizeText(groupTextBox.Text)
         };
     }
 
@@ -153,7 +229,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private void DeleteCurrent()
     {
-        var s = symbolTextBox.Text.Trim();
+        var s = SymbolDefinitionRules.NormalizeText(symbolTextBox.Text);
         if (string.IsNullOrWhiteSpace(s)) return;
         if (MessageBox.Show(this, $"آیا نماد «{s}» حذف شود؟", "حذف نماد", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
         var all = SymbolDefinitionStore.Load();
@@ -179,22 +255,28 @@ public sealed partial class SymbolDefinitionForm : Form
         if (d.ShowDialog(this) != DialogResult.OK) return;
         try
         {
-            var imported = ExcelSymbolReader.Read(d.FileName);
+            var imported = ExcelSymbolReader.Read(d.FileName, out var invalidRows, out var invalidDetails);
             if (imported.Count == 0)
             {
-                MessageBox.Show(this, "هیچ ردیف قابل استفاده‌ای پیدا نشد.", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var message = invalidRows > 0
+                    ? $"هیچ ردیف معتبری پیدا نشد.\nردیف‌های نامعتبر: {invalidRows}\n\n{invalidDetails}"
+                    : "هیچ ردیف قابل استفاده‌ای پیدا نشد.";
+                MessageBox.Show(this, message, "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            var map = SymbolDefinitionStore.Load().ToDictionary(x => x.SymbolTitle.Trim(), StringComparer.OrdinalIgnoreCase);
+            var map = SymbolDefinitionStore.Load().ToDictionary(x => SymbolDefinitionRules.NormalizeText(x.SymbolTitle), StringComparer.OrdinalIgnoreCase);
             int added = 0, updated = 0;
             foreach (var x in imported)
             {
-                if (map.ContainsKey(x.SymbolTitle.Trim())) updated++; else added++;
-                map[x.SymbolTitle.Trim()] = x;
+                var key = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
+                if (map.ContainsKey(key)) updated++; else added++;
+                map[key] = x;
             }
             SymbolDefinitionStore.Save(map.Values);
             LoadGrid();
-            MessageBox.Show(this, $"ورود انجام شد.\nجدید: {added}\nبه‌روزشده: {updated}", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var resultMessage = $"ورود انجام شد.\nجدید: {added}\nبه‌روزشده: {updated}";
+            if (invalidRows > 0) resultMessage += $"\nنامعتبر: {invalidRows}\n\n{invalidDetails}";
+            MessageBox.Show(this, resultMessage, "ورود از Excel", MessageBoxButtons.OK, invalidRows > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
@@ -207,8 +289,10 @@ internal static class ExcelSymbolReader
 {
     private static readonly string[] Headers = { "عنوان نماد", "نام نماد", "عنوان بورس", "نوع بازار", "نوع تابلو", "نوع دارایی (سهام یا صندوق)", "گروه صنعت یا نوع صندوق" };
 
-    public static List<SymbolDefinition> Read(string path)
+    public static List<SymbolDefinition> Read(string path, out int invalidRows, out string invalidDetails)
     {
+        invalidRows = 0;
+        var details = new List<string>();
         using var zip = ZipFile.OpenRead(path);
         XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
         XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
@@ -228,25 +312,52 @@ internal static class ExcelSymbolReader
         var indexByHeader = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         foreach (var pair in headerRow)
         {
-            var normalized = Normalize(pair.Value);
+            var normalized = SymbolDefinitionRules.NormalizeText(pair.Value);
             foreach (var expected in Headers)
                 if (HeaderMatches(normalized, expected)) indexByHeader[expected] = pair.Key;
         }
         foreach (var h in Headers) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
         var result = new List<SymbolDefinition>();
+        int excelRow = 1;
         foreach (var xmlRow in rows.Skip(1))
         {
+            excelRow++;
             var cells = Row(xmlRow, s, shared);
-            string V(string h) => cells.TryGetValue(indexByHeader[h], out var value) ? value.Trim() : "";
+            string V(string h) => cells.TryGetValue(indexByHeader[h], out var value) ? SymbolDefinitionRules.NormalizeText(value) : "";
             var symbol = V(Headers[0]);
             if (string.IsNullOrWhiteSpace(symbol)) continue;
-            result.Add(new SymbolDefinition { SymbolTitle = symbol, Name = V(Headers[1]), ExchangeTitle = V(Headers[2]), MarketType = V(Headers[3]), BoardType = V(Headers[4]), AssetType = V(Headers[5]), IndustryGroupOrFundType = V(Headers[6]) });
+
+            var exchange = V(Headers[2]);
+            var market = V(Headers[3]);
+            var board = V(Headers[4]);
+            var asset = V(Headers[5]);
+            var errors = new List<string>();
+            if (!SymbolDefinitionRules.IsAllowed(exchange, SymbolDefinitionRules.Exchanges, out var standardExchange)) errors.Add("عنوان بورس");
+            if (!SymbolDefinitionRules.IsAllowed(market, SymbolDefinitionRules.Markets, out var standardMarket)) errors.Add("نوع بازار");
+            if (!SymbolDefinitionRules.IsAllowed(board, SymbolDefinitionRules.Boards, out var standardBoard)) errors.Add("نوع تابلو");
+            if (!SymbolDefinitionRules.IsAllowed(asset, SymbolDefinitionRules.Assets, out var standardAsset)) errors.Add("نوع دارایی");
+            if (errors.Count > 0)
+            {
+                invalidRows++;
+                if (details.Count < 20) details.Add($"ردیف {excelRow}: {string.Join("، ", errors)} نامعتبر است.");
+                continue;
+            }
+            result.Add(new SymbolDefinition
+            {
+                SymbolTitle = symbol,
+                Name = V(Headers[1]),
+                ExchangeTitle = standardExchange,
+                MarketType = standardMarket,
+                BoardType = standardBoard,
+                AssetType = standardAsset,
+                IndustryGroupOrFundType = V(Headers[6])
+            });
         }
+        invalidDetails = details.Count == 0 ? "" : string.Join(Environment.NewLine, details) + (invalidRows > details.Count ? Environment.NewLine + "..." : "");
         return result;
     }
 
-    private static bool HeaderMatches(string actual, string expected) => actual == Normalize(expected) || actual.Replace(" ", "") == Normalize(expected).Replace(" ", "");
-    private static string Normalize(string x) => x.Replace("\u200c", "").Replace("ي", "ی").Replace("ك", "ک").Trim();
+    private static bool HeaderMatches(string actual, string expected) => actual == SymbolDefinitionRules.NormalizeText(expected) || actual.Replace(" ", "") == SymbolDefinitionRules.NormalizeText(expected).Replace(" ", "");
 
     private static Dictionary<int, string> Row(XElement row, XNamespace s, IReadOnlyList<string> shared)
     {
