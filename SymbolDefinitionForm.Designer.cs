@@ -262,7 +262,7 @@ partial class SymbolDefinitionForm
         panel21.TabIndex = 6;
         groupTextBox.Dock = DockStyle.Fill;
         groupTextBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupTextBox.Items.AddRange(new object[] { "-", "مواد و محصولات شیمیایی", "فلزات اساسی", "استخراج کانه‌های فلزی", "محصولات غذایی", "خودرو و قطعات", "بانک‌ها و مؤسسات اعتباری", "سرمایه‌گذاری", "دارویی", "سیمان", "محصولات کاغذی", "صندوق درآمد ثابت", "صندوق سهامی", "صندوق اهرمی", "صندوق طلا", "صندوق مختلط", "صندوق کالایی", "سایر" });
+        groupTextBox.Items.AddRange(new object[] { "-" });
         groupTextBox.Location = new Point(4, 4);
         groupTextBox.Name = "groupTextBox";
         groupTextBox.Size = new Size(137, 30);
