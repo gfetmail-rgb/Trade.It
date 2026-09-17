@@ -17,10 +17,56 @@ namespace Trade.It
         private int latestTradeDateLoadVersion;
         private TextBox textBox1;
 
+
+        private string appliedMarketExchange = "-";
+        private string appliedMarketType = "-";
+        private string appliedMarketBoard = "-";
+        private string appliedMarketAsset = "-";
+        private string appliedMarketFundType = "-";
+        private string appliedMarketIndustryGroup = "-";
+
         public MainForm()
         {
             InitializeComponent();
 
+            using (var sourceForm = new SymbolDefinitionForm())
+            {
+                sourceForm.CopyFilterItemsTo(
+                    marketExchangeComboBox,
+                    marketTypeComboBox,
+                    marketBoardComboBox,
+                    marketAssetComboBox,
+                    marketFundTypeComboBox,
+                    marketIndustryGroupComboBox);
+            }
+
+            marketApplyButton.Click += (_, _) =>
+            {
+                appliedMarketExchange = marketExchangeComboBox.Text;
+                appliedMarketType = marketTypeComboBox.Text;
+                appliedMarketBoard = marketBoardComboBox.Text;
+                appliedMarketAsset = marketAssetComboBox.Text;
+                appliedMarketFundType = marketFundTypeComboBox.Text;
+                appliedMarketIndustryGroup = marketIndustryGroupComboBox.Text;
+            };
+
+
+            marketClearButton.Click += (_, _) =>
+            {
+                marketExchangeComboBox.SelectedIndex = 0;
+                marketTypeComboBox.SelectedIndex = 0;
+                marketBoardComboBox.SelectedIndex = 0;
+                marketAssetComboBox.SelectedIndex = 0;
+                marketFundTypeComboBox.SelectedIndex = 0;
+                marketIndustryGroupComboBox.SelectedIndex = 0;
+
+                appliedMarketExchange = "-";
+                appliedMarketType = "-";
+                appliedMarketBoard = "-";
+                appliedMarketAsset = "-";
+                appliedMarketFundType = "-";
+                appliedMarketIndustryGroup = "-";
+            };
             // The WinForms designer creates MainForm inside the design-tools process.
             // Runtime-only initialization must not execute while the designer is loading.
             if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
@@ -57,6 +103,17 @@ namespace Trade.It
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
+
+        }
+
+        private void RestoreAppliedMarketFilters()
+        {
+            marketExchangeComboBox.SelectedItem = appliedMarketExchange;
+            marketTypeComboBox.SelectedItem = appliedMarketType;
+            marketBoardComboBox.SelectedItem = appliedMarketBoard;
+            marketAssetComboBox.SelectedItem = appliedMarketAsset;
+            marketFundTypeComboBox.SelectedItem = appliedMarketFundType;
+            marketIndustryGroupComboBox.SelectedItem = appliedMarketIndustryGroup;
         }
 
         private void InitializeFilterComboEmptyOptions()

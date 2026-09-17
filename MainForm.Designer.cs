@@ -1827,6 +1827,7 @@
             // marketTypeComboBox
             // 
             marketTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketTypeComboBox.FormattingEnabled = true;
             marketTypeComboBox.Location = new Point(11, 132);
             marketTypeComboBox.Name = "marketTypeComboBox";
@@ -1836,6 +1837,7 @@
             // marketBoardComboBox
             // 
             marketBoardComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketBoardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketBoardComboBox.FormattingEnabled = true;
             marketBoardComboBox.Location = new Point(11, 197);
             marketBoardComboBox.Name = "marketBoardComboBox";
@@ -1845,6 +1847,7 @@
             // marketAssetComboBox
             // 
             marketAssetComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketAssetComboBox.FormattingEnabled = true;
             marketAssetComboBox.Location = new Point(11, 266);
             marketAssetComboBox.Name = "marketAssetComboBox";
@@ -1854,6 +1857,7 @@
             // marketFundTypeComboBox
             // 
             marketFundTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFundTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketFundTypeComboBox.FormattingEnabled = true;
             marketFundTypeComboBox.Location = new Point(11, 339);
             marketFundTypeComboBox.Name = "marketFundTypeComboBox";
@@ -1863,6 +1867,7 @@
             // marketIndustryGroupComboBox
             // 
             marketIndustryGroupComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketIndustryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketIndustryGroupComboBox.FormattingEnabled = true;
             marketIndustryGroupComboBox.Location = new Point(11, 408);
             marketIndustryGroupComboBox.Name = "marketIndustryGroupComboBox";
@@ -1872,6 +1877,7 @@
             // marketExchangeComboBox
             // 
             marketExchangeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketExchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             marketExchangeComboBox.FormattingEnabled = true;
             marketExchangeComboBox.Location = new Point(11, 66);
             marketExchangeComboBox.Name = "marketExchangeComboBox";

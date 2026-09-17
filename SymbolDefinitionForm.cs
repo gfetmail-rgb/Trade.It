@@ -23,6 +23,28 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
     }
 
+    internal void CopyFilterItemsTo(ComboBox exchange,ComboBox market,ComboBox board,ComboBox asset,ComboBox fundType,ComboBox industryGroup)
+    {
+        CopyItems(exchangeComboBox, exchange);
+        CopyItems(marketComboBox, market);
+        CopyItems(boardComboBox, board);
+        CopyItems(assetComboBox, asset);
+        CopyItems(groupComboBox, fundType);
+        CopyItems(industryGroupComboBox, industryGroup);
+    }
+
+    private static void CopyItems(ComboBox source, ComboBox target)
+    {
+        target.Items.Clear();
+
+        foreach (var item in source.Items)
+            target.Items.Add(item);
+
+        if (target.Items.Count > 0)
+            target.SelectedIndex = 0;
+    }
+    
+
     private void SetComboDefaults()
     {
         exchangeComboBox.SelectedIndex = 0;
