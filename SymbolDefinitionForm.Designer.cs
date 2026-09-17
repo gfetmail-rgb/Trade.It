@@ -94,9 +94,9 @@ partial class SymbolDefinitionForm
 
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         exchangeComboBox.Items.AddRange(new object[] { "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" });
-        marketComboBox.DropDownStyle = ComboBoxStyle.DropDown;
+        marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         marketComboBox.Items.AddRange(new object[] { "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" });
-        boardComboBox.DropDownStyle = ComboBoxStyle.DropDown;
+        boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         boardComboBox.Items.AddRange(new object[] { "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" });
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق" });
