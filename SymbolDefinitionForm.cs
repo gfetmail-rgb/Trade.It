@@ -5,89 +5,6 @@ using System.Xml.Linq;
 
 namespace Trade.It;
 
-// Keep the form declaration first in this file so the WinForms Designer can discover it.
-public sealed partial class SymbolDefinitionForm : Form
-{
-}
-
-public sealed class SymbolDefinition
-{
-    public string SymbolTitle { get; set; } = "";
-    public string Name { get; set; } = "";
-    public string ExchangeTitle { get; set; } = "";
-    public string MarketType { get; set; } = "";
-    public string BoardType { get; set; } = "";
-    public string AssetType { get; set; } = "";
-    public string IndustryGroupOrFundType { get; set; } = "";
-}
-
-public static class SymbolDefinitionStore
-{
-    private static string FilePath => Path.Combine(AppContext.BaseDirectory, "Data", "Symbols.json");
-    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
-
-    public static List<SymbolDefinition> Load()
-    {
-        try
-        {
-            if (!File.Exists(FilePath)) return new();
-            var items = JsonSerializer.Deserialize<List<SymbolDefinition>>(File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
-            foreach (var x in items) SymbolDefinitionRules.Normalize(x);
-            return items;
-        }
-        catch { return new(); }
-    }
-
-    public static void Save(IEnumerable<SymbolDefinition> items)
-    {
-        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-        var normalized = items.ToList();
-        foreach (var x in normalized) SymbolDefinitionRules.Normalize(x);
-        File.WriteAllText(FilePath, JsonSerializer.Serialize(normalized.OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase).ToList(), Options), new UTF8Encoding(false));
-    }
-}
-
-internal static class SymbolDefinitionRules
-{
-    public const string EmptyOption = "-";
-    public static readonly string[] Exchanges = { EmptyOption, "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
-    public static readonly string[] Markets = { EmptyOption, "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
-    public static readonly string[] Boards = { EmptyOption, "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
-    public static readonly string[] Assets = { EmptyOption, "سهام", "صندوق" };
-
-    public static string NormalizeText(string value)
-    {
-        return value
-            .Replace('\u064A', '\u06CC')
-            .Replace('\u0649', '\u06CC')
-            .Replace('\u0643', '\u06A9')
-            .Replace('\u200C', ' ')
-            .Replace('\u200D', ' ')
-            .Replace('\uFEFF', ' ')
-            .Trim();
-    }
-
-    public static void Normalize(SymbolDefinition x)
-    {
-        x.SymbolTitle = NormalizeText(x.SymbolTitle);
-        x.Name = NormalizeText(x.Name);
-        x.ExchangeTitle = NormalizeText(x.ExchangeTitle);
-        x.MarketType = NormalizeText(x.MarketType);
-        x.BoardType = NormalizeText(x.BoardType);
-        x.AssetType = NormalizeText(x.AssetType);
-        x.IndustryGroupOrFundType = NormalizeText(x.IndustryGroupOrFundType);
-    }
-
-    public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
-    {
-        var normalized = NormalizeText(value);
-        if (string.IsNullOrWhiteSpace(normalized)) normalized = EmptyOption;
-        var match = allowed.FirstOrDefault(x => string.Equals(NormalizeText(x), normalized, StringComparison.Ordinal));
-        standardValue = match ?? "";
-        return match != null;
-    }
-}
-
 public sealed partial class SymbolDefinitionForm : Form
 {
     private bool loading;
@@ -296,6 +213,84 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             MessageBox.Show(this, $"خواندن فایل Excel انجام نشد:\n{ex.Message}", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+}
+
+public sealed class SymbolDefinition
+{
+    public string SymbolTitle { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string ExchangeTitle { get; set; } = "";
+    public string MarketType { get; set; } = "";
+    public string BoardType { get; set; } = "";
+    public string AssetType { get; set; } = "";
+    public string IndustryGroupOrFundType { get; set; } = "";
+}
+
+public static class SymbolDefinitionStore
+{
+    private static string FilePath => Path.Combine(AppContext.BaseDirectory, "Data", "Symbols.json");
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+
+    public static List<SymbolDefinition> Load()
+    {
+        try
+        {
+            if (!File.Exists(FilePath)) return new();
+            var items = JsonSerializer.Deserialize<List<SymbolDefinition>>(File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
+            foreach (var x in items) SymbolDefinitionRules.Normalize(x);
+            return items;
+        }
+        catch { return new(); }
+    }
+
+    public static void Save(IEnumerable<SymbolDefinition> items)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+        var normalized = items.ToList();
+        foreach (var x in normalized) SymbolDefinitionRules.Normalize(x);
+        File.WriteAllText(FilePath, JsonSerializer.Serialize(normalized.OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase).ToList(), Options), new UTF8Encoding(false));
+    }
+}
+
+internal static class SymbolDefinitionRules
+{
+    public const string EmptyOption = "-";
+    public static readonly string[] Exchanges = { EmptyOption, "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
+    public static readonly string[] Markets = { EmptyOption, "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
+    public static readonly string[] Boards = { EmptyOption, "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
+    public static readonly string[] Assets = { EmptyOption, "سهام", "صندوق" };
+
+    public static string NormalizeText(string value)
+    {
+        return value
+            .Replace('\u064A', '\u06CC')
+            .Replace('\u0649', '\u06CC')
+            .Replace('\u0643', '\u06A9')
+            .Replace('\u200C', ' ')
+            .Replace('\u200D', ' ')
+            .Replace('\uFEFF', ' ')
+            .Trim();
+    }
+
+    public static void Normalize(SymbolDefinition x)
+    {
+        x.SymbolTitle = NormalizeText(x.SymbolTitle);
+        x.Name = NormalizeText(x.Name);
+        x.ExchangeTitle = NormalizeText(x.ExchangeTitle);
+        x.MarketType = NormalizeText(x.MarketType);
+        x.BoardType = NormalizeText(x.BoardType);
+        x.AssetType = NormalizeText(x.AssetType);
+        x.IndustryGroupOrFundType = NormalizeText(x.IndustryGroupOrFundType);
+    }
+
+    public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
+    {
+        var normalized = NormalizeText(value);
+        if (string.IsNullOrWhiteSpace(normalized)) normalized = EmptyOption;
+        var match = allowed.FirstOrDefault(x => string.Equals(NormalizeText(x), normalized, StringComparison.Ordinal));
+        standardValue = match ?? "";
+        return match != null;
     }
 }
 
