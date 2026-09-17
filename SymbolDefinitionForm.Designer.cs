@@ -45,6 +45,8 @@ partial class SymbolDefinitionForm
 
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SymbolDefinitionForm));
         symbolTextBox = new TextBox();
         nameTextBox = new TextBox();
         exchangeComboBox = new ComboBox();
@@ -79,6 +81,7 @@ partial class SymbolDefinitionForm
         label21 = new Label();
         label22 = new Label();
         label1 = new Label();
+        toolTip1 = new ToolTip(components);
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
         // 
@@ -198,6 +201,7 @@ partial class SymbolDefinitionForm
         importButton.Size = new Size(120, 35);
         importButton.TabIndex = 12;
         importButton.Text = "ورود از Excel";
+        toolTip1.SetToolTip(importButton, resources.GetString("importButton.ToolTip"));
         importButton.UseVisualStyleBackColor = true;
         // 
         // closeButton
@@ -397,6 +401,12 @@ partial class SymbolDefinitionForm
         label1.Text = "گروه صنعت";
         label1.TextAlign = ContentAlignment.MiddleRight;
         // 
+        // toolTip1
+        // 
+        toolTip1.IsBalloon = true;
+        toolTip1.ToolTipIcon = ToolTipIcon.Info;
+        toolTip1.ToolTipTitle = "هشدار";
+        // 
         // SymbolDefinitionForm
         // 
         ClientSize = new Size(1293, 700);
@@ -437,4 +447,5 @@ partial class SymbolDefinitionForm
         PerformLayout();
     }
     private Label label1;
+    private ToolTip toolTip1;
 }
