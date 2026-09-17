@@ -52,7 +52,6 @@ namespace Trade.It
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
                     ApplyTradingStatusFilterWithWaitCursor();
-                    UpdateMarketFilterCounts(definition);
                 }
             };
 
@@ -77,7 +76,6 @@ namespace Trade.It
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
                     ApplyTradingStatusFilterWithWaitCursor();
-                    UpdateMarketFilterCounts(definition);
                 }
             };
             // The WinForms designer creates MainForm inside the design-tools process.
@@ -116,8 +114,8 @@ namespace Trade.It
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
-            stocksDataGridView.RowsAdded += (_, _) => UpdateStocksGridCount();
-            stocksDataGridView.RowsRemoved += (_, _) => UpdateStocksGridCount();
+            stocksDataGridView.RowsAdded += (_, _) => { UpdateStocksGridCount(); UpdateFilterCounts(); };
+            stocksDataGridView.RowsRemoved += (_, _) => { UpdateStocksGridCount(); UpdateFilterCounts(); };
             UpdateStocksGridCount();
 
         }
@@ -409,7 +407,7 @@ namespace Trade.It
             try
             {
                 PopulateStocksGrid(definition);
-                UpdateMarketFilterCounts(definition);
+                UpdateFilterCounts();
             }
             finally
             {
@@ -953,7 +951,7 @@ namespace Trade.It
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
             {
-                UpdateFilterCounts(0, 0);
+                UpdateFilterCounts();
                 return;
             }
 
@@ -986,8 +984,6 @@ namespace Trade.It
                     filtered = filtered.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op));
             }
             var result = filtered.ToList();
-            UpdateFilterCounts(result.Count, symbols.Count);
-            UpdateMarketFilterCounts(definition);
 
             internalPortfolioUpdate = true;
             try
@@ -1004,6 +1000,7 @@ namespace Trade.It
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
+            UpdateFilterCounts();
             _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);
         }
 
@@ -1042,31 +1039,6 @@ namespace Trade.It
         {
             if (stocksGridCountLabel != null)
                 stocksGridCountLabel.Text = $"نمادها: {ToPersianDigits(stocksDataGridView.Rows.Count.ToString())}";
-        }
-
-        private void UpdateMarketFilterCounts(PortfolioDefinition? definition)
-        {
-            if (marketCountLabel == null)
-                return;
-
-            if (definition == null)
-            {
-                marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
-                return;
-            }
-
-            var total = (definition.Symbols ?? new List<string>())
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Count();
-            var found = GetMarketFilteredSymbols(definition).Count;
-            marketCountLabel.Text = $"کل: {ToPersianDigits(total.ToString())}    پیدا شده: {ToPersianDigits(found.ToString())}";
-        }
-
-        private void UpdateFilterCounts(int foundCount, int totalCount)
-        {
-            if (filterCountLabel != null)
-                filterCountLabel.Text = $"کل: {ToPersianDigits(totalCount.ToString())}    پیدا شده: {ToPersianDigits(foundCount.ToString())}";
         }
 
         private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
@@ -1438,7 +1410,7 @@ namespace Trade.It
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
-            UpdateFilterCounts(result.Count, totalCount);
+            UpdateFilterCounts();
             internalPortfolioUpdate = true;
             try
             {
@@ -1449,6 +1421,7 @@ namespace Trade.It
             selectAllCheckBox.Checked = false;
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
+            UpdateFilterCounts();
         }
 
         private IEnumerable<string> GetDisplayedGridSymbols()
@@ -1623,7 +1596,7 @@ namespace Trade.It
                 .ToList();
             var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
-            UpdateFilterCounts(result.Count, totalCount);
+            UpdateFilterCounts();
             internalPortfolioUpdate = true;
             try
             {
