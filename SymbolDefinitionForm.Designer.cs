@@ -131,7 +131,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-","صندوق سهامی در سهام","صندوق سهامی اهرمی","صندوق سهامی بخشی", "صندوق سهامی مختلط", "صندوق سهامی درآمد ثابت", "", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "-", "صندوق سهامی در سهام", "صندوق سهامی اهرمی", "صندوق سهامی بخشی", "صندوق سهامی مختلط", "صندوق سهامی درآمد ثابت", "", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
@@ -195,6 +195,7 @@ partial class SymbolDefinitionForm
         importButton.TabIndex = 12;
         importButton.Text = "ورود از Excel";
         importButton.UseVisualStyleBackColor = true;
+        importButton.Click += importButton_Click;
         // 
         // closeButton
         // 
