@@ -19,13 +19,6 @@ partial class SymbolDefinitionForm
     private Button closeButton = null!;
     private Label countLabel = null!;
     private DataGridView symbolsDataGridView = null!;
-    private DataGridViewTextBoxColumn symbolTitleColumn = null!;
-    private DataGridViewTextBoxColumn nameColumn = null!;
-    private DataGridViewTextBoxColumn exchangeColumn = null!;
-    private DataGridViewTextBoxColumn marketColumn = null!;
-    private DataGridViewTextBoxColumn boardColumn = null!;
-    private DataGridViewTextBoxColumn assetColumn = null!;
-    private DataGridViewTextBoxColumn groupColumn = null!;
     private Label label00 = null!;
     private Label label10 = null!;
     private Label label20 = null!;
@@ -59,13 +52,6 @@ partial class SymbolDefinitionForm
         closeButton = new Button();
         countLabel = new Label();
         symbolsDataGridView = new DataGridView();
-        symbolTitleColumn = new DataGridViewTextBoxColumn();
-        nameColumn = new DataGridViewTextBoxColumn();
-        exchangeColumn = new DataGridViewTextBoxColumn();
-        marketColumn = new DataGridViewTextBoxColumn();
-        boardColumn = new DataGridViewTextBoxColumn();
-        assetColumn = new DataGridViewTextBoxColumn();
-        groupColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label20 = new Label();
@@ -75,6 +61,13 @@ partial class SymbolDefinitionForm
         label21 = new Label();
         label22 = new Label();
         label1 = new Label();
+        symbolTitleColumn = new DataGridViewTextBoxColumn();
+        nameColumn = new DataGridViewTextBoxColumn();
+        exchangeColumn = new DataGridViewTextBoxColumn();
+        marketColumn = new DataGridViewTextBoxColumn();
+        boardColumn = new DataGridViewTextBoxColumn();
+        assetColumn = new DataGridViewTextBoxColumn();
+        groupColumn = new DataGridViewTextBoxColumn();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
         // 
@@ -195,7 +188,6 @@ partial class SymbolDefinitionForm
         importButton.TabIndex = 12;
         importButton.Text = "ورود از Excel";
         importButton.UseVisualStyleBackColor = true;
-        importButton.Click += importButton_Click;
         // 
         // closeButton
         // 
@@ -236,65 +228,6 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.Size = new Size(1279, 520);
         symbolsDataGridView.TabIndex = 0;
         // 
-        // symbolTitleColumn
-        // 
-        symbolTitleColumn.HeaderText = "عنوان نماد";
-        symbolTitleColumn.MinimumWidth = 8;
-        symbolTitleColumn.Name = "symbolTitleColumn";
-        symbolTitleColumn.ReadOnly = true;
-        symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // nameColumn
-        // 
-        nameColumn.FillWeight = 150F;
-        nameColumn.HeaderText = "نام نماد";
-        nameColumn.MinimumWidth = 8;
-        nameColumn.Name = "nameColumn";
-        nameColumn.ReadOnly = true;
-        nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // exchangeColumn
-        // 
-        exchangeColumn.HeaderText = "عنوان بورس";
-        exchangeColumn.MinimumWidth = 8;
-        exchangeColumn.Name = "exchangeColumn";
-        exchangeColumn.ReadOnly = true;
-        exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // marketColumn
-        // 
-        marketColumn.HeaderText = "نوع بازار";
-        marketColumn.MinimumWidth = 8;
-        marketColumn.Name = "marketColumn";
-        marketColumn.ReadOnly = true;
-        marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // boardColumn
-        // 
-        boardColumn.HeaderText = "نوع تابلو";
-        boardColumn.MinimumWidth = 8;
-        boardColumn.Name = "boardColumn";
-        boardColumn.ReadOnly = true;
-        boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // assetColumn
-        // 
-        assetColumn.FillWeight = 80F;
-        assetColumn.HeaderText = "نوع دارایی";
-        assetColumn.MinimumWidth = 8;
-        assetColumn.Name = "assetColumn";
-        assetColumn.ReadOnly = true;
-        assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // groupColumn
-        // 
-        groupColumn.FillWeight = 150F;
-        groupColumn.HeaderText = "گروه صنعت / نوع صندوق";
-        groupColumn.MinimumWidth = 8;
-        groupColumn.Name = "groupColumn";
-        groupColumn.ReadOnly = true;
-        groupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
         // label00
         // 
         label00.Location = new Point(12, 18);
@@ -319,7 +252,7 @@ partial class SymbolDefinitionForm
         label20.Name = "label20";
         label20.Size = new Size(113, 30);
         label20.TabIndex = 17;
-        label20.Text = "عنوان بورس";
+        label20.Text = "بورس";
         label20.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label30
@@ -328,7 +261,7 @@ partial class SymbolDefinitionForm
         label30.Name = "label30";
         label30.Size = new Size(76, 30);
         label30.TabIndex = 18;
-        label30.Text = "نوع بازار";
+        label30.Text = "بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label01
@@ -346,7 +279,7 @@ partial class SymbolDefinitionForm
         label11.Name = "label11";
         label11.Size = new Size(90, 30);
         label11.TabIndex = 20;
-        label11.Text = "نوع دارایی";
+        label11.Text = "دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label21
@@ -375,6 +308,65 @@ partial class SymbolDefinitionForm
         label1.TabIndex = 23;
         label1.Text = "گروه صنعت";
         label1.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // symbolTitleColumn
+        // 
+        symbolTitleColumn.HeaderText = "نماد";
+        symbolTitleColumn.MinimumWidth = 8;
+        symbolTitleColumn.Name = "symbolTitleColumn";
+        symbolTitleColumn.ReadOnly = true;
+        symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // nameColumn
+        // 
+        nameColumn.FillWeight = 150F;
+        nameColumn.HeaderText = "نام";
+        nameColumn.MinimumWidth = 8;
+        nameColumn.Name = "nameColumn";
+        nameColumn.ReadOnly = true;
+        nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // exchangeColumn
+        // 
+        exchangeColumn.HeaderText = "بورس";
+        exchangeColumn.MinimumWidth = 8;
+        exchangeColumn.Name = "exchangeColumn";
+        exchangeColumn.ReadOnly = true;
+        exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // marketColumn
+        // 
+        marketColumn.HeaderText = "بازار";
+        marketColumn.MinimumWidth = 8;
+        marketColumn.Name = "marketColumn";
+        marketColumn.ReadOnly = true;
+        marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // boardColumn
+        // 
+        boardColumn.HeaderText = "تابلو";
+        boardColumn.MinimumWidth = 8;
+        boardColumn.Name = "boardColumn";
+        boardColumn.ReadOnly = true;
+        boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // assetColumn
+        // 
+        assetColumn.FillWeight = 80F;
+        assetColumn.HeaderText = "دارایی";
+        assetColumn.MinimumWidth = 8;
+        assetColumn.Name = "assetColumn";
+        assetColumn.ReadOnly = true;
+        assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // groupColumn
+        // 
+        groupColumn.FillWeight = 150F;
+        groupColumn.HeaderText = "گروه صنعت / نوع صندوق";
+        groupColumn.MinimumWidth = 8;
+        groupColumn.Name = "groupColumn";
+        groupColumn.ReadOnly = true;
+        groupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // SymbolDefinitionForm
         // 
@@ -416,4 +408,11 @@ partial class SymbolDefinitionForm
         PerformLayout();
     }
     private Label label1;
+    private DataGridViewTextBoxColumn symbolTitleColumn;
+    private DataGridViewTextBoxColumn nameColumn;
+    private DataGridViewTextBoxColumn exchangeColumn;
+    private DataGridViewTextBoxColumn marketColumn;
+    private DataGridViewTextBoxColumn boardColumn;
+    private DataGridViewTextBoxColumn assetColumn;
+    private DataGridViewTextBoxColumn groupColumn;
 }
