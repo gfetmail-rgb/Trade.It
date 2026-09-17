@@ -51,7 +51,7 @@ namespace Trade.It
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
-                    PopulateStocksGrid(definition);
+                    ApplyTradingStatusFilterWithWaitCursor();
                 }
             };
 
@@ -75,7 +75,7 @@ namespace Trade.It
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
-                    PopulateStocksGrid(definition);
+                    ApplyTradingStatusFilterWithWaitCursor();
                 }
             };
             // The WinForms designer creates MainForm inside the design-tools process.
@@ -934,7 +934,7 @@ namespace Trade.It
                 return;
             }
 
-            var symbols = (definition.Symbols ?? new List<string>())
+            var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
