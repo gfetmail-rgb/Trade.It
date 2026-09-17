@@ -88,6 +88,9 @@ partial class SymbolDefinitionForm
         buttonsFlowLayoutPanel.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
+        // 
+        // rootTableLayoutPanel
+        // 
         rootTableLayoutPanel.ColumnCount = 1;
         rootTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
         rootTableLayoutPanel.Controls.Add(fieldsTableLayoutPanel, 0, 0);
@@ -103,6 +106,9 @@ partial class SymbolDefinitionForm
         rootTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         rootTableLayoutPanel.Size = new Size(1180, 700);
         rootTableLayoutPanel.TabIndex = 0;
+        // 
+        // fieldsTableLayoutPanel
+        // 
         fieldsTableLayoutPanel.ColumnCount = 4;
         fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
         fieldsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
@@ -124,6 +130,9 @@ partial class SymbolDefinitionForm
         fieldsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
         fieldsTableLayoutPanel.Size = new Size(1154, 144);
         fieldsTableLayoutPanel.TabIndex = 0;
+        // 
+        // panel00
+        // 
         panel00.Controls.Add(symbolTextBox);
         panel00.Controls.Add(label00);
         panel00.Dock = DockStyle.Fill;
@@ -132,11 +141,17 @@ partial class SymbolDefinitionForm
         panel00.Padding = new Padding(4);
         panel00.Size = new Size(280, 62);
         panel00.TabIndex = 0;
+        // 
+        // symbolTextBox
+        // 
         symbolTextBox.Dock = DockStyle.Fill;
         symbolTextBox.Location = new Point(4, 4);
         symbolTextBox.Name = "symbolTextBox";
         symbolTextBox.Size = new Size(137, 29);
         symbolTextBox.TabIndex = 0;
+        // 
+        // label00
+        // 
         label00.Dock = DockStyle.Right;
         label00.Location = new Point(141, 4);
         label00.Name = "label00";
@@ -144,6 +159,9 @@ partial class SymbolDefinitionForm
         label00.TabIndex = 1;
         label00.Text = "نماد";
         label00.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel10
+        // 
         panel10.Controls.Add(nameTextBox);
         panel10.Controls.Add(label10);
         panel10.Dock = DockStyle.Fill;
@@ -152,11 +170,17 @@ partial class SymbolDefinitionForm
         panel10.Padding = new Padding(4);
         panel10.Size = new Size(280, 62);
         panel10.TabIndex = 1;
+        // 
+        // nameTextBox
+        // 
         nameTextBox.Dock = DockStyle.Fill;
         nameTextBox.Location = new Point(4, 4);
         nameTextBox.Name = "nameTextBox";
         nameTextBox.Size = new Size(137, 29);
         nameTextBox.TabIndex = 0;
+        // 
+        // label10
+        // 
         label10.Dock = DockStyle.Right;
         label10.Location = new Point(141, 4);
         label10.Name = "label10";
@@ -164,6 +188,9 @@ partial class SymbolDefinitionForm
         label10.TabIndex = 1;
         label10.Text = "نام";
         label10.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel20
+        // 
         panel20.Controls.Add(exchangeComboBox);
         panel20.Controls.Add(label20);
         panel20.Dock = DockStyle.Fill;
@@ -172,6 +199,9 @@ partial class SymbolDefinitionForm
         panel20.Padding = new Padding(4);
         panel20.Size = new Size(280, 62);
         panel20.TabIndex = 2;
+        // 
+        // exchangeComboBox
+        // 
         exchangeComboBox.Dock = DockStyle.Fill;
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         exchangeComboBox.Items.AddRange(new object[] { "-", "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
@@ -179,6 +209,9 @@ partial class SymbolDefinitionForm
         exchangeComboBox.Name = "exchangeComboBox";
         exchangeComboBox.Size = new Size(137, 30);
         exchangeComboBox.TabIndex = 0;
+        // 
+        // label20
+        // 
         label20.Dock = DockStyle.Right;
         label20.Location = new Point(141, 4);
         label20.Name = "label20";
@@ -186,6 +219,9 @@ partial class SymbolDefinitionForm
         label20.TabIndex = 1;
         label20.Text = "عنوان بورس";
         label20.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel30
+        // 
         panel30.Controls.Add(marketComboBox);
         panel30.Controls.Add(label30);
         panel30.Dock = DockStyle.Fill;
@@ -194,6 +230,9 @@ partial class SymbolDefinitionForm
         panel30.Padding = new Padding(4);
         panel30.Size = new Size(282, 62);
         panel30.TabIndex = 3;
+        // 
+        // marketComboBox
+        // 
         marketComboBox.Dock = DockStyle.Fill;
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         marketComboBox.Items.AddRange(new object[] { "-", "اول", "دوم", "پایه", "SMD", "نوآفرین" });
@@ -201,6 +240,9 @@ partial class SymbolDefinitionForm
         marketComboBox.Name = "marketComboBox";
         marketComboBox.Size = new Size(139, 30);
         marketComboBox.TabIndex = 0;
+        // 
+        // label30
+        // 
         label30.Dock = DockStyle.Right;
         label30.Location = new Point(143, 4);
         label30.Name = "label30";
@@ -208,6 +250,9 @@ partial class SymbolDefinitionForm
         label30.TabIndex = 1;
         label30.Text = "نوع بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel01
+        // 
         panel01.Controls.Add(boardComboBox);
         panel01.Controls.Add(label01);
         panel01.Dock = DockStyle.Fill;
@@ -216,6 +261,9 @@ partial class SymbolDefinitionForm
         panel01.Padding = new Padding(4);
         panel01.Size = new Size(280, 62);
         panel01.TabIndex = 4;
+        // 
+        // boardComboBox
+        // 
         boardComboBox.Dock = DockStyle.Fill;
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         boardComboBox.Items.AddRange(new object[] { "-", "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
@@ -223,6 +271,9 @@ partial class SymbolDefinitionForm
         boardComboBox.Name = "boardComboBox";
         boardComboBox.Size = new Size(137, 30);
         boardComboBox.TabIndex = 0;
+        // 
+        // label01
+        // 
         label01.Dock = DockStyle.Right;
         label01.Location = new Point(141, 4);
         label01.Name = "label01";
@@ -230,6 +281,9 @@ partial class SymbolDefinitionForm
         label01.TabIndex = 1;
         label01.Text = "تابلو";
         label01.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel11
+        // 
         panel11.Controls.Add(assetComboBox);
         panel11.Controls.Add(label11);
         panel11.Dock = DockStyle.Fill;
@@ -238,6 +292,9 @@ partial class SymbolDefinitionForm
         panel11.Padding = new Padding(4);
         panel11.Size = new Size(280, 62);
         panel11.TabIndex = 5;
+        // 
+        // assetComboBox
+        // 
         assetComboBox.Dock = DockStyle.Fill;
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF" });
@@ -245,6 +302,9 @@ partial class SymbolDefinitionForm
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(137, 30);
         assetComboBox.TabIndex = 0;
+        // 
+        // label11
+        // 
         label11.Dock = DockStyle.Right;
         label11.Location = new Point(141, 4);
         label11.Name = "label11";
@@ -252,6 +312,9 @@ partial class SymbolDefinitionForm
         label11.TabIndex = 1;
         label11.Text = "نوع دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // panel21
+        // 
         panel21.Controls.Add(groupTextBox);
         panel21.Controls.Add(label21);
         panel21.Dock = DockStyle.Fill;
@@ -260,6 +323,9 @@ partial class SymbolDefinitionForm
         panel21.Padding = new Padding(4);
         panel21.Size = new Size(280, 62);
         panel21.TabIndex = 6;
+        // 
+        // groupTextBox
+        // 
         groupTextBox.Dock = DockStyle.Fill;
         groupTextBox.DropDownStyle = ComboBoxStyle.DropDownList;
         groupTextBox.Items.AddRange(new object[] { "-" });
@@ -267,6 +333,9 @@ partial class SymbolDefinitionForm
         groupTextBox.Name = "groupTextBox";
         groupTextBox.Size = new Size(137, 30);
         groupTextBox.TabIndex = 0;
+        // 
+        // label21
+        // 
         label21.Dock = DockStyle.Right;
         label21.Location = new Point(141, 4);
         label21.Name = "label21";
@@ -274,6 +343,9 @@ partial class SymbolDefinitionForm
         label21.TabIndex = 1;
         label21.Text = "گروه صنعت/نوع صندوق";
         label21.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // buttonsFlowLayoutPanel
+        // 
         buttonsFlowLayoutPanel.Controls.Add(newButton);
         buttonsFlowLayoutPanel.Controls.Add(saveButton);
         buttonsFlowLayoutPanel.Controls.Add(deleteButton);
@@ -288,6 +360,9 @@ partial class SymbolDefinitionForm
         buttonsFlowLayoutPanel.Size = new Size(1154, 39);
         buttonsFlowLayoutPanel.TabIndex = 1;
         buttonsFlowLayoutPanel.WrapContents = false;
+        // 
+        // newButton
+        // 
         newButton.AutoSize = true;
         newButton.Location = new Point(4, 4);
         newButton.Margin = new Padding(4);
@@ -296,6 +371,9 @@ partial class SymbolDefinitionForm
         newButton.TabIndex = 0;
         newButton.Text = "جدید";
         newButton.UseVisualStyleBackColor = true;
+        // 
+        // saveButton
+        // 
         saveButton.AutoSize = true;
         saveButton.Location = new Point(87, 4);
         saveButton.Margin = new Padding(4);
@@ -304,6 +382,9 @@ partial class SymbolDefinitionForm
         saveButton.TabIndex = 1;
         saveButton.Text = "ذخیره";
         saveButton.UseVisualStyleBackColor = true;
+        // 
+        // deleteButton
+        // 
         deleteButton.AutoSize = true;
         deleteButton.Location = new Point(170, 4);
         deleteButton.Margin = new Padding(4);
@@ -312,6 +393,9 @@ partial class SymbolDefinitionForm
         deleteButton.TabIndex = 2;
         deleteButton.Text = "حذف";
         deleteButton.UseVisualStyleBackColor = true;
+        // 
+        // deleteAllButton
+        // 
         deleteAllButton.AutoSize = true;
         deleteAllButton.Location = new Point(253, 4);
         deleteAllButton.Margin = new Padding(4);
@@ -320,6 +404,9 @@ partial class SymbolDefinitionForm
         deleteAllButton.TabIndex = 3;
         deleteAllButton.Text = "حذف همه";
         deleteAllButton.UseVisualStyleBackColor = true;
+        // 
+        // importButton
+        // 
         importButton.AutoSize = true;
         importButton.Location = new Point(358, 4);
         importButton.Margin = new Padding(4);
@@ -328,6 +415,9 @@ partial class SymbolDefinitionForm
         importButton.TabIndex = 4;
         importButton.Text = "ورود از Excel";
         importButton.UseVisualStyleBackColor = true;
+        // 
+        // closeButton
+        // 
         closeButton.AutoSize = true;
         closeButton.Location = new Point(482, 4);
         closeButton.Margin = new Padding(4);
@@ -336,6 +426,9 @@ partial class SymbolDefinitionForm
         closeButton.TabIndex = 5;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
+        // 
+        // countLabel
+        // 
         countLabel.AutoSize = true;
         countLabel.Location = new Point(571, 9);
         countLabel.Margin = new Padding(20, 9, 10, 3);
@@ -343,6 +436,9 @@ partial class SymbolDefinitionForm
         countLabel.Size = new Size(68, 22);
         countLabel.TabIndex = 6;
         countLabel.Text = "تعداد: 0";
+        // 
+        // symbolsDataGridView
+        // 
         symbolsDataGridView.AllowUserToAddRows = false;
         symbolsDataGridView.AllowUserToDeleteRows = false;
         symbolsDataGridView.AllowUserToResizeRows = false;
@@ -360,44 +456,68 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         symbolsDataGridView.Size = new Size(1154, 479);
         symbolsDataGridView.TabIndex = 2;
+        // 
+        // symbolTitleColumn
+        // 
         symbolTitleColumn.HeaderText = "عنوان نماد";
         symbolTitleColumn.MinimumWidth = 8;
         symbolTitleColumn.Name = "symbolTitleColumn";
         symbolTitleColumn.ReadOnly = true;
         symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // nameColumn
+        // 
         nameColumn.FillWeight = 150F;
         nameColumn.HeaderText = "نام نماد";
         nameColumn.MinimumWidth = 8;
         nameColumn.Name = "nameColumn";
         nameColumn.ReadOnly = true;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // exchangeColumn
+        // 
         exchangeColumn.HeaderText = "عنوان بورس";
         exchangeColumn.MinimumWidth = 8;
         exchangeColumn.Name = "exchangeColumn";
         exchangeColumn.ReadOnly = true;
         exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // marketColumn
+        // 
         marketColumn.HeaderText = "نوع بازار";
         marketColumn.MinimumWidth = 8;
         marketColumn.Name = "marketColumn";
         marketColumn.ReadOnly = true;
         marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // boardColumn
+        // 
         boardColumn.HeaderText = "نوع تابلو";
         boardColumn.MinimumWidth = 8;
         boardColumn.Name = "boardColumn";
         boardColumn.ReadOnly = true;
         boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // assetColumn
+        // 
         assetColumn.FillWeight = 80F;
         assetColumn.HeaderText = "نوع دارایی";
         assetColumn.MinimumWidth = 8;
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // groupColumn
+        // 
         groupColumn.FillWeight = 150F;
         groupColumn.HeaderText = "گروه صنعت / نوع صندوق";
         groupColumn.MinimumWidth = 8;
         groupColumn.Name = "groupColumn";
         groupColumn.ReadOnly = true;
         groupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // SymbolDefinitionForm
+        // 
         ClientSize = new Size(1180, 700);
         Controls.Add(rootTableLayoutPanel);
         Font = new Font("Tahoma", 9F);
@@ -418,7 +538,6 @@ partial class SymbolDefinitionForm
         panel01.ResumeLayout(false);
         panel11.ResumeLayout(false);
         panel21.ResumeLayout(false);
-        panel21.PerformLayout();
         buttonsFlowLayoutPanel.ResumeLayout(false);
         buttonsFlowLayoutPanel.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).EndInit();
