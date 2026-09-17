@@ -5,6 +5,11 @@ using System.Xml.Linq;
 
 namespace Trade.It;
 
+// Keep the form declaration first in this file so the WinForms Designer can discover it.
+public sealed partial class SymbolDefinitionForm : Form
+{
+}
+
 public sealed class SymbolDefinition
 {
     public string SymbolTitle { get; set; } = "";
@@ -53,9 +58,9 @@ internal static class SymbolDefinitionRules
     public static string NormalizeText(string value)
     {
         return value
-            .Replace('\u064A', '\u06CC') // ي -> ی
-            .Replace('\u0649', '\u06CC') // ى -> ی
-            .Replace('\u0643', '\u06A9') // ك -> ک
+            .Replace('\u064A', '\u06CC')
+            .Replace('\u0649', '\u06CC')
+            .Replace('\u0643', '\u06A9')
             .Replace('\u200C', ' ')
             .Replace('\u200D', ' ')
             .Replace('\uFEFF', ' ')
