@@ -1506,5 +1506,11 @@ namespace Trade.It
         {
 
         }
+
+        private void symbolDefinitionMenuItem_Click(object sender, EventArgs e)
+        {
+            using var form = new SymbolDefinitionForm();
+            form.ShowDialog(this);
+        }
     }
 }

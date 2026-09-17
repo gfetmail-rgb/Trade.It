@@ -334,6 +334,7 @@
             drawMeasureButton = new Button();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
+            symbolDefinitionMenuItem = new ToolStripMenuItem();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -369,7 +370,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, closeAllChartsMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, closeAllChartsMenuItem, symbolDefinitionMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -2321,6 +2322,13 @@
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
             // 
+            // symbolDefinitionMenuItem
+            // 
+            symbolDefinitionMenuItem.Name = "symbolDefinitionMenuItem";
+            symbolDefinitionMenuItem.Size = new Size(132, 29);
+            symbolDefinitionMenuItem.Text = "تعریف نمادها";
+            symbolDefinitionMenuItem.Click += symbolDefinitionMenuItem_Click;
+            // 
             // MainForm
             // 
             ClientSize = new Size(1491, 966);
@@ -2417,5 +2425,6 @@
         private Label label12;
         private Label label11;
         private Label label10;
+        private ToolStripMenuItem symbolDefinitionMenuItem;
     }
 }
