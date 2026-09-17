@@ -26,7 +26,8 @@ partial class SymbolDefinitionForm
     private DataGridViewTextBoxColumn marketColumn = null!;
     private DataGridViewTextBoxColumn boardColumn = null!;
     private DataGridViewTextBoxColumn assetColumn = null!;
-    private DataGridViewTextBoxColumn groupColumn = null!;
+    private DataGridViewTextBoxColumn fundTypeColumn = null!;
+    private DataGridViewTextBoxColumn industryGroupColumn = null!;
     private Label label00 = null!;
     private Label label10 = null!;
     private Label label20 = null!;
@@ -67,7 +68,8 @@ partial class SymbolDefinitionForm
         marketColumn = new DataGridViewTextBoxColumn();
         boardColumn = new DataGridViewTextBoxColumn();
         assetColumn = new DataGridViewTextBoxColumn();
-        groupColumn = new DataGridViewTextBoxColumn();
+        fundTypeColumn = new DataGridViewTextBoxColumn();
+        industryGroupColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label20 = new Label();
@@ -225,7 +227,7 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         symbolsDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, groupColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, fundTypeColumn, industryGroupColumn });
         symbolsDataGridView.Location = new Point(10, 165);
         symbolsDataGridView.MultiSelect = false;
         symbolsDataGridView.Name = "symbolsDataGridView";
@@ -296,14 +298,23 @@ partial class SymbolDefinitionForm
         assetColumn.ReadOnly = true;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
-        // groupColumn
+        // fundTypeColumn
         // 
-        groupColumn.FillWeight = 150F;
-        groupColumn.HeaderText = "گروه صنعت / نوع صندوق";
-        groupColumn.MinimumWidth = 8;
-        groupColumn.Name = "groupColumn";
-        groupColumn.ReadOnly = true;
-        groupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        fundTypeColumn.FillWeight = 125F;
+        fundTypeColumn.HeaderText = "نوع صندوق";
+        fundTypeColumn.MinimumWidth = 8;
+        fundTypeColumn.Name = "fundTypeColumn";
+        fundTypeColumn.ReadOnly = true;
+        fundTypeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // industryGroupColumn
+        // 
+        industryGroupColumn.FillWeight = 125F;
+        industryGroupColumn.HeaderText = "گروه صنعت";
+        industryGroupColumn.MinimumWidth = 8;
+        industryGroupColumn.Name = "industryGroupColumn";
+        industryGroupColumn.ReadOnly = true;
+        industryGroupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // label00
         // 
