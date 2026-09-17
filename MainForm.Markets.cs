@@ -1,32 +1,15 @@
-namespace Trade.It;
-
-public partial class MainForm
+namespace Trade.It
 {
-    private bool marketEventsAttached;
-
-    protected override void OnShown(EventArgs e)
+    public partial class MainForm
     {
-        base.OnShown(e);
-
-        if (marketEventsAttached)
-            return;
-
-        marketEventsAttached = true;
-        marketsTabPage.Enter += MarketsTabPage_Enter;
-        controlTabControl.SelectedIndexChanged += MarketsTabControl_SelectedIndexChanged;
-
-        if (controlTabControl.SelectedTab == marketsTabPage)
-            RestoreAppliedMarketFilters();
-    }
-
-    private void MarketsTabPage_Enter(object? sender, EventArgs e)
-    {
-        RestoreAppliedMarketFilters();
-    }
-
-    private void MarketsTabControl_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-        if (controlTabControl.SelectedTab == marketsTabPage)
-            RestoreAppliedMarketFilters();
+        private void RestoreAppliedMarketFilters()
+        {
+            marketExchangeComboBox.SelectedItem = appliedMarketExchange;
+            marketTypeComboBox.SelectedItem = appliedMarketType;
+            marketBoardComboBox.SelectedItem = appliedMarketBoard;
+            marketAssetComboBox.SelectedItem = appliedMarketAsset;
+            marketFundTypeComboBox.SelectedItem = appliedMarketFundType;
+            marketIndustryGroupComboBox.SelectedItem = appliedMarketIndustryGroup;
+        }
     }
 }
