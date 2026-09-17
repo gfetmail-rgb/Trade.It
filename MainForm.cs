@@ -30,13 +30,6 @@ namespace Trade.It
         {
             InitializeComponent();
 
-            marketExchangeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-            marketTypeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-            marketBoardCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-            marketAssetCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-            marketFundTypeCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-            marketIndustryGroupCheckedListBox.ItemCheck += MarketCheckedListBox_ItemCheck;
-
             marketApplyButton.Click += (_, _) =>
             {
                 CopyCheckedItems(appliedMarketExchanges, marketExchangeCheckedListBox);
@@ -113,15 +106,6 @@ namespace Trade.It
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
             SetCheckedItems(marketFundTypeCheckedListBox, appliedMarketFundTypes);
             SetCheckedItems(marketIndustryGroupCheckedListBox, appliedMarketIndustryGroups);
-            UpdateMarketCascadeLists();
-        }
-
-        private void MarketCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
-        {
-            if (updatingMarketCascade || IsDisposed || !IsHandleCreated)
-                return;
-
-            BeginInvoke(new Action(UpdateMarketCascadeLists));
         }
 
         private void ClearMarketSelections()
@@ -148,7 +132,6 @@ namespace Trade.It
                 updatingMarketCascade = false;
             }
 
-            UpdateMarketCascadeLists();
         }
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
@@ -194,98 +177,8 @@ namespace Trade.It
 
         private void UpdateMarketCascadeLists()
         {
-            if (updatingMarketCascade)
-                return;
-
-            var definitions = SymbolDefinitionStore.Load();
-            if (definitions == null || !definitions.Any())
-                return;
-
-            updatingMarketCascade = true;
-            try
-            {
-                var exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                var allowedExchanges = definitions
-                    .Select(x => x.ExchangeTitle)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketExchangeCheckedListBox, allowedExchanges, exchanges);
-
-                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                var types = GetCheckedValues(marketTypeCheckedListBox);
-                var allowedTypes = definitions
-                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
-                    .Select(x => x.MarketType)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketTypeCheckedListBox, allowedTypes, types);
-
-                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                types = GetCheckedValues(marketTypeCheckedListBox);
-                var boards = GetCheckedValues(marketBoardCheckedListBox);
-                var allowedBoards = definitions
-                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
-                    .Where(x => MatchesSelection(x.MarketType, types))
-                    .Select(x => x.BoardType)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketBoardCheckedListBox, allowedBoards, boards);
-
-                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                types = GetCheckedValues(marketTypeCheckedListBox);
-                boards = GetCheckedValues(marketBoardCheckedListBox);
-                var assets = GetCheckedValues(marketAssetCheckedListBox);
-                var allowedAssets = definitions
-                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
-                    .Where(x => MatchesSelection(x.MarketType, types))
-                    .Where(x => MatchesSelection(x.BoardType, boards))
-                    .Select(x => x.AssetType)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketAssetCheckedListBox, allowedAssets, assets);
-
-                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                types = GetCheckedValues(marketTypeCheckedListBox);
-                boards = GetCheckedValues(marketBoardCheckedListBox);
-                assets = GetCheckedValues(marketAssetCheckedListBox);
-                var fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
-                var allowedFundTypes = definitions
-                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
-                    .Where(x => MatchesSelection(x.MarketType, types))
-                    .Where(x => MatchesSelection(x.BoardType, boards))
-                    .Where(x => MatchesSelection(x.AssetType, assets))
-                    .Select(x => x.FundType)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketFundTypeCheckedListBox, allowedFundTypes, fundTypes);
-
-                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-                types = GetCheckedValues(marketTypeCheckedListBox);
-                boards = GetCheckedValues(marketBoardCheckedListBox);
-                assets = GetCheckedValues(marketAssetCheckedListBox);
-                fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
-                var industryGroups = GetCheckedValues(marketIndustryGroupCheckedListBox);
-                var allowedIndustryGroups = definitions
-                    .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
-                    .Where(x => MatchesSelection(x.MarketType, types))
-                    .Where(x => MatchesSelection(x.BoardType, boards))
-                    .Where(x => MatchesSelection(x.AssetType, assets))
-                    .Where(x => MatchesSelection(x.FundType, fundTypes))
-                    .Select(x => x.IndustryGroup)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-                UpdateCheckedListBoxItems(marketIndustryGroupCheckedListBox, allowedIndustryGroups, industryGroups);
-            }
-            finally
-            {
-                updatingMarketCascade = false;
-            }
+            // The six market filters are intentionally independent.
+            // Selecting an item in one list must never change another list.
         }
 
         private static bool MatchesSelection(string? value, HashSet<string> selected)
