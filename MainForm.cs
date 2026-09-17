@@ -122,6 +122,7 @@ namespace Trade.It
             ClearCheckedListBox(marketAssetCheckedListBox);
             ClearCheckedListBox(marketFundTypeCheckedListBox);
             ClearCheckedListBox(marketIndustryGroupCheckedListBox);
+        }
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
         {
