@@ -52,6 +52,7 @@ namespace Trade.It
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
                     ApplyTradingStatusFilterWithWaitCursor();
+                    UpdateMarketFilterCounts(definition);
                 }
             };
 
@@ -76,6 +77,7 @@ namespace Trade.It
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
                     ApplyTradingStatusFilterWithWaitCursor();
+                    UpdateMarketFilterCounts(definition);
                 }
             };
             // The WinForms designer creates MainForm inside the design-tools process.
@@ -114,6 +116,9 @@ namespace Trade.It
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
+            stocksDataGridView.RowsAdded += (_, _) => UpdateStocksGridCount();
+            stocksDataGridView.RowsRemoved += (_, _) => UpdateStocksGridCount();
+            UpdateStocksGridCount();
 
         }
 
@@ -981,6 +986,7 @@ namespace Trade.It
             }
             var result = filtered.ToList();
             UpdateFilterCounts(result.Count, symbols.Count);
+            UpdateMarketFilterCounts(definition);
 
             internalPortfolioUpdate = true;
             try
@@ -1030,6 +1036,31 @@ namespace Trade.It
         }
 
         private static string NormalizeSymbolName(string value) => (value ?? string.Empty).Trim().Replace('ي', 'ی').Replace('ى', 'ی').Replace('ك', 'ک');
+
+        private void UpdateStocksGridCount()
+        {
+            if (stocksGridCountLabel != null)
+                stocksGridCountLabel.Text = $"نمادها: {ToPersianDigits(stocksDataGridView.Rows.Count.ToString())}";
+        }
+
+        private void UpdateMarketFilterCounts(PortfolioDefinition? definition)
+        {
+            if (marketCountLabel == null)
+                return;
+
+            if (definition == null)
+            {
+                marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
+                return;
+            }
+
+            var total = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Count();
+            var found = GetMarketFilteredSymbols(definition).Count;
+            marketCountLabel.Text = $"کل: {ToPersianDigits(total.ToString())}    پیدا شده: {ToPersianDigits(found.ToString())}";
+        }
 
         private void UpdateFilterCounts(int foundCount, int totalCount)
         {
