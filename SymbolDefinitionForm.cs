@@ -29,7 +29,7 @@ public sealed partial class SymbolDefinitionForm : Form
         marketComboBox.SelectedIndex = 0;
         boardComboBox.SelectedIndex = 0;
         assetComboBox.SelectedIndex = 0;
-        groupTextBox.SelectedIndex = 0;
+        groupComboBox.SelectedIndex = 0;
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -60,7 +60,7 @@ public sealed partial class SymbolDefinitionForm : Form
         SelectComboValue(marketComboBox, x.MarketType);
         SelectComboValue(boardComboBox, x.BoardType);
         SelectComboValue(assetComboBox, x.AssetType);
-        groupTextBox.Text = SymbolDefinitionRules.NormalizeText(x.IndustryGroupOrFundType);
+        groupComboBox.Text = SymbolDefinitionRules.NormalizeText(x.IndustryGroupOrFundType);
     }
 
     private static void SelectComboValue(ComboBox comboBox, string value)
@@ -84,7 +84,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Clear();
         nameTextBox.Clear();
         SetComboDefaults();
-        groupTextBox.SelectedIndex = 0;
+        groupComboBox.SelectedIndex = 0;
         symbolTextBox.Focus();
     }
 
@@ -129,7 +129,7 @@ public sealed partial class SymbolDefinitionForm : Form
             MarketType = market,
             BoardType = board,
             AssetType = asset,
-            IndustryGroupOrFundType = SymbolDefinitionRules.NormalizeText(groupTextBox.Text)
+            IndustryGroupOrFundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text)
         };
     }
 
