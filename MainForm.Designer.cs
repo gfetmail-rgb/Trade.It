@@ -161,6 +161,7 @@
             groupBox2 = new GroupBox();
             navigationButton = new Button();
             selectAllCheckBox = new CheckBox();
+            stocksGridCountLabel = new Label();
             selectNoneCheckBox = new CheckBox();
             speedLabel = new Label();
             refreshButton = new Button();
@@ -333,7 +334,6 @@
             marketExchangeComboBox = new ComboBox();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
-            stocksGridCountLabel = new Label();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -443,9 +443,9 @@
             // 
             // stocksTabPage
             // 
+            stocksTabPage.Controls.Add(stocksGridCountLabel);
             stocksTabPage.Controls.Add(groupBox2);
             stocksTabPage.Controls.Add(stocksDataGridView);
-            stocksTabPage.Controls.Add(stocksGridCountLabel);
             stocksTabPage.Controls.Add(portfolioComboBox);
             stocksTabPage.Controls.Add(portfolioLabel);
             stocksTabPage.Location = new Point(4, 34);
@@ -467,16 +467,16 @@
             groupBox2.Controls.Add(deleteButton);
             groupBox2.Controls.Add(newPortfolioButton);
             groupBox2.Controls.Add(navigationSpeedTextBox);
-            groupBox2.Location = new Point(8, 736);
+            groupBox2.Location = new Point(8, 748);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(338, 154);
+            groupBox2.Size = new Size(338, 131);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             // 
             // navigationButton
             // 
             navigationButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            navigationButton.Location = new Point(236, 17);
+            navigationButton.Location = new Point(236, 16);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(87, 34);
             navigationButton.TabIndex = 0;
@@ -486,17 +486,29 @@
             // 
             selectAllCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(227, 62);
+            selectAllCheckBox.Location = new Point(227, 51);
             selectAllCheckBox.Name = "selectAllCheckBox";
             selectAllCheckBox.Size = new Size(70, 29);
             selectAllCheckBox.TabIndex = 0;
             selectAllCheckBox.Text = "همه";
             // 
+            // stocksGridCountLabel
+            // 
+            stocksGridCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            stocksGridCountLabel.AutoSize = true;
+            stocksGridCountLabel.Location = new Point(148, 727);
+            stocksGridCountLabel.Name = "stocksGridCountLabel";
+            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
+            stocksGridCountLabel.Size = new Size(77, 25);
+            stocksGridCountLabel.TabIndex = 4;
+            stocksGridCountLabel.Text = "نمادها: ۰";
+            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // selectNoneCheckBox
             // 
             selectNoneCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             selectNoneCheckBox.AutoSize = true;
-            selectNoneCheckBox.Location = new Point(53, 62);
+            selectNoneCheckBox.Location = new Point(53, 51);
             selectNoneCheckBox.Name = "selectNoneCheckBox";
             selectNoneCheckBox.Size = new Size(101, 29);
             selectNoneCheckBox.TabIndex = 1;
@@ -506,7 +518,7 @@
             // 
             speedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(112, 20);
+            speedLabel.Location = new Point(112, 19);
             speedLabel.Name = "speedLabel";
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 2;
@@ -515,7 +527,7 @@
             // refreshButton
             // 
             refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            refreshButton.Location = new Point(114, 97);
+            refreshButton.Location = new Point(114, 86);
             refreshButton.Name = "refreshButton";
             refreshButton.Size = new Size(121, 34);
             refreshButton.TabIndex = 2;
@@ -524,7 +536,7 @@
             // deleteButton
             // 
             deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deleteButton.Location = new Point(250, 97);
+            deleteButton.Location = new Point(250, 86);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
             deleteButton.TabIndex = 3;
@@ -533,7 +545,7 @@
             // newPortfolioButton
             // 
             newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            newPortfolioButton.Location = new Point(24, 97);
+            newPortfolioButton.Location = new Point(24, 86);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(69, 34);
             newPortfolioButton.TabIndex = 1;
@@ -542,7 +554,7 @@
             // navigationSpeedTextBox
             // 
             navigationSpeedTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            navigationSpeedTextBox.Location = new Point(24, 19);
+            navigationSpeedTextBox.Location = new Point(24, 18);
             navigationSpeedTextBox.Name = "navigationSpeedTextBox";
             navigationSpeedTextBox.Size = new Size(87, 31);
             navigationSpeedTextBox.TabIndex = 3;
@@ -600,9 +612,9 @@
             // 
             portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            portfolioComboBox.Location = new Point(122, 6);
+            portfolioComboBox.Location = new Point(11, 6);
             portfolioComboBox.Name = "portfolioComboBox";
-            portfolioComboBox.Size = new Size(155, 33);
+            portfolioComboBox.Size = new Size(266, 33);
             portfolioComboBox.TabIndex = 2;
             // 
             // portfolioLabel
@@ -2412,18 +2424,6 @@
             refreshButtonPortfolio.Name = "refreshButtonPortfolio";
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
-            // 
-            // stocksGridCountLabel
-            // 
-            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(8, 6);
-            stocksGridCountLabel.Name = "stocksGridCountLabel";
-            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
-            stocksGridCountLabel.Size = new Size(108, 25);
-            stocksGridCountLabel.TabIndex = 4;
-            stocksGridCountLabel.Text = "نمادها: ۰";
-            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 
