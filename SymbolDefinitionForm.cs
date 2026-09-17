@@ -39,6 +39,7 @@ public sealed partial class SymbolDefinitionForm : Form
         try
         {
             symbolsDataGridView.Rows.Clear();
+            int rowNumber = 1;
             foreach (var item in SymbolDefinitionStore.Load().OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase))
             {
                 var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
@@ -47,13 +48,13 @@ public sealed partial class SymbolDefinitionForm : Form
                         ? item.IndustryGroup
                         : $"{item.IndustryGroup} / {item.FundType}";
 
-                int r = symbolsDataGridView.Rows.Add(item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
+                int r = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
                 symbolsDataGridView.Rows[r].Tag = item;
             }
             countLabel.Text = $"تعداد: {symbolsDataGridView.Rows.Count}";
             if (!string.IsNullOrWhiteSpace(selectSymbol))
                 foreach (DataGridViewRow r in symbolsDataGridView.Rows)
-                    if (string.Equals(Convert.ToString(r.Cells[0].Value), selectSymbol, StringComparison.OrdinalIgnoreCase)) { r.Selected = true; break; }
+                    if (string.Equals(Convert.ToString(r.Cells[1].Value), selectSymbol, StringComparison.OrdinalIgnoreCase)) { r.Selected = true; break; }
         }
         finally { loading = false; }
     }
