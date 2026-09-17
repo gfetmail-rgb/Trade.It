@@ -92,6 +92,9 @@ public sealed partial class SymbolDefinitionForm : Form
         comboBox.SelectedIndex = 0;
     }
 
+    private static string[] ComboValues(ComboBox comboBox) =>
+        comboBox.Items.Cast<object>().Select(x => SymbolDefinitionRules.NormalizeText(Convert.ToString(x) ?? "")).ToArray();
+
     private void ClearEditor()
     {
         symbolsDataGridView.ClearSelection();
@@ -110,25 +113,25 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolTextBox.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(exchangeComboBox.Text, SymbolDefinitionRules.Exchanges, out var exchange))
+        if (!SymbolDefinitionRules.IsAllowed(exchangeComboBox.Text, exchangeComboBox.Items, out var exchange))
         {
             MessageBox.Show(this, "عنوان بورس را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             exchangeComboBox.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(marketComboBox.Text, SymbolDefinitionRules.Markets, out var market))
+        if (!SymbolDefinitionRules.IsAllowed(marketComboBox.Text, marketComboBox.Items, out var market))
         {
             MessageBox.Show(this, "نوع بازار را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketComboBox.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(boardComboBox.Text, SymbolDefinitionRules.Boards, out var board))
+        if (!SymbolDefinitionRules.IsAllowed(boardComboBox.Text, boardComboBox.Items, out var board))
         {
             MessageBox.Show(this, "نوع تابلو را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             boardComboBox.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, SymbolDefinitionRules.Assets, out var asset))
+        if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, assetComboBox.Items, out var asset))
         {
             MessageBox.Show(this, "نوع دارایی را انتخاب کنید؛ در صورت نداشتن اطلاعات، «-» را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             assetComboBox.Focus();
@@ -204,7 +207,14 @@ public sealed partial class SymbolDefinitionForm : Form
         if (d.ShowDialog(this) != DialogResult.OK) return;
         try
         {
-            var imported = ExcelSymbolReader.Read(d.FileName, out var invalidRows, out var invalidDetails);
+            var imported = ExcelSymbolReader.Read(
+                d.FileName,
+                ComboValues(exchangeComboBox),
+                ComboValues(marketComboBox),
+                ComboValues(boardComboBox),
+                ComboValues(assetComboBox),
+                out var invalidRows,
+                out var invalidDetails);
             if (imported.Count == 0)
             {
                 var message = invalidRows > 0
@@ -276,10 +286,6 @@ public static class SymbolDefinitionStore
 internal static class SymbolDefinitionRules
 {
     public const string EmptyOption = "-";
-    public static readonly string[] Exchanges = { EmptyOption, "بورس تهران", "فرابورس ایران", "بورس کالا", "بورس انرژی" };
-    public static readonly string[] Markets = { EmptyOption, "بازار اول", "بازار دوم", "بازار پایه", "بازار شرکت‌های کوچک و متوسط", "بازار نوآفرین" };
-    public static readonly string[] Boards = { EmptyOption, "تابلوی اصلی", "تابلوی فرعی", "بازار اول", "بازار دوم", "پایه زرد", "پایه نارنجی", "پایه قرمز" };
-    public static readonly string[] Assets = { EmptyOption, "سهام", "صندوق" };
 
     public static string NormalizeText(string value)
     {
@@ -306,6 +312,20 @@ internal static class SymbolDefinitionRules
         x.IndustryGroupOrFundType = NormalizeText(x.IndustryGroupOrFundType);
     }
 
+    public static bool IsAllowed(string value, ComboBox.ObjectCollection items, out string standardValue) =>
+        IsAllowed(value, items.Cast<object>(), out standardValue);
+
+    public static bool IsAllowed(string value, IEnumerable<object> items, out string standardValue)
+    {
+        var normalized = NormalizeText(value);
+        if (string.IsNullOrWhiteSpace(normalized)) normalized = EmptyOption;
+        var match = items
+            .Select(x => NormalizeText(Convert.ToString(x) ?? ""))
+            .FirstOrDefault(x => string.Equals(x, normalized, StringComparison.Ordinal));
+        standardValue = match ?? "";
+        return match != null;
+    }
+
     public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
     {
         var normalized = NormalizeText(value);
@@ -320,7 +340,14 @@ internal static class ExcelSymbolReader
 {
     private static readonly string[] Headers = { "عنوان نماد", "نام نماد", "عنوان بورس", "نوع بازار", "نوع تابلو", "نوع دارایی (سهام یا صندوق)", "نوع صندوق", "گروه صنعت" };
 
-    public static List<SymbolDefinition> Read(string path, out int invalidRows, out string invalidDetails)
+    public static List<SymbolDefinition> Read(
+        string path,
+        IReadOnlyCollection<string> exchanges,
+        IReadOnlyCollection<string> markets,
+        IReadOnlyCollection<string> boards,
+        IReadOnlyCollection<string> assets,
+        out int invalidRows,
+        out string invalidDetails)
     {
         invalidRows = 0;
         invalidDetails = "";
@@ -372,10 +399,10 @@ internal static class ExcelSymbolReader
             if (string.IsNullOrWhiteSpace(board)) board = SymbolDefinitionRules.EmptyOption;
             if (string.IsNullOrWhiteSpace(asset)) asset = SymbolDefinitionRules.EmptyOption;
             var errors = new List<string>();
-            if (!SymbolDefinitionRules.IsAllowed(exchange, SymbolDefinitionRules.Exchanges, out var standardExchange)) errors.Add("عنوان بورس");
-            if (!SymbolDefinitionRules.IsAllowed(market, SymbolDefinitionRules.Markets, out var standardMarket)) errors.Add("نوع بازار");
-            if (!SymbolDefinitionRules.IsAllowed(board, SymbolDefinitionRules.Boards, out var standardBoard)) errors.Add("نوع تابلو");
-            if (!SymbolDefinitionRules.IsAllowed(asset, SymbolDefinitionRules.Assets, out var standardAsset)) errors.Add("نوع دارایی");
+            if (!SymbolDefinitionRules.IsAllowed(exchange, exchanges, out var standardExchange)) errors.Add($"عنوان بورس «{exchange}»");
+            if (!SymbolDefinitionRules.IsAllowed(market, markets, out var standardMarket)) errors.Add($"نوع بازار «{market}»");
+            if (!SymbolDefinitionRules.IsAllowed(board, boards, out var standardBoard)) errors.Add($"نوع تابلو «{board}»");
+            if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset)) errors.Add($"نوع دارایی «{asset}»");
             if (errors.Count > 0)
             {
                 invalidRows++;
