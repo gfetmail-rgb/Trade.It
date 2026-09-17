@@ -198,26 +198,33 @@ namespace Trade.It
                 return;
 
             var definitions = SymbolDefinitionStore.Load();
-            if (definitions == null || definitions.Count == 0)
+            if (definitions == null || !definitions.Any())
                 return;
-
-            var exchanges = GetCheckedValues(marketExchangeCheckedListBox);
-            var types = GetCheckedValues(marketTypeCheckedListBox);
-            var boards = GetCheckedValues(marketBoardCheckedListBox);
-            var assets = GetCheckedValues(marketAssetCheckedListBox);
-            var fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
-            var industryGroups = GetCheckedValues(marketIndustryGroupCheckedListBox);
 
             updatingMarketCascade = true;
             try
             {
+                var exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                var allowedExchanges = definitions
+                    .Select(x => x.ExchangeTitle)
+                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                UpdateCheckedListBoxItems(marketExchangeCheckedListBox, allowedExchanges, exchanges);
+
+                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                var types = GetCheckedValues(marketTypeCheckedListBox);
                 var allowedTypes = definitions
                     .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
                     .Select(x => x.MarketType)
                     .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
+                UpdateCheckedListBoxItems(marketTypeCheckedListBox, allowedTypes, types);
 
+                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                types = GetCheckedValues(marketTypeCheckedListBox);
+                var boards = GetCheckedValues(marketBoardCheckedListBox);
                 var allowedBoards = definitions
                     .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
                     .Where(x => MatchesSelection(x.MarketType, types))
@@ -225,7 +232,12 @@ namespace Trade.It
                     .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
+                UpdateCheckedListBoxItems(marketBoardCheckedListBox, allowedBoards, boards);
 
+                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                types = GetCheckedValues(marketTypeCheckedListBox);
+                boards = GetCheckedValues(marketBoardCheckedListBox);
+                var assets = GetCheckedValues(marketAssetCheckedListBox);
                 var allowedAssets = definitions
                     .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
                     .Where(x => MatchesSelection(x.MarketType, types))
@@ -234,7 +246,13 @@ namespace Trade.It
                     .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
+                UpdateCheckedListBoxItems(marketAssetCheckedListBox, allowedAssets, assets);
 
+                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                types = GetCheckedValues(marketTypeCheckedListBox);
+                boards = GetCheckedValues(marketBoardCheckedListBox);
+                assets = GetCheckedValues(marketAssetCheckedListBox);
+                var fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
                 var allowedFundTypes = definitions
                     .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
                     .Where(x => MatchesSelection(x.MarketType, types))
@@ -244,7 +262,14 @@ namespace Trade.It
                     .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
+                UpdateCheckedListBoxItems(marketFundTypeCheckedListBox, allowedFundTypes, fundTypes);
 
+                exchanges = GetCheckedValues(marketExchangeCheckedListBox);
+                types = GetCheckedValues(marketTypeCheckedListBox);
+                boards = GetCheckedValues(marketBoardCheckedListBox);
+                assets = GetCheckedValues(marketAssetCheckedListBox);
+                fundTypes = GetCheckedValues(marketFundTypeCheckedListBox);
+                var industryGroups = GetCheckedValues(marketIndustryGroupCheckedListBox);
                 var allowedIndustryGroups = definitions
                     .Where(x => MatchesSelection(x.ExchangeTitle, exchanges))
                     .Where(x => MatchesSelection(x.MarketType, types))
@@ -255,20 +280,6 @@ namespace Trade.It
                     .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
-
-                // The first list is the root of the cascade. Its available values
-                // come directly from the symbol-definition data.
-                var allowedExchanges = definitions
-                    .Select(x => x.ExchangeTitle)
-                    .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-                UpdateCheckedListBoxItems(marketExchangeCheckedListBox, allowedExchanges, exchanges);
-                UpdateCheckedListBoxItems(marketTypeCheckedListBox, allowedTypes, types);
-                UpdateCheckedListBoxItems(marketBoardCheckedListBox, allowedBoards, boards);
-                UpdateCheckedListBoxItems(marketAssetCheckedListBox, allowedAssets, assets);
-                UpdateCheckedListBoxItems(marketFundTypeCheckedListBox, allowedFundTypes, fundTypes);
                 UpdateCheckedListBoxItems(marketIndustryGroupCheckedListBox, allowedIndustryGroups, industryGroups);
             }
             finally
