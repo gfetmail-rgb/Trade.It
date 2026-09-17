@@ -593,7 +593,7 @@
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new Point(8, 3);
             portfolioComboBox.Name = "portfolioComboBox";
-            portfolioComboBox.Size = new Size(274, 33);
+            portfolioComboBox.Size = new Size(155, 33);
             portfolioComboBox.TabIndex = 2;
             // 
             // stocksGridCountLabel
@@ -601,10 +601,10 @@
             stocksGridCountLabel = new Label();
             stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(650, 6);
+            stocksGridCountLabel.Location = new Point(166, 6);
             stocksGridCountLabel.Name = "stocksGridCountLabel";
             stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
-            stocksGridCountLabel.Size = new Size(150, 25);
+            stocksGridCountLabel.Size = new Size(108, 25);
             stocksGridCountLabel.TabIndex = 4;
             stocksGridCountLabel.Text = "نمادها: ۰";
             stocksGridCountLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -765,7 +765,7 @@
             // 
             marketCountLabel = new Label();
             marketCountLabel.Font = new Font("Segoe UI", 9F);
-            marketCountLabel.Location = new Point(20, 250);
+            marketCountLabel.Location = new Point(20, 575);
             marketCountLabel.Name = "marketCountLabel";
             marketCountLabel.RightToLeft = RightToLeft.Yes;
             marketCountLabel.Size = new Size(400, 36);
