@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,5 +7,14 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="SymbolDefinitionForm.Designer.cs">
+      <DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="SymbolDefinitionForm.resx">
+      <DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
