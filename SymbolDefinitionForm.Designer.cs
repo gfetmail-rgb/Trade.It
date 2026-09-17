@@ -74,6 +74,7 @@ partial class SymbolDefinitionForm
         label11 = new Label();
         label21 = new Label();
         label22 = new Label();
+        label1 = new Label();
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
         // 
@@ -113,36 +114,36 @@ partial class SymbolDefinitionForm
         // 
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         boardComboBox.Items.AddRange(new object[] { "-", "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
-        boardComboBox.Location = new Point(92, 76);
+        boardComboBox.Location = new Point(75, 76);
         boardComboBox.Name = "boardComboBox";
-        boardComboBox.Size = new Size(180, 30);
+        boardComboBox.Size = new Size(176, 30);
         boardComboBox.TabIndex = 4;
         // 
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
-        assetComboBox.Location = new Point(447, 76);
+        assetComboBox.Location = new Point(359, 76);
         assetComboBox.Name = "assetComboBox";
-        assetComboBox.Size = new Size(210, 30);
+        assetComboBox.Size = new Size(175, 30);
         assetComboBox.TabIndex = 5;
         // 
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
-        groupComboBox.Location = new Point(872, 75);
+        groupComboBox.Items.AddRange(new object[] { "-","صندوق سهامی در سهام","صندوق سهامی اهرمی","صندوق سهامی بخشی", "صندوق سهامی مختلط", "صندوق سهامی درآمد ثابت", "", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+        groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
-        groupComboBox.Size = new Size(385, 30);
+        groupComboBox.Size = new Size(247, 30);
         groupComboBox.TabIndex = 6;
         // 
         // industryGroupComboBox
         // 
         industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        industryGroupComboBox.Items.AddRange(new object[] { "-" });
-        industryGroupComboBox.Location = new Point(300, 118);
+        industryGroupComboBox.Items.AddRange(new object[] { "-", "استخراج کانه های فلزی", "واسطه‌گریهای مالی و پولی", "مواد و محصولات دارویی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات شیمیایی" });
+        industryGroupComboBox.Location = new Point(1008, 75);
         industryGroupComboBox.Name = "industryGroupComboBox";
-        industryGroupComboBox.Size = new Size(250, 30);
+        industryGroupComboBox.Size = new Size(253, 30);
         industryGroupComboBox.TabIndex = 7;
         // 
         // newButton
@@ -340,7 +341,7 @@ partial class SymbolDefinitionForm
         // 
         // label11
         // 
-        label11.Location = new Point(351, 76);
+        label11.Location = new Point(262, 76);
         label11.Name = "label11";
         label11.Size = new Size(90, 30);
         label11.TabIndex = 20;
@@ -349,9 +350,9 @@ partial class SymbolDefinitionForm
         // 
         // label21
         // 
-        label21.Location = new Point(671, 75);
+        label21.Location = new Point(536, 75);
         label21.Name = "label21";
-        label21.Size = new Size(195, 30);
+        label21.Size = new Size(108, 30);
         label21.TabIndex = 21;
         label21.Text = "نوع صندوق";
         label21.TextAlign = ContentAlignment.MiddleRight;
@@ -365,9 +366,19 @@ partial class SymbolDefinitionForm
         label22.Text = "گروه صنعت";
         label22.TextAlign = ContentAlignment.MiddleRight;
         // 
+        // label1
+        // 
+        label1.Location = new Point(901, 76);
+        label1.Name = "label1";
+        label1.Size = new Size(101, 30);
+        label1.TabIndex = 23;
+        label1.Text = "گروه صنعت";
+        label1.TextAlign = ContentAlignment.MiddleRight;
+        // 
         // SymbolDefinitionForm
         // 
         ClientSize = new Size(1293, 700);
+        Controls.Add(label1);
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
         Controls.Add(exchangeComboBox);
@@ -403,4 +414,5 @@ partial class SymbolDefinitionForm
         ResumeLayout(false);
         PerformLayout();
     }
+    private Label label1;
 }
