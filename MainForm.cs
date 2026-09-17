@@ -1041,6 +1041,29 @@ namespace Trade.It
                 stocksGridCountLabel.Text = $"نمادها: {ToPersianDigits(stocksDataGridView.Rows.Count.ToString())}";
         }
 
+        private void UpdateFilterCounts()
+        {
+            var totalCount = 0;
+
+            if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
+                loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+            {
+                totalCount = (definition.Symbols ?? new List<string>())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Count();
+            }
+
+            var foundCount = stocksDataGridView.Rows.Count;
+            var text = $"کل: {ToPersianDigits(totalCount.ToString())}    پیدا شده: {ToPersianDigits(foundCount.ToString())}";
+
+            if (filterCountLabel != null)
+                filterCountLabel.Text = text;
+
+            if (marketCountLabel != null)
+                marketCountLabel.Text = text;
+        }
+
         private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
         {
             if (!HasVolumeColumn(definition)) return symbols;
