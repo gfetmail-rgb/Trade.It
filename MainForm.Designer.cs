@@ -445,6 +445,7 @@
             // 
             stocksTabPage.Controls.Add(groupBox2);
             stocksTabPage.Controls.Add(stocksDataGridView);
+            stocksTabPage.Controls.Add(stocksGridCountLabel);
             stocksTabPage.Controls.Add(portfolioComboBox);
             stocksTabPage.Controls.Add(portfolioLabel);
             stocksTabPage.Location = new Point(4, 34);
@@ -2414,9 +2415,9 @@
             // 
             // stocksGridCountLabel
             // 
-            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stocksGridCountLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(166, 6);
+            stocksGridCountLabel.Location = new Point(8, 6);
             stocksGridCountLabel.Name = "stocksGridCountLabel";
             stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
             stocksGridCountLabel.Size = new Size(108, 25);
