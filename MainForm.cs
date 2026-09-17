@@ -24,7 +24,6 @@ namespace Trade.It
         private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> appliedMarketFundTypes = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> appliedMarketIndustryGroups = new(StringComparer.OrdinalIgnoreCase);
-        private bool updatingMarketCascade;
 
         public MainForm()
         {
@@ -117,22 +116,12 @@ namespace Trade.It
             appliedMarketFundTypes.Clear();
             appliedMarketIndustryGroups.Clear();
 
-            updatingMarketCascade = true;
-            try
-            {
-                ClearCheckedListBox(marketExchangeCheckedListBox);
-                ClearCheckedListBox(marketTypeCheckedListBox);
-                ClearCheckedListBox(marketBoardCheckedListBox);
-                ClearCheckedListBox(marketAssetCheckedListBox);
-                ClearCheckedListBox(marketFundTypeCheckedListBox);
-                ClearCheckedListBox(marketIndustryGroupCheckedListBox);
-            }
-            finally
-            {
-                updatingMarketCascade = false;
-            }
-
-        }
+            ClearCheckedListBox(marketExchangeCheckedListBox);
+            ClearCheckedListBox(marketTypeCheckedListBox);
+            ClearCheckedListBox(marketBoardCheckedListBox);
+            ClearCheckedListBox(marketAssetCheckedListBox);
+            ClearCheckedListBox(marketFundTypeCheckedListBox);
+            ClearCheckedListBox(marketIndustryGroupCheckedListBox);
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
         {
@@ -175,48 +164,12 @@ namespace Trade.It
             }
         }
 
-        private void UpdateMarketCascadeLists()
-        {
-            // The six market filters are intentionally independent.
-            // Selecting an item in one list must never change another list.
-        }
-
         private static bool MatchesSelection(string? value, HashSet<string> selected)
         {
             if (selected.Count == 0)
                 return true;
 
             return selected.Contains(SymbolDefinitionRules.NormalizeText(value));
-        }
-
-        private static void UpdateCheckedListBoxItems(
-            CheckedListBox listBox,
-            IEnumerable<string?> allowedValues,
-            HashSet<string> selectedValues)
-        {
-            var allowed = allowedValues
-                .Where(x => !string.IsNullOrWhiteSpace(x) && x != "-")
-                .Select(SymbolDefinitionRules.NormalizeText)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            var selected = new HashSet<string>(
-                selectedValues.Where(allowed.Contains),
-                StringComparer.OrdinalIgnoreCase);
-
-            listBox.BeginUpdate();
-            try
-            {
-                listBox.Items.Clear();
-
-                foreach (var value in allowed)
-                    listBox.Items.Add(value, selected.Contains(value));
-            }
-            finally
-            {
-                listBox.EndUpdate();
-            }
         }
 
         private void InitializeFilterComboEmptyOptions()
