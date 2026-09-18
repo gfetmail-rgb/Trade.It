@@ -52,7 +52,7 @@ public sealed partial class SymbolDefinitionForm : Form
         foreach (var item in source.Items)
             target.Items.Add(item);
     }
-    
+
 
     private void SetComboDefaults()
     {
@@ -382,6 +382,11 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             MessageBox.Show(this, $"خواندن فایل Excel انجام نشد:\n{ex.Message}", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+
+    private void SymbolDefinitionForm_Load(object sender, EventArgs e)
+    {
+
     }
 }
 
