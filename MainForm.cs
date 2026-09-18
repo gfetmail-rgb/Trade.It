@@ -60,6 +60,8 @@ namespace Trade.It
             if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
 
+            LoadMarketFilterItemsFromSymbolDefinition();
+
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
             portfolioDefinitionMenuItem.Click += (_, _) =>
@@ -128,6 +130,19 @@ namespace Trade.It
         {
             for (var i = 0; i < listBox.Items.Count; i++)
                 listBox.SetItemCheckState(i, CheckState.Unchecked);
+        }
+
+        private void LoadMarketFilterItemsFromSymbolDefinition()
+        {
+            using var symbolDefinitionForm = new SymbolDefinitionForm();
+
+            symbolDefinitionForm.CopyFilterItemsTo(
+                marketExchangeCheckedListBox,
+                marketTypeCheckedListBox,
+                marketBoardCheckedListBox,
+                marketAssetCheckedListBox,
+                marketFundTypeCheckedListBox,
+                marketIndustryGroupCheckedListBox);
         }
 
         private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)

@@ -178,7 +178,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
         var fundType = x.FundType;
         var industryGroup = x.IndustryGroup;
-        if (string.IsNullOrWhiteSpace(fundType) && string.IsNullOrWhiteSpace(industryGroup) && !string.IsNullOrWhiteSpace(x.IndustryGroupOrFundType))
+        if (string.IsNullOrWhiteSpace(fundType) && !string.IsNullOrWhiteSpace(x.IndustryGroupOrFundType))
             fundType = x.IndustryGroupOrFundType;
 
         SelectComboValue(groupComboBox, fundType);
