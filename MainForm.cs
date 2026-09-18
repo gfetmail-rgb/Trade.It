@@ -153,7 +153,7 @@ namespace Trade.It
             {
                 var value = item?.ToString()?.Trim();
                 if (!string.IsNullOrWhiteSpace(value) && value != "-")
-                    target.Add(SymbolDefinitionRules.NormalizeText(value));
+                    target.Add(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value));
             }
         }
 
@@ -165,7 +165,7 @@ namespace Trade.It
             {
                 var value = item?.ToString()?.Trim();
                 if (!string.IsNullOrWhiteSpace(value) && value != "-")
-                    result.Add(SymbolDefinitionRules.NormalizeText(value));
+                    result.Add(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value));
             }
 
             return result;
@@ -175,7 +175,7 @@ namespace Trade.It
         {
             for (var i = 0; i < listBox.Items.Count; i++)
             {
-                var value = SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
+                var value = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
                 listBox.SetItemChecked(i, values.Contains(value));
             }
         }
@@ -185,7 +185,7 @@ namespace Trade.It
             if (selected.Count == 0)
                 return true;
 
-            return selected.Contains(SymbolDefinitionRules.NormalizeText(value));
+            return selected.Contains(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value));
         }
 
         private void InitializeFilterComboEmptyOptions()
@@ -479,15 +479,15 @@ namespace Trade.It
             if (!hasMarketFilter)
                 return portfolioSymbols;
 
-            var definitions = SymbolDefinitionStore.Load()
+            var definitions = SymbolDefinitionForm.SymbolDefinitionStore.Load()
                 .ToDictionary(
-                    x => SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                    x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
                     StringComparer.OrdinalIgnoreCase);
 
             return portfolioSymbols
                 .Where(symbol =>
                 {
-                    var key = SymbolDefinitionRules.NormalizeText(symbol);
+                    var key = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol);
 
                     if (!definitions.TryGetValue(key, out var item))
                         return false;
