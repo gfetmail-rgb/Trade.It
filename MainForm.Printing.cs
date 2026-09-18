@@ -109,7 +109,7 @@ namespace Trade.It
             const float rowHeight = 30;
 
             // The grid is printed in its current visual order.
-            var columnWidth = bounds.Width / 3f;
+            var columnWidth = bounds.Width / 3;
             var rowColumnRect = new RectangleF(bounds.Left, top, columnWidth, rowHeight);
             var symbolColumnRect = new RectangleF(bounds.Left + columnWidth, top, columnWidth, rowHeight);
             var dateColumnRect = new RectangleF(bounds.Left + columnWidth * 2, top, columnWidth, rowHeight);
