@@ -27,10 +27,7 @@ namespace Trade.It
 
         public MainForm()
         {
-            InitializeComponent();
-            EnsureMarketClassificationOptions();
-
-            marketApplyButton.Click += (_, _) =>
+            InitializeComponent();marketApplyButton.Click += (_, _) =>
             {
                 CopyCheckedItems(appliedMarketExchanges, marketExchangeCheckedListBox);
                 CopyCheckedItems(appliedMarketTypes, marketTypeCheckedListBox);
@@ -60,6 +57,8 @@ namespace Trade.It
             // Runtime-only initialization must not execute while the designer is loading.
             if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
+
+            LoadMarketFilterItemsFromSymbolDefinition();
 
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
 
