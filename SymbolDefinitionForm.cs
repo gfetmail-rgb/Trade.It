@@ -615,3 +615,122 @@ internal static class ExcelSymbolReader
 
     private static Stream Entry(ZipArchive zip, string path) => (zip.GetEntry(path) ?? throw new InvalidDataException($"فایل داخلی Excel پیدا نشد: {path}")).Open();
 }
+
+
+internal static class ExcelSymbolWriter
+{
+    private static readonly string[] Headers =
+        { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "نوع صندوق", "گروه صنعت" };
+
+    public static void Write(string path, IEnumerable<SymbolDefinition> items)
+    {
+        var list = items
+            .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        using var file = File.Create(path);
+        using var zip = new ZipArchive(file, ZipArchiveMode.Create);
+
+        WriteEntry(zip, "[Content_Types].xml",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Types xmlns=""http://schemas.openxmlformats.org/package/2006/content-types"">
+  <Default Extension=""rels"" ContentType=""application/vnd.openxmlformats-package.relationships+xml""/>
+  <Default Extension=""xml"" ContentType=""application/xml""/>
+  <Override PartName=""/xl/workbook.xml"" ContentType=""application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml""/>
+  <Override PartName=""/xl/worksheets/sheet1.xml"" ContentType=""application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml""/>
+</Types>");
+
+        WriteEntry(zip, "_rels/.rels",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Relationships xmlns=""http://schemas.openxmlformats.org/package/2006/relationships"">
+  <Relationship Id=""rId1"" Type=""http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"" Target=""xl/workbook.xml""/>
+</Relationships>");
+
+        WriteEntry(zip, "xl/workbook.xml",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<workbook xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"" xmlns:r=""http://schemas.openxmlformats.org/officeDocument/2006/relationships"">
+  <sheets>
+    <sheet name=""نمادها"" sheetId=""1"" r:id=""rId1""/>
+  </sheets>
+</workbook>");
+
+        WriteEntry(zip, "xl/_rels/workbook.xml.rels",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Relationships xmlns=""http://schemas.openxmlformats.org/package/2006/relationships"">
+  <Relationship Id=""rId1"" Type=""http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"" Target=""worksheets/sheet1.xml""/>
+</Relationships>");
+
+        WriteEntry(zip, "xl/worksheets/sheet1.xml", BuildWorksheet(list));
+    }
+
+    private static string BuildWorksheet(IReadOnlyList<SymbolDefinition> items)
+    {
+        XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        var sheetData = new XElement(ns + "sheetData");
+
+        sheetData.Add(new XElement(ns + "row",
+            new XAttribute("r", "1"),
+            Headers.Select((x, i) => Cell(ColumnName(i + 1) + "1", x))));
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            var x = items[i];
+            var values = new[]
+            {
+                x.SymbolTitle, x.Name, x.ExchangeTitle, x.MarketType,
+                x.BoardType, x.AssetType, x.FundType, x.IndustryGroup
+            };
+
+            sheetData.Add(new XElement(ns + "row",
+                new XAttribute("r", (i + 2).ToString()),
+                values.Select((v, c) => Cell(ColumnName(c + 1) + (i + 2), v))));
+        }
+
+        var cols = new XElement(ns + "cols",
+            Enumerable.Range(1, Headers.Length).Select(i =>
+                new XElement(ns + "col",
+                    new XAttribute("min", i),
+                    new XAttribute("max", i),
+                    new XAttribute("width", i == 2 ? 35 : 20),
+                    new XAttribute("customWidth", "1"))));
+
+        var worksheet = new XElement(ns + "worksheet",
+            cols,
+            sheetData);
+
+        return new XDocument(new XDeclaration("1.0", "UTF-8", "yes"), worksheet)
+            .ToString(SaveOptions.DisableFormatting);
+    }
+
+    private static XElement Cell(string reference, string? value)
+    {
+        XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        return new XElement(ns + "c",
+            new XAttribute("r", reference),
+            new XAttribute("t", "inlineStr"),
+            new XElement(ns + "is",
+                new XElement(ns + "t",
+                    new XAttribute(XNamespace.Xml + "space", "preserve"),
+                    value ?? string.Empty)));
+    }
+
+    private static string ColumnName(int number)
+    {
+        var result = string.Empty;
+        while (number > 0)
+        {
+            number--;
+            result = (char)('A' + number % 26) + result;
+            number /= 26;
+        }
+        return result;
+    }
+
+    private static void WriteEntry(ZipArchive zip, string name, string content)
+    {
+        var entry = zip.CreateEntry(name, CompressionLevel.Optimal);
+        using var stream = entry.Open();
+        using var writer = new StreamWriter(stream, new UTF8Encoding(false));
+        writer.Write(content);
+    }
+}
