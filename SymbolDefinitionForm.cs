@@ -8,10 +8,14 @@ namespace Trade.It;
 public sealed partial class SymbolDefinitionForm : Form
 {
     private bool loading;
+    private int sortColumnIndex = -1;
+    private SortOrder sortOrder = SortOrder.None;
 
     public SymbolDefinitionForm()
     {
         InitializeComponent();
+        foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
+            column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
         SetComboDefaults();
         LoadGrid();
         newButton.Click += (_, _) => ClearEditor();
@@ -19,8 +23,10 @@ public sealed partial class SymbolDefinitionForm : Form
         deleteButton.Click += (_, _) => DeleteCurrent();
         deleteAllButton.Click += (_, _) => DeleteAll();
         importButton.Click += (_, _) => ImportExcel();
+        exportButton.Click += (_, _) => ExportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
+        symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
     }
 
     internal void CopyFilterItemsTo(ComboBox exchange,ComboBox market,ComboBox board,ComboBox asset,ComboBox fundType,ComboBox industryGroup)
@@ -79,6 +85,86 @@ public sealed partial class SymbolDefinitionForm : Form
         }
         finally { loading = false; }
     }
+
+    private void SymbolsDataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+    {
+        if (e.ColumnIndex == rowNumberColumn.Index) return;
+
+        var nextOrder = sortColumnIndex == e.ColumnIndex && sortOrder == SortOrder.Ascending
+            ? SortOrder.Descending
+            : SortOrder.Ascending;
+
+        SortSymbolsGrid(e.ColumnIndex, nextOrder);
+    }
+
+    private void SortSymbolsGrid(int columnIndex, SortOrder order)
+    {
+        var selectedSymbol = symbolsDataGridView.SelectedRows.Count > 0
+            ? symbolsDataGridView.SelectedRows[0].Tag as SymbolDefinition
+            : null;
+
+        var items = symbolsDataGridView.Rows.Cast<DataGridViewRow>()
+            .Where(r => r.Tag is SymbolDefinition)
+            .Select(r => (SymbolDefinition)r.Tag!)
+            .ToList();
+
+        items.Sort((a, b) =>
+        {
+            var aKey = GetSortValue(a, columnIndex);
+            var bKey = GetSortValue(b, columnIndex);
+            var result = StringComparer.OrdinalIgnoreCase.Compare(aKey, bKey);
+            return order == SortOrder.Descending ? -result : result;
+        });
+
+        loading = true;
+        try
+        {
+            symbolsDataGridView.Rows.Clear();
+            int rowNumber = 1;
+            foreach (var item in items)
+            {
+                var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
+                    ? item.FundType
+                    : string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
+                        ? item.IndustryGroup
+                        : $"{item.IndustryGroup} / {item.FundType}";
+
+                int rowIndex = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
+                symbolsDataGridView.Rows[rowIndex].Tag = item;
+                if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
+                    symbolsDataGridView.Rows[rowIndex].Selected = true;
+            }
+
+            sortColumnIndex = columnIndex;
+            sortOrder = order;
+            foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
+                column.HeaderCell.SortGlyphDirection = column.Index == columnIndex ? order : SortOrder.None;
+        }
+        finally
+        {
+            loading = false;
+        }
+
+        if (selectedSymbol != null && symbolsDataGridView.SelectedRows.Count > 0)
+            LoadSelected();
+    }
+
+    private static string GetSortValue(SymbolDefinition item, int columnIndex) => columnIndex switch
+    {
+        1 => item.SymbolTitle ?? string.Empty,
+        2 => item.Name ?? string.Empty,
+        3 => item.ExchangeTitle ?? string.Empty,
+        4 => item.MarketType ?? string.Empty,
+        5 => item.BoardType ?? string.Empty,
+        6 => item.AssetType ?? string.Empty,
+        7 => string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
+            ? string.Empty
+            : item.FundType,
+        8 => string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
+            ? string.Empty
+            : item.IndustryGroup,
+        _ => string.Empty
+    };
 
     private void LoadSelected()
     {
@@ -228,6 +314,30 @@ public sealed partial class SymbolDefinitionForm : Form
         ClearEditor();
     }
 
+    private void ExportExcel()
+    {
+        using var d = new SaveFileDialog
+        {
+            Title = "ذخیره نمادها در فایل Excel",
+            Filter = "Excel (*.xlsx)|*.xlsx",
+            DefaultExt = "xlsx",
+            AddExtension = true,
+            FileName = $"Symbols_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+            OverwritePrompt = true
+        };
+        if (d.ShowDialog(this) != DialogResult.OK) return;
+
+        try
+        {
+            var items = SymbolDefinitionStore.Load();
+            ExcelSymbolWriter.Write(d.FileName, items);
+            MessageBox.Show(this, $"خروجی Excel با موفقیت ایجاد شد.\nتعداد نمادها: {items.Count}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"ایجاد فایل Excel انجام نشد:\n{ex.Message}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
     private void ImportExcel()
     {
         using var d = new OpenFileDialog { Title = "انتخاب فایل Excel نمادها", Filter = "Excel (*.xlsx)|*.xlsx", CheckFileExists = true };
@@ -504,4 +614,123 @@ internal static class ExcelSymbolReader
     }
 
     private static Stream Entry(ZipArchive zip, string path) => (zip.GetEntry(path) ?? throw new InvalidDataException($"فایل داخلی Excel پیدا نشد: {path}")).Open();
+}
+
+
+internal static class ExcelSymbolWriter
+{
+    private static readonly string[] Headers =
+        { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "نوع صندوق", "گروه صنعت" };
+
+    public static void Write(string path, IEnumerable<SymbolDefinition> items)
+    {
+        var list = items
+            .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        using var file = File.Create(path);
+        using var zip = new ZipArchive(file, ZipArchiveMode.Create);
+
+        WriteEntry(zip, "[Content_Types].xml",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Types xmlns=""http://schemas.openxmlformats.org/package/2006/content-types"">
+  <Default Extension=""rels"" ContentType=""application/vnd.openxmlformats-package.relationships+xml""/>
+  <Default Extension=""xml"" ContentType=""application/xml""/>
+  <Override PartName=""/xl/workbook.xml"" ContentType=""application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml""/>
+  <Override PartName=""/xl/worksheets/sheet1.xml"" ContentType=""application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml""/>
+</Types>");
+
+        WriteEntry(zip, "_rels/.rels",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Relationships xmlns=""http://schemas.openxmlformats.org/package/2006/relationships"">
+  <Relationship Id=""rId1"" Type=""http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"" Target=""xl/workbook.xml""/>
+</Relationships>");
+
+        WriteEntry(zip, "xl/workbook.xml",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<workbook xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"" xmlns:r=""http://schemas.openxmlformats.org/officeDocument/2006/relationships"">
+  <sheets>
+    <sheet name=""نمادها"" sheetId=""1"" r:id=""rId1""/>
+  </sheets>
+</workbook>");
+
+        WriteEntry(zip, "xl/_rels/workbook.xml.rels",
+            @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
+<Relationships xmlns=""http://schemas.openxmlformats.org/package/2006/relationships"">
+  <Relationship Id=""rId1"" Type=""http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"" Target=""worksheets/sheet1.xml""/>
+</Relationships>");
+
+        WriteEntry(zip, "xl/worksheets/sheet1.xml", BuildWorksheet(list));
+    }
+
+    private static string BuildWorksheet(IReadOnlyList<SymbolDefinition> items)
+    {
+        XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        var sheetData = new XElement(ns + "sheetData");
+
+        sheetData.Add(new XElement(ns + "row",
+            new XAttribute("r", "1"),
+            Headers.Select((x, i) => Cell(ColumnName(i + 1) + "1", x))));
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            var x = items[i];
+            var values = new[]
+            {
+                x.SymbolTitle, x.Name, x.ExchangeTitle, x.MarketType,
+                x.BoardType, x.AssetType, x.FundType, x.IndustryGroup
+            };
+
+            sheetData.Add(new XElement(ns + "row",
+                new XAttribute("r", (i + 2).ToString()),
+                values.Select((v, c) => Cell(ColumnName(c + 1) + (i + 2), v))));
+        }
+
+        var cols = new XElement(ns + "cols",
+            Enumerable.Range(1, Headers.Length).Select(i =>
+                new XElement(ns + "col",
+                    new XAttribute("min", i),
+                    new XAttribute("max", i),
+                    new XAttribute("width", i == 2 ? 35 : 20),
+                    new XAttribute("customWidth", "1"))));
+
+        var worksheet = new XElement(ns + "worksheet",
+            cols,
+            sheetData);
+
+        return new XDocument(new XDeclaration("1.0", "UTF-8", "yes"), worksheet)
+            .ToString(SaveOptions.DisableFormatting);
+    }
+
+    private static XElement Cell(string reference, string? value)
+    {
+        XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        return new XElement(ns + "c",
+            new XAttribute("r", reference),
+            new XAttribute("t", "inlineStr"),
+            new XElement(ns + "is",
+                new XElement(ns + "t",
+                    new XAttribute(XNamespace.Xml + "space", "preserve"),
+                    value ?? string.Empty)));
+    }
+
+    private static string ColumnName(int number)
+    {
+        var result = string.Empty;
+        while (number > 0)
+        {
+            number--;
+            result = (char)('A' + number % 26) + result;
+            number /= 26;
+        }
+        return result;
+    }
+
+    private static void WriteEntry(ZipArchive zip, string name, string content)
+    {
+        var entry = zip.CreateEntry(name, CompressionLevel.Optimal);
+        using var stream = entry.Open();
+        using var writer = new StreamWriter(stream, new UTF8Encoding(false));
+        writer.Write(content);
+    }
 }

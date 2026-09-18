@@ -51,6 +51,7 @@ partial class SymbolDefinitionForm
         deleteButton = new Button();
         deleteAllButton = new Button();
         importButton = new Button();
+        exportButton = new Button();
         closeButton = new Button();
         countLabel = new Label();
         symbolsDataGridView = new DataGridView();
@@ -120,7 +121,7 @@ partial class SymbolDefinitionForm
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
+        assetComboBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(359, 76);
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(175, 30);
@@ -129,7 +130,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی", "صندوق نیست" });
+        groupComboBox.Items.AddRange(new object[] { "صندوق نیست", "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
@@ -138,7 +139,7 @@ partial class SymbolDefinitionForm
         // industryGroupComboBox
         // 
         industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        industryGroupComboBox.Items.AddRange(new object[] { "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران", "سهام نیست" });
+        industryGroupComboBox.Items.AddRange(new object[] { "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
         industryGroupComboBox.Location = new Point(1008, 75);
         industryGroupComboBox.Name = "industryGroupComboBox";
         industryGroupComboBox.Size = new Size(253, 30);
@@ -195,13 +196,25 @@ partial class SymbolDefinitionForm
         toolTip1.SetToolTip(importButton, resources.GetString("importButton.ToolTip"));
         importButton.UseVisualStyleBackColor = true;
         // 
+        // exportButton
+        // 
+        exportButton.AutoSize = true;
+        exportButton.Location = new Point(280, 118);
+        exportButton.Name = "exportButton";
+        exportButton.Size = new Size(120, 35);
+        exportButton.TabIndex = 13;
+        exportButton.Text = "خروجی به Excel";
+        toolTip1.SetToolTip(exportButton, "تمام نمادهای ثبت‌شده را در یک فایل Excel جدید ذخیره می‌کند.");
+        exportButton.UseVisualStyleBackColor = true;
+        // 
+        // 
         // closeButton
         // 
         closeButton.AutoSize = true;
         closeButton.Location = new Point(1186, 118);
         closeButton.Name = "closeButton";
         closeButton.Size = new Size(75, 35);
-        closeButton.TabIndex = 13;
+        closeButton.TabIndex = 14;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
@@ -211,7 +224,7 @@ partial class SymbolDefinitionForm
         countLabel.Location = new Point(22, 131);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
-        countLabel.TabIndex = 14;
+        countLabel.TabIndex = 15;
         countLabel.Text = "تعداد: 0";
         // 
         // symbolsDataGridView
@@ -316,7 +329,7 @@ partial class SymbolDefinitionForm
         label00.Location = new Point(12, 18);
         label00.Name = "label00";
         label00.Size = new Size(57, 30);
-        label00.TabIndex = 15;
+        label00.TabIndex = 16;
         label00.Text = "نماد";
         label00.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -325,7 +338,7 @@ partial class SymbolDefinitionForm
         label10.Location = new Point(229, 19);
         label10.Name = "label10";
         label10.Size = new Size(90, 30);
-        label10.TabIndex = 16;
+        label10.TabIndex = 17;
         label10.Text = "نام";
         label10.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -334,7 +347,7 @@ partial class SymbolDefinitionForm
         label20.Location = new Point(701, 19);
         label20.Name = "label20";
         label20.Size = new Size(113, 30);
-        label20.TabIndex = 17;
+        label20.TabIndex = 18;
         label20.Text = "بورس";
         label20.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -343,7 +356,7 @@ partial class SymbolDefinitionForm
         label30.Location = new Point(997, 20);
         label30.Name = "label30";
         label30.Size = new Size(76, 30);
-        label30.TabIndex = 18;
+        label30.TabIndex = 19;
         label30.Text = "بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -352,7 +365,7 @@ partial class SymbolDefinitionForm
         label01.Location = new Point(22, 75);
         label01.Name = "label01";
         label01.Size = new Size(47, 30);
-        label01.TabIndex = 19;
+        label01.TabIndex = 20;
         label01.Text = "تابلو";
         label01.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -361,7 +374,7 @@ partial class SymbolDefinitionForm
         label11.Location = new Point(262, 76);
         label11.Name = "label11";
         label11.Size = new Size(90, 30);
-        label11.TabIndex = 20;
+        label11.TabIndex = 21;
         label11.Text = "دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -370,7 +383,7 @@ partial class SymbolDefinitionForm
         label21.Location = new Point(536, 75);
         label21.Name = "label21";
         label21.Size = new Size(108, 30);
-        label21.TabIndex = 21;
+        label21.TabIndex = 22;
         label21.Text = "نوع صندوق";
         label21.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -379,7 +392,7 @@ partial class SymbolDefinitionForm
         label22.Location = new Point(560, 118);
         label22.Name = "label22";
         label22.Size = new Size(130, 30);
-        label22.TabIndex = 22;
+        label22.TabIndex = 23;
         label22.Text = "گروه صنعت";
         label22.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -388,7 +401,7 @@ partial class SymbolDefinitionForm
         label1.Location = new Point(901, 76);
         label1.Name = "label1";
         label1.Size = new Size(101, 30);
-        label1.TabIndex = 23;
+        label1.TabIndex = 24;
         label1.Text = "گروه صنعت";
         label1.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -418,6 +431,7 @@ partial class SymbolDefinitionForm
         Controls.Add(deleteButton);
         Controls.Add(deleteAllButton);
         Controls.Add(importButton);
+        Controls.Add(exportButton);
         Controls.Add(closeButton);
         Controls.Add(countLabel);
         Controls.Add(symbolsDataGridView);
@@ -442,6 +456,7 @@ partial class SymbolDefinitionForm
     }
     private Label label1;
     private ToolTip toolTip1;
+    private Button exportButton;
     private DataGridViewTextBoxColumn rowNumberColumn;
     private DataGridViewTextBoxColumn symbolTitleColumn;
     private DataGridViewTextBoxColumn nameColumn;
