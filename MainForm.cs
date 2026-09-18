@@ -131,16 +131,17 @@ namespace Trade.It
                 listBox.SetItemCheckState(i, CheckState.Unchecked);
         }
 
-        private void EnsureMarketClassificationOptions()
+        private void LoadMarketFilterItemsFromSymbolDefinition()
         {
-            AddCheckedListOption(marketAssetCheckedListBox, "سهام نیست");
-            AddCheckedListOption(marketFundTypeCheckedListBox, "صندوق نیست");
-        }
+            using var symbolDefinitionForm = new SymbolDefinitionForm();
 
-        private static void AddCheckedListOption(CheckedListBox listBox, string value)
-        {
-            if (!listBox.Items.Cast<object>().Any(x => string.Equals(Convert.ToString(x), value, StringComparison.Ordinal)))
-                listBox.Items.Insert(0, value);
+            symbolDefinitionForm.CopyFilterItemsTo(
+                marketExchangeCheckedListBox,
+                marketTypeCheckedListBox,
+                marketBoardCheckedListBox,
+                marketAssetCheckedListBox,
+                marketFundTypeCheckedListBox,
+                marketIndustryGroupCheckedListBox);
         }
 
         private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)
