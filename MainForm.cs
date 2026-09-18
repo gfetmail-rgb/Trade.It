@@ -28,6 +28,7 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
+            EnsureMarketClassificationOptions();
 
             marketApplyButton.Click += (_, _) =>
             {
@@ -128,6 +129,18 @@ namespace Trade.It
         {
             for (var i = 0; i < listBox.Items.Count; i++)
                 listBox.SetItemCheckState(i, CheckState.Unchecked);
+        }
+
+        private void EnsureMarketClassificationOptions()
+        {
+            AddCheckedListOption(marketAssetCheckedListBox, "سهام نیست");
+            AddCheckedListOption(marketFundTypeCheckedListBox, "صندوق نیست");
+        }
+
+        private static void AddCheckedListOption(CheckedListBox listBox, string value)
+        {
+            if (!listBox.Items.Cast<object>().Any(x => string.Equals(Convert.ToString(x), value, StringComparison.Ordinal)))
+                listBox.Items.Insert(0, value);
         }
 
         private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)
