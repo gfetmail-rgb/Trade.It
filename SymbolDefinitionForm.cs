@@ -29,7 +29,13 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
     }
 
-    internal void CopyFilterItemsTo(ComboBox exchange,ComboBox market,ComboBox board,ComboBox asset,ComboBox fundType,ComboBox industryGroup)
+    internal void CopyFilterItemsTo(
+        CheckedListBox exchange,
+        CheckedListBox market,
+        CheckedListBox board,
+        CheckedListBox asset,
+        CheckedListBox fundType,
+        CheckedListBox industryGroup)
     {
         CopyItems(exchangeComboBox, exchange);
         CopyItems(marketComboBox, market);
@@ -39,14 +45,12 @@ public sealed partial class SymbolDefinitionForm : Form
         CopyItems(industryGroupComboBox, industryGroup);
     }
 
-    private static void CopyItems(ComboBox source, ComboBox target)
+    private static void CopyItems(ComboBox source, CheckedListBox target)
     {
         target.Items.Clear();
 
         foreach (var item in source.Items)
             target.Items.Add(item);
-
-        target.SelectedIndex = -1;
     }
     
 
