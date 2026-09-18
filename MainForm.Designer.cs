@@ -1872,7 +1872,7 @@
             marketFundTypeCheckedListBox.CheckOnClick = true;
             marketFundTypeCheckedListBox.FormattingEnabled = true;
             marketFundTypeCheckedListBox.HorizontalScrollbar = true;
-            marketFundTypeCheckedListBox.Items.AddRange(new object[] { "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+            marketFundTypeCheckedListBox.Items.AddRange(new object[] { "صندوق نیست", "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
             marketFundTypeCheckedListBox.Location = new Point(6, 532);
             marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
             marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1885,7 +1885,7 @@
             marketAssetCheckedListBox.CheckOnClick = true;
             marketAssetCheckedListBox.FormattingEnabled = true;
             marketAssetCheckedListBox.HorizontalScrollbar = true;
-            marketAssetCheckedListBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
+            marketAssetCheckedListBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
             marketAssetCheckedListBox.Location = new Point(6, 409);
             marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
             marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
