@@ -93,7 +93,7 @@ partial class SymbolDefinitionForm
         // exchangeComboBox
         // 
         exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        exchangeComboBox.Items.AddRange(new object[] { "-", "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
+        exchangeComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
         exchangeComboBox.Location = new Point(814, 20);
         exchangeComboBox.Name = "exchangeComboBox";
         exchangeComboBox.Size = new Size(180, 30);
@@ -102,7 +102,7 @@ partial class SymbolDefinitionForm
         // marketComboBox
         // 
         marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "-", "اول", "دوم", "پایه", "SME", "نوآفرین" });
+        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SME", "نوآفرین" });
         marketComboBox.Location = new Point(1075, 20);
         marketComboBox.Name = "marketComboBox";
         marketComboBox.Size = new Size(186, 30);
@@ -111,7 +111,7 @@ partial class SymbolDefinitionForm
         // boardComboBox
         // 
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        boardComboBox.Items.AddRange(new object[] { "-", "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
+        boardComboBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
         boardComboBox.Location = new Point(75, 76);
         boardComboBox.Name = "boardComboBox";
         boardComboBox.Size = new Size(176, 30);
@@ -120,7 +120,7 @@ partial class SymbolDefinitionForm
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "-", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
+        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(359, 76);
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(175, 30);
@@ -129,7 +129,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-", "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
@@ -138,7 +138,7 @@ partial class SymbolDefinitionForm
         // industryGroupComboBox
         // 
         industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        industryGroupComboBox.Items.AddRange(new object[] { "-", "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
+        industryGroupComboBox.Items.AddRange(new object[] { "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
         industryGroupComboBox.Location = new Point(1008, 75);
         industryGroupComboBox.Name = "industryGroupComboBox";
         industryGroupComboBox.Size = new Size(253, 30);
