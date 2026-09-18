@@ -23,6 +23,7 @@ public sealed partial class SymbolDefinitionForm : Form
         deleteButton.Click += (_, _) => DeleteCurrent();
         deleteAllButton.Click += (_, _) => DeleteAll();
         importButton.Click += (_, _) => ImportExcel();
+        exportButton.Click += (_, _) => ExportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
@@ -313,6 +314,30 @@ public sealed partial class SymbolDefinitionForm : Form
         ClearEditor();
     }
 
+    private void ExportExcel()
+    {
+        using var d = new SaveFileDialog
+        {
+            Title = "ذخیره نمادها در فایل Excel",
+            Filter = "Excel (*.xlsx)|*.xlsx",
+            DefaultExt = "xlsx",
+            AddExtension = true,
+            FileName = $"Symbols_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+            OverwritePrompt = true
+        };
+        if (d.ShowDialog(this) != DialogResult.OK) return;
+
+        try
+        {
+            var items = SymbolDefinitionStore.Load();
+            ExcelSymbolWriter.Write(d.FileName, items);
+            MessageBox.Show(this, $"خروجی Excel با موفقیت ایجاد شد.\nتعداد نمادها: {items.Count}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"ایجاد فایل Excel انجام نشد:\n{ex.Message}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
     private void ImportExcel()
     {
         using var d = new OpenFileDialog { Title = "انتخاب فایل Excel نمادها", Filter = "Excel (*.xlsx)|*.xlsx", CheckFileExists = true };
