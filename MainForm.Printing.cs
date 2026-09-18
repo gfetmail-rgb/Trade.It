@@ -43,8 +43,6 @@ namespace Trade.It
             symbolsPrintRowIndex = 0;
 
             symbolsPrintDocument?.Dispose();
-            symbolsPrintPreviewDialog?.Dispose();
-
             symbolsPrintDocument = new PrintDocument
             {
                 DocumentName = "فهرست نمادها و تاریخ آخرین معامله"
@@ -52,24 +50,23 @@ namespace Trade.It
             symbolsPrintDocument.DefaultPageSettings.Landscape = false;
             symbolsPrintDocument.PrintPage += SymbolsPrintDocument_PrintPage;
 
-            symbolsPrintPreviewDialog = new PrintPreviewDialog
+            using var printDialog = new PrintDialog
             {
                 Document = symbolsPrintDocument,
-                Width = 1000,
-                Height = 700,
-                StartPosition = FormStartPosition.CenterParent,
-                UseAntiAlias = true
+                UseEXDialog = true,
+                AllowCurrentPage = false,
+                AllowSelection = false,
+                AllowSomePages = false
             };
 
-            using (symbolsPrintPreviewDialog)
+            if (printDialog.ShowDialog(this) == DialogResult.OK)
             {
-                symbolsPrintPreviewDialog.ShowDialog(this);
+                symbolsPrintDocument.Print();
             }
 
             symbolsPrintDocument.PrintPage -= SymbolsPrintDocument_PrintPage;
             symbolsPrintDocument.Dispose();
             symbolsPrintDocument = null;
-            symbolsPrintPreviewDialog = null;
         }
 
         private void SymbolsPrintDocument_PrintPage(object? sender, PrintPageEventArgs e)
