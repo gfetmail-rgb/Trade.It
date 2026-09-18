@@ -120,7 +120,7 @@ partial class SymbolDefinitionForm
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
+        assetComboBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(359, 76);
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(175, 30);
@@ -129,7 +129,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "صندوق نیست", "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
