@@ -14,6 +14,8 @@ public sealed partial class SymbolDefinitionForm : Form
     public SymbolDefinitionForm()
     {
         InitializeComponent();
+        foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
+            column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
         SetComboDefaults();
         LoadGrid();
         newButton.Click += (_, _) => ClearEditor();
