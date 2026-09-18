@@ -53,7 +53,6 @@ public sealed partial class SymbolDefinitionForm : Form
             target.Items.Add(item);
     }
 
-
     private void SetComboDefaults()
     {
         exchangeComboBox.SelectedIndex = -1;
@@ -73,19 +72,28 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in SymbolDefinitionStore.Load().OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase))
             {
-                var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
-                    ? item.FundType
-                    : string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
-                        ? item.IndustryGroup
-                        : $"{item.IndustryGroup} / {item.FundType}";
+                int r = symbolsDataGridView.Rows.Add(
+                    rowNumber++,
+                    item.SymbolTitle,
+                    item.Name,
+                    item.ExchangeTitle,
+                    item.MarketType,
+                    item.BoardType,
+                    item.AssetType,
+                    item.FundType,
+                    item.IndustryGroup);
 
-                int r = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
                 symbolsDataGridView.Rows[r].Tag = item;
             }
+
             countLabel.Text = $"تعداد: {symbolsDataGridView.Rows.Count}";
             if (!string.IsNullOrWhiteSpace(selectSymbol))
                 foreach (DataGridViewRow r in symbolsDataGridView.Rows)
-                    if (string.Equals(Convert.ToString(r.Cells[1].Value), selectSymbol, StringComparison.OrdinalIgnoreCase)) { r.Selected = true; break; }
+                    if (string.Equals(Convert.ToString(r.Cells[1].Value), selectSymbol, StringComparison.OrdinalIgnoreCase))
+                    {
+                        r.Selected = true;
+                        break;
+                    }
         }
         finally { loading = false; }
     }
@@ -127,13 +135,17 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
-                var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
-                    ? item.FundType
-                    : string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
-                        ? item.IndustryGroup
-                        : $"{item.IndustryGroup} / {item.FundType}";
+                int rowIndex = symbolsDataGridView.Rows.Add(
+                    rowNumber++,
+                    item.SymbolTitle,
+                    item.Name,
+                    item.ExchangeTitle,
+                    item.MarketType,
+                    item.BoardType,
+                    item.AssetType,
+                    item.FundType,
+                    item.IndustryGroup);
 
-                int rowIndex = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
                 symbolsDataGridView.Rows[rowIndex].Tag = item;
                 if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
                     symbolsDataGridView.Rows[rowIndex].Selected = true;
@@ -335,13 +347,16 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             var items = SymbolDefinitionStore.Load();
             ExcelSymbolWriter.Write(d.FileName, items);
-            MessageBox.Show(this, $"خروجی Excel با موفقیت ایجاد شد.\nتعداد نمادها: {items.Count}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, $"خروجی Excel با موفقیت ایجاد شد.
+تعداد نمادها: {items.Count}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"ایجاد فایل Excel انجام نشد:\n{ex.Message}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, $"ایجاد فایل Excel انجام نشد:
+{ex.Message}", "خروجی به Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
+
     private void ImportExcel()
     {
         using var d = new OpenFileDialog { Title = "انتخاب فایل Excel نمادها", Filter = "Excel (*.xlsx)|*.xlsx", CheckFileExists = true };
@@ -359,7 +374,10 @@ public sealed partial class SymbolDefinitionForm : Form
             if (imported.Count == 0)
             {
                 var message = invalidRows > 0
-                    ? $"هیچ ردیف معتبری پیدا نشد.\nردیف‌های نامعتبر: {invalidRows}\n\n{invalidDetails}"
+                    ? $"هیچ ردیف معتبری پیدا نشد.
+ردیف‌های نامعتبر: {invalidRows}
+
+{invalidDetails}"
                     : "هیچ ردیف قابل استفاده‌ای پیدا نشد.";
                 MessageBox.Show(this, message, "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -374,19 +392,20 @@ public sealed partial class SymbolDefinitionForm : Form
             }
             SymbolDefinitionStore.Save(map.Values);
             LoadGrid();
-            var resultMessage = $"ورود انجام شد.\nجدید: {added}\nبه‌روزشده: {updated}";
-            if (invalidRows > 0) resultMessage += $"\nنامعتبر: {invalidRows}\n\n{invalidDetails}";
+            var resultMessage = $"ورود انجام شد.
+جدید: {added}
+به‌روزشده: {updated}";
+            if (invalidRows > 0) resultMessage += $"
+نامعتبر: {invalidRows}
+
+{invalidDetails}";
             MessageBox.Show(this, resultMessage, "ورود از Excel", MessageBoxButtons.OK, invalidRows > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"خواندن فایل Excel انجام نشد:\n{ex.Message}", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, $"خواندن فایل Excel انجام نشد:
+{ex.Message}", "ورود از Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-    }
-
-    private void SymbolDefinitionForm_Load(object sender, EventArgs e)
-    {
-
     }
 }
 
@@ -436,12 +455,12 @@ internal static class SymbolDefinitionRules
     public static string NormalizeText(string value)
     {
         return value
-            .Replace('\u064A', '\u06CC')
-            .Replace('\u0649', '\u06CC')
-            .Replace('\u0643', '\u06A9')
-            .Replace('\u200C', ' ')
-            .Replace('\u200D', ' ')
-            .Replace('\uFEFF', ' ')
+            .Replace('ي', 'ی')
+            .Replace('ى', 'ی')
+            .Replace('ك', 'ک')
+            .Replace('‌', ' ')
+            .Replace('‍', ' ')
+            .Replace('﻿', ' ')
             .Trim();
     }
 
@@ -624,7 +643,6 @@ internal static class ExcelSymbolReader
 
     private static Stream Entry(ZipArchive zip, string path) => (zip.GetEntry(path) ?? throw new InvalidDataException($"فایل داخلی Excel پیدا نشد: {path}")).Open();
 }
-
 
 internal static class ExcelSymbolWriter
 {
