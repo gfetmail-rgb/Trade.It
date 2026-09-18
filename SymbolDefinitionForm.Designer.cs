@@ -51,6 +51,7 @@ partial class SymbolDefinitionForm
         deleteButton = new Button();
         deleteAllButton = new Button();
         importButton = new Button();
+        exportButton = new Button();
         closeButton = new Button();
         countLabel = new Label();
         symbolsDataGridView = new DataGridView();
@@ -195,13 +196,25 @@ partial class SymbolDefinitionForm
         toolTip1.SetToolTip(importButton, resources.GetString("importButton.ToolTip"));
         importButton.UseVisualStyleBackColor = true;
         // 
+        // exportButton
+        // 
+        exportButton.AutoSize = true;
+        exportButton.Location = new Point(280, 118);
+        exportButton.Name = "exportButton";
+        exportButton.Size = new Size(120, 35);
+        exportButton.TabIndex = 13;
+        exportButton.Text = "خروجی به Excel";
+        toolTip1.SetToolTip(exportButton, "تمام نمادهای ثبت‌شده را در یک فایل Excel جدید ذخیره می‌کند.");
+        exportButton.UseVisualStyleBackColor = true;
+        // 
+        // 
         // closeButton
         // 
         closeButton.AutoSize = true;
         closeButton.Location = new Point(1186, 118);
         closeButton.Name = "closeButton";
         closeButton.Size = new Size(75, 35);
-        closeButton.TabIndex = 13;
+        closeButton.TabIndex = 14;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
@@ -211,7 +224,7 @@ partial class SymbolDefinitionForm
         countLabel.Location = new Point(22, 131);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
-        countLabel.TabIndex = 14;
+        countLabel.TabIndex = 15;
         countLabel.Text = "تعداد: 0";
         // 
         // symbolsDataGridView
@@ -316,7 +329,7 @@ partial class SymbolDefinitionForm
         label00.Location = new Point(12, 18);
         label00.Name = "label00";
         label00.Size = new Size(57, 30);
-        label00.TabIndex = 15;
+        label00.TabIndex = 16;
         label00.Text = "نماد";
         label00.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -325,7 +338,7 @@ partial class SymbolDefinitionForm
         label10.Location = new Point(229, 19);
         label10.Name = "label10";
         label10.Size = new Size(90, 30);
-        label10.TabIndex = 16;
+        label10.TabIndex = 17;
         label10.Text = "نام";
         label10.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -334,7 +347,7 @@ partial class SymbolDefinitionForm
         label20.Location = new Point(701, 19);
         label20.Name = "label20";
         label20.Size = new Size(113, 30);
-        label20.TabIndex = 17;
+        label20.TabIndex = 18;
         label20.Text = "بورس";
         label20.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -343,7 +356,7 @@ partial class SymbolDefinitionForm
         label30.Location = new Point(997, 20);
         label30.Name = "label30";
         label30.Size = new Size(76, 30);
-        label30.TabIndex = 18;
+        label30.TabIndex = 19;
         label30.Text = "بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -352,7 +365,7 @@ partial class SymbolDefinitionForm
         label01.Location = new Point(22, 75);
         label01.Name = "label01";
         label01.Size = new Size(47, 30);
-        label01.TabIndex = 19;
+        label01.TabIndex = 20;
         label01.Text = "تابلو";
         label01.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -361,7 +374,7 @@ partial class SymbolDefinitionForm
         label11.Location = new Point(262, 76);
         label11.Name = "label11";
         label11.Size = new Size(90, 30);
-        label11.TabIndex = 20;
+        label11.TabIndex = 21;
         label11.Text = "دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -370,7 +383,7 @@ partial class SymbolDefinitionForm
         label21.Location = new Point(536, 75);
         label21.Name = "label21";
         label21.Size = new Size(108, 30);
-        label21.TabIndex = 21;
+        label21.TabIndex = 22;
         label21.Text = "نوع صندوق";
         label21.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -379,7 +392,7 @@ partial class SymbolDefinitionForm
         label22.Location = new Point(560, 118);
         label22.Name = "label22";
         label22.Size = new Size(130, 30);
-        label22.TabIndex = 22;
+        label22.TabIndex = 23;
         label22.Text = "گروه صنعت";
         label22.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -388,7 +401,7 @@ partial class SymbolDefinitionForm
         label1.Location = new Point(901, 76);
         label1.Name = "label1";
         label1.Size = new Size(101, 30);
-        label1.TabIndex = 23;
+        label1.TabIndex = 24;
         label1.Text = "گروه صنعت";
         label1.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -418,6 +431,7 @@ partial class SymbolDefinitionForm
         Controls.Add(deleteButton);
         Controls.Add(deleteAllButton);
         Controls.Add(importButton);
+        Controls.Add(exportButton);
         Controls.Add(closeButton);
         Controls.Add(countLabel);
         Controls.Add(symbolsDataGridView);
@@ -442,6 +456,7 @@ partial class SymbolDefinitionForm
     }
     private Label label1;
     private ToolTip toolTip1;
+    private Button exportButton;
     private DataGridViewTextBoxColumn rowNumberColumn;
     private DataGridViewTextBoxColumn symbolTitleColumn;
     private DataGridViewTextBoxColumn nameColumn;
