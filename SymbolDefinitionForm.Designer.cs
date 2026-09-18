@@ -449,7 +449,6 @@ partial class SymbolDefinitionForm
         RightToLeftLayout = true;
         StartPosition = FormStartPosition.CenterParent;
         Text = "تعریف نمادها";
-        Load += SymbolDefinitionForm_Load;
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).EndInit();
         ResumeLayout(false);
         PerformLayout();
