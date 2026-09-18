@@ -28,6 +28,7 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
+            InitializeSymbolsPrintButton();
 
             marketApplyButton.Click += (_, _) =>
             {
