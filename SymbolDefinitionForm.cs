@@ -191,14 +191,8 @@ public sealed partial class SymbolDefinitionForm : Form
         SelectComboValue(marketComboBox, x.MarketType);
         SelectComboValue(boardComboBox, x.BoardType);
         SelectComboValue(assetComboBox, x.AssetType);
-
-        var fundType = x.FundType;
-        var industryGroup = x.IndustryGroup;
-        if (string.IsNullOrWhiteSpace(fundType) && !string.IsNullOrWhiteSpace(x.IndustryGroupOrFundType))
-            fundType = x.IndustryGroupOrFundType;
-
-        SelectComboValue(groupComboBox, fundType);
-        SelectComboValue(industryGroupComboBox, industryGroup);
+        SelectComboValue(groupComboBox, x.FundType);
+        SelectComboValue(industryGroupComboBox, x.IndustryGroup);
     }
 
     private static void SelectComboValue(ComboBox comboBox, string value)
@@ -389,6 +383,8 @@ public sealed partial class SymbolDefinitionForm : Form
                 ComboValues(marketComboBox),
                 ComboValues(boardComboBox),
                 ComboValues(assetComboBox),
+                ComboValues(groupComboBox),
+                ComboValues(industryGroupComboBox),
                 out var invalidRows,
                 out var invalidDetails);
 
@@ -585,6 +581,8 @@ public sealed partial class SymbolDefinitionForm : Form
             IReadOnlyCollection<string> markets,
             IReadOnlyCollection<string> boards,
             IReadOnlyCollection<string> assets,
+            IReadOnlyCollection<string> fundTypes,
+            IReadOnlyCollection<string> industryGroups,
             out int invalidRows,
             out string invalidDetails)
         {
@@ -629,21 +627,29 @@ public sealed partial class SymbolDefinitionForm : Form
                     if (details.Count < 20) details.Add($"ردیف {excelRow}: عنوان نماد خالی است.");
                     continue;
                 }
+
                 var exchange = V(Headers[2]);
                 var market = V(Headers[3]);
                 var board = V(Headers[4]);
                 var asset = V(Headers[5]);
+                var fundType = V(Headers[6]);
+                var industryGroup = V(Headers[7]);
+
                 var errors = new List<string>();
                 if (!SymbolDefinitionRules.IsAllowed(exchange, exchanges, out var standardExchange)) errors.Add($"عنوان بورس «{exchange}»");
                 if (!SymbolDefinitionRules.IsAllowed(market, markets, out var standardMarket)) errors.Add($"نوع بازار «{market}»");
                 if (!SymbolDefinitionRules.IsAllowed(board, boards, out var standardBoard)) errors.Add($"نوع تابلو «{board}»");
                 if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset)) errors.Add($"نوع دارایی «{asset}»");
+                if (!SymbolDefinitionRules.IsAllowed(fundType, fundTypes, out var standardFundType)) errors.Add($"نوع صندوق «{fundType}»");
+                if (!SymbolDefinitionRules.IsAllowed(industryGroup, industryGroups, out var standardIndustryGroup)) errors.Add($"گروه صنعت «{industryGroup}»");
+
                 if (errors.Count > 0)
                 {
                     invalidRows++;
                     if (details.Count < 20) details.Add($"ردیف {excelRow}: {string.Join("، ", errors)} نامعتبر است.");
                     continue;
                 }
+
                 result.Add(new SymbolDefinition
                 {
                     SymbolTitle = symbol,
@@ -652,8 +658,8 @@ public sealed partial class SymbolDefinitionForm : Form
                     MarketType = standardMarket,
                     BoardType = standardBoard,
                     AssetType = standardAsset,
-                    FundType = V(Headers[6]),
-                    IndustryGroup = V(Headers[7]),
+                    FundType = standardFundType,
+                    IndustryGroup = standardIndustryGroup,
                     IndustryGroupOrFundType = ""
                 });
             }
