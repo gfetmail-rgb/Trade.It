@@ -8,6 +8,8 @@ namespace Trade.It;
 public sealed partial class SymbolDefinitionForm : Form
 {
     private bool loading;
+    private int sortColumnIndex = -1;
+    private SortOrder sortOrder = SortOrder.None;
 
     public SymbolDefinitionForm()
     {
@@ -21,6 +23,7 @@ public sealed partial class SymbolDefinitionForm : Form
         importButton.Click += (_, _) => ImportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
+        symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
     }
 
     internal void CopyFilterItemsTo(ComboBox exchange,ComboBox market,ComboBox board,ComboBox asset,ComboBox fundType,ComboBox industryGroup)
@@ -79,6 +82,86 @@ public sealed partial class SymbolDefinitionForm : Form
         }
         finally { loading = false; }
     }
+
+    private void SymbolsDataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+    {
+        if (e.ColumnIndex == rowNumberColumn.Index) return;
+
+        var nextOrder = sortColumnIndex == e.ColumnIndex && sortOrder == SortOrder.Ascending
+            ? SortOrder.Descending
+            : SortOrder.Ascending;
+
+        SortSymbolsGrid(e.ColumnIndex, nextOrder);
+    }
+
+    private void SortSymbolsGrid(int columnIndex, SortOrder order)
+    {
+        var selectedSymbol = symbolsDataGridView.SelectedRows.Count > 0
+            ? symbolsDataGridView.SelectedRows[0].Tag as SymbolDefinition
+            : null;
+
+        var items = symbolsDataGridView.Rows.Cast<DataGridViewRow>()
+            .Where(r => r.Tag is SymbolDefinition)
+            .Select(r => (SymbolDefinition)r.Tag!)
+            .ToList();
+
+        items.Sort((a, b) =>
+        {
+            var aKey = GetSortValue(a, columnIndex);
+            var bKey = GetSortValue(b, columnIndex);
+            var result = StringComparer.OrdinalIgnoreCase.Compare(aKey, bKey);
+            return order == SortOrder.Descending ? -result : result;
+        });
+
+        loading = true;
+        try
+        {
+            symbolsDataGridView.Rows.Clear();
+            int rowNumber = 1;
+            foreach (var item in items)
+            {
+                var groupDisplay = string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
+                    ? item.FundType
+                    : string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
+                        ? item.IndustryGroup
+                        : $"{item.IndustryGroup} / {item.FundType}";
+
+                int rowIndex = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name, item.ExchangeTitle, item.MarketType, item.BoardType, item.AssetType, groupDisplay);
+                symbolsDataGridView.Rows[rowIndex].Tag = item;
+                if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
+                    symbolsDataGridView.Rows[rowIndex].Selected = true;
+            }
+
+            sortColumnIndex = columnIndex;
+            sortOrder = order;
+            foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
+                column.HeaderCell.SortGlyphDirection = column.Index == columnIndex ? order : SortOrder.None;
+        }
+        finally
+        {
+            loading = false;
+        }
+
+        if (selectedSymbol != null && symbolsDataGridView.SelectedRows.Count > 0)
+            LoadSelected();
+    }
+
+    private static string GetSortValue(SymbolDefinition item, int columnIndex) => columnIndex switch
+    {
+        1 => item.SymbolTitle ?? string.Empty,
+        2 => item.Name ?? string.Empty,
+        3 => item.ExchangeTitle ?? string.Empty,
+        4 => item.MarketType ?? string.Empty,
+        5 => item.BoardType ?? string.Empty,
+        6 => item.AssetType ?? string.Empty,
+        7 => string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
+            ? string.Empty
+            : item.FundType,
+        8 => string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
+            ? string.Empty
+            : item.IndustryGroup,
+        _ => string.Empty
+    };
 
     private void LoadSelected()
     {
