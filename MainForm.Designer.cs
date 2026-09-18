@@ -7,7 +7,6 @@
         private System.Windows.Forms.ToolStripMenuItem portfolioDefinitionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portfolioManagementMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeAllChartsMenuItem;
 
         private System.Windows.Forms.SplitContainer mainSplitContainer;
         private System.Windows.Forms.TabControl controlTabControl;
@@ -153,7 +152,6 @@
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
-            closeAllChartsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
             mainSplitContainer = new SplitContainer();
             controlTabControl = new TabControl();
@@ -367,7 +365,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, closeAllChartsMenuItem, symbolDefinitionMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -392,12 +390,6 @@
             settingsMenuItem.Name = "settingsMenuItem";
             settingsMenuItem.Size = new Size(94, 29);
             settingsMenuItem.Text = "تنظیمات";
-            // 
-            // closeAllChartsMenuItem
-            // 
-            closeAllChartsMenuItem.Name = "closeAllChartsMenuItem";
-            closeAllChartsMenuItem.Size = new Size(104, 29);
-            closeAllChartsMenuItem.Text = "بستن همه";
             // 
             // symbolDefinitionMenuItem
             // 
