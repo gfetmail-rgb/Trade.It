@@ -27,7 +27,6 @@ namespace Trade.It
             hideChartButton.Click += HideChartButton_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
-            closeAllChartsMenuItem.Click += (_, _) => CloseAllChartTabs();
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, true);
@@ -75,7 +74,6 @@ namespace Trade.It
             };
 
             chartTabControl.SelectedIndexChanged += ChartDrawingTabChanged;
-            closeAllChartsMenuItem.Click += (_, _) => ResetDrawingToolButtons();
             drawingStateTimer.Interval = 100;
             drawingStateTimer.Tick += DrawingStateTimer_Tick;
             drawingStateTimer.Start();
