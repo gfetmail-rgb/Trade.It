@@ -129,7 +129,7 @@ partial class SymbolDefinitionForm
         // groupComboBox
         // 
         groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "-", "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
+        groupComboBox.Items.AddRange(new object[] { "-", "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی" });
         groupComboBox.Location = new Point(653, 75);
         groupComboBox.Name = "groupComboBox";
         groupComboBox.Size = new Size(247, 30);
