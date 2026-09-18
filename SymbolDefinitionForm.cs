@@ -14,7 +14,6 @@ public sealed partial class SymbolDefinitionForm : Form
     public SymbolDefinitionForm()
     {
         InitializeComponent();
-        EnsureClassificationOptions();
         foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
             column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
         SetComboDefaults();
@@ -50,18 +49,6 @@ public sealed partial class SymbolDefinitionForm : Form
         target.SelectedIndex = -1;
     }
     
-
-    private void EnsureClassificationOptions()
-    {
-        AddComboOption(assetComboBox, "سهام نیست");
-        AddComboOption(groupComboBox, "صندوق نیست");
-    }
-
-    private static void AddComboOption(ComboBox comboBox, string value)
-    {
-        if (!comboBox.Items.Cast<object>().Any(x => string.Equals(Convert.ToString(x), value, StringComparison.Ordinal)))
-            comboBox.Items.Insert(0, value);
-    }
 
     private void SetComboDefaults()
     {
