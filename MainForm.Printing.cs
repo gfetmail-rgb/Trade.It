@@ -105,11 +105,11 @@ namespace Trade.It
                 titleRect,
                 titleFormat);
 
-            var top = bounds.Top + 55;
+            var top = bounds.Top + 55f;
             const float rowHeight = 30;
 
             // The grid is printed in its current visual order.
-            var columnWidth = bounds.Width / 3;
+            var columnWidth = bounds.Width / 3f;
             var rowColumnRect = new RectangleF(bounds.Left, top, columnWidth, rowHeight);
             var symbolColumnRect = new RectangleF(bounds.Left + columnWidth, top, columnWidth, rowHeight);
             var dateColumnRect = new RectangleF(bounds.Left + columnWidth * 2, top, columnWidth, rowHeight);
