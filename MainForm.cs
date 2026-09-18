@@ -27,7 +27,9 @@ namespace Trade.It
 
         public MainForm()
         {
-            InitializeComponent();marketApplyButton.Click += (_, _) =>
+            InitializeComponent();
+
+            marketApplyButton.Click += (_, _) =>
             {
                 CopyCheckedItems(appliedMarketExchanges, marketExchangeCheckedListBox);
                 CopyCheckedItems(appliedMarketTypes, marketTypeCheckedListBox);
