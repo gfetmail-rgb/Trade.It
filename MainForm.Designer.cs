@@ -1859,7 +1859,6 @@
             marketIndustryGroupCheckedListBox.CheckOnClick = true;
             marketIndustryGroupCheckedListBox.FormattingEnabled = true;
             marketIndustryGroupCheckedListBox.HorizontalScrollbar = true;
-            marketIndustryGroupCheckedListBox.Items.AddRange(new object[] { "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیکی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران" });
             marketIndustryGroupCheckedListBox.Location = new Point(6, 656);
             marketIndustryGroupCheckedListBox.Name = "marketIndustryGroupCheckedListBox";
             marketIndustryGroupCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1872,7 +1871,6 @@
             marketFundTypeCheckedListBox.CheckOnClick = true;
             marketFundTypeCheckedListBox.FormattingEnabled = true;
             marketFundTypeCheckedListBox.HorizontalScrollbar = true;
-            marketFundTypeCheckedListBox.Items.AddRange(new object[] { "صندوق نیست", "در سهام", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "املاک و مستغلات", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "صندوق کالایی طلا", "صندوق کالایی نقره", "صندوق کالایی انرژی", "صندوق کالایی کشاورزی" });
             marketFundTypeCheckedListBox.Location = new Point(6, 532);
             marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
             marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1885,7 +1883,6 @@
             marketAssetCheckedListBox.CheckOnClick = true;
             marketAssetCheckedListBox.FormattingEnabled = true;
             marketAssetCheckedListBox.HorizontalScrollbar = true;
-            marketAssetCheckedListBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
             marketAssetCheckedListBox.Location = new Point(6, 409);
             marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
             marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1898,7 +1895,6 @@
             marketBoardCheckedListBox.CheckOnClick = true;
             marketBoardCheckedListBox.FormattingEnabled = true;
             marketBoardCheckedListBox.HorizontalScrollbar = true;
-            marketBoardCheckedListBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
             marketBoardCheckedListBox.Location = new Point(9, 258);
             marketBoardCheckedListBox.Name = "marketBoardCheckedListBox";
             marketBoardCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1911,7 +1907,6 @@
             marketTypeCheckedListBox.CheckOnClick = true;
             marketTypeCheckedListBox.FormattingEnabled = true;
             marketTypeCheckedListBox.HorizontalScrollbar = true;
-            marketTypeCheckedListBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SME", "نوآفرین" });
             marketTypeCheckedListBox.Location = new Point(9, 134);
             marketTypeCheckedListBox.Name = "marketTypeCheckedListBox";
             marketTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
@@ -1924,7 +1919,6 @@
             marketExchangeCheckedListBox.CheckOnClick = true;
             marketExchangeCheckedListBox.FormattingEnabled = true;
             marketExchangeCheckedListBox.HorizontalScrollbar = true;
-            marketExchangeCheckedListBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
             marketExchangeCheckedListBox.Location = new Point(9, 11);
             marketExchangeCheckedListBox.Name = "marketExchangeCheckedListBox";
             marketExchangeCheckedListBox.RightToLeft = RightToLeft.Yes;
