@@ -566,9 +566,19 @@ namespace Trade.It
                 var y = c.Y + dy * level.Value;
                 g.DrawLine(pen, leftX, y, rightX, y);
                 var size = g.MeasureString(level.Text, SystemFonts.DefaultFont);
-                var labelX = Math.Min(rightX + 5f, plot.Right - size.Width - 2f);
-                if (labelX < leftX) labelX = leftX;
-                g.DrawString(level.Text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
+                var labelX = rightX + 5f;
+                if (labelX + size.Width > plot.Right)
+                    labelX = leftX - size.Width - 5f;
+                if (labelX < plot.Left)
+                    labelX = plot.Left + 2f;
+
+                var labelY = y - size.Height / 2f;
+                if (labelY < plot.Top)
+                    labelY = plot.Top;
+                else if (labelY + size.Height > plot.Bottom)
+                    labelY = plot.Bottom - size.Height;
+
+                g.DrawString(level.Text, SystemFonts.DefaultFont, labelBrush, labelX, labelY);
             }
 
             if (selected)
