@@ -40,7 +40,6 @@
         private System.Windows.Forms.Button snapshotChartButton;
         private System.Windows.Forms.Button fullScreenChartButton;
         private System.Windows.Forms.Button saveAnalysisButton;
-        private System.Windows.Forms.Button loadAnalysisButton;
         private System.Windows.Forms.Button drawTrendLineButton;
         private System.Windows.Forms.Button drawTrendChannelButton;
         private System.Windows.Forms.Button drawHorizontalDoubleButton;
@@ -315,7 +314,6 @@
             snapshotChartButton = new Button();
             fullScreenChartButton = new Button();
             saveAnalysisButton = new Button();
-            loadAnalysisButton = new Button();
             drawTrendLineButton = new Button();
             drawTrendChannelButton = new Button();
             drawHorizontalDoubleButton = new Button();
@@ -2062,7 +2060,6 @@
             chartToolbarPanel.Controls.Add(label10);
             chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
             chartToolbarPanel.Controls.Add(saveAnalysisButton);
-            chartToolbarPanel.Controls.Add(loadAnalysisButton);
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
@@ -2231,16 +2228,6 @@
             saveAnalysisButton.TabIndex = 11;
             saveAnalysisButton.Text = "ذخیره تحلیل";
             saveAnalysisButton.UseVisualStyleBackColor = true;
-            // 
-            // loadAnalysisButton
-            // 
-            loadAnalysisButton.Location = new Point(930, 7);
-            loadAnalysisButton.Name = "loadAnalysisButton";
-            loadAnalysisButton.RightToLeft = RightToLeft.Yes;
-            loadAnalysisButton.Size = new Size(70, 34);
-            loadAnalysisButton.TabIndex = 12;
-            loadAnalysisButton.Text = "بازیابی";
-            loadAnalysisButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendLineButton
             // 
