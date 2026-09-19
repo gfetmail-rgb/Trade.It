@@ -61,8 +61,7 @@ namespace Trade.It
             {
                 MessageBox.Show(
                     this,
-                    $"ذخیره تحلیل انجام نشد:
-{ex.Message}",
+                    $"ذخیره تحلیل انجام نشد:\n{ex.Message}",
                     "ذخیره تحلیل",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -116,8 +115,7 @@ namespace Trade.It
             {
                 MessageBox.Show(
                     this,
-                    $"بازیابی تحلیل انجام نشد:
-{ex.Message}",
+                    $"بازیابی تحلیل انجام نشد:\n{ex.Message}",
                     "بازیابی تحلیل",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
