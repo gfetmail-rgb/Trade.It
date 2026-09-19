@@ -133,7 +133,12 @@ namespace Trade.It
                 {
                     DashStyle = LineAppearanceSettings.CrosshairLineStyle
                 };
-                e.Graphics.DrawLine(fullCrosshairPen, crosshairX, plot.Top, crosshairX, volumePlot.Bottom);
+                e.Graphics.DrawLine(
+                    fullCrosshairPen,
+                    crosshairX,
+                    plot.Top,
+                    crosshairX,
+                    volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom);
             }
 
             for (var i = 0; i <= 5; i++)
@@ -171,7 +176,7 @@ namespace Trade.It
                     var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
                     var timeRect = new RectangleF(
                         Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
-                        volumePlot.Bottom + 2f,
+                        (volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom) + 2f,
                         timeSize.Width + 6f,
                         timeSize.Height + 4f);
 
