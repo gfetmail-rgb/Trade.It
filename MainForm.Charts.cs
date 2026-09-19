@@ -365,6 +365,7 @@ namespace Trade.It
                 chart.Visible = true;
                 SetToggleButtonState(hideChartButton, false);
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
+                SetIndicatorPanelButtonState(chart);
                 AttachChartToTab(chart, symbol);
             }
             catch (Exception ex)
