@@ -27,11 +27,101 @@ namespace Trade.It
             hideChartButton.Click += HideChartButton_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
+            saveAnalysisButton.Click += SaveAnalysisButton_Click;
+            loadAnalysisButton.Click += LoadAnalysisButton_Click;
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, true);
             SetToggleButtonState(hideChartButton, false);
             ApplyChartDisplayMode();
+        }
+
+        private void SaveAnalysisButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال انتخاب کنید.", "ذخیره تحلیل", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var document = chart.CreateAnalysisDocument();
+                ChartAnalysisStorage.Save(document);
+
+                MessageBox.Show(
+                    this,
+                    $"تحلیل نماد «{document.Symbol}» ذخیره شد.",
+                    "ذخیره تحلیل",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    $"ذخیره تحلیل انجام نشد:
+{ex.Message}",
+                    "ذخیره تحلیل",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadAnalysisButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال انتخاب کنید.", "بازیابی تحلیل", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var document = ChartAnalysisStorage.Load(chart.ChartSymbol);
+                if (document == null)
+                {
+                    MessageBox.Show(
+                        this,
+                        $"برای نماد «{chart.ChartSymbol}» تحلیل ذخیره‌شده‌ای پیدا نشد.",
+                        "بازیابی تحلیل",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                chart.RestoreAnalysisDocument(document);
+                SetToggleButtonState(gridButton, chart.GridVisible);
+                SetToggleButtonState(crossButton, chart.CrosshairVisible);
+
+                if (chart.ChartType == TradingChartType.Candlestick)
+                    chartTypeComboBox.SelectedIndex = 0;
+                else if (chart.ChartType == TradingChartType.Line)
+                    chartTypeComboBox.SelectedIndex = 1;
+                else
+                    chartTypeComboBox.SelectedIndex = 2;
+
+                ResetDrawingToolButtons();
+
+                MessageBox.Show(
+                    this,
+                    $"تحلیل نماد «{chart.ChartSymbol}» بازیابی شد.",
+                    "بازیابی تحلیل",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    $"بازیابی تحلیل انجام نشد:
+{ex.Message}",
+                    "بازیابی تحلیل",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void InitializeChartDrawingTools()
