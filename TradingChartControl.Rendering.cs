@@ -124,6 +124,8 @@ namespace Trade.It
             e.Graphics.Restore(chartState);
 
             var volumePlot = GetVolumePlotRectangle();
+            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
+
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
                 var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
@@ -133,9 +135,6 @@ namespace Trade.It
                 };
                 e.Graphics.DrawLine(fullCrosshairPen, crosshairX, plot.Top, crosshairX, volumePlot.Bottom);
             }
-
-            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
-            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
 
             for (var i = 0; i <= 5; i++)
             {
