@@ -58,6 +58,7 @@ namespace Trade.It
         private int draggingDrawingIndex = -1;
         private int draggingHandle = 0;
         private Point draggingLastPoint;
+        private string chartSymbol = string.Empty;
 
         private sealed class ChartDrawing
         {
@@ -81,8 +82,9 @@ namespace Trade.It
             TabStop = true;
         }
 
-        public void SetData(IEnumerable<TradingChartPoint> data)
+        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null)
         {
+            chartSymbol = symbol?.Trim() ?? string.Empty;
             points.Clear();
             points.AddRange(data.OrderBy(x => x.Date));
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
@@ -100,6 +102,8 @@ namespace Trade.It
             draggingHandle = 0;
             Invalidate();
         }
+
+        public string ChartSymbol => chartSymbol;
 
         public void SetChartType(TradingChartType type) { chartType = type; Invalidate(); }
         public void ToggleGrid() { showGrid = !showGrid; Invalidate(); }
