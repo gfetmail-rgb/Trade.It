@@ -156,10 +156,10 @@
             mainSplitContainer = new SplitContainer();
             controlTabControl = new TabControl();
             stocksTabPage = new TabPage();
+            stocksGridCountLabel = new Label();
             groupBox2 = new GroupBox();
             navigationButton = new Button();
             selectAllCheckBox = new CheckBox();
-            stocksGridCountLabel = new Label();
             selectNoneCheckBox = new CheckBox();
             speedLabel = new Label();
             refreshButton = new Button();
@@ -448,6 +448,18 @@
             stocksTabPage.TabIndex = 0;
             stocksTabPage.Text = "سبد";
             // 
+            // stocksGridCountLabel
+            // 
+            stocksGridCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            stocksGridCountLabel.AutoSize = true;
+            stocksGridCountLabel.Location = new Point(148, 727);
+            stocksGridCountLabel.Name = "stocksGridCountLabel";
+            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
+            stocksGridCountLabel.Size = new Size(77, 25);
+            stocksGridCountLabel.TabIndex = 4;
+            stocksGridCountLabel.Text = "نمادها: ۰";
+            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -483,18 +495,6 @@
             selectAllCheckBox.Size = new Size(70, 29);
             selectAllCheckBox.TabIndex = 0;
             selectAllCheckBox.Text = "همه";
-            // 
-            // stocksGridCountLabel
-            // 
-            stocksGridCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(148, 727);
-            stocksGridCountLabel.Name = "stocksGridCountLabel";
-            stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
-            stocksGridCountLabel.Size = new Size(77, 25);
-            stocksGridCountLabel.TabIndex = 4;
-            stocksGridCountLabel.Text = "نمادها: ۰";
-            stocksGridCountLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // selectNoneCheckBox
             // 
@@ -1929,7 +1929,7 @@
             // 
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label18.AutoSize = true;
-            label18.Location = new Point(244, 694);
+            label18.Location = new Point(243, 694);
             label18.Name = "label18";
             label18.Size = new Size(106, 25);
             label18.TabIndex = 5;
@@ -1970,7 +1970,7 @@
             // 
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Location = new Point(246, 581);
+            label14.Location = new Point(245, 581);
             label14.Name = "label14";
             label14.Size = new Size(103, 25);
             label14.TabIndex = 1;
@@ -2504,12 +2504,6 @@
         private Label label11;
         private Label label10;
         private ToolStripMenuItem symbolDefinitionMenuItem;
-        private Label label18;
-        private Label label17;
-        private Label label16;
-        private Label label15;
-        private Label label14;
-        private Label label13;
         private ComboBox marketTypeComboBox;
         private ComboBox marketBoardComboBox;
         private ComboBox marketAssetComboBox;
@@ -2524,5 +2518,11 @@
         private CheckedListBox marketIndustryGroupCheckedListBox;
         private Button marketClearButton;
         private Button marketApplyButton;
+        private Label label18;
+        private Label label17;
+        private Label label16;
+        private Label label15;
+        private Label label14;
+        private Label label13;
     }
 }

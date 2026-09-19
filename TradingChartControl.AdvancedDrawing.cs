@@ -419,19 +419,23 @@ namespace Trade.It
             var left = Math.Min(start.X, end.X);
             var right = Math.Max(start.X, end.X);
             var height = end.Y - start.Y;
+
             // Point 1 is the 100% anchor and point 2 is the 0% anchor.
             // Values above 100% are Fibonacci extensions beyond point 1.
             var levels = ChartAppearanceSettings.GetEnabledFibonacciLevels();
+
             foreach (var level in levels)
             {
-                var y = start.Y + height * (1f - level);
+                var y = start.Y + height * (1f - level.Value);
                 g.DrawLine(pen, left, y, right, y);
-                var text = ChartAppearanceSettings.GetFibonacciLevelText(level);
-                var size = g.MeasureString(text, SystemFonts.DefaultFont);
-                var labelX = right + 4f;
-                if (labelX + size.Width > g.VisibleClipBounds.Right)
-                    labelX = left + 4f;
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
+
+                var text = level.Text;
+
+                var textSize = g.MeasureString(text, SystemFonts.DefaultFont);
+                var textX = right - textSize.Width - 4f;
+                var textY = y - textSize.Height / 2f;
+
+                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, textX, textY);
             }
         }
 
