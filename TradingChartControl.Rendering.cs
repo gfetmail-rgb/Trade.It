@@ -177,7 +177,7 @@ namespace Trade.It
                 ? $"O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
                 : $"{chartSymbol}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
             using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
-                e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 4f, 2f);
+                e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
         }
