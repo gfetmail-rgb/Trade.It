@@ -211,7 +211,7 @@ namespace Trade.It
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
             SetColorButton(button, dialog.Color);
             if (crosshair) LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
-            else LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineStyle);
+            else LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
             RefreshOwnerCharts();
         }
 
@@ -235,7 +235,7 @@ namespace Trade.It
             RefreshOwnerCharts();
         }
 
-        private static void SetColorButton(Button button, Color color)
+        private void RefreshOwnerCharts()\n        {\n            if (Owner is MainForm mainForm && !mainForm.IsDisposed) mainForm.Refresh();\n        }\n\n        private static void SetColorButton(Button button, Color color)
         {
             button.BackColor = color;
             button.ForeColor = color.GetBrightness() < 0.5f ? Color.White : Color.Black;
