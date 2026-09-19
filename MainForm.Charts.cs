@@ -242,7 +242,7 @@ namespace Trade.It
                 chartInfoLabel.Text = $"{symbol}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
                 var chart = GetOrCreateChart(symbol);
-                chart.SetData(points);
+                chart.SetData(points, symbol);
                 chart.SetChartType(GetSelectedChartType());
                 chart.Visible = true;
                 SetToggleButtonState(hideChartButton, false);
