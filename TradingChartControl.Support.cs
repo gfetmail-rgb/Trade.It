@@ -237,23 +237,17 @@ namespace Trade.It
             var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
             var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
-            var levels = new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f };
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            foreach (var level in levels)
+            foreach (var level in ChartAppearanceSettings.GetEnabledFibonacciExtensionLevels())
             {
-                var y = c.Y + dy * level;
+                var y = c.Y + dy * level.Value;
                 g.DrawLine(pen, leftX, y, rightX, y);
-                var text = level switch
-                {
-                    0f => "0%", 0.382f => "38.2%", 0.618f => "61.8%", 1f => "100%",
-                    1.272f => "127.2%", 1.618f => "161.8%", 2f => "200%", _ => "261.8%"
-                };
-                var size = g.MeasureString(text, SystemFonts.DefaultFont);
+                var size = g.MeasureString(level.Text, SystemFonts.DefaultFont);
                 var labelX = rightX + 5f;
                 if (labelX + size.Width > plot.Right)
                     labelX = Math.Max(plot.Left, leftX - size.Width - 5f);
-                g.DrawString(text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
+                g.DrawString(level.Text, SystemFonts.DefaultFont, labelBrush, labelX, y - size.Height / 2f);
             }
             if (selected)
             {
@@ -273,9 +267,9 @@ namespace Trade.It
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
-            foreach (var level in new[] { 0f, 0.382f, 0.618f, 1f, 1.272f, 1.618f, 2f, 2.618f })
+            foreach (var level in ChartAppearanceSettings.GetEnabledFibonacciExtensionLevels())
             {
-                var y = c.Y + dy * level;
+                var y = c.Y + dy * level.Value;
                 if (y >= plot.Top - 1 && y <= plot.Bottom + 1)
                     g.DrawLine(pen, leftX, y, rightX, y);
             }
