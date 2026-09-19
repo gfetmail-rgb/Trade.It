@@ -570,6 +570,11 @@ namespace Trade.It
             var right = Math.Max(left + 1, Width - 15);
             var overallBottom = Math.Max(top + 1, Height - 35);
 
+            // وقتی پنل اندیکاتور/حجم مخفی است، چارت قیمت باید تمام فضای
+            // آزاد تا انتهای ناحیه چارت را در اختیار داشته باشد.
+            if (!volumePanelVisible)
+                return Rectangle.FromLTRB(left, top, right, overallBottom);
+
             var gap = Math.Clamp(volumePanelGap, 2, 30);
             var totalHeight = Math.Max(120, overallBottom - top);
             var volumeHeight = Math.Clamp(
@@ -586,6 +591,9 @@ namespace Trade.It
 
         private Rectangle GetVolumePlotRectangle()
         {
+            if (!volumePanelVisible)
+                return Rectangle.Empty;
+
             var pricePlot = GetPlotRectangle();
             var left = pricePlot.Left;
             var right = pricePlot.Right;
