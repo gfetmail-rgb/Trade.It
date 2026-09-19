@@ -11,6 +11,8 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
+        private readonly List<CheckBox> fibonacciLevelCheckBoxes = new();
+        private GroupBox? fibonacciLevelsGroupBox;
 
         public ChartDisplayMode ChartDisplayMode
         {
@@ -51,10 +53,78 @@ namespace Trade.It
             InitialVisibleCandleCount = initialVisibleCandleCount;
             LoadColorButtons();
             InitializeLineSettingsControls();
+            InitializeFibonacciLevelControls();
             AttachColorEvents();
             AttachLineSettingsEvents();
             okButton.Click += okButton_Click;
             cancelButton.Click += cancelButton_Click;
+        }
+
+        private void InitializeFibonacciLevelControls()
+        {
+            fibonacciLevelsGroupBox = new GroupBox
+            {
+                Text = "سطوح فیبوناچی (مشترک برای هر دو فیبو)",
+                RightToLeft = RightToLeft.Yes,
+                Location = new Point(16, 702),
+                Size = new Size(760, 160),
+                TabStop = false
+            };
+
+            var levels = ChartAppearanceSettings.GetAllFibonacciLevels();
+            for (var i = 0; i < levels.Count; i++)
+            {
+                var row = i / 5;
+                var column = i % 5;
+                var checkBox = new CheckBox
+                {
+                    AutoSize = true,
+                    Text = levels[i].Text,
+                    RightToLeft = RightToLeft.Yes,
+                    Location = new Point(585 - column * 145, 35 + row * 42),
+                    Size = new Size(120, 28),
+                    Checked = (ChartAppearanceSettings.FibonacciLevelsMask & (1 << i)) != 0,
+                    TabIndex = i
+                };
+                fibonacciLevelCheckBoxes.Add(checkBox);
+                fibonacciLevelsGroupBox.Controls.Add(checkBox);
+            }
+
+            var selectAllButton = new Button
+            {
+                Text = "انتخاب همه",
+                Location = new Point(585, 115),
+                Size = new Size(80, 32)
+            };
+            var clearAllButton = new Button
+            {
+                Text = "حذف همه",
+                Location = new Point(495, 115),
+                Size = new Size(80, 32)
+            };
+            selectAllButton.Click += (_, _) => fibonacciLevelCheckBoxes.ForEach(x => x.Checked = true);
+            clearAllButton.Click += (_, _) => fibonacciLevelCheckBoxes.ForEach(x => x.Checked = false);
+            fibonacciLevelsGroupBox.Controls.Add(selectAllButton);
+            fibonacciLevelsGroupBox.Controls.Add(clearAllButton);
+
+            Controls.Add(fibonacciLevelsGroupBox);
+            fibonacciLevelsGroupBox.BringToFront();
+
+            crosshairGridGroupBox.Location = new Point(16, 872);
+            okButton.Location = new Point(276, 1048);
+            cancelButton.Location = new Point(389, 1048);
+            ClientSize = new Size(792, 1107);
+        }
+
+        private int GetSelectedFibonacciLevelsMask()
+        {
+            var mask = 0;
+            for (var i = 0; i < fibonacciLevelCheckBoxes.Count; i++)
+            {
+                if (fibonacciLevelCheckBoxes[i].Checked)
+                    mask |= 1 << i;
+            }
+            return mask;
         }
 
         private void InitializeLineSettingsControls()
@@ -218,6 +288,13 @@ namespace Trade.It
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
             ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
             ChartAppearanceSettings.SetInitialVisibleCandleCount(InitialVisibleCandleCount);
+            var fibonacciMask = GetSelectedFibonacciLevelsMask();
+            if (fibonacciMask == 0)
+            {
+                MessageBox.Show(this, "حداقل یک سطح فیبوناچی را انتخاب کنید.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            ChartAppearanceSettings.SetFibonacciLevelsMask(fibonacciMask);
             ChartAppearanceSettings.Save();
             LineAppearanceSettings.Save();
             DialogResult = DialogResult.OK;
