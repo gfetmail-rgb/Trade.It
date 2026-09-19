@@ -367,8 +367,8 @@ namespace Trade.It
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
+                var isNewChart = !chartControls.ContainsKey(symbol);
                 var chart = GetOrCreateChart(symbol);
-                var isNewChart = chart.DataPointCount == 0;
                 chart.SetData(points, symbol);
                 chart.SetChartType(GetSelectedChartType());
 
