@@ -88,6 +88,7 @@ namespace Trade.It
             selectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged;
             selectNoneCheckBox.CheckedChanged += SelectNoneCheckBox_CheckedChanged;
             stocksDataGridView.CurrentCellDirtyStateChanged += StocksDataGridView_CurrentCellDirtyStateChanged;
+            stocksDataGridView.KeyDown += StocksDataGridView_KeyDownForChartNavigation;
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             Load += MainForm_Portfolios_Load;
             fullScreenChartButton.Click += FullScreenChartButton_Click;
@@ -555,6 +556,43 @@ namespace Trade.It
 
                 await Task.Yield();
             }
+        }
+
+
+        private void StocksDataGridView_KeyDownForChartNavigation(object? sender, KeyEventArgs e)
+        {
+            if (stocksDataGridView.Rows.Count == 0)
+                return;
+
+            var currentRow = stocksDataGridView.CurrentCell?.RowIndex ?? stocksDataGridView.CurrentRow?.Index ?? -1;
+            if (currentRow < 0 || currentRow >= stocksDataGridView.Rows.Count)
+                return;
+
+            int targetRow;
+            if (e.KeyCode == Keys.Up)
+            {
+                targetRow = Math.Max(0, currentRow - 1);
+            }
+            else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
+            {
+                targetRow = Math.Min(stocksDataGridView.Rows.Count - 1, currentRow + 1);
+            }
+            else
+            {
+                return;
+            }
+
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+
+            var targetCell = stocksDataGridView.Rows[targetRow].Cells[symbolColumn.Index];
+            stocksDataGridView.CurrentCell = targetCell;
+            stocksDataGridView.ClearSelection();
+            stocksDataGridView.Rows[targetRow].Selected = true;
+
+            var symbol = Convert.ToString(targetCell.Value)?.Trim();
+            if (!string.IsNullOrWhiteSpace(symbol))
+                ShowSymbolChart(symbol);
         }
 
         private void StocksDataGridView_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
