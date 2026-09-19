@@ -29,7 +29,6 @@ namespace Trade.It
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
-            loadAnalysisButton.Click += LoadAnalysisButton_Click;
             analysisAutoSaveTimer.Interval = 1000;
             analysisAutoSaveTimer.Tick += AnalysisAutoSaveTimer_Tick;
             analysisAutoSaveTimer.Start();
@@ -102,49 +101,6 @@ namespace Trade.It
                 chartTypeComboBox.SelectedIndex = 2;
 
             ResetDrawingToolButtons();
-        }
-
-        private void LoadAnalysisButton_Click(object? sender, EventArgs e)
-        {
-            var chart = GetActiveChart();
-            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
-            {
-                MessageBox.Show(this, "ابتدا یک چارت فعال انتخاب کنید.", "بازیابی تحلیل", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            try
-            {
-                var document = ChartAnalysisStorage.Load(chart.ChartSymbol);
-                if (document == null)
-                {
-                    MessageBox.Show(
-                        this,
-                        $"برای نماد «{chart.ChartSymbol}» تحلیل ذخیره‌شده‌ای پیدا نشد.",
-                        "بازیابی تحلیل",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                    return;
-                }
-
-                ApplyAnalysisDocument(chart, document);
-
-                MessageBox.Show(
-                    this,
-                    $"تحلیل نماد «{chart.ChartSymbol}» بازیابی شد.",
-                    "بازیابی تحلیل",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    this,
-                    $"بازیابی تحلیل انجام نشد:\n{ex.Message}",
-                    "بازیابی تحلیل",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
         }
 
         private void InitializeChartDrawingTools()
