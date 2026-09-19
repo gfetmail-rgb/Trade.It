@@ -24,6 +24,7 @@ namespace Trade.It
             public int PitchforkColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
             public int FibonacciExtensionColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
             public int MeasureColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
+            public int FibonacciLevelsMask { get; set; } = (1 << 10) - 1;
         }
 
         private static readonly string FilePath = Path.Combine(
@@ -49,6 +50,29 @@ namespace Trade.It
         public static Color PitchforkColor { get; private set; } = Color.FromArgb(155, 80, 45);
         public static Color FibonacciExtensionColor { get; private set; } = Color.FromArgb(155, 80, 45);
         public static Color MeasureColor { get; private set; } = Color.FromArgb(155, 80, 45);
+        public static int FibonacciLevelsMask { get; private set; } = (1 << 10) - 1;
+
+        private static readonly (float Value, string Text)[] AllFibonacciLevels =
+        {
+            (0f, "0%"),
+            (0.382f, "38.2%"),
+            (0.5f, "50%"),
+            (0.618f, "61.8%"),
+            (0.786f, "78.6%"),
+            (1f, "100%"),
+            (1.272f, "127.2%"),
+            (1.618f, "161.8%"),
+            (2f, "200%"),
+            (2.618f, "261.8%")
+        };
+
+        public static IReadOnlyList<(float Value, string Text)> GetAllFibonacciLevels() => AllFibonacciLevels;
+
+        public static (float Value, string Text)[] GetEnabledFibonacciLevels() =>
+            AllFibonacciLevels.Where((_, index) => (FibonacciLevelsMask & (1 << index)) != 0).ToArray();
+
+        public static string GetFibonacciLevelText(float value) =>
+            AllFibonacciLevels.FirstOrDefault(x => Math.Abs(x.Value - value) < 0.0001f).Text ?? $"{value * 100:0.#}%";
 
         public static void Load()
         {
@@ -87,7 +111,8 @@ namespace Trade.It
                     TextLabelColor = TextLabelColor.ToArgb(),
                     PitchforkColor = PitchforkColor.ToArgb(),
                     FibonacciExtensionColor = FibonacciExtensionColor.ToArgb(),
-                    MeasureColor = MeasureColor.ToArgb()
+                    MeasureColor = MeasureColor.ToArgb(),
+                    FibonacciLevelsMask = FibonacciLevelsMask
                 };
                 File.WriteAllText(FilePath, JsonSerializer.Serialize(stored, new JsonSerializerOptions { WriteIndented = true }));
             }
@@ -165,10 +190,13 @@ namespace Trade.It
             PitchforkColor = Color.FromArgb(stored.PitchforkColor);
             FibonacciExtensionColor = Color.FromArgb(stored.FibonacciExtensionColor);
             MeasureColor = Color.FromArgb(stored.MeasureColor);
+            FibonacciLevelsMask = stored.FibonacciLevelsMask & ((1 << 10) - 1);
+            if (FibonacciLevelsMask == 0) FibonacciLevelsMask = (1 << 10) - 1;
         }
 
         public static void SetChartRightEmptyPercent(double value) => ChartRightEmptyPercent = Math.Clamp(value, 0, 90);
         public static void SetChartTopEmptyPercent(double value) => ChartTopEmptyPercent = Math.Clamp(value, 0, 50);
         public static void SetInitialVisibleCandleCount(int value) => InitialVisibleCandleCount = Math.Clamp(value, 10, 5000);
+        public static void SetFibonacciLevelsMask(int value) => FibonacciLevelsMask = value & ((1 << 10) - 1);
     }
 }
