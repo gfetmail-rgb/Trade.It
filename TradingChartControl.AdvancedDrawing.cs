@@ -421,24 +421,12 @@ namespace Trade.It
             var height = end.Y - start.Y;
             // Point 1 is the 100% anchor and point 2 is the 0% anchor.
             // Values above 100% are Fibonacci extensions beyond point 1.
-            var levels = new[] { 0f, 0.382f, 0.5f, 0.618f, 0.786f, 1f, 1.272f, 1.618f, 2f };
+            var levels = ChartAppearanceSettings.GetEnabledFibonacciLevels();
             foreach (var level in levels)
             {
                 var y = start.Y + height * (1f - level);
                 g.DrawLine(pen, left, y, right, y);
-                var text = level switch
-                {
-                    0f => "0%",
-                    0.236f => "23.6%",
-                    0.382f => "38.2%",
-                    0.5f => "50%",
-                    0.618f => "61.8%",
-                    0.786f => "78.6%",
-                    1f => "100%",
-                    1.272f => "127.2%",
-                    1.618f => "161.8%",
-                    _ => "200%"
-                };
+                var text = ChartAppearanceSettings.GetFibonacciLevelText(level);
                 var size = g.MeasureString(text, SystemFonts.DefaultFont);
                 var labelX = right + 4f;
                 if (labelX + size.Width > g.VisibleClipBounds.Right)
