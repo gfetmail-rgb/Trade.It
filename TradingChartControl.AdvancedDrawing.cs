@@ -422,7 +422,7 @@ namespace Trade.It
 
             // Point 1 is the 100% anchor and point 2 is the 0% anchor.
             // Values above 100% are Fibonacci extensions beyond point 1.
-            var levels = ChartAppearanceSettings.GetEnabledFibonacciLevels();
+            var levels = ChartAppearanceSettings.GetEnabledFibonacciRetracementLevels();
 
             foreach (var level in levels)
             {
