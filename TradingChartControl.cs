@@ -96,7 +96,6 @@ namespace Trade.It
             showCrosshair = true;
             crosshairIndex = -1;
             CancelDrawing();
-            drawings.Clear();
             selectedDrawingIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
