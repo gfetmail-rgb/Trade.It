@@ -6,7 +6,7 @@ namespace Trade.It
 
     internal enum ChartDrawingTool
     {
-        None, TrendLine, TrendChannel, HorizontalDoubleArrow, VerticalDoubleArrow,
+        None, TrendLine, TrendChannel, HorizontalLine, VerticalLine,
         HorizontalRay, TrendLineWithArrow, Rectangle
     }
 
@@ -187,7 +187,15 @@ namespace Trade.It
 
             foreach (var item in document.Drawings ?? new List<ChartAnalysisDrawing>())
             {
-                if (!Enum.TryParse<ChartDrawingTool>(item.Tool, true, out var tool) ||
+                // سازگاری با تحلیل‌های قدیمی که نام ابزارها در آنها DoubleArrow بوده است.
+                var toolName = item.Tool switch
+                {
+                    "HorizontalLine" => "HorizontalLine",
+                    "VerticalLine" => "VerticalLine",
+                    _ => item.Tool
+                };
+
+                if (!Enum.TryParse<ChartDrawingTool>(toolName, true, out var tool) ||
                     tool == ChartDrawingTool.None)
                     continue;
 
@@ -464,7 +472,7 @@ namespace Trade.It
         private void BeginOrCompleteDrawing(Point location)
         {
             if (!IsInsidePlot(location)) return;
-            if (activeDrawingTool == ChartDrawingTool.HorizontalDoubleArrow || activeDrawingTool == ChartDrawingTool.VerticalDoubleArrow)
+            if (activeDrawingTool == ChartDrawingTool.HorizontalLine || activeDrawingTool == ChartDrawingTool.VerticalLine)
             {
                 AddDrawing(location, location);
                 drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
@@ -519,9 +527,9 @@ namespace Trade.It
                     var x3 = ScreenToDataX(third.X, plot, visible.Count);
                     var y3 = ScreenToPrice(third.Y, plot, min, max);
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 }); break;
-                case ChartDrawingTool.HorizontalDoubleArrow:
+                case ChartDrawingTool.HorizontalLine:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
-                case ChartDrawingTool.VerticalDoubleArrow:
+                case ChartDrawingTool.VerticalLine:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x1, Y2 = y2 }); break;
                 case ChartDrawingTool.HorizontalRay:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
