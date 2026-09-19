@@ -64,12 +64,14 @@ namespace Trade.It
 
         private void InitializeFibonacciLevelControls()
         {
+            // فیبوناچی‌ها در ستون مستقل کنار بخش ابزارهای رسم قرار می‌گیرند
+            // تا ارتفاع فرم بی‌دلیل زیاد نشود.
             fibonacciLevelsGroupBox = new GroupBox
             {
                 Text = "سطوح فیبوناچی",
                 RightToLeft = RightToLeft.Yes,
-                Location = new Point(16, 702),
-                Size = new Size(760, 275),
+                Location = new Point(790, 420),
+                Size = new Size(520, 267),
                 TabStop = false
             };
 
@@ -77,7 +79,7 @@ namespace Trade.It
                 "فیبوناچی دو نقطه‌ای",
                 ChartAppearanceSettings.FibonacciRetracementLevelsMask,
                 fibonacciRetracementCheckBoxes,
-                new Point(385, 25));
+                new Point(260, 25));
 
             var extensionGroup = CreateFibonacciLevelGroup(
                 "فیبوناچی سه نقطه‌ای",
@@ -90,10 +92,10 @@ namespace Trade.It
             Controls.Add(fibonacciLevelsGroupBox);
             fibonacciLevelsGroupBox.BringToFront();
 
-            crosshairGridGroupBox.Location = new Point(16, 987);
-            okButton.Location = new Point(276, 1163);
-            cancelButton.Location = new Point(389, 1163);
-            ClientSize = new Size(792, 1222);
+            crosshairGridGroupBox.Location = new Point(16, 702);
+            okButton.Location = new Point(535, 878);
+            cancelButton.Location = new Point(648, 878);
+            ClientSize = new Size(1325, 937);
         }
 
         private static GroupBox CreateFibonacciLevelGroup(
@@ -107,22 +109,22 @@ namespace Trade.It
                 Text = title,
                 RightToLeft = RightToLeft.Yes,
                 Location = location,
-                Size = new Size(365, 235),
+                Size = new Size(250, 235),
                 TabStop = false
             };
 
             var levels = ChartAppearanceSettings.GetAllFibonacciLevels();
             for (var i = 0; i < levels.Count; i++)
             {
-                var row = i / 5;
-                var column = i % 5;
+                var row = i / 4;
+                var column = i % 4;
                 var checkBox = new CheckBox
                 {
                     AutoSize = false,
                     Text = levels[i].Text,
                     RightToLeft = RightToLeft.Yes,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Location = new Point(285 - column * 70, 35 + row * 42),
+                    Location = new Point(185 - column * 60, 35 + row * 42),
                     Size = new Size(65, 28),
                     Checked = (mask & (1 << i)) != 0,
                     TabIndex = i
@@ -134,13 +136,13 @@ namespace Trade.It
             var selectAllButton = new Button
             {
                 Text = "انتخاب همه",
-                Location = new Point(195, 190),
+                Location = new Point(145, 190),
                 Size = new Size(75, 30)
             };
             var clearAllButton = new Button
             {
                 Text = "حذف همه",
-                Location = new Point(105, 190),
+                Location = new Point(55, 190),
                 Size = new Size(75, 30)
             };
 
