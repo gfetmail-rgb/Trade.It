@@ -12,7 +12,6 @@
         private System.Windows.Forms.TabControl controlTabControl;
         private System.Windows.Forms.TabPage stocksTabPage;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage marketsTabPage;
 
         private System.Windows.Forms.ComboBox portfolioComboBox;
@@ -238,7 +237,6 @@
             statusPositiveRadio = new RadioButton();
             statusNegativeRadio = new RadioButton();
             filterTradingClearButton = new Button();
-            tabPage3 = new TabPage();
             identifierMainGroup = new GroupBox();
             identifierLayout = new TableLayoutPanel();
             identifierSymbolLabel = new Label();
@@ -352,7 +350,6 @@
             volumeRatioGroup.SuspendLayout();
             nameFilterGroup.SuspendLayout();
             tradingStatusGroup.SuspendLayout();
-            tabPage3.SuspendLayout();
             identifierMainGroup.SuspendLayout();
             identifierLayout.SuspendLayout();
             identifierButtonsPanel.SuspendLayout();
@@ -424,7 +421,6 @@
             // 
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
-            controlTabControl.Controls.Add(tabPage3);
             controlTabControl.Controls.Add(marketsTabPage);
             controlTabControl.Dock = DockStyle.Fill;
             controlTabControl.Location = new Point(0, 0);
@@ -2464,8 +2460,6 @@
             nameFilterGroup.ResumeLayout(false);
             nameFilterGroup.PerformLayout();
             tradingStatusGroup.ResumeLayout(false);
-            tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
             identifierMainGroup.ResumeLayout(false);
             identifierMainGroup.PerformLayout();
             identifierLayout.ResumeLayout(false);
