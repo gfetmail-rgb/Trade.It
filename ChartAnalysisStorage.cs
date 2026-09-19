@@ -16,6 +16,7 @@ namespace Trade.It
         public double VerticalPanOffset { get; set; }
         public double HorizontalPanOffset { get; set; }
         public double ChartPanCompensation { get; set; }
+        public double VolumePanelRatio { get; set; } = 0.22;
         public List<ChartAnalysisDrawing> Drawings { get; set; } = new();
         public List<ChartAnalysisDrawing> AdvancedDrawings { get; set; } = new();
         public List<ChartAnalysisDrawing> ExtraDrawings { get; set; } = new();
