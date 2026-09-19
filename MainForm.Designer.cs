@@ -103,42 +103,6 @@
         private System.Windows.Forms.Label ohlcChangeDaysLabel;
         private System.Windows.Forms.Label ohlcChangePercentLabel;
 
-        private System.Windows.Forms.GroupBox identifierMainGroup;
-        private System.Windows.Forms.TableLayoutPanel identifierLayout;
-        private System.Windows.Forms.Label identifierSymbolLabel;
-        private System.Windows.Forms.TextBox identifierSymbolTextBox;
-        private System.Windows.Forms.Label identifierNameLabel;
-        private System.Windows.Forms.TextBox identifierNameTextBox;
-        private System.Windows.Forms.Label identifierTsetmcLabel;
-        private System.Windows.Forms.TextBox identifierTsetmcTextBox;
-        private System.Windows.Forms.Label identifierMarketLabel;
-        private System.Windows.Forms.ComboBox identifierMarketComboBox;
-        private System.Windows.Forms.Label identifierGroupLabel;
-        private System.Windows.Forms.TextBox identifierGroupTextBox;
-        private System.Windows.Forms.Label identifierDescriptionLabel;
-        private System.Windows.Forms.TextBox identifierDescriptionTextBox;
-        private System.Windows.Forms.Label identifierPersianSymbolLabel;
-        private System.Windows.Forms.TextBox identifierPersianSymbolTextBox;
-        private System.Windows.Forms.Label identifierPersian30SymbolLabel;
-        private System.Windows.Forms.TextBox identifierPersian30SymbolTextBox;
-        private System.Windows.Forms.Label identifierCompanyCode12Label;
-        private System.Windows.Forms.TextBox identifierCompanyCode12TextBox;
-        private System.Windows.Forms.Label identifierBoardCodeLabel;
-        private System.Windows.Forms.TextBox identifierBoardCodeTextBox;
-        private System.Windows.Forms.Label identifierIndustryCodeLabel;
-        private System.Windows.Forms.TextBox identifierIndustryCodeTextBox;
-        private System.Windows.Forms.Label identifierIndustryLabel;
-        private System.Windows.Forms.TextBox identifierIndustryTextBox;
-        private System.Windows.Forms.Label identifierSubIndustryCodeLabel;
-        private System.Windows.Forms.TextBox identifierSubIndustryCodeTextBox;
-        private System.Windows.Forms.Label identifierSubIndustryLabel;
-        private System.Windows.Forms.TextBox identifierSubIndustryTextBox;
-        private System.Windows.Forms.FlowLayoutPanel identifierButtonsPanel;
-        private System.Windows.Forms.Button identifierNewButton;
-        private System.Windows.Forms.Button identifierSaveButton;
-        private System.Windows.Forms.Button identifierDeleteButton;
-        private System.Windows.Forms.Button identifierDeleteAllButton;
-        private System.Windows.Forms.Button identifierImportExcelButton;
 
         protected override void Dispose(bool disposing)
         {
@@ -237,42 +201,6 @@
             statusPositiveRadio = new RadioButton();
             statusNegativeRadio = new RadioButton();
             filterTradingClearButton = new Button();
-            identifierMainGroup = new GroupBox();
-            identifierLayout = new TableLayoutPanel();
-            identifierSymbolLabel = new Label();
-            identifierSymbolTextBox = new TextBox();
-            identifierNameLabel = new Label();
-            identifierNameTextBox = new TextBox();
-            identifierTsetmcLabel = new Label();
-            identifierTsetmcTextBox = new TextBox();
-            identifierGroupLabel = new Label();
-            identifierGroupTextBox = new TextBox();
-            identifierDescriptionLabel = new Label();
-            identifierDescriptionTextBox = new TextBox();
-            identifierPersianSymbolLabel = new Label();
-            identifierPersianSymbolTextBox = new TextBox();
-            identifierPersian30SymbolLabel = new Label();
-            identifierPersian30SymbolTextBox = new TextBox();
-            identifierCompanyCode12Label = new Label();
-            identifierCompanyCode12TextBox = new TextBox();
-            identifierMarketLabel = new Label();
-            identifierMarketComboBox = new ComboBox();
-            identifierBoardCodeLabel = new Label();
-            identifierBoardCodeTextBox = new TextBox();
-            identifierIndustryCodeLabel = new Label();
-            identifierIndustryCodeTextBox = new TextBox();
-            identifierIndustryLabel = new Label();
-            identifierIndustryTextBox = new TextBox();
-            identifierSubIndustryCodeLabel = new Label();
-            identifierSubIndustryCodeTextBox = new TextBox();
-            identifierSubIndustryLabel = new Label();
-            identifierSubIndustryTextBox = new TextBox();
-            identifierButtonsPanel = new FlowLayoutPanel();
-            identifierImportExcelButton = new Button();
-            identifierDeleteAllButton = new Button();
-            identifierDeleteButton = new Button();
-            identifierSaveButton = new Button();
-            identifierNewButton = new Button();
             marketsTabPage = new TabPage();
             marketCountLabel = new Label();
             marketClearButton = new Button();
@@ -350,9 +278,6 @@
             volumeRatioGroup.SuspendLayout();
             nameFilterGroup.SuspendLayout();
             tradingStatusGroup.SuspendLayout();
-            identifierMainGroup.SuspendLayout();
-            identifierLayout.SuspendLayout();
-            identifierButtonsPanel.SuspendLayout();
             marketsTabPage.SuspendLayout();
             chartPanel.SuspendLayout();
             chartTabControl.SuspendLayout();
@@ -1329,8 +1254,6 @@
             // 
             // tabPage3
             // 
-            tabPage3.Controls.Add(identifierMainGroup);
-            tabPage3.Controls.Add(identifierButtonsPanel);
             tabPage3.Location = new Point(4, 34);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(8);
@@ -1338,462 +1261,77 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "شناسه";
             // 
-            // identifierMainGroup
-            // 
-            identifierMainGroup.AutoSize = true;
-            identifierMainGroup.Controls.Add(identifierLayout);
-            identifierMainGroup.Dock = DockStyle.Top;
-            identifierMainGroup.Location = new Point(8, 60);
-            identifierMainGroup.Name = "identifierMainGroup";
-            identifierMainGroup.Padding = new Padding(10);
-            identifierMainGroup.RightToLeft = RightToLeft.Yes;
-            identifierMainGroup.Size = new Size(338, 644);
-            identifierMainGroup.TabIndex = 0;
-            identifierMainGroup.TabStop = false;
-            identifierMainGroup.Text = "اطلاعات شناسه";
-            // 
-            // identifierLayout
-            // 
-            identifierLayout.AutoSize = true;
-            identifierLayout.ColumnCount = 2;
-            identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
-            identifierLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            identifierLayout.Controls.Add(identifierSymbolLabel, 0, 0);
-            identifierLayout.Controls.Add(identifierSymbolTextBox, 1, 0);
-            identifierLayout.Controls.Add(identifierNameLabel, 0, 1);
-            identifierLayout.Controls.Add(identifierNameTextBox, 1, 1);
-            identifierLayout.Controls.Add(identifierTsetmcLabel, 0, 2);
-            identifierLayout.Controls.Add(identifierTsetmcTextBox, 1, 2);
-            identifierLayout.Controls.Add(identifierGroupLabel, 0, 3);
-            identifierLayout.Controls.Add(identifierGroupTextBox, 1, 3);
-            identifierLayout.Controls.Add(identifierDescriptionLabel, 0, 4);
-            identifierLayout.Controls.Add(identifierDescriptionTextBox, 1, 4);
-            identifierLayout.Controls.Add(identifierPersianSymbolLabel, 0, 5);
-            identifierLayout.Controls.Add(identifierPersianSymbolTextBox, 1, 5);
-            identifierLayout.Controls.Add(identifierPersian30SymbolLabel, 0, 6);
-            identifierLayout.Controls.Add(identifierPersian30SymbolTextBox, 1, 6);
-            identifierLayout.Controls.Add(identifierCompanyCode12Label, 0, 7);
-            identifierLayout.Controls.Add(identifierCompanyCode12TextBox, 1, 7);
-            identifierLayout.Controls.Add(identifierMarketLabel, 0, 8);
-            identifierLayout.Controls.Add(identifierMarketComboBox, 1, 8);
-            identifierLayout.Controls.Add(identifierBoardCodeLabel, 0, 9);
-            identifierLayout.Controls.Add(identifierBoardCodeTextBox, 1, 9);
-            identifierLayout.Controls.Add(identifierIndustryCodeLabel, 0, 10);
-            identifierLayout.Controls.Add(identifierIndustryCodeTextBox, 1, 10);
-            identifierLayout.Controls.Add(identifierIndustryLabel, 0, 11);
-            identifierLayout.Controls.Add(identifierIndustryTextBox, 1, 11);
-            identifierLayout.Controls.Add(identifierSubIndustryCodeLabel, 0, 12);
-            identifierLayout.Controls.Add(identifierSubIndustryCodeTextBox, 1, 12);
-            identifierLayout.Controls.Add(identifierSubIndustryLabel, 0, 13);
-            identifierLayout.Controls.Add(identifierSubIndustryTextBox, 1, 13);
-            identifierLayout.Dock = DockStyle.Top;
-            identifierLayout.Location = new Point(10, 34);
-            identifierLayout.Name = "identifierLayout";
-            identifierLayout.Padding = new Padding(6);
-            identifierLayout.RightToLeft = RightToLeft.Yes;
-            identifierLayout.RowCount = 14;
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            identifierLayout.Size = new Size(318, 600);
-            identifierLayout.TabIndex = 0;
-            // 
-            // identifierSymbolLabel
-            // 
-            identifierSymbolLabel.Dock = DockStyle.Fill;
-            identifierSymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierSymbolLabel.Location = new Point(161, 10);
-            identifierSymbolLabel.Margin = new Padding(4);
-            identifierSymbolLabel.Name = "identifierSymbolLabel";
-            identifierSymbolLabel.RightToLeft = RightToLeft.Yes;
-            identifierSymbolLabel.Size = new Size(147, 34);
-            identifierSymbolLabel.TabIndex = 0;
-            identifierSymbolLabel.Text = "کد ۱۲ رقمی نماد";
-            identifierSymbolLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierSymbolTextBox
-            // 
-            identifierSymbolTextBox.Dock = DockStyle.Fill;
-            identifierSymbolTextBox.Location = new Point(10, 10);
-            identifierSymbolTextBox.Margin = new Padding(4);
-            identifierSymbolTextBox.Name = "identifierSymbolTextBox";
-            identifierSymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSymbolTextBox.Size = new Size(143, 31);
-            identifierSymbolTextBox.TabIndex = 0;
-            // 
-            // identifierNameLabel
-            // 
-            identifierNameLabel.Dock = DockStyle.Fill;
-            identifierNameLabel.Font = new Font("Segoe UI", 10F);
-            identifierNameLabel.Location = new Point(161, 52);
-            identifierNameLabel.Margin = new Padding(4);
-            identifierNameLabel.Name = "identifierNameLabel";
-            identifierNameLabel.RightToLeft = RightToLeft.Yes;
-            identifierNameLabel.Size = new Size(147, 34);
-            identifierNameLabel.TabIndex = 1;
-            identifierNameLabel.Text = "کد ۵ رقمی نماد";
-            identifierNameLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierNameTextBox
-            // 
-            identifierNameTextBox.Dock = DockStyle.Fill;
-            identifierNameTextBox.Location = new Point(10, 52);
-            identifierNameTextBox.Margin = new Padding(4);
-            identifierNameTextBox.Name = "identifierNameTextBox";
-            identifierNameTextBox.RightToLeft = RightToLeft.Yes;
-            identifierNameTextBox.Size = new Size(143, 31);
-            identifierNameTextBox.TabIndex = 1;
-            // 
-            // identifierTsetmcLabel
-            // 
-            identifierTsetmcLabel.Dock = DockStyle.Fill;
-            identifierTsetmcLabel.Font = new Font("Segoe UI", 10F);
-            identifierTsetmcLabel.Location = new Point(161, 94);
-            identifierTsetmcLabel.Margin = new Padding(4);
-            identifierTsetmcLabel.Name = "identifierTsetmcLabel";
-            identifierTsetmcLabel.RightToLeft = RightToLeft.Yes;
-            identifierTsetmcLabel.Size = new Size(147, 34);
-            identifierTsetmcLabel.TabIndex = 2;
-            identifierTsetmcLabel.Text = "نام لاتین شرکت";
-            identifierTsetmcLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierTsetmcTextBox
-            // 
-            identifierTsetmcTextBox.Dock = DockStyle.Fill;
-            identifierTsetmcTextBox.Location = new Point(10, 94);
-            identifierTsetmcTextBox.Margin = new Padding(4);
-            identifierTsetmcTextBox.Name = "identifierTsetmcTextBox";
-            identifierTsetmcTextBox.RightToLeft = RightToLeft.Yes;
-            identifierTsetmcTextBox.Size = new Size(143, 31);
-            identifierTsetmcTextBox.TabIndex = 2;
-            // 
-            // identifierGroupLabel
-            // 
-            identifierGroupLabel.Dock = DockStyle.Fill;
-            identifierGroupLabel.Font = new Font("Segoe UI", 10F);
-            identifierGroupLabel.Location = new Point(161, 136);
-            identifierGroupLabel.Margin = new Padding(4);
-            identifierGroupLabel.Name = "identifierGroupLabel";
-            identifierGroupLabel.RightToLeft = RightToLeft.Yes;
-            identifierGroupLabel.Size = new Size(147, 34);
-            identifierGroupLabel.TabIndex = 3;
-            identifierGroupLabel.Text = "کد ۴ رقمی شرکت";
-            identifierGroupLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierGroupTextBox
-            // 
-            identifierGroupTextBox.Dock = DockStyle.Fill;
-            identifierGroupTextBox.Location = new Point(10, 136);
-            identifierGroupTextBox.Margin = new Padding(4);
-            identifierGroupTextBox.Name = "identifierGroupTextBox";
-            identifierGroupTextBox.RightToLeft = RightToLeft.Yes;
-            identifierGroupTextBox.Size = new Size(143, 31);
-            identifierGroupTextBox.TabIndex = 3;
-            // 
-            // identifierDescriptionLabel
-            // 
-            identifierDescriptionLabel.Dock = DockStyle.Fill;
-            identifierDescriptionLabel.Font = new Font("Segoe UI", 10F);
-            identifierDescriptionLabel.Location = new Point(161, 178);
-            identifierDescriptionLabel.Margin = new Padding(4);
-            identifierDescriptionLabel.Name = "identifierDescriptionLabel";
-            identifierDescriptionLabel.RightToLeft = RightToLeft.Yes;
-            identifierDescriptionLabel.Size = new Size(147, 34);
-            identifierDescriptionLabel.TabIndex = 4;
-            identifierDescriptionLabel.Text = "نام شرکت";
-            identifierDescriptionLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierDescriptionTextBox
-            // 
-            identifierDescriptionTextBox.Dock = DockStyle.Fill;
-            identifierDescriptionTextBox.Location = new Point(10, 178);
-            identifierDescriptionTextBox.Margin = new Padding(4);
-            identifierDescriptionTextBox.Name = "identifierDescriptionTextBox";
-            identifierDescriptionTextBox.RightToLeft = RightToLeft.Yes;
-            identifierDescriptionTextBox.Size = new Size(143, 31);
-            identifierDescriptionTextBox.TabIndex = 4;
-            // 
-            // identifierPersianSymbolLabel
-            // 
-            identifierPersianSymbolLabel.Dock = DockStyle.Fill;
-            identifierPersianSymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierPersianSymbolLabel.Location = new Point(161, 220);
-            identifierPersianSymbolLabel.Margin = new Padding(4);
-            identifierPersianSymbolLabel.Name = "identifierPersianSymbolLabel";
-            identifierPersianSymbolLabel.RightToLeft = RightToLeft.Yes;
-            identifierPersianSymbolLabel.Size = new Size(147, 34);
-            identifierPersianSymbolLabel.TabIndex = 5;
-            identifierPersianSymbolLabel.Text = "نماد فارسی";
-            identifierPersianSymbolLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierPersianSymbolTextBox
-            // 
-            identifierPersianSymbolTextBox.Dock = DockStyle.Fill;
-            identifierPersianSymbolTextBox.Location = new Point(10, 220);
-            identifierPersianSymbolTextBox.Margin = new Padding(4);
-            identifierPersianSymbolTextBox.Name = "identifierPersianSymbolTextBox";
-            identifierPersianSymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierPersianSymbolTextBox.Size = new Size(143, 31);
-            identifierPersianSymbolTextBox.TabIndex = 5;
-            // 
-            // identifierPersian30SymbolLabel
-            // 
-            identifierPersian30SymbolLabel.Dock = DockStyle.Fill;
-            identifierPersian30SymbolLabel.Font = new Font("Segoe UI", 10F);
-            identifierPersian30SymbolLabel.Location = new Point(161, 262);
-            identifierPersian30SymbolLabel.Margin = new Padding(4);
-            identifierPersian30SymbolLabel.Name = "identifierPersian30SymbolLabel";
-            identifierPersian30SymbolLabel.RightToLeft = RightToLeft.Yes;
-            identifierPersian30SymbolLabel.Size = new Size(147, 34);
-            identifierPersian30SymbolLabel.TabIndex = 6;
-            identifierPersian30SymbolLabel.Text = "نماد ۳۰ رقمی فارسی";
-            identifierPersian30SymbolLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierPersian30SymbolTextBox
-            // 
-            identifierPersian30SymbolTextBox.Dock = DockStyle.Fill;
-            identifierPersian30SymbolTextBox.Location = new Point(10, 262);
-            identifierPersian30SymbolTextBox.Margin = new Padding(4);
-            identifierPersian30SymbolTextBox.Name = "identifierPersian30SymbolTextBox";
-            identifierPersian30SymbolTextBox.RightToLeft = RightToLeft.Yes;
-            identifierPersian30SymbolTextBox.Size = new Size(143, 31);
-            identifierPersian30SymbolTextBox.TabIndex = 6;
-            // 
-            // identifierCompanyCode12Label
-            // 
-            identifierCompanyCode12Label.Dock = DockStyle.Fill;
-            identifierCompanyCode12Label.Font = new Font("Segoe UI", 10F);
-            identifierCompanyCode12Label.Location = new Point(161, 304);
-            identifierCompanyCode12Label.Margin = new Padding(4);
-            identifierCompanyCode12Label.Name = "identifierCompanyCode12Label";
-            identifierCompanyCode12Label.RightToLeft = RightToLeft.Yes;
-            identifierCompanyCode12Label.Size = new Size(147, 34);
-            identifierCompanyCode12Label.TabIndex = 7;
-            identifierCompanyCode12Label.Text = "کد ۱۲ رقمی شرکت";
-            identifierCompanyCode12Label.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierCompanyCode12TextBox
-            // 
-            identifierCompanyCode12TextBox.Dock = DockStyle.Fill;
-            identifierCompanyCode12TextBox.Location = new Point(10, 304);
-            identifierCompanyCode12TextBox.Margin = new Padding(4);
-            identifierCompanyCode12TextBox.Name = "identifierCompanyCode12TextBox";
-            identifierCompanyCode12TextBox.RightToLeft = RightToLeft.Yes;
-            identifierCompanyCode12TextBox.Size = new Size(143, 31);
-            identifierCompanyCode12TextBox.TabIndex = 7;
-            // 
-            // identifierMarketLabel
-            // 
-            identifierMarketLabel.Dock = DockStyle.Fill;
-            identifierMarketLabel.Font = new Font("Segoe UI", 10F);
-            identifierMarketLabel.Location = new Point(161, 346);
-            identifierMarketLabel.Margin = new Padding(4);
-            identifierMarketLabel.Name = "identifierMarketLabel";
-            identifierMarketLabel.RightToLeft = RightToLeft.Yes;
-            identifierMarketLabel.Size = new Size(147, 34);
-            identifierMarketLabel.TabIndex = 8;
-            identifierMarketLabel.Text = "بازار";
-            identifierMarketLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierMarketComboBox
-            // 
-            identifierMarketComboBox.Dock = DockStyle.Fill;
-            identifierMarketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            identifierMarketComboBox.Location = new Point(10, 346);
-            identifierMarketComboBox.Margin = new Padding(4);
-            identifierMarketComboBox.Name = "identifierMarketComboBox";
-            identifierMarketComboBox.RightToLeft = RightToLeft.Yes;
-            identifierMarketComboBox.Size = new Size(143, 33);
-            identifierMarketComboBox.TabIndex = 8;
-            // 
-            // identifierBoardCodeLabel
-            // 
-            identifierBoardCodeLabel.Dock = DockStyle.Fill;
-            identifierBoardCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierBoardCodeLabel.Location = new Point(161, 388);
-            identifierBoardCodeLabel.Margin = new Padding(4);
-            identifierBoardCodeLabel.Name = "identifierBoardCodeLabel";
-            identifierBoardCodeLabel.RightToLeft = RightToLeft.Yes;
-            identifierBoardCodeLabel.Size = new Size(147, 34);
-            identifierBoardCodeLabel.TabIndex = 9;
-            identifierBoardCodeLabel.Text = "کد تابلو";
-            identifierBoardCodeLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierBoardCodeTextBox
-            // 
-            identifierBoardCodeTextBox.Dock = DockStyle.Fill;
-            identifierBoardCodeTextBox.Location = new Point(10, 388);
-            identifierBoardCodeTextBox.Margin = new Padding(4);
-            identifierBoardCodeTextBox.Name = "identifierBoardCodeTextBox";
-            identifierBoardCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierBoardCodeTextBox.Size = new Size(143, 31);
-            identifierBoardCodeTextBox.TabIndex = 9;
-            // 
-            // identifierIndustryCodeLabel
-            // 
-            identifierIndustryCodeLabel.Dock = DockStyle.Fill;
-            identifierIndustryCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierIndustryCodeLabel.Location = new Point(161, 430);
-            identifierIndustryCodeLabel.Margin = new Padding(4);
-            identifierIndustryCodeLabel.Name = "identifierIndustryCodeLabel";
-            identifierIndustryCodeLabel.RightToLeft = RightToLeft.Yes;
-            identifierIndustryCodeLabel.Size = new Size(147, 34);
-            identifierIndustryCodeLabel.TabIndex = 10;
-            identifierIndustryCodeLabel.Text = "کد گروه صنعت";
-            identifierIndustryCodeLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierIndustryCodeTextBox
-            // 
-            identifierIndustryCodeTextBox.Dock = DockStyle.Fill;
-            identifierIndustryCodeTextBox.Location = new Point(10, 430);
-            identifierIndustryCodeTextBox.Margin = new Padding(4);
-            identifierIndustryCodeTextBox.Name = "identifierIndustryCodeTextBox";
-            identifierIndustryCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierIndustryCodeTextBox.Size = new Size(143, 31);
-            identifierIndustryCodeTextBox.TabIndex = 10;
-            // 
-            // identifierIndustryLabel
-            // 
-            identifierIndustryLabel.Dock = DockStyle.Fill;
-            identifierIndustryLabel.Font = new Font("Segoe UI", 10F);
-            identifierIndustryLabel.Location = new Point(161, 472);
-            identifierIndustryLabel.Margin = new Padding(4);
-            identifierIndustryLabel.Name = "identifierIndustryLabel";
-            identifierIndustryLabel.RightToLeft = RightToLeft.Yes;
-            identifierIndustryLabel.Size = new Size(147, 34);
-            identifierIndustryLabel.TabIndex = 11;
-            identifierIndustryLabel.Text = "گروه صنعت";
-            identifierIndustryLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierIndustryTextBox
-            // 
-            identifierIndustryTextBox.Dock = DockStyle.Fill;
-            identifierIndustryTextBox.Location = new Point(10, 472);
-            identifierIndustryTextBox.Margin = new Padding(4);
-            identifierIndustryTextBox.Name = "identifierIndustryTextBox";
-            identifierIndustryTextBox.RightToLeft = RightToLeft.Yes;
-            identifierIndustryTextBox.Size = new Size(143, 31);
-            identifierIndustryTextBox.TabIndex = 11;
-            // 
-            // identifierSubIndustryCodeLabel
-            // 
-            identifierSubIndustryCodeLabel.Dock = DockStyle.Fill;
-            identifierSubIndustryCodeLabel.Font = new Font("Segoe UI", 10F);
-            identifierSubIndustryCodeLabel.Location = new Point(161, 514);
-            identifierSubIndustryCodeLabel.Margin = new Padding(4);
-            identifierSubIndustryCodeLabel.Name = "identifierSubIndustryCodeLabel";
-            identifierSubIndustryCodeLabel.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryCodeLabel.Size = new Size(147, 34);
-            identifierSubIndustryCodeLabel.TabIndex = 12;
-            identifierSubIndustryCodeLabel.Text = "کد زیر گروه صنعت";
-            identifierSubIndustryCodeLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierSubIndustryCodeTextBox
-            // 
-            identifierSubIndustryCodeTextBox.Dock = DockStyle.Fill;
-            identifierSubIndustryCodeTextBox.Location = new Point(10, 514);
-            identifierSubIndustryCodeTextBox.Margin = new Padding(4);
-            identifierSubIndustryCodeTextBox.Name = "identifierSubIndustryCodeTextBox";
-            identifierSubIndustryCodeTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryCodeTextBox.Size = new Size(143, 31);
-            identifierSubIndustryCodeTextBox.TabIndex = 12;
-            // 
-            // identifierSubIndustryLabel
-            // 
-            identifierSubIndustryLabel.Dock = DockStyle.Fill;
-            identifierSubIndustryLabel.Font = new Font("Segoe UI", 10F);
-            identifierSubIndustryLabel.Location = new Point(161, 556);
-            identifierSubIndustryLabel.Margin = new Padding(4);
-            identifierSubIndustryLabel.Name = "identifierSubIndustryLabel";
-            identifierSubIndustryLabel.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryLabel.Size = new Size(147, 34);
-            identifierSubIndustryLabel.TabIndex = 13;
-            identifierSubIndustryLabel.Text = "زیر گروه صنعت";
-            identifierSubIndustryLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // identifierSubIndustryTextBox
-            // 
-            identifierSubIndustryTextBox.Dock = DockStyle.Fill;
-            identifierSubIndustryTextBox.Location = new Point(10, 556);
-            identifierSubIndustryTextBox.Margin = new Padding(4);
-            identifierSubIndustryTextBox.Name = "identifierSubIndustryTextBox";
-            identifierSubIndustryTextBox.RightToLeft = RightToLeft.Yes;
-            identifierSubIndustryTextBox.Size = new Size(143, 31);
-            identifierSubIndustryTextBox.TabIndex = 13;
-            // 
-            // identifierButtonsPanel
-            // 
-            identifierButtonsPanel.Controls.Add(identifierImportExcelButton);
-            identifierButtonsPanel.Controls.Add(identifierDeleteAllButton);
-            identifierButtonsPanel.Controls.Add(identifierDeleteButton);
-            identifierButtonsPanel.Controls.Add(identifierSaveButton);
-            identifierButtonsPanel.Controls.Add(identifierNewButton);
-            identifierButtonsPanel.Dock = DockStyle.Top;
-            identifierButtonsPanel.FlowDirection = FlowDirection.RightToLeft;
-            identifierButtonsPanel.Location = new Point(8, 8);
-            identifierButtonsPanel.Margin = new Padding(0);
-            identifierButtonsPanel.Name = "identifierButtonsPanel";
-            identifierButtonsPanel.Padding = new Padding(4);
-            identifierButtonsPanel.RightToLeft = RightToLeft.Yes;
-            identifierButtonsPanel.Size = new Size(338, 52);
-            identifierButtonsPanel.TabIndex = 0;
-            identifierButtonsPanel.WrapContents = false;
-            // 
-            // identifierImportExcelButton
-            // 
-            identifierImportExcelButton.Location = new Point(7, 7);
-            identifierImportExcelButton.Name = "identifierImportExcelButton";
-            identifierImportExcelButton.Size = new Size(105, 36);
-            identifierImportExcelButton.TabIndex = 4;
-            identifierImportExcelButton.Text = "ورود از اکسل";
-            identifierImportExcelButton.UseVisualStyleBackColor = true;
-            // 
-            // identifierDeleteAllButton
-            // 
-            identifierDeleteAllButton.Location = new Point(118, 7);
-            identifierDeleteAllButton.Name = "identifierDeleteAllButton";
-            identifierDeleteAllButton.Size = new Size(80, 36);
-            identifierDeleteAllButton.TabIndex = 3;
-            identifierDeleteAllButton.Text = "حذف همه";
-            identifierDeleteAllButton.UseVisualStyleBackColor = true;
-            // 
-            // identifierDeleteButton
-            // 
-            identifierDeleteButton.Location = new Point(204, 7);
-            identifierDeleteButton.Name = "identifierDeleteButton";
-            identifierDeleteButton.Size = new Size(62, 36);
-            identifierDeleteButton.TabIndex = 2;
-            identifierDeleteButton.Text = "حذف";
-            identifierDeleteButton.UseVisualStyleBackColor = true;
-            // 
-            // identifierSaveButton
-            // 
-            identifierSaveButton.Location = new Point(272, 7);
-            identifierSaveButton.Name = "identifierSaveButton";
-            identifierSaveButton.Size = new Size(70, 36);
-            identifierSaveButton.TabIndex = 1;
-            identifierSaveButton.Text = "ذخیره";
-            identifierSaveButton.UseVisualStyleBackColor = true;
-            // 
-            // identifierNewButton
-            // 
-            identifierNewButton.Location = new Point(348, 7);
-            identifierNewButton.Name = "identifierNewButton";
-            identifierNewButton.Size = new Size(62, 36);
-            identifierNewButton.TabIndex = 0;
-            identifierNewButton.Text = "جدید";
-            identifierNewButton.UseVisualStyleBackColor = true;
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
+            // 
             // 
             // marketsTabPage
             // 
@@ -2460,11 +1998,6 @@
             nameFilterGroup.ResumeLayout(false);
             nameFilterGroup.PerformLayout();
             tradingStatusGroup.ResumeLayout(false);
-            identifierMainGroup.ResumeLayout(false);
-            identifierMainGroup.PerformLayout();
-            identifierLayout.ResumeLayout(false);
-            identifierLayout.PerformLayout();
-            identifierButtonsPanel.ResumeLayout(false);
             marketsTabPage.ResumeLayout(false);
             marketsTabPage.PerformLayout();
             chartPanel.ResumeLayout(false);
