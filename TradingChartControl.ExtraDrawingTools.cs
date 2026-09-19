@@ -362,7 +362,7 @@ namespace Trade.It
             if (location.X < leftX - 8f || location.X > rightX + 8f)
                 return false;
 
-            foreach (var level in FibonacciLevels)
+            foreach (var level in ChartAppearanceSettings.GetEnabledFibonacciLevels())
             {
                 var y = c.Y + dy * level.Value;
                 if (Math.Abs(location.Y - y) <= 7f)
@@ -370,8 +370,6 @@ namespace Trade.It
             }
             return false;
         }
-
-        private static (float Value, string Text)[] FibonacciLevels => ChartAppearanceSettings.GetEnabledFibonacciLevels();
 
         private static float DistanceToRay(Point location, PointF start, float dx, float dy, Rectangle plot)
         {
@@ -563,7 +561,7 @@ namespace Trade.It
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
 
-            foreach (var level in FibonacciLevels)
+            foreach (var level in ChartAppearanceSettings.GetEnabledFibonacciLevels())
             {
                 var y = c.Y + dy * level.Value;
                 g.DrawLine(pen, leftX, y, rightX, y);
@@ -591,7 +589,7 @@ namespace Trade.It
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
 
-            foreach (var level in FibonacciLevels)
+            foreach (var level in ChartAppearanceSettings.GetEnabledFibonacciLevels())
             {
                 var y = c.Y + dy * level.Value;
                 g.DrawLine(pen, leftX, y, rightX, y);
