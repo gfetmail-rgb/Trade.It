@@ -60,14 +60,55 @@ namespace Trade.It
             cancelButton.Click += cancelButton_Click;
         }
 
+        private readonly List<CheckBox> fibonacciRetracementCheckBoxes = new();
+        private readonly List<CheckBox> fibonacciExtensionCheckBoxes = new();
+
         private void InitializeFibonacciLevelControls()
         {
             fibonacciLevelsGroupBox = new GroupBox
             {
-                Text = "سطوح فیبوناچی (مشترک برای هر دو فیبو)",
+                Text = "سطوح فیبوناچی",
                 RightToLeft = RightToLeft.Yes,
                 Location = new Point(16, 702),
-                Size = new Size(760, 160),
+                Size = new Size(760, 275),
+                TabStop = false
+            };
+
+            var retracementGroup = CreateFibonacciLevelGroup(
+                "فیبوناچی دو نقطه‌ای",
+                ChartAppearanceSettings.FibonacciRetracementLevelsMask,
+                fibonacciRetracementCheckBoxes,
+                new Point(385, 25));
+
+            var extensionGroup = CreateFibonacciLevelGroup(
+                "فیبوناچی سه نقطه‌ای",
+                ChartAppearanceSettings.FibonacciExtensionLevelsMask,
+                fibonacciExtensionCheckBoxes,
+                new Point(10, 25));
+
+            fibonacciLevelsGroupBox.Controls.Add(retracementGroup);
+            fibonacciLevelsGroupBox.Controls.Add(extensionGroup);
+            Controls.Add(fibonacciLevelsGroupBox);
+            fibonacciLevelsGroupBox.BringToFront();
+
+            crosshairGridGroupBox.Location = new Point(16, 987);
+            okButton.Location = new Point(276, 1163);
+            cancelButton.Location = new Point(389, 1163);
+            ClientSize = new Size(792, 1222);
+        }
+
+        private static GroupBox CreateFibonacciLevelGroup(
+            string title,
+            int mask,
+            List<CheckBox> target,
+            Point location)
+        {
+            var group = new GroupBox
+            {
+                Text = title,
+                RightToLeft = RightToLeft.Yes,
+                Location = location,
+                Size = new Size(365, 235),
                 TabStop = false
             };
 
@@ -78,50 +119,46 @@ namespace Trade.It
                 var column = i % 5;
                 var checkBox = new CheckBox
                 {
-                    AutoSize = true,
+                    AutoSize = false,
                     Text = levels[i].Text,
                     RightToLeft = RightToLeft.Yes,
-                    Location = new Point(585 - column * 145, 35 + row * 42),
-                    Size = new Size(120, 28),
-                    Checked = (ChartAppearanceSettings.FibonacciLevelsMask & (1 << i)) != 0,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Location = new Point(285 - column * 70, 35 + row * 42),
+                    Size = new Size(65, 28),
+                    Checked = (mask & (1 << i)) != 0,
                     TabIndex = i
                 };
-                fibonacciLevelCheckBoxes.Add(checkBox);
-                fibonacciLevelsGroupBox.Controls.Add(checkBox);
+                target.Add(checkBox);
+                group.Controls.Add(checkBox);
             }
 
             var selectAllButton = new Button
             {
                 Text = "انتخاب همه",
-                Location = new Point(585, 115),
-                Size = new Size(80, 32)
+                Location = new Point(195, 190),
+                Size = new Size(75, 30)
             };
             var clearAllButton = new Button
             {
                 Text = "حذف همه",
-                Location = new Point(495, 115),
-                Size = new Size(80, 32)
+                Location = new Point(105, 190),
+                Size = new Size(75, 30)
             };
-            selectAllButton.Click += (_, _) => fibonacciLevelCheckBoxes.ForEach(x => x.Checked = true);
-            clearAllButton.Click += (_, _) => fibonacciLevelCheckBoxes.ForEach(x => x.Checked = false);
-            fibonacciLevelsGroupBox.Controls.Add(selectAllButton);
-            fibonacciLevelsGroupBox.Controls.Add(clearAllButton);
 
-            Controls.Add(fibonacciLevelsGroupBox);
-            fibonacciLevelsGroupBox.BringToFront();
+            selectAllButton.Click += (_, _) => target.ForEach(x => x.Checked = true);
+            clearAllButton.Click += (_, _) => target.ForEach(x => x.Checked = false);
+            group.Controls.Add(selectAllButton);
+            group.Controls.Add(clearAllButton);
 
-            crosshairGridGroupBox.Location = new Point(16, 872);
-            okButton.Location = new Point(276, 1048);
-            cancelButton.Location = new Point(389, 1048);
-            ClientSize = new Size(792, 1107);
+            return group;
         }
 
-        private int GetSelectedFibonacciLevelsMask()
+        private static int GetSelectedFibonacciLevelsMask(List<CheckBox> checkBoxes)
         {
             var mask = 0;
-            for (var i = 0; i < fibonacciLevelCheckBoxes.Count; i++)
+            for (var i = 0; i < checkBoxes.Count; i++)
             {
-                if (fibonacciLevelCheckBoxes[i].Checked)
+                if (checkBoxes[i].Checked)
                     mask |= 1 << i;
             }
             return mask;
@@ -289,15 +326,15 @@ namespace Trade.It
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
             ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
             ChartAppearanceSettings.SetInitialVisibleCandleCount(InitialVisibleCandleCount);
-            var fibonacciMask = GetSelectedFibonacciLevelsMask();
-            if (fibonacciMask == 0)
+            var fibonacciRetracementMask = GetSelectedFibonacciLevelsMask(fibonacciRetracementCheckBoxes);
+            var fibonacciExtensionMask = GetSelectedFibonacciLevelsMask(fibonacciExtensionCheckBoxes);
+            if (fibonacciRetracementMask == 0 || fibonacciExtensionMask == 0)
             {
-                MessageBox.Show(this, "حداقل یک سطح فیبوناچی را انتخاب کنید.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "برای هر دو فیبوناچی حداقل یک سطح را انتخاب کنید.", "تنظیمات", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            ChartAppearanceSettings.SetFibonacciLevelsMask(fibonacciMask);
-            var selectedLevels = string.Join(", ", ChartAppearanceSettings.GetEnabledFibonacciLevels().Select(x => x.Text));
-            MessageBox.Show(this, $"ماسک فیبوناچی: {ChartAppearanceSettings.FibonacciLevelsMask}\nسطوح فعال: {selectedLevels}", "تشخیص تنظیمات فیبوناچی", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ChartAppearanceSettings.SetFibonacciRetracementLevelsMask(fibonacciRetracementMask);
+            ChartAppearanceSettings.SetFibonacciExtensionLevelsMask(fibonacciExtensionMask);
             ChartAppearanceSettings.Save();
             LineAppearanceSettings.Save();
             DialogResult = DialogResult.OK;
