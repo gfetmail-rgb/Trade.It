@@ -36,8 +36,7 @@ namespace Trade.It
     internal static class ChartAnalysisStorage
     {
         private static readonly string FolderPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Trade.It",
+            AppContext.BaseDirectory,
             "Analyses");
 
         private static string GetFilePath(string symbol)
