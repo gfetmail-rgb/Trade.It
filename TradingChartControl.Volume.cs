@@ -28,5 +28,33 @@ namespace Trade.It
                 Invalidate();
             }
         }
+
+        public bool VolumePanelVisible => volumePanelVisible;
+
+        public void ToggleVolumePanel()
+        {
+            volumePanelVisible = !volumePanelVisible;
+            if (!volumePanelVisible)
+            {
+                volumePanelResizeDrag = false;
+                Capture = false;
+                Cursor = Cursors.Default;
+            }
+
+            Invalidate();
+        }
+
+        public void SetVolumePanelVisible(bool visible)
+        {
+            volumePanelVisible = visible;
+            if (!visible)
+            {
+                volumePanelResizeDrag = false;
+                Capture = false;
+                Cursor = Cursors.Default;
+            }
+
+            Invalidate();
+        }
     }
 }
