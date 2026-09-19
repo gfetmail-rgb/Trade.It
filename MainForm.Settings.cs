@@ -42,7 +42,10 @@ namespace Trade.It
                 TradingChartControl.ChartRightEmptyPercent = chartRightEmptyPercent;
                 TradingChartControl.ChartTopEmptyPercent = chartTopEmptyPercent;
                 foreach (var chart in chartControls.Values.ToList())
+                {
                     chart.ResetView();
+                    chart.Invalidate(true);
+                }
                 ApplyChartDisplayMode();
                 Invalidate(true);
             }
