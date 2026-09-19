@@ -29,6 +29,7 @@ namespace Trade.It
             using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
+            using var headerFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size), FontStyle.Bold);
 
             if (showGrid)
             {
@@ -166,6 +167,17 @@ namespace Trade.It
                     e.Graphics.DrawString(timeText, axisTextFont, crosshairLabelTextBrush, timeRect.X + 3f, timeRect.Y + 2f);
                 }
             }
+
+            // Chart header: symbol and OHLCV for the candle under the crosshair.
+            var headerIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
+                ? crosshairIndex
+                : visible.Count - 1;
+            var headerPoint = visible[Math.Clamp(headerIndex, 0, visible.Count - 1)];
+            var headerText = string.IsNullOrWhiteSpace(chartSymbol)
+                ? $"O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
+                : $"{chartSymbol}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
+            using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
+                e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 4f, 2f);
 
             DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
         }
