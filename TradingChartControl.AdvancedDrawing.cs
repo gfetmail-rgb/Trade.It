@@ -432,8 +432,15 @@ namespace Trade.It
                 var text = level.Text;
 
                 var textSize = g.MeasureString(text, SystemFonts.DefaultFont);
-                var textX = right - textSize.Width - 4f;
+                var textX = right + 4f;
+                if (textX + textSize.Width > g.VisibleClipBounds.Right)
+                    textX = left - textSize.Width - 4f;
+
                 var textY = y - textSize.Height / 2f;
+                if (textY < g.VisibleClipBounds.Top)
+                    textY = g.VisibleClipBounds.Top;
+                else if (textY + textSize.Height > g.VisibleClipBounds.Bottom)
+                    textY = g.VisibleClipBounds.Bottom - textSize.Height;
 
                 g.DrawString(text, SystemFonts.DefaultFont, labelBrush, textX, textY);
             }
