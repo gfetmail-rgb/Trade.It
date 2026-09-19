@@ -69,17 +69,11 @@ namespace Trade.It
             // on an ordinary chart drawing or on an empty chart area. In that case
             // the normal OnMouseDown logic must receive the message so that regular
             // drawings remain selectable/movable and new drawing tools can be used.
-            // Temporarily hide the extra drawings only for this dispatch; clicks on
-            // an actual extra drawing were already intercepted above.
-            if ((m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN) &&
-                !ExtraDrawingActive && !extraDrawingInProgress && !extraDraggingHandleActive &&
-                extraDrawings.Count > 0 && !IsExtraDrawingHit(location))
-            {
-                var savedExtraDrawings = extraDrawings.ToArray();
-                extraDrawings.Clear();
-                try
-                {
-                    base.WndProc(ref m);
+            // Completed Extra drawings must remain in the control while the normal
+            // mouse event is dispatched. In particular, TextLabel can open a modal
+            // dialog from that dispatch; temporarily clearing extraDrawings would
+            // make Pitchfork/FibonacciExtension disappear until the dialog closes.
+            base.WndProc(ref m);
                 }
                 finally
                 {
