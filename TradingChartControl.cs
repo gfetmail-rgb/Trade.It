@@ -59,6 +59,11 @@ namespace Trade.It
         private int draggingHandle = 0;
         private Point draggingLastPoint;
         private string chartSymbol = string.Empty;
+        private double volumePanelRatio = 0.22;
+        private int volumePanelGap = 8;
+        private bool volumePanelResizeDrag;
+        private int volumePanelResizeStartY;
+        private double volumePanelResizeStartRatio;
 
         private sealed class ChartDrawing
         {
@@ -418,6 +423,16 @@ namespace Trade.It
             }
             if (activeDrawingTool != ChartDrawingTool.None) { BeginOrCompleteDrawing(e.Location); return; }
 
+            if (IsVolumePanelSeparator(e.Location.Y))
+            {
+                volumePanelResizeDrag = true;
+                volumePanelResizeStartY = e.Location.Y;
+                volumePanelResizeStartRatio = volumePanelRatio;
+                Capture = true;
+                Cursor = Cursors.SizeNS;
+                return;
+            }
+
             var plot = GetPlotRectangle();
             var handleIndex = HitTestDrawingHandle(e.Location, plot, out var handle);
             if (handleIndex >= 0)
@@ -441,9 +456,9 @@ namespace Trade.It
             selectedDrawingIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
-            var plotLeft = 55;
-            var plotBottom = Height - 35;
-            horizontalAxisDrag = e.Y >= plotBottom && e.X >= plotLeft;
+            var plotLeft = GetPlotRectangle().Left;
+            var plotBottom = GetPlotRectangle().Bottom;
+            horizontalAxisDrag = e.Y >= plotBottom && e.Y <= plotBottom + 6 && e.X >= plotLeft;
             verticalAxisDrag = e.X <= plotLeft && e.Y <= plotBottom;
             if (horizontalAxisDrag)
             {
@@ -548,12 +563,25 @@ namespace Trade.It
         {
             base.OnMouseMove(e);
             if (extraInputHandled) { extraInputHandled = false; return; }
+            if (volumePanelResizeDrag && Capture)
+            {
+                var overallBottom = Math.Max(15 + 1, Height - 35);
+                var totalHeight = Math.Max(120, overallBottom - 15);
+                var gap = Math.Clamp(volumePanelGap, 2, 30);
+                var desiredVolumeHeight = overallBottom - e.Y - gap;
+                var newRatio = desiredVolumeHeight / (double)totalHeight;
+                volumePanelRatio = Math.Clamp(newRatio, 0.10, 0.45);
+                Invalidate();
+                return;
+            }
+
             if (showCrosshair)
             {
-                var plotLeft = 55;
-                var plotRight = Math.Max(plotLeft, Width - 15);
-                var plotTop = 15;
-                var plotBottom = Math.Max(plotTop, Height - 35);
+                var plot = GetPlotRectangle();
+                var plotLeft = plot.Left;
+                var plotRight = plot.Right;
+                var plotTop = plot.Top;
+                var plotBottom = plot.Bottom;
                 var plotWidth = Math.Max(1, plotRight - plotLeft);
                 var step = plotWidth / (double)Math.Max(1, visibleCount);
                 var initialOffset = -plotWidth * 0.25;
@@ -586,10 +614,10 @@ namespace Trade.It
             {
                 var dx = e.X - panStartPoint.X;
                 var dy = e.Y - panStartPoint.Y;
-                var step = Math.Max(1.0, (Width - 70) / (double)Math.Max(1, visibleCount));
+                var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
                 var indexDelta = (int)Math.Round(-dx / step);
                 firstIndex = Math.Clamp(panStartFirstIndex + indexDelta, 0, Math.Max(0, points.Count - visibleCount));
-                verticalPanOffset = panStartVerticalPanOffset + dy / Math.Max(1.0, Height - 50) * panStartVerticalRange;
+                verticalPanOffset = panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
                 horizontalPanOffset = panStartHorizontalOffset + dx;
                 Invalidate();
             }
@@ -601,6 +629,15 @@ namespace Trade.It
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Left)
             {
+                if (volumePanelResizeDrag)
+                {
+                    volumePanelResizeDrag = false;
+                    Capture = false;
+                    Cursor = Cursors.Default;
+                    Invalidate();
+                    return;
+                }
+
                 if (draggingDrawingIndex >= 0)
                 {
                     draggingDrawingIndex = -1; draggingHandle = 0; Capture = false; Cursor = Cursors.Default; Invalidate(); return;
