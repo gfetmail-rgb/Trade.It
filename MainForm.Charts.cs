@@ -367,6 +367,23 @@ namespace Trade.It
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
                 SetIndicatorPanelButtonState(chart);
                 AttachChartToTab(chart, symbol);
+
+                // بعد از نمایش چارت، فوکوس را روی فهرست سهام نگه می‌داریم
+                // تا کلیدهای ناوبری مستقیماً روی فهرست عمل کنند.
+                var selectedRow = stocksDataGridView.Rows
+                    .Cast<DataGridViewRow>()
+                    .FirstOrDefault(row => string.Equals(
+                        Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim(),
+                        symbol,
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (selectedRow != null)
+                {
+                    stocksDataGridView.CurrentCell = selectedRow.Cells[symbolColumn.Index];
+                    stocksDataGridView.ClearSelection();
+                    selectedRow.Selected = true;
+                    stocksDataGridView.Focus();
+                }
             }
             catch (Exception ex)
             {
