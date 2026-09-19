@@ -421,7 +421,7 @@ namespace Trade.It
             var height = end.Y - start.Y;
             // Point 1 is the 100% anchor and point 2 is the 0% anchor.
             // Values above 100% are Fibonacci extensions beyond point 1.
-            var levels = new[] { 0f, 0.236f, 0.382f, 0.5f, 0.618f, 0.786f, 1f, 1.272f, 1.618f, 2f };
+            var levels = new[] { 0f, 0.382f, 0.5f, 0.618f, 0.786f, 1f, 1.272f, 1.618f, 2f };
             foreach (var level in levels)
             {
                 var y = start.Y + height * (1f - level);
