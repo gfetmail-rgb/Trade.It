@@ -11,7 +11,6 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
-        private readonly List<CheckBox> fibonacciLevelCheckBoxes = new();
         private GroupBox? fibonacciLevelsGroupBox;
 
         public ChartDisplayMode ChartDisplayMode
