@@ -282,9 +282,9 @@ namespace Trade.It
                     g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendChannel:
                     DrawTrendChannel(g, pen, drawing, plot, visibleCountForDrawing, min, max); break;
-                case ChartDrawingTool.HorizontalDoubleArrow:
+                case ChartDrawingTool.HorizontalLine:
                     g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
-                case ChartDrawingTool.VerticalDoubleArrow:
+                case ChartDrawingTool.VerticalLine:
                     g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
                 case ChartDrawingTool.HorizontalRay:
                     var direction = end.X >= start.X ? 1f : -1f;
@@ -309,9 +309,9 @@ namespace Trade.It
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
                     g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
-                case ChartDrawingTool.HorizontalDoubleArrow:
+                case ChartDrawingTool.HorizontalLine:
                     g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
-                case ChartDrawingTool.VerticalDoubleArrow:
+                case ChartDrawingTool.VerticalLine:
                     g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
                 case ChartDrawingTool.HorizontalRay:
                     var direction = end.X >= start.X ? 1f : -1f;
@@ -355,12 +355,12 @@ namespace Trade.It
 
         private void GetDrawingScreenPoints(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max, out PointF start, out PointF end)
         {
-            if (drawing.Tool == ChartDrawingTool.HorizontalDoubleArrow)
+            if (drawing.Tool == ChartDrawingTool.HorizontalLine)
             {
                 var y = PriceToScreen(drawing.Y1, plot, min, max);
                 start = new PointF(plot.Left, y); end = new PointF(plot.Right, y); return;
             }
-            if (drawing.Tool == ChartDrawingTool.VerticalDoubleArrow)
+            if (drawing.Tool == ChartDrawingTool.VerticalLine)
             {
                 var x = DataToScreen(drawing.X1, 0, plot, visibleCountForDrawing, min, max).X;
                 start = new PointF(x, plot.Top); end = new PointF(x, plot.Bottom); return;
@@ -410,8 +410,8 @@ namespace Trade.It
                 {
                     case ChartDrawingTool.TrendLine:
                     case ChartDrawingTool.TrendLineWithArrow:
-                    case ChartDrawingTool.HorizontalDoubleArrow:
-                    case ChartDrawingTool.VerticalDoubleArrow:
+                    case ChartDrawingTool.HorizontalLine:
+                    case ChartDrawingTool.VerticalLine:
                         if (DistanceToSegment(location, start, end) <= tolerance) return i;
                         break;
                     case ChartDrawingTool.TrendChannel:
@@ -469,12 +469,12 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var drawing = drawings[index];
-            if (drawing.Tool == ChartDrawingTool.HorizontalDoubleArrow)
+            if (drawing.Tool == ChartDrawingTool.HorizontalLine)
             {
                 drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
                 drawing.Y2 = drawing.Y1; return;
             }
-            if (drawing.Tool == ChartDrawingTool.VerticalDoubleArrow)
+            if (drawing.Tool == ChartDrawingTool.VerticalLine)
             {
                 var x = ScreenToDataX(location.X, plot, visible.Count);
                 drawing.X1 = x; drawing.X2 = x; return;
