@@ -64,24 +64,10 @@ namespace Trade.It
                 return;
             }
 
-            // ExtraDrawing_MouseDown currently marks every left-click as handled
-            // whenever at least one extra drawing exists, even when the click is
-            // on an ordinary chart drawing or on an empty chart area. In that case
-            // the normal OnMouseDown logic must receive the message so that regular
-            // drawings remain selectable/movable and new drawing tools can be used.
             // Completed Extra drawings must remain in the control while the normal
             // mouse event is dispatched. In particular, TextLabel can open a modal
             // dialog from that dispatch; temporarily clearing extraDrawings would
             // make Pitchfork/FibonacciExtension disappear until the dialog closes.
-            base.WndProc(ref m);
-                }
-                finally
-                {
-                    extraDrawings.AddRange(savedExtraDrawings);
-                }
-                return;
-            }
-
             base.WndProc(ref m);
 
             if (m.Msg == WM_MOUSEMOVE && verticalAxisDrag && Capture && points.Count > 1)
