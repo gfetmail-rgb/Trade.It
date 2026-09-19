@@ -12,6 +12,7 @@ namespace Trade.It
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
+        private readonly System.Windows.Forms.Timer analysisAutoSaveTimer = new();
 
         private void InitializeChartRuntime()
         {
@@ -29,6 +30,9 @@ namespace Trade.It
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
             loadAnalysisButton.Click += LoadAnalysisButton_Click;
+            analysisAutoSaveTimer.Interval = 1000;
+            analysisAutoSaveTimer.Tick += AnalysisAutoSaveTimer_Tick;
+            analysisAutoSaveTimer.Start();
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, true);
@@ -68,6 +72,38 @@ namespace Trade.It
             }
         }
 
+        private void AnalysisAutoSaveTimer_Tick(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+                return;
+
+            try
+            {
+                ChartAnalysisStorage.Save(chart.CreateAnalysisDocument());
+            }
+            catch
+            {
+                // ذخیره خودکار نباید مزاحم کاربر شود.
+            }
+        }
+
+        private void ApplyAnalysisDocument(TradingChartControl chart, ChartAnalysisDocument document)
+        {
+            chart.RestoreAnalysisDocument(document);
+            SetToggleButtonState(gridButton, chart.GridVisible);
+            SetToggleButtonState(crossButton, chart.CrosshairVisible);
+
+            if (chart.ChartType == TradingChartType.Candlestick)
+                chartTypeComboBox.SelectedIndex = 0;
+            else if (chart.ChartType == TradingChartType.Line)
+                chartTypeComboBox.SelectedIndex = 1;
+            else
+                chartTypeComboBox.SelectedIndex = 2;
+
+            ResetDrawingToolButtons();
+        }
+
         private void LoadAnalysisButton_Click(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
@@ -91,18 +127,7 @@ namespace Trade.It
                     return;
                 }
 
-                chart.RestoreAnalysisDocument(document);
-                SetToggleButtonState(gridButton, chart.GridVisible);
-                SetToggleButtonState(crossButton, chart.CrosshairVisible);
-
-                if (chart.ChartType == TradingChartType.Candlestick)
-                    chartTypeComboBox.SelectedIndex = 0;
-                else if (chart.ChartType == TradingChartType.Line)
-                    chartTypeComboBox.SelectedIndex = 1;
-                else
-                    chartTypeComboBox.SelectedIndex = 2;
-
-                ResetDrawingToolButtons();
+                ApplyAnalysisDocument(chart, document);
 
                 MessageBox.Show(
                     this,
@@ -316,6 +341,19 @@ namespace Trade.It
 
         private void ShowSymbolChart(string symbol)
         {
+            var currentChart = GetActiveChart();
+            if (currentChart != null && !string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
+                }
+                catch
+                {
+                    // ذخیره خودکار نباید مانع باز شدن چارت جدید شود.
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
             try
             {
@@ -330,8 +368,17 @@ namespace Trade.It
                 chartInfoLabel.Text = $"{symbol}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
                 var chart = GetOrCreateChart(symbol);
+                var isNewChart = chart.DataPointCount == 0;
                 chart.SetData(points, symbol);
                 chart.SetChartType(GetSelectedChartType());
+
+                if (isNewChart)
+                {
+                    var savedAnalysis = ChartAnalysisStorage.Load(symbol);
+                    if (savedAnalysis != null)
+                        ApplyAnalysisDocument(chart, savedAnalysis);
+                }
+
                 chart.Visible = true;
                 SetToggleButtonState(hideChartButton, false);
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
