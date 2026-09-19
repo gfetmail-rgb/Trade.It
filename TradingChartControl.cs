@@ -133,7 +133,8 @@ namespace Trade.It
                 VerticalZoom = verticalZoom,
                 VerticalPanOffset = verticalPanOffset,
                 HorizontalPanOffset = horizontalPanOffset,
-                ChartPanCompensation = chartPanCompensation
+                ChartPanCompensation = chartPanCompensation,
+                VolumePanelRatio = volumePanelRatio
             };
 
             foreach (var drawing in drawings)
@@ -274,6 +275,10 @@ namespace Trade.It
             verticalPanOffset = document.VerticalPanOffset;
             horizontalPanOffset = document.HorizontalPanOffset;
             chartPanCompensation = document.ChartPanCompensation;
+            volumePanelRatio = Math.Clamp(
+                document.VolumePanelRatio > 0 ? document.VolumePanelRatio : 0.22,
+                0.10,
+                0.45);
 
             if (Enum.TryParse<TradingChartType>(document.ChartType, true, out var restoredChartType))
                 chartType = restoredChartType;
