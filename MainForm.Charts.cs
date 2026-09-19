@@ -25,6 +25,7 @@ namespace Trade.It
             zoomOutButton.Click += (_, _) => GetActiveChart()?.ZoomX(1.35);
             gridButton.Click += GridButton_Click;
             crossButton.Click += CrossButton_Click;
+            indicatorPanelButton.Click += IndicatorPanelButton_Click;
             hideChartButton.Click += HideChartButton_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
@@ -35,8 +36,34 @@ namespace Trade.It
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, true);
+            SetIndicatorPanelButtonState(GetActiveChart());
             SetToggleButtonState(hideChartButton, false);
             ApplyChartDisplayMode();
+        }
+
+        private void IndicatorPanelButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart == null)
+                return;
+
+            chart.ToggleVolumePanel();
+            SetIndicatorPanelButtonState(chart);
+        }
+
+        private void SetIndicatorPanelButtonState(TradingChartControl? chart)
+        {
+            if (chart == null)
+            {
+                indicatorPanelButton.Text = "اندیکاتورها";
+                SetToggleButtonState(indicatorPanelButton, false);
+                return;
+            }
+
+            indicatorPanelButton.Text = chart.VolumePanelVisible
+                ? "پنهان اندیکاتور"
+                : "نمایش اندیکاتور";
+            SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
         }
 
         private void SaveAnalysisButton_Click(object? sender, EventArgs e)
