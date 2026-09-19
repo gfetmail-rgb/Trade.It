@@ -235,7 +235,13 @@ namespace Trade.It
             RefreshOwnerCharts();
         }
 
-        private void RefreshOwnerCharts()\n        {\n            if (Owner is MainForm mainForm && !mainForm.IsDisposed) mainForm.Refresh();\n        }\n\n        private static void SetColorButton(Button button, Color color)
+        private void RefreshOwnerCharts()
+        {
+            if (Owner is MainForm mainForm && !mainForm.IsDisposed)
+                mainForm.Refresh();
+        }
+
+        private static void SetColorButton(Button button, Color color)
         {
             button.BackColor = color;
             button.ForeColor = color.GetBrightness() < 0.5f ? Color.White : Color.Black;
