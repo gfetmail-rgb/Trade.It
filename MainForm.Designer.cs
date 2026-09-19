@@ -30,6 +30,7 @@
         private System.Windows.Forms.ComboBox chartTypeComboBox;
         private System.Windows.Forms.Button gridButton;
         private System.Windows.Forms.Button crossButton;
+        private System.Windows.Forms.Button indicatorPanelButton;
         private System.Windows.Forms.Button zoomInButton;
         private System.Windows.Forms.Button zoomOutButton;
         private System.Windows.Forms.Button resetChartButton;
@@ -231,6 +232,7 @@
             chartTypeComboBox = new ComboBox();
             gridButton = new Button();
             crossButton = new Button();
+            indicatorPanelButton = new Button();
             zoomInButton = new Button();
             zoomOutButton = new Button();
             resetChartButton = new Button();
@@ -1587,6 +1589,7 @@
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
+            chartToolbarPanel.Controls.Add(indicatorPanelButton);
             chartToolbarPanel.Controls.Add(zoomInButton);
             chartToolbarPanel.Controls.Add(zoomOutButton);
             chartToolbarPanel.Controls.Add(resetChartButton);
@@ -1677,12 +1680,21 @@
             crossButton.TabIndex = 2;
             crossButton.Text = "Cross";
             // 
+            // indicatorPanelButton
+            // 
+            indicatorPanelButton.Location = new Point(222, 7);
+            indicatorPanelButton.Name = "indicatorPanelButton";
+            indicatorPanelButton.Size = new Size(88, 34);
+            indicatorPanelButton.TabIndex = 3;
+            indicatorPanelButton.Text = "اندیکاتورها";
+            indicatorPanelButton.UseVisualStyleBackColor = true;
+            // 
             // zoomInButton
             // 
             zoomInButton.Location = new Point(242, 7);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
-            zoomInButton.TabIndex = 3;
+            zoomInButton.TabIndex = 4;
             zoomInButton.Text = "+";
             // 
             // zoomOutButton
@@ -1690,7 +1702,7 @@
             zoomOutButton.Location = new Point(297, 7);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
-            zoomOutButton.TabIndex = 4;
+            zoomOutButton.TabIndex = 5;
             zoomOutButton.Text = "-";
             // 
             // resetChartButton
@@ -1699,7 +1711,7 @@
             resetChartButton.Location = new Point(352, 7);
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(86, 35);
-            resetChartButton.TabIndex = 5;
+            resetChartButton.TabIndex = 6;
             resetChartButton.Text = "بازنشانی";
             // 
             // hideChartButton
