@@ -190,8 +190,8 @@ namespace Trade.It
                 // سازگاری با تحلیل‌های قدیمی که نام ابزارها در آنها DoubleArrow بوده است.
                 var toolName = item.Tool switch
                 {
-                    "HorizontalLine" => "HorizontalLine",
-                    "VerticalLine" => "VerticalLine",
+                    "HorizontalDoubleArrow" => "HorizontalLine",
+                    "VerticalDoubleArrow" => "VerticalLine",
                     _ => item.Tool
                 };
 
