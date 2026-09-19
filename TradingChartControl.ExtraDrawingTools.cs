@@ -103,12 +103,9 @@ namespace Trade.It
             if (count == extraDataCount && first == extraFirstDate && last == extraLastDate)
                 return;
 
-            extraDrawings.Clear();
-            selectedExtraDrawingIndex = -1;
-            extraDraggingHandle = 0;
-            extraDraggingDrawingIndex = -1;
-            extraDraggingHandleActive = false;
-            extraDraggingLastPoint = Point.Empty;
+            // تغییر/Refresh داده‌های قیمت نباید Drawingهای تکمیل‌شده‌ی Extra
+            // مثل Pitchfork را پاک کند. این متد ممکن است صرفاً در جریان Paint
+            // و به‌دلیل باز شدن یک پنجره Modal فراخوانی شود.
             extraDataCount = count;
             extraFirstDate = first;
             extraLastDate = last;
