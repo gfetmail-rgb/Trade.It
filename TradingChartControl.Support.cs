@@ -162,13 +162,10 @@ namespace Trade.It
             extraDrawingLegacyPaintDetached = true;
         }
 
-        private void RenderExtraDrawings(Graphics g)
+        private void RenderExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             DetachLegacyExtraDrawingPaint();
             RenderConfiguredAdvancedOverlay(g);
-            SyncExtraDrawingData();
-            if (!TryGetExtraContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
-                return;
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             for (var i = 0; i < extraDrawings.Count; i++)
             {
