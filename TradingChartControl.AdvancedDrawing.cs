@@ -505,7 +505,7 @@ namespace Trade.It
 
         private string? PromptAdvancedText()
         {
-            using var form = new Form { Width = 360, Height = 150, FormBorderStyle = FormBorderStyle.FixedDialog, StartPosition = FormStartPosition.CenterParent, MinimizeBox = false, MaximizeBox = false, RightToLeft = RightToLeft.Yes, RightToLeftLayout = true, Text = "درج متن" };
+            using var form = new Form { Width = 360, Height = 150, FormBorderStyle = FormBorderStyle.FixedDialog, StartPosition = FormStartPosition.CenterScreen, MinimizeBox = false, MaximizeBox = false, RightToLeft = RightToLeft.Yes, RightToLeftLayout = true, Text = "درج متن" };
             using var textBox = new TextBox { Dock = DockStyle.Top, Multiline = false };
             using var ok = new Button { Text = "تأیید", DialogResult = DialogResult.OK, Width = 80, Height = 30 };
             using var cancel = new Button { Text = "لغو", DialogResult = DialogResult.Cancel, Width = 80, Height = 30 };
@@ -517,7 +517,7 @@ namespace Trade.It
             form.AcceptButton = ok;
             form.CancelButton = cancel;
             form.Shown += (_, _) => textBox.Focus();
-            return form.ShowDialog(FindForm()) == DialogResult.OK ? textBox.Text : null;
+            return form.ShowDialog() == DialogResult.OK ? textBox.Text : null;
         }
     }
 }
