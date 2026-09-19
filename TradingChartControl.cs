@@ -105,6 +105,194 @@ namespace Trade.It
 
         public string ChartSymbol => chartSymbol;
 
+        public TradingChartType ChartType => chartType;
+
+        public ChartAnalysisDocument CreateAnalysisDocument()
+        {
+            var document = new ChartAnalysisDocument
+            {
+                Symbol = chartSymbol,
+                ChartType = chartType.ToString(),
+                GridVisible = showGrid,
+                CrosshairVisible = showCrosshair,
+                VisibleCount = visibleCount,
+                FirstIndex = firstIndex,
+                VerticalZoom = verticalZoom,
+                VerticalPanOffset = verticalPanOffset,
+                HorizontalPanOffset = horizontalPanOffset,
+                ChartPanCompensation = chartPanCompensation
+            };
+
+            foreach (var drawing in drawings)
+            {
+                document.Drawings.Add(new ChartAnalysisDrawing
+                {
+                    Tool = drawing.Tool.ToString(),
+                    X1 = firstIndex + drawing.X1,
+                    Y1 = drawing.Y1,
+                    X2 = firstIndex + drawing.X2,
+                    Y2 = drawing.Y2,
+                    X3 = firstIndex + drawing.X3,
+                    Y3 = drawing.Y3
+                });
+            }
+
+            foreach (var drawing in advancedDrawings)
+            {
+                document.AdvancedDrawings.Add(new ChartAnalysisDrawing
+                {
+                    Tool = drawing.Tool.ToString(),
+                    X1 = firstIndex + drawing.X1,
+                    Y1 = drawing.Y1,
+                    X2 = firstIndex + drawing.X2,
+                    Y2 = drawing.Y2,
+                    Text = drawing.Text
+                });
+            }
+
+            foreach (var drawing in extraDrawings)
+            {
+                document.ExtraDrawings.Add(new ChartAnalysisDrawing
+                {
+                    Tool = drawing.Tool.ToString(),
+                    X1 = firstIndex + drawing.X1,
+                    Y1 = drawing.Y1,
+                    X2 = firstIndex + drawing.X2,
+                    Y2 = drawing.Y2,
+                    X3 = firstIndex + drawing.X3,
+                    Y3 = drawing.Y3
+                });
+            }
+
+            return document;
+        }
+
+        public void RestoreAnalysisDocument(ChartAnalysisDocument document)
+        {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
+            if (!string.IsNullOrWhiteSpace(document.Symbol) &&
+                !string.Equals(document.Symbol.Trim(), chartSymbol.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("این تحلیل مربوط به نماد دیگری است.");
+            }
+
+            CancelDrawing();
+            CancelAdvancedDrawing();
+            CancelExtraDrawing();
+
+            drawings.Clear();
+            advancedDrawings.Clear();
+            extraDrawings.Clear();
+
+            foreach (var item in document.Drawings ?? new List<ChartAnalysisDrawing>())
+            {
+                if (!Enum.TryParse<ChartDrawingTool>(item.Tool, true, out var tool) ||
+                    tool == ChartDrawingTool.None)
+                    continue;
+
+                drawings.Add(new ChartDrawing
+                {
+                    Tool = tool,
+                    X1 = item.X1 - document.FirstIndex,
+                    Y1 = item.Y1,
+                    X2 = item.X2 - document.FirstIndex,
+                    Y2 = item.Y2,
+                    X3 = item.X3 - document.FirstIndex,
+                    Y3 = item.Y3
+                });
+            }
+
+            foreach (var item in document.AdvancedDrawings ?? new List<ChartAnalysisDrawing>())
+            {
+                if (!Enum.TryParse<AdvancedDrawingTool>(item.Tool, true, out var tool) ||
+                    tool == AdvancedDrawingTool.None)
+                    continue;
+
+                advancedDrawings.Add(new AdvancedDrawing
+                {
+                    Tool = tool,
+                    X1 = item.X1 - document.FirstIndex,
+                    Y1 = item.Y1,
+                    X2 = item.X2 - document.FirstIndex,
+                    Y2 = item.Y2,
+                    Text = item.Text
+                });
+            }
+
+            foreach (var item in document.ExtraDrawings ?? new List<ChartAnalysisDrawing>())
+            {
+                if (!Enum.TryParse<ExtraDrawingTool>(item.Tool, true, out var tool) ||
+                    tool == ExtraDrawingTool.None)
+                    continue;
+
+                extraDrawings.Add(new ExtraDrawing
+                {
+                    Tool = tool,
+                    X1 = item.X1 - document.FirstIndex,
+                    Y1 = item.Y1,
+                    X2 = item.X2 - document.FirstIndex,
+                    Y2 = item.Y2,
+                    X3 = item.X3 - document.FirstIndex,
+                    Y3 = item.Y3
+                });
+            }
+
+            visibleCount = Math.Clamp(
+                document.VisibleCount > 0 ? document.VisibleCount : Math.Min(200, Math.Max(1, points.Count)),
+                1,
+                Math.Max(1, points.Count));
+
+            firstIndex = Math.Clamp(
+                document.FirstIndex,
+                0,
+                Math.Max(0, points.Count - visibleCount));
+
+            verticalZoom = document.VerticalZoom > 0 ? document.VerticalZoom : 1.0;
+            verticalPanOffset = document.VerticalPanOffset;
+            horizontalPanOffset = document.HorizontalPanOffset;
+            chartPanCompensation = document.ChartPanCompensation;
+
+            if (Enum.TryParse<TradingChartType>(document.ChartType, true, out var restoredChartType))
+                chartType = restoredChartType;
+
+            showGrid = document.GridVisible;
+            showCrosshair = document.CrosshairVisible;
+            crosshairIndex = -1;
+
+            advancedDataCount = points.Count;
+            advancedFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
+            advancedLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
+
+            extraDataCount = points.Count;
+            extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
+            extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
+
+            selectedDrawingIndex = -1;
+            draggingDrawingIndex = -1;
+            selectedAdvancedDrawingIndex = -1;
+            draggingAdvancedDrawingIndex = -1;
+            selectedExtraDrawingIndex = -1;
+            extraDraggingDrawingIndex = -1;
+
+            Invalidate();
+        }
+
+        public void SetGridVisible(bool visible)
+        {
+            showGrid = visible;
+            Invalidate();
+        }
+
+        public void SetCrosshairVisible(bool visible)
+        {
+            showCrosshair = visible;
+            if (!visible)
+                crosshairIndex = -1;
+            Invalidate();
+        }
+
         public void SetChartType(TradingChartType type) { chartType = type; Invalidate(); }
         public void ToggleGrid() { showGrid = !showGrid; Invalidate(); }
         public bool GridVisible => showGrid;
