@@ -179,9 +179,9 @@ namespace Trade.It
 
                 if (extraDrawingPoints.Count == RequiredExtraPoints)
                 {
+                    // خط‌کش فقط ابزار اندازه‌گیری موقت است و نباید به‌عنوان Drawing ذخیره شود.
+                    // بعد از کلیک نقطه دوم، Preview هم باید کاملاً ناپدید شود.
                     if (activeExtraDrawingTool != ExtraDrawingTool.Measure)
-                        AddExtraDrawing();
-                    else
                         AddExtraDrawing();
 
                     // Completing a drawing also ends the tool, exactly once.
