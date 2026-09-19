@@ -39,6 +39,8 @@
         private System.Windows.Forms.Button printChartButton;
         private System.Windows.Forms.Button snapshotChartButton;
         private System.Windows.Forms.Button fullScreenChartButton;
+        private System.Windows.Forms.Button saveAnalysisButton;
+        private System.Windows.Forms.Button loadAnalysisButton;
         private System.Windows.Forms.Button drawTrendLineButton;
         private System.Windows.Forms.Button drawTrendChannelButton;
         private System.Windows.Forms.Button drawHorizontalDoubleButton;
@@ -312,6 +314,8 @@
             printChartButton = new Button();
             snapshotChartButton = new Button();
             fullScreenChartButton = new Button();
+            saveAnalysisButton = new Button();
+            loadAnalysisButton = new Button();
             drawTrendLineButton = new Button();
             drawTrendChannelButton = new Button();
             drawHorizontalDoubleButton = new Button();
@@ -2057,6 +2061,8 @@
             chartToolbarPanel.Controls.Add(label11);
             chartToolbarPanel.Controls.Add(label10);
             chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
+            chartToolbarPanel.Controls.Add(saveAnalysisButton);
+            chartToolbarPanel.Controls.Add(loadAnalysisButton);
             chartToolbarPanel.Controls.Add(chartTypeComboBox);
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
@@ -2117,9 +2123,9 @@
             // 
             // closeAllChartsToolbarButton
             // 
-            closeAllChartsToolbarButton.Location = new Point(960, 7);
+            closeAllChartsToolbarButton.Location = new Point(1004, 7);
             closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
-            closeAllChartsToolbarButton.Size = new Size(114, 34);
+            closeAllChartsToolbarButton.Size = new Size(110, 34);
             closeAllChartsToolbarButton.TabIndex = 21;
             closeAllChartsToolbarButton.Text = "بستن چارتها";
             closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
@@ -2186,7 +2192,7 @@
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(838, 7);
+            hideToolsButton.Location = new Point(970, 46);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
@@ -2215,6 +2221,26 @@
             fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
             fullScreenChartButton.Text = "تمام صفحه";
+            // 
+            // saveAnalysisButton
+            // 
+            saveAnalysisButton.Location = new Point(838, 7);
+            saveAnalysisButton.Name = "saveAnalysisButton";
+            saveAnalysisButton.RightToLeft = RightToLeft.Yes;
+            saveAnalysisButton.Size = new Size(88, 34);
+            saveAnalysisButton.TabIndex = 11;
+            saveAnalysisButton.Text = "ذخیره تحلیل";
+            saveAnalysisButton.UseVisualStyleBackColor = true;
+            // 
+            // loadAnalysisButton
+            // 
+            loadAnalysisButton.Location = new Point(930, 7);
+            loadAnalysisButton.Name = "loadAnalysisButton";
+            loadAnalysisButton.RightToLeft = RightToLeft.Yes;
+            loadAnalysisButton.Size = new Size(70, 34);
+            loadAnalysisButton.TabIndex = 12;
+            loadAnalysisButton.Text = "بازیابی";
+            loadAnalysisButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendLineButton
             // 
