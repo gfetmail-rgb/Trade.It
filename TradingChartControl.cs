@@ -61,9 +61,9 @@ namespace Trade.It
         private string chartSymbol = string.Empty;
         private double volumePanelRatio = 0.22;
         private int volumePanelGap = 8;
-        private bool volumePanelResizeDrag;
-        private int volumePanelResizeStartY;
-        private double volumePanelResizeStartRatio;
+        private bool volumePanelGapResizeDrag;
+        private int volumePanelGapResizeStartY;
+        private int volumePanelGapResizeStartGap;
 
         private sealed class ChartDrawing
         {
@@ -425,9 +425,9 @@ namespace Trade.It
 
             if (IsVolumePanelSeparator(e.Location.Y))
             {
-                volumePanelResizeDrag = true;
-                volumePanelResizeStartY = e.Location.Y;
-                volumePanelResizeStartRatio = volumePanelRatio;
+                volumePanelGapResizeDrag = true;
+                volumePanelGapResizeStartY = e.Location.Y;
+                volumePanelGapResizeStartGap = volumePanelGap;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
@@ -563,14 +563,10 @@ namespace Trade.It
         {
             base.OnMouseMove(e);
             if (extraInputHandled) { extraInputHandled = false; return; }
-            if (volumePanelResizeDrag && Capture)
+            if (volumePanelGapResizeDrag && Capture)
             {
-                var overallBottom = Math.Max(15 + 1, Height - 35);
-                var totalHeight = Math.Max(120, overallBottom - 15);
-                var gap = Math.Clamp(volumePanelGap, 2, 30);
-                var desiredVolumeHeight = overallBottom - e.Y - gap;
-                var newRatio = desiredVolumeHeight / (double)totalHeight;
-                volumePanelRatio = Math.Clamp(newRatio, 0.10, 0.45);
+                var delta = e.Location.Y - volumePanelGapResizeStartY;
+                volumePanelGap = Math.Clamp(volumePanelGapResizeStartGap + delta, 2, 30);
                 Invalidate();
                 return;
             }
@@ -629,9 +625,9 @@ namespace Trade.It
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Left)
             {
-                if (volumePanelResizeDrag)
+                if (volumePanelGapResizeDrag)
                 {
-                    volumePanelResizeDrag = false;
+                    volumePanelGapResizeDrag = false;
                     Capture = false;
                     Cursor = Cursors.Default;
                     Invalidate();
