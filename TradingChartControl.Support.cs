@@ -21,8 +21,8 @@ namespace Trade.It
         {
             ChartDrawingTool.TrendLine => ChartAppearanceSettings.TrendLineColor,
             ChartDrawingTool.TrendChannel => ChartAppearanceSettings.TrendChannelColor,
-            ChartDrawingTool.HorizontalDoubleArrow => ChartAppearanceSettings.HorizontalDoubleArrowColor,
-            ChartDrawingTool.VerticalDoubleArrow => ChartAppearanceSettings.VerticalDoubleArrowColor,
+            ChartDrawingTool.HorizontalLine => ChartAppearanceSettings.HorizontalLineColor,
+            ChartDrawingTool.VerticalLine => ChartAppearanceSettings.VerticalLineColor,
             ChartDrawingTool.HorizontalRay => ChartAppearanceSettings.HorizontalRayColor,
             ChartDrawingTool.TrendLineWithArrow => ChartAppearanceSettings.TrendLineWithArrowColor,
             ChartDrawingTool.Rectangle => ChartAppearanceSettings.RectangleColor,
