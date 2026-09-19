@@ -55,7 +55,8 @@ namespace Trade.It
         {
             EnsureAdvancedDrawingEvents();
             CancelDrawing();
-            CancelExtraDrawing();
+            // فعال‌سازی متن نباید وضعیت یا رندر Drawingهای تکمیل‌شده‌ی Extra
+            // مثل Pitchfork را دستکاری کند. فقط ابزار Advanced فعلی تغییر می‌کند.
             activeAdvancedDrawingTool = activeAdvancedDrawingTool == AdvancedDrawingTool.TextLabel
                 ? AdvancedDrawingTool.None
                 : AdvancedDrawingTool.TextLabel;
