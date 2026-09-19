@@ -118,11 +118,24 @@ namespace Trade.It
             {
                 var x = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
                 using var crosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth) { DashStyle = LineAppearanceSettings.CrosshairLineStyle };
-                e.Graphics.DrawLine(crosshairPen, x, plot.Top, x, plot.Bottom);
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
 
             e.Graphics.Restore(chartState);
+
+            var volumePlot = GetVolumePlotRectangle();
+            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
+            {
+                var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
+                using var fullCrosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth)
+                {
+                    DashStyle = LineAppearanceSettings.CrosshairLineStyle
+                };
+                e.Graphics.DrawLine(fullCrosshairPen, crosshairX, plot.Top, crosshairX, volumePlot.Bottom);
+            }
+
+            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
+            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
 
             for (var i = 0; i <= 5; i++)
             {
@@ -159,7 +172,7 @@ namespace Trade.It
                     var timeSize = e.Graphics.MeasureString(timeText, axisTextFont);
                     var timeRect = new RectangleF(
                         Math.Clamp(crosshairX - timeSize.Width / 2f - 3f, plot.Left, Math.Max(plot.Left, Width - timeSize.Width - 6f)),
-                        plot.Bottom + 2f,
+                        volumePlot.Bottom + 2f,
                         timeSize.Width + 6f,
                         timeSize.Height + 4f);
 
@@ -551,8 +564,100 @@ namespace Trade.It
             var left = 55;
             var top = 15;
             var right = Math.Max(left + 1, Width - 15);
-            var bottom = Math.Max(top + 1, Height - 35);
+            var overallBottom = Math.Max(top + 1, Height - 35);
+
+            var gap = Math.Clamp(volumePanelGap, 2, 30);
+            var totalHeight = Math.Max(120, overallBottom - top);
+            var volumeHeight = Math.Clamp(
+                (int)Math.Round(totalHeight * volumePanelRatio),
+                60,
+                Math.Max(60, totalHeight / 2));
+
+            var bottom = Math.Max(
+                top + 80,
+                overallBottom - volumeHeight - gap);
+
             return Rectangle.FromLTRB(left, top, right, bottom);
+        }
+
+        private Rectangle GetVolumePlotRectangle()
+        {
+            var pricePlot = GetPlotRectangle();
+            var left = pricePlot.Left;
+            var right = pricePlot.Right;
+            var overallBottom = Math.Max(pricePlot.Top + 1, Height - 35);
+            var top = Math.Min(overallBottom - 1, pricePlot.Bottom + Math.Clamp(volumePanelGap, 2, 30));
+            return Rectangle.FromLTRB(left, top, right, overallBottom);
+        }
+
+        private void RenderVolumePanel(
+            Graphics g,
+            Rectangle volumePlot,
+            List<TradingChartPoint> visible,
+            double step,
+            double initialOffset)
+        {
+            if (visible.Count == 0 || volumePlot.Width <= 0 || volumePlot.Height <= 0)
+                return;
+
+            using var separatorPen = new Pen(Color.FromArgb(170, 170, 170), 1f);
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var risingBrush = new SolidBrush(ChartAppearanceSettings.RisingCandleColor);
+            using var fallingBrush = new SolidBrush(ChartAppearanceSettings.FallingCandleColor);
+            using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, LineAppearanceSettings.ChartLineWidth);
+            using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth);
+            using var textBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
+            using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Regular);
+
+            g.DrawLine(separatorPen, volumePlot.Left, volumePlot.Top, volumePlot.Right, volumePlot.Top);
+            g.DrawLine(axisPen, volumePlot.Left, volumePlot.Bottom, volumePlot.Right, volumePlot.Bottom);
+            g.DrawLine(axisPen, volumePlot.Left, volumePlot.Top, volumePlot.Left, volumePlot.Bottom);
+
+            var minVolume = visible.Min(x => Math.Max(0.0, x.Volume));
+            var maxVolume = visible.Max(x => Math.Max(0.0, x.Volume));
+            var topPadding = Math.Max(2f, volumePlot.Height * 0.05f);
+            var usableHeight = Math.Max(1f, volumePlot.Height - topPadding);
+            var range = maxVolume - minVolume;
+
+            float VolumeToScreen(double volume)
+            {
+                if (range <= 1e-12)
+                    return volumePlot.Bottom - usableHeight * 0.5f;
+
+                var ratio = (Math.Max(minVolume, Math.Min(maxVolume, volume)) - minVolume) / range;
+                return (float)(volumePlot.Bottom - ratio * usableHeight);
+            }
+
+            var candleWidth = Math.Max(2f, (float)(step * 0.65));
+            for (var i = 0; i < visible.Count; i++)
+            {
+                var item = visible[i];
+                var x = (float)(volumePlot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                var y = VolumeToScreen(item.Volume);
+                var rising = item.Close >= item.Open;
+                var brush = rising ? risingBrush : fallingBrush;
+                var pen = rising ? risingPen : fallingPen;
+
+                var top = Math.Min(y, volumePlot.Bottom);
+                var height = Math.Max(1f, volumePlot.Bottom - top);
+                var rect = RectangleF.FromLTRB(
+                    x - candleWidth / 2f,
+                    top,
+                    x + candleWidth / 2f,
+                    volumePlot.Bottom);
+
+                g.FillRectangle(brush, rect);
+                g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, Math.Max(1f, height));
+            }
+
+            var maxText = maxVolume.ToString("N0");
+            var minText = minVolume.ToString("N0");
+            g.DrawString(maxText, labelFont, textBrush, volumePlot.Left + 4f, volumePlot.Top + 1f);
+            g.DrawString(minText, labelFont, textBrush, volumePlot.Left + 4f, volumePlot.Bottom - labelFont.GetHeight(g) - 1f);
+
+            using var titleBrush = new SolidBrush(Color.FromArgb(90, 90, 90));
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            g.DrawString("حجم", titleFont, titleBrush, volumePlot.Left + 45f, volumePlot.Top + 1f);
         }
 
         private void GetVerticalRange(List<TradingChartPoint> visible, out double min, out double max)
