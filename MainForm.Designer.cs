@@ -1691,7 +1691,7 @@
             // 
             // zoomInButton
             // 
-            zoomInButton.Location = new Point(242, 7);
+            zoomInButton.Location = new Point(314, 7);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
             zoomInButton.TabIndex = 4;
@@ -1699,7 +1699,7 @@
             // 
             // zoomOutButton
             // 
-            zoomOutButton.Location = new Point(297, 7);
+            zoomOutButton.Location = new Point(369, 7);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
             zoomOutButton.TabIndex = 5;
@@ -1708,7 +1708,7 @@
             // resetChartButton
             // 
             resetChartButton.AutoSize = true;
-            resetChartButton.Location = new Point(352, 7);
+            resetChartButton.Location = new Point(424, 7);
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(86, 35);
             resetChartButton.TabIndex = 6;
@@ -1716,7 +1716,7 @@
             // 
             // hideChartButton
             // 
-            hideChartButton.Location = new Point(732, 7);
+            hideChartButton.Location = new Point(784, 7);
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(104, 34);
             hideChartButton.TabIndex = 6;
@@ -1733,7 +1733,7 @@
             // 
             // printChartButton
             // 
-            printChartButton.Location = new Point(452, 7);
+            printChartButton.Location = new Point(522, 7);
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(70, 34);
             printChartButton.TabIndex = 8;
@@ -1741,7 +1741,7 @@
             // 
             // snapshotChartButton
             // 
-            snapshotChartButton.Location = new Point(525, 7);
+            snapshotChartButton.Location = new Point(595, 7);
             snapshotChartButton.Name = "snapshotChartButton";
             snapshotChartButton.Size = new Size(79, 34);
             snapshotChartButton.TabIndex = 9;
@@ -1749,7 +1749,7 @@
             // 
             // fullScreenChartButton
             // 
-            fullScreenChartButton.Location = new Point(606, 7);
+            fullScreenChartButton.Location = new Point(676, 7);
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
@@ -1757,7 +1757,7 @@
             // 
             // saveAnalysisButton
             // 
-            saveAnalysisButton.Location = new Point(838, 7);
+            saveAnalysisButton.Location = new Point(892, 7);
             saveAnalysisButton.Name = "saveAnalysisButton";
             saveAnalysisButton.RightToLeft = RightToLeft.Yes;
             saveAnalysisButton.Size = new Size(88, 34);
