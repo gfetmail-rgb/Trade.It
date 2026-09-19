@@ -211,7 +211,7 @@ namespace Trade.It
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
             SetColorButton(button, dialog.Color);
             if (crosshair) LineAppearanceSettings.SetCrosshair(dialog.Color, LineAppearanceSettings.CrosshairLineWidth, LineAppearanceSettings.CrosshairLineStyle);
-            else LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridLineWidth, LineAppearanceSettings.GridLineStyle);
+            else LineAppearanceSettings.SetGrid(dialog.Color, LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineStyle);
             RefreshOwnerCharts();
         }
 
@@ -233,11 +233,6 @@ namespace Trade.It
             ChartAppearanceSettings.SetDrawingColor(key, dialog.Color);
             SetColorButton(button, dialog.Color);
             RefreshOwnerCharts();
-        }
-
-        private void RefreshOwnerCharts()
-        {
-            if (Owner is MainForm mainForm && !mainForm.IsDisposed) mainForm.Refresh();
         }
 
         private static void SetColorButton(Button button, Color color)
@@ -295,6 +290,8 @@ namespace Trade.It
                 return;
             }
             ChartAppearanceSettings.SetFibonacciLevelsMask(fibonacciMask);
+            var selectedLevels = string.Join(", ", ChartAppearanceSettings.GetEnabledFibonacciLevels().Select(x => x.Text));
+            MessageBox.Show(this, $"ماسک فیبوناچی: {ChartAppearanceSettings.FibonacciLevelsMask}\nسطوح فعال: {selectedLevels}", "تشخیص تنظیمات فیبوناچی", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ChartAppearanceSettings.Save();
             LineAppearanceSettings.Save();
             DialogResult = DialogResult.OK;
