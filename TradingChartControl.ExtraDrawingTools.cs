@@ -371,18 +371,7 @@ namespace Trade.It
             return false;
         }
 
-        private static readonly (float Value, string Text)[] FibonacciLevels =
-        {
-            (0f, "0%"),
-            (0.382f, "38.2%"),
-            (0.5f, "50%"),
-            (0.618f, "61.8%"),
-            (1f, "100%"),
-            (1.272f, "127.2%"),
-            (1.618f, "161.8%"),
-            (2f, "200%"),
-            (2.618f, "261.8%")
-        };
+        private static (float Value, string Text)[] FibonacciLevels => ChartAppearanceSettings.GetEnabledFibonacciLevels();
 
         private static float DistanceToRay(Point location, PointF start, float dx, float dy, Rectangle plot)
         {
