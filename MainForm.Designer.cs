@@ -1252,16 +1252,6 @@
             filterTradingClearButton.UseVisualStyleBackColor = false;
             filterTradingClearButton.Click += IndividualFilterClearButton_Click;
             // 
-            // tabPage3
-            // 
-            tabPage3.Location = new Point(4, 34);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(8);
-            tabPage3.Size = new Size(354, 895);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "شناسه";
-            // 
-            // 
             // 
             // 
             // 
