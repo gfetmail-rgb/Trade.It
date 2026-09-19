@@ -87,6 +87,14 @@ namespace Trade.It
             chartSymbol = symbol?.Trim() ?? string.Empty;
             points.Clear();
             points.AddRange(data.OrderBy(x => x.Date));
+
+            // همگام‌سازی وضعیت داده‌های ابزارهای Extra با داده‌ی جدید.
+            // این کار مانع می‌شود یک Paint/Refresh موقت (مثلاً هنگام باز شدن پنجره متن)
+            // به اشتباه Extra Drawingهای موجود مثل Pitchfork را پاک کند.
+            extraDataCount = points.Count;
+            extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
+            extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
+
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
             verticalZoom = 1.0;
