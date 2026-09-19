@@ -24,7 +24,8 @@ namespace Trade.It
             public int PitchforkColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
             public int FibonacciExtensionColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
             public int MeasureColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
-            public int FibonacciLevelsMask { get; set; } = (1 << 10) - 1;
+            public int FibonacciRetracementLevelsMask { get; set; } = (1 << 10) - 1;
+            public int FibonacciExtensionLevelsMask { get; set; } = (1 << 10) - 1;
         }
 
         private static readonly string FilePath = Path.Combine(
@@ -50,7 +51,8 @@ namespace Trade.It
         public static Color PitchforkColor { get; private set; } = Color.FromArgb(155, 80, 45);
         public static Color FibonacciExtensionColor { get; private set; } = Color.FromArgb(155, 80, 45);
         public static Color MeasureColor { get; private set; } = Color.FromArgb(155, 80, 45);
-        public static int FibonacciLevelsMask { get; private set; } = (1 << 10) - 1;
+        public static int FibonacciRetracementLevelsMask { get; private set; } = (1 << 10) - 1;
+        public static int FibonacciExtensionLevelsMask { get; private set; } = (1 << 10) - 1;
 
         private static readonly (float Value, string Text)[] AllFibonacciLevels =
         {
@@ -68,8 +70,11 @@ namespace Trade.It
 
         public static IReadOnlyList<(float Value, string Text)> GetAllFibonacciLevels() => AllFibonacciLevels;
 
-        public static (float Value, string Text)[] GetEnabledFibonacciLevels() =>
-            AllFibonacciLevels.Where((_, index) => (FibonacciLevelsMask & (1 << index)) != 0).ToArray();
+        public static (float Value, string Text)[] GetEnabledFibonacciRetracementLevels() =>
+            AllFibonacciLevels.Where((_, index) => (FibonacciRetracementLevelsMask & (1 << index)) != 0).ToArray();
+
+        public static (float Value, string Text)[] GetEnabledFibonacciExtensionLevels() =>
+            AllFibonacciLevels.Where((_, index) => (FibonacciExtensionLevelsMask & (1 << index)) != 0).ToArray();
 
         public static string GetFibonacciLevelText(float value) =>
             AllFibonacciLevels.FirstOrDefault(x => Math.Abs(x.Value - value) < 0.0001f).Text ?? $"{value * 100:0.#}%";
@@ -112,7 +117,8 @@ namespace Trade.It
                     PitchforkColor = PitchforkColor.ToArgb(),
                     FibonacciExtensionColor = FibonacciExtensionColor.ToArgb(),
                     MeasureColor = MeasureColor.ToArgb(),
-                    FibonacciLevelsMask = FibonacciLevelsMask
+                    FibonacciRetracementLevelsMask = FibonacciRetracementLevelsMask,
+                    FibonacciExtensionLevelsMask = FibonacciExtensionLevelsMask
                 };
                 File.WriteAllText(FilePath, JsonSerializer.Serialize(stored, new JsonSerializerOptions { WriteIndented = true }));
             }
@@ -190,13 +196,16 @@ namespace Trade.It
             PitchforkColor = Color.FromArgb(stored.PitchforkColor);
             FibonacciExtensionColor = Color.FromArgb(stored.FibonacciExtensionColor);
             MeasureColor = Color.FromArgb(stored.MeasureColor);
-            FibonacciLevelsMask = stored.FibonacciLevelsMask & ((1 << 10) - 1);
-            if (FibonacciLevelsMask == 0) FibonacciLevelsMask = (1 << 10) - 1;
+            FibonacciRetracementLevelsMask = stored.FibonacciRetracementLevelsMask & ((1 << 10) - 1);
+            FibonacciExtensionLevelsMask = stored.FibonacciExtensionLevelsMask & ((1 << 10) - 1);
+            if (FibonacciRetracementLevelsMask == 0) FibonacciRetracementLevelsMask = (1 << 10) - 1;
+            if (FibonacciExtensionLevelsMask == 0) FibonacciExtensionLevelsMask = (1 << 10) - 1;
         }
 
         public static void SetChartRightEmptyPercent(double value) => ChartRightEmptyPercent = Math.Clamp(value, 0, 90);
         public static void SetChartTopEmptyPercent(double value) => ChartTopEmptyPercent = Math.Clamp(value, 0, 50);
         public static void SetInitialVisibleCandleCount(int value) => InitialVisibleCandleCount = Math.Clamp(value, 10, 5000);
-        public static void SetFibonacciLevelsMask(int value) => FibonacciLevelsMask = value & ((1 << 10) - 1);
+        public static void SetFibonacciRetracementLevelsMask(int value) => FibonacciRetracementLevelsMask = value & ((1 << 10) - 1);
+        public static void SetFibonacciExtensionLevelsMask(int value) => FibonacciExtensionLevelsMask = value & ((1 << 10) - 1);
     }
 }
