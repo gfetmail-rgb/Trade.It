@@ -68,6 +68,8 @@ namespace Trade.It
         private bool testMode;
         private bool testStartSelected;
         private int testEndIndex = -1;
+        private int testAnchorIndex = -1;
+        private float testAnchorScreenX;
 
         private sealed class ChartDrawing
         {
@@ -107,6 +109,8 @@ namespace Trade.It
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
             testEndIndex = -1;
+            testAnchorIndex = -1;
+            testAnchorScreenX = 0f;
             verticalZoom = 1.0;
             verticalPanOffset = 0;
             horizontalPanOffset = 0;
@@ -335,6 +339,8 @@ namespace Trade.It
             testMode = enabled;
             testStartSelected = false;
             testEndIndex = -1;
+            testAnchorIndex = -1;
+            testAnchorScreenX = 0f;
 
             // با ورود/خروج از حالت تست، هیچ وضعیت نیمه‌کاره‌ای از
             // ورودی ماوس نباید به رسم ابزارهای معمولی منتقل شود.
@@ -357,16 +363,42 @@ namespace Trade.It
 
         public void StepTest(int delta)
         {
-            if (!testMode || points.Count == 0)
+            if (!testMode || points.Count == 0 || !testStartSelected)
                 return;
 
-            var naturalEndIndex = Math.Min(points.Count - 1, firstIndex + Math.Max(1, visibleCount) - 1);
-            if (testEndIndex < 0)
-                testEndIndex = naturalEndIndex;
+            if (testEndIndex < 0 || testAnchorIndex < 0)
+                return;
 
-            testEndIndex = Math.Clamp(testEndIndex + delta, firstIndex, naturalEndIndex);
+            var nextEnd = Math.Clamp(testEndIndex + delta, 0, points.Count - 1);
+            if (nextEnd == testEndIndex)
+                return;
+
+            testEndIndex = nextEnd;
+            KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
+        }
+
+        private void KeepTestAnchorFixed()
+        {
+            if (!testMode || testAnchorIndex < 0 || testEndIndex < 0 || points.Count == 0)
+                return;
+
+            var plot = GetPlotRectangle();
+            var count = Math.Max(2, visibleCount);
+            var step = plot.Width / (double)count;
+            var initialOffset = -plot.Width * 0.25;
+
+            var relativeIndex = (int)Math.Round(
+                (testAnchorScreenX - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5);
+
+            relativeIndex = Math.Clamp(relativeIndex, 0, count - 1);
+
+            var desiredFirst = testEndIndex - relativeIndex;
+            firstIndex = Math.Clamp(
+                desiredFirst,
+                0,
+                Math.Max(0, points.Count - count));
         }
 
         private void SetTestEndFromMouse(Point location)
@@ -382,7 +414,10 @@ namespace Trade.It
             var dataX = (location.X - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
             var relativeIndex = Math.Clamp((int)Math.Round(dataX), 0, count - 1);
             testEndIndex = Math.Clamp(firstIndex + relativeIndex, 0, points.Count - 1);
+            testAnchorIndex = testEndIndex;
+            testAnchorScreenX = location.X;
             testStartSelected = true;
+            KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
         }
@@ -683,9 +718,40 @@ namespace Trade.It
                 var delta = e.X - horizontalAxisStartPoint.X;
                 var factor = Math.Exp(-delta / 300.0);
                 var newCount = Math.Clamp((int)Math.Round(horizontalAxisStartVisibleCount * factor), 2, points.Count);
-                visibleCount = newCount;
-                firstIndex = Math.Clamp((int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
-                crosshairIndex = -1; Invalidate(); return;
+
+                if (testMode && testStartSelected)
+                {
+                    visibleCount = newCount;
+                    KeepTestAnchorFixed();
+                }
+                else
+                {
+                    // زوم محور زمان باید حول مرکز دید انجام شود، نه اینکه
+                    // با تغییر visibleCount چارت به چپ یا راست سر بخورد.
+                    var plot = GetPlotRectangle();
+                    var centerX = plot.Left + plot.Width / 2.0;
+                    var oldStep = plot.Width / (double)Math.Max(1, horizontalAxisStartVisibleCount);
+                    var initialOffset = -plot.Width * 0.25;
+                    var centerDataIndex =
+                        firstIndex +
+                        (centerX - plot.Left - initialOffset - horizontalPanOffset) / oldStep - 0.5;
+
+                    visibleCount = newCount;
+
+                    var newStep = plot.Width / (double)Math.Max(1, visibleCount);
+                    var newFirst =
+                        centerDataIndex -
+                        (centerX - plot.Left - initialOffset - horizontalPanOffset) / newStep + 0.5;
+
+                    firstIndex = Math.Clamp(
+                        (int)Math.Round(newFirst),
+                        0,
+                        Math.Max(0, points.Count - visibleCount));
+                }
+
+                crosshairIndex = -1;
+                Invalidate();
+                return;
             }
             if (verticalAxisDrag && Capture && points.Count > 1)
             {
