@@ -4,6 +4,45 @@ using System.Text.Json;
 
 namespace Trade.It
 {
+    internal sealed class FullScreenToggleButton : Button
+    {
+        public FullScreenToggleButton()
+        {
+            SetStyle(
+                ControlStyles.UserPaint |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer,
+                true);
+
+            FlatStyle = FlatStyle.Flat;
+            FlatAppearance.BorderSize = 1;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var rect = ClientRectangle;
+            rect.Width--;
+            rect.Height--;
+
+            using var background = new SolidBrush(BackColor);
+            using var border = new Pen(FlatAppearance.BorderColor);
+
+            e.Graphics.FillRectangle(background, rect);
+            e.Graphics.DrawRectangle(border, rect);
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                Text,
+                Font,
+                ClientRectangle,
+                ForeColor,
+                TextFormatFlags.HorizontalCenter |
+                TextFormatFlags.VerticalCenter |
+                TextFormatFlags.SingleLine);
+        }
+    }
+
+
     public partial class MainForm : Form
     {
         private readonly Dictionary<string, PortfolioDefinition> loadedPortfolios = new(StringComparer.OrdinalIgnoreCase);
@@ -92,7 +131,6 @@ namespace Trade.It
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             Load += MainForm_Portfolios_Load;
             fullScreenChartButton.Click += FullScreenChartButton_Click;
-            fullScreenChartButton.Paint += FullScreenChartButton_Paint;
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
@@ -324,31 +362,6 @@ namespace Trade.It
             }));
         }
 
-        private void FullScreenChartButton_Paint(object? sender, PaintEventArgs e)
-        {
-            if (!isFullScreenChart)
-                return;
-
-            var rect = fullScreenChartButton.ClientRectangle;
-            rect.Width--;
-            rect.Height--;
-
-            using var backBrush = new SolidBrush(SystemColors.Highlight);
-            using var borderPen = new Pen(SystemColors.Highlight);
-            e.Graphics.FillRectangle(backBrush, rect);
-            e.Graphics.DrawRectangle(borderPen, rect);
-
-            TextRenderer.DrawText(
-                e.Graphics,
-                "بازگشت",
-                fullScreenChartButton.Font,
-                fullScreenChartButton.ClientRectangle,
-                SystemColors.HighlightText,
-                TextFormatFlags.HorizontalCenter |
-                TextFormatFlags.VerticalCenter |
-                TextFormatFlags.SingleLine);
-        }
-        
 
         protected override void OnHandleCreated(EventArgs e)
         {
