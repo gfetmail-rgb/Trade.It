@@ -22,6 +22,8 @@ namespace Trade.It
             if (visible.Count == 0)
                 return;
             GetVerticalRange(visible, out var min, out var max);
+            var naturalVisible = points.Skip(firstIndex).Take(Math.Max(1, naturalEndIndex - firstIndex)).ToList();
+            GetVerticalRange(naturalVisible, out var drawingMin, out var drawingMax);
 
             using var gridPen = new Pen(LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineWidth) { DashStyle = LineAppearanceSettings.GridLineStyle };
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
@@ -60,7 +62,7 @@ namespace Trade.It
             var step = plot.Width / (double)layoutCount;
             var initialOffset = -plot.Width * 0.25;
 
-            DrawRectangleFillsBehindChart(e.Graphics, plot, layoutCount, min, max);
+            DrawRectangleFillsBehindChart(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
 
             if (drawingInProgress && activeDrawingTool == ChartDrawingTool.Rectangle && IsInsidePlot(drawingCurrentPoint))
                 DrawRectanglePreviewFillBehindChart(e.Graphics, drawingStartPoint, drawingCurrentPoint);
@@ -110,14 +112,14 @@ namespace Trade.It
                 }
             }
 
-            DrawDrawings(e.Graphics, plot, layoutCount, min, max);
+            DrawDrawings(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
             RenderAdvancedDrawings(e.Graphics);
             RenderExtraDrawings(e.Graphics, plot, visible.Count, min, max);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
                 using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, min, max);
+                DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, drawingMin, drawingMax);
             }
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
@@ -202,7 +204,7 @@ namespace Trade.It
             using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
-            DrawAdvancedTextLabels(e.Graphics, plot, visible.Count, min, max);
+            DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
         }
 
         private void DrawRectangleFillsBehindChart(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
@@ -247,8 +249,7 @@ namespace Trade.It
                 var color = GetDrawingColor(drawings[i].Tool);
                 var width = selected ? LineAppearanceSettings.DrawingLineWidth + 1.4f : LineAppearanceSettings.DrawingLineWidth;
                 using var drawingPen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
-                if (selected)
+                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);                if (selected)
                     DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
             }
         }
@@ -396,8 +397,7 @@ namespace Trade.It
         {
             handle = 0;
             if (drawings.Count == 0) return -1;
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var visibleCountForDrawing = Math.Max(1, endIndex - firstIndex);
+            var visibleCountForDrawing = GetDrawingLayoutCount();
             var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
             if (visible.Count == 0) return -1;
             GetVerticalRange(visible, out var min, out var max);
@@ -497,9 +497,8 @@ namespace Trade.It
                 drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
                 drawing.Y2 = drawing.Y1; return;
             }
-            if (drawing.Tool == ChartDrawingTool.VerticalLine)
-            {
-                var x = ScreenToDataX(location.X, plot, visible.Count);
+            if (drawing.Tool == ChartDrawingTool.VerticalLine)            {
+                var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount());
                 drawing.X1 = x; drawing.X2 = x; return;
             }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
@@ -507,7 +506,7 @@ namespace Trade.It
                 if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
                 if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
                 if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); return; }
-                var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, GetDrawingLayoutCount());
                 var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
                 drawing.X1 += deltaX; drawing.X2 += deltaX; drawing.X3 += deltaX;
                 drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY; return;
