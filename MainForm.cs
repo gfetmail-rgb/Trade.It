@@ -285,7 +285,7 @@ namespace Trade.It
             mainSplitContainer.Panel1Collapsed = !mainSplitContainer.Panel1Collapsed;
             isFullScreenChart = mainSplitContainer.Panel1Collapsed;
             ApplyFullScreenChartButtonStyle();
-
+        }
         private void ApplyFullScreenChartButtonStyle()
         {
             fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
@@ -312,7 +312,7 @@ namespace Trade.It
 
             fullScreenChartButton.Invalidate();
         }
-        }
+        
 
         protected override void OnHandleCreated(EventArgs e)
         {

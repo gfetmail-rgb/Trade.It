@@ -228,6 +228,8 @@
             chartInfoLabel = new Label();
             chartPlaceholderLabel = new Label();
             chartToolbarPanel = new Panel();
+            label20 = new Label();
+            label19 = new Label();
             label12 = new Label();
             label11 = new Label();
             label10 = new Label();
@@ -268,8 +270,6 @@
             marketExchangeComboBox = new ComboBox();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
-            label19 = new Label();
-            label20 = new Label();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -570,7 +570,7 @@
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(8);
             tabPage2.RightToLeft = RightToLeft.Yes;
-            tabPage2.Size = new Size(354, 895);
+            tabPage2.Size = new Size(387, 895);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "فیلترها";
             // 
@@ -588,7 +588,7 @@
             groupBox3.Controls.Add(filterComparison9ClearButton);
             groupBox3.Location = new Point(8, 631);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(341, 111);
+            groupBox3.Size = new Size(374, 111);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "9. مقایسه قیمت:";
@@ -607,7 +607,7 @@
             comparisonSecondTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox3.Location = new Point(172, 74);
             comparisonSecondTextBox3.Name = "comparisonSecondTextBox3";
-            comparisonSecondTextBox3.Size = new Size(32, 31);
+            comparisonSecondTextBox3.Size = new Size(65, 31);
             comparisonSecondTextBox3.TabIndex = 1;
             comparisonSecondTextBox3.Text = "5";
             comparisonSecondTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -626,7 +626,7 @@
             comparisonFirstTextBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox3.Location = new Point(172, 37);
             comparisonFirstTextBox3.Name = "comparisonFirstTextBox3";
-            comparisonFirstTextBox3.Size = new Size(32, 31);
+            comparisonFirstTextBox3.Size = new Size(65, 31);
             comparisonFirstTextBox3.TabIndex = 4;
             comparisonFirstTextBox3.Text = "5";
             comparisonFirstTextBox3.TextAlign = HorizontalAlignment.Center;
@@ -635,7 +635,7 @@
             // 
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label9.AutoSize = true;
-            label9.Location = new Point(277, 38);
+            label9.Location = new Point(310, 38);
             label9.Name = "label9";
             label9.Size = new Size(55, 25);
             label9.TabIndex = 5;
@@ -646,7 +646,7 @@
             comparisonFirstComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox3.Location = new Point(204, 34);
+            comparisonFirstComboBox3.Location = new Point(237, 34);
             comparisonFirstComboBox3.Name = "comparisonFirstComboBox3";
             comparisonFirstComboBox3.Size = new Size(75, 33);
             comparisonFirstComboBox3.TabIndex = 6;
@@ -665,7 +665,7 @@
             comparisonSecondComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox3.Location = new Point(204, 73);
+            comparisonSecondComboBox3.Location = new Point(237, 73);
             comparisonSecondComboBox3.Name = "comparisonSecondComboBox3";
             comparisonSecondComboBox3.Size = new Size(75, 33);
             comparisonSecondComboBox3.TabIndex = 8;
@@ -718,7 +718,7 @@
             ohlcChangeFilterGroup.Controls.Add(filterOhlcChangeClearButton);
             ohlcChangeFilterGroup.Location = new Point(8, 750);
             ohlcChangeFilterGroup.Name = "ohlcChangeFilterGroup";
-            ohlcChangeFilterGroup.Size = new Size(341, 105);
+            ohlcChangeFilterGroup.Size = new Size(374, 105);
             ohlcChangeFilterGroup.TabIndex = 8;
             ohlcChangeFilterGroup.TabStop = false;
             ohlcChangeFilterGroup.Text = "10. درصد رشد";
@@ -727,7 +727,7 @@
             // 
             ohlcChangeFieldLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldLabel.AutoSize = true;
-            ohlcChangeFieldLabel.Location = new Point(281, 31);
+            ohlcChangeFieldLabel.Location = new Point(314, 31);
             ohlcChangeFieldLabel.Name = "ohlcChangeFieldLabel";
             ohlcChangeFieldLabel.Size = new Size(55, 25);
             ohlcChangeFieldLabel.TabIndex = 0;
@@ -738,7 +738,7 @@
             ohlcChangeFieldComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "پایانی" });
-            ohlcChangeFieldComboBox.Location = new Point(198, 27);
+            ohlcChangeFieldComboBox.Location = new Point(231, 27);
             ohlcChangeFieldComboBox.Name = "ohlcChangeFieldComboBox";
             ohlcChangeFieldComboBox.Size = new Size(79, 33);
             ohlcChangeFieldComboBox.TabIndex = 1;
@@ -784,7 +784,7 @@
             ohlcChangeDirectionComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
-            ohlcChangeDirectionComboBox.Location = new Point(230, 68);
+            ohlcChangeDirectionComboBox.Location = new Point(263, 68);
             ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
             ohlcChangeDirectionComboBox.Size = new Size(98, 33);
             ohlcChangeDirectionComboBox.TabIndex = 6;
@@ -818,7 +818,7 @@
             comparisonGroup8.Controls.Add(filterComparison8ClearButton);
             comparisonGroup8.Location = new Point(8, 519);
             comparisonGroup8.Name = "comparisonGroup8";
-            comparisonGroup8.Size = new Size(341, 119);
+            comparisonGroup8.Size = new Size(374, 119);
             comparisonGroup8.TabIndex = 7;
             comparisonGroup8.TabStop = false;
             comparisonGroup8.Text = "8. مقایسه قیمت:";
@@ -837,7 +837,7 @@
             comparisonSecondTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox1.Location = new Point(172, 70);
             comparisonSecondTextBox1.Name = "comparisonSecondTextBox1";
-            comparisonSecondTextBox1.Size = new Size(32, 31);
+            comparisonSecondTextBox1.Size = new Size(65, 31);
             comparisonSecondTextBox1.TabIndex = 1;
             comparisonSecondTextBox1.Text = "5";
             comparisonSecondTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -856,7 +856,7 @@
             comparisonFirstTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox1.Location = new Point(172, 33);
             comparisonFirstTextBox1.Name = "comparisonFirstTextBox1";
-            comparisonFirstTextBox1.Size = new Size(32, 31);
+            comparisonFirstTextBox1.Size = new Size(65, 31);
             comparisonFirstTextBox1.TabIndex = 4;
             comparisonFirstTextBox1.Text = "5";
             comparisonFirstTextBox1.TextAlign = HorizontalAlignment.Center;
@@ -865,7 +865,7 @@
             // 
             label5_8.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label5_8.AutoSize = true;
-            label5_8.Location = new Point(278, 31);
+            label5_8.Location = new Point(311, 31);
             label5_8.Name = "label5_8";
             label5_8.Size = new Size(55, 25);
             label5_8.TabIndex = 5;
@@ -876,7 +876,7 @@
             comparisonFirstComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox2.Location = new Point(204, 30);
+            comparisonFirstComboBox2.Location = new Point(237, 30);
             comparisonFirstComboBox2.Name = "comparisonFirstComboBox2";
             comparisonFirstComboBox2.Size = new Size(75, 33);
             comparisonFirstComboBox2.TabIndex = 6;
@@ -895,7 +895,7 @@
             comparisonSecondComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox2.Location = new Point(204, 69);
+            comparisonSecondComboBox2.Location = new Point(237, 69);
             comparisonSecondComboBox2.Name = "comparisonSecondComboBox2";
             comparisonSecondComboBox2.Size = new Size(75, 33);
             comparisonSecondComboBox2.TabIndex = 8;
@@ -929,7 +929,7 @@
             comparisonGroup7.Controls.Add(filterComparison7ClearButton);
             comparisonGroup7.Location = new Point(8, 400);
             comparisonGroup7.Name = "comparisonGroup7";
-            comparisonGroup7.Size = new Size(341, 119);
+            comparisonGroup7.Size = new Size(374, 119);
             comparisonGroup7.TabIndex = 6;
             comparisonGroup7.TabStop = false;
             comparisonGroup7.Text = "7. مقایسه قیمت:";
@@ -948,7 +948,7 @@
             comparisonSecondTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonSecondTextBox2.Location = new Point(172, 79);
             comparisonSecondTextBox2.Name = "comparisonSecondTextBox2";
-            comparisonSecondTextBox2.Size = new Size(35, 31);
+            comparisonSecondTextBox2.Size = new Size(68, 31);
             comparisonSecondTextBox2.TabIndex = 10;
             comparisonSecondTextBox2.Text = "5";
             comparisonSecondTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -967,7 +967,7 @@
             comparisonFirstTextBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             comparisonFirstTextBox2.Location = new Point(172, 42);
             comparisonFirstTextBox2.Name = "comparisonFirstTextBox2";
-            comparisonFirstTextBox2.Size = new Size(35, 31);
+            comparisonFirstTextBox2.Size = new Size(68, 31);
             comparisonFirstTextBox2.TabIndex = 12;
             comparisonFirstTextBox2.Text = "5";
             comparisonFirstTextBox2.TextAlign = HorizontalAlignment.Center;
@@ -976,7 +976,7 @@
             // 
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.AutoSize = true;
-            label6.Location = new Point(279, 42);
+            label6.Location = new Point(312, 42);
             label6.Name = "label6";
             label6.Size = new Size(55, 25);
             label6.TabIndex = 13;
@@ -987,7 +987,7 @@
             comparisonFirstComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonFirstComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonFirstComboBox1.Location = new Point(207, 39);
+            comparisonFirstComboBox1.Location = new Point(240, 39);
             comparisonFirstComboBox1.Name = "comparisonFirstComboBox1";
             comparisonFirstComboBox1.Size = new Size(75, 33);
             comparisonFirstComboBox1.TabIndex = 14;
@@ -1006,7 +1006,7 @@
             comparisonSecondComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comparisonSecondComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
-            comparisonSecondComboBox1.Location = new Point(207, 78);
+            comparisonSecondComboBox1.Location = new Point(240, 78);
             comparisonSecondComboBox1.Name = "comparisonSecondComboBox1";
             comparisonSecondComboBox1.Size = new Size(75, 33);
             comparisonSecondComboBox1.TabIndex = 16;
@@ -1037,7 +1037,7 @@
             pastDaysGroup.Controls.Add(filterPastDaysClearButton);
             pastDaysGroup.Location = new Point(8, 281);
             pastDaysGroup.Name = "pastDaysGroup";
-            pastDaysGroup.Size = new Size(341, 86);
+            pastDaysGroup.Size = new Size(374, 86);
             pastDaysGroup.TabIndex = 3;
             pastDaysGroup.TabStop = false;
             pastDaysGroup.Text = "4. وضعیت معامله در روزهای گذشته:";
@@ -1045,7 +1045,7 @@
             // label4
             // 
             label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label4.Location = new Point(288, 45);
+            label4.Location = new Point(321, 45);
             label4.Name = "label4";
             label4.Size = new Size(40, 33);
             label4.TabIndex = 0;
@@ -1056,14 +1056,14 @@
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label3.Location = new Point(163, 45);
             label3.Name = "label3";
-            label3.Size = new Size(61, 34);
+            label3.Size = new Size(94, 34);
             label3.TabIndex = 1;
             label3.Text = "گذشته معامله";
             // 
             // pastDaysTextBox
             // 
             pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pastDaysTextBox.Location = new Point(232, 44);
+            pastDaysTextBox.Location = new Point(265, 44);
             pastDaysTextBox.Name = "pastDaysTextBox";
             pastDaysTextBox.Size = new Size(63, 31);
             pastDaysTextBox.TabIndex = 2;
@@ -1109,7 +1109,7 @@
             volumeRatioGroup.Controls.Add(filterVolumeClearButton);
             volumeRatioGroup.Location = new Point(8, 196);
             volumeRatioGroup.Name = "volumeRatioGroup";
-            volumeRatioGroup.Size = new Size(341, 85);
+            volumeRatioGroup.Size = new Size(374, 85);
             volumeRatioGroup.TabIndex = 2;
             volumeRatioGroup.TabStop = false;
             volumeRatioGroup.Text = "3. نسبت حجم آخرین روز به میانگین: ";
@@ -1117,7 +1117,7 @@
             // label2
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label2.Location = new Point(191, 43);
+            label2.Location = new Point(224, 43);
             label2.Name = "label2";
             label2.Size = new Size(69, 31);
             label2.TabIndex = 0;
@@ -1135,7 +1135,7 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            textBox1.Location = new Point(263, 45);
+            textBox1.Location = new Point(296, 45);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(59, 31);
             textBox1.TabIndex = 2;
@@ -1170,7 +1170,7 @@
             nameFilterGroup.Controls.Add(filterNameClearButton);
             nameFilterGroup.Location = new Point(8, 111);
             nameFilterGroup.Name = "nameFilterGroup";
-            nameFilterGroup.Size = new Size(341, 85);
+            nameFilterGroup.Size = new Size(374, 85);
             nameFilterGroup.TabIndex = 1;
             nameFilterGroup.TabStop = false;
             nameFilterGroup.Text = "2. جستجو در نام نماد:";
@@ -1187,7 +1187,7 @@
             // nameTextBox
             // 
             nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nameTextBox.Location = new Point(191, 40);
+            nameTextBox.Location = new Point(224, 40);
             nameTextBox.Name = "nameTextBox";
             nameTextBox.Size = new Size(137, 31);
             nameTextBox.TabIndex = 1;
@@ -1216,7 +1216,7 @@
             tradingStatusGroup.Controls.Add(filterTradingClearButton);
             tradingStatusGroup.Location = new Point(8, 8);
             tradingStatusGroup.Name = "tradingStatusGroup";
-            tradingStatusGroup.Size = new Size(341, 103);
+            tradingStatusGroup.Size = new Size(374, 103);
             tradingStatusGroup.TabIndex = 0;
             tradingStatusGroup.TabStop = false;
             tradingStatusGroup.Text = "1. وضعیت معامله امروز:";
@@ -1224,7 +1224,7 @@
             // statusAllRadio
             // 
             statusAllRadio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            statusAllRadio.Location = new Point(230, 49);
+            statusAllRadio.Location = new Point(263, 49);
             statusAllRadio.Name = "statusAllRadio";
             statusAllRadio.Size = new Size(90, 29);
             statusAllRadio.TabIndex = 0;
@@ -1235,7 +1235,7 @@
             statusPositiveRadio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             statusPositiveRadio.Location = new Point(148, 47);
             statusPositiveRadio.Name = "statusPositiveRadio";
-            statusPositiveRadio.Size = new Size(76, 33);
+            statusPositiveRadio.Size = new Size(109, 33);
             statusPositiveRadio.TabIndex = 1;
             statusPositiveRadio.Text = "دارد";
             // 
@@ -1282,7 +1282,7 @@
             marketsTabPage.Location = new Point(4, 34);
             marketsTabPage.Name = "marketsTabPage";
             marketsTabPage.Padding = new Padding(8);
-            marketsTabPage.Size = new Size(354, 895);
+            marketsTabPage.Size = new Size(387, 895);
             marketsTabPage.TabIndex = 3;
             marketsTabPage.Text = "بازارها";
             // 
@@ -1293,7 +1293,7 @@
             marketCountLabel.Location = new Point(16, 843);
             marketCountLabel.Name = "marketCountLabel";
             marketCountLabel.RightToLeft = RightToLeft.Yes;
-            marketCountLabel.Size = new Size(318, 36);
+            marketCountLabel.Size = new Size(351, 36);
             marketCountLabel.TabIndex = 20;
             marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
             marketCountLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -1311,7 +1311,7 @@
             // marketApplyButton
             // 
             marketApplyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            marketApplyButton.Location = new Point(196, 800);
+            marketApplyButton.Location = new Point(229, 800);
             marketApplyButton.Name = "marketApplyButton";
             marketApplyButton.Size = new Size(85, 35);
             marketApplyButton.TabIndex = 12;
@@ -1327,7 +1327,7 @@
             marketIndustryGroupCheckedListBox.Location = new Point(6, 656);
             marketIndustryGroupCheckedListBox.Name = "marketIndustryGroupCheckedListBox";
             marketIndustryGroupCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupCheckedListBox.Size = new Size(237, 116);
+            marketIndustryGroupCheckedListBox.Size = new Size(270, 116);
             marketIndustryGroupCheckedListBox.TabIndex = 11;
             // 
             // marketFundTypeCheckedListBox
@@ -1339,7 +1339,7 @@
             marketFundTypeCheckedListBox.Location = new Point(6, 532);
             marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
             marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketFundTypeCheckedListBox.Size = new Size(237, 116);
+            marketFundTypeCheckedListBox.Size = new Size(270, 116);
             marketFundTypeCheckedListBox.TabIndex = 10;
             // 
             // marketAssetCheckedListBox
@@ -1351,7 +1351,7 @@
             marketAssetCheckedListBox.Location = new Point(6, 409);
             marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
             marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketAssetCheckedListBox.Size = new Size(237, 116);
+            marketAssetCheckedListBox.Size = new Size(270, 116);
             marketAssetCheckedListBox.TabIndex = 9;
             // 
             // marketBoardCheckedListBox
@@ -1363,7 +1363,7 @@
             marketBoardCheckedListBox.Location = new Point(9, 258);
             marketBoardCheckedListBox.Name = "marketBoardCheckedListBox";
             marketBoardCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketBoardCheckedListBox.Size = new Size(237, 144);
+            marketBoardCheckedListBox.Size = new Size(270, 144);
             marketBoardCheckedListBox.TabIndex = 8;
             // 
             // marketTypeCheckedListBox
@@ -1375,7 +1375,7 @@
             marketTypeCheckedListBox.Location = new Point(9, 134);
             marketTypeCheckedListBox.Name = "marketTypeCheckedListBox";
             marketTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketTypeCheckedListBox.Size = new Size(237, 116);
+            marketTypeCheckedListBox.Size = new Size(270, 116);
             marketTypeCheckedListBox.TabIndex = 7;
             // 
             // marketExchangeCheckedListBox
@@ -1387,14 +1387,14 @@
             marketExchangeCheckedListBox.Location = new Point(9, 11);
             marketExchangeCheckedListBox.Name = "marketExchangeCheckedListBox";
             marketExchangeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketExchangeCheckedListBox.Size = new Size(237, 116);
+            marketExchangeCheckedListBox.Size = new Size(270, 116);
             marketExchangeCheckedListBox.TabIndex = 6;
             // 
             // label18
             // 
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label18.AutoSize = true;
-            label18.Location = new Point(243, 694);
+            label18.Location = new Point(276, 694);
             label18.Name = "label18";
             label18.Size = new Size(106, 25);
             label18.TabIndex = 5;
@@ -1404,7 +1404,7 @@
             // 
             label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label17.AutoSize = true;
-            label17.Location = new Point(251, 182);
+            label17.Location = new Point(284, 182);
             label17.Name = "label17";
             label17.Size = new Size(77, 25);
             label17.TabIndex = 4;
@@ -1415,7 +1415,7 @@
             // 
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label16.AutoSize = true;
-            label16.Location = new Point(248, 455);
+            label16.Location = new Point(281, 455);
             label16.Name = "label16";
             label16.Size = new Size(93, 25);
             label16.TabIndex = 3;
@@ -1425,7 +1425,7 @@
             // 
             label15.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label15.AutoSize = true;
-            label15.Location = new Point(252, 331);
+            label15.Location = new Point(285, 331);
             label15.Name = "label15";
             label15.Size = new Size(79, 25);
             label15.TabIndex = 2;
@@ -1435,7 +1435,7 @@
             // 
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Location = new Point(245, 581);
+            label14.Location = new Point(278, 581);
             label14.Name = "label14";
             label14.Size = new Size(103, 25);
             label14.TabIndex = 1;
@@ -1445,7 +1445,7 @@
             // 
             label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label13.AutoSize = true;
-            label13.Location = new Point(252, 59);
+            label13.Location = new Point(285, 59);
             label13.Name = "label13";
             label13.Size = new Size(89, 25);
             label13.TabIndex = 0;
@@ -1560,6 +1560,24 @@
             chartToolbarPanel.Size = new Size(1229, 88);
             chartToolbarPanel.TabIndex = 1;
             // 
+            // label20
+            // 
+            label20.BorderStyle = BorderStyle.FixedSingle;
+            label20.Location = new Point(1113, 46);
+            label20.Name = "label20";
+            label20.Size = new Size(2, 30);
+            label20.TabIndex = 26;
+            label20.Text = "label20";
+            // 
+            // label19
+            // 
+            label19.BorderStyle = BorderStyle.FixedSingle;
+            label19.Location = new Point(967, 46);
+            label19.Name = "label19";
+            label19.Size = new Size(2, 30);
+            label19.TabIndex = 25;
+            label19.Text = "label19";
+            // 
             // label12
             // 
             label12.BorderStyle = BorderStyle.FixedSingle;
@@ -1589,7 +1607,7 @@
             // 
             // closeAllChartsToolbarButton
             // 
-            closeAllChartsToolbarButton.Location = new Point(936, 6);
+            closeAllChartsToolbarButton.Location = new Point(936, 7);
             closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
             closeAllChartsToolbarButton.Size = new Size(110, 34);
             closeAllChartsToolbarButton.TabIndex = 21;
@@ -1634,7 +1652,7 @@
             // 
             // indicatorPanelButton
             // 
-            indicatorPanelButton.Location = new Point(1049, 6);
+            indicatorPanelButton.Location = new Point(1049, 7);
             indicatorPanelButton.Name = "indicatorPanelButton";
             indicatorPanelButton.Size = new Size(88, 34);
             indicatorPanelButton.TabIndex = 3;
@@ -1695,7 +1713,7 @@
             // 
             // hideChartButton
             // 
-            hideChartButton.Location = new Point(829, 6);
+            hideChartButton.Location = new Point(829, 7);
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(104, 34);
             hideChartButton.TabIndex = 6;
@@ -1704,7 +1722,7 @@
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(707, 6);
+            hideToolsButton.Location = new Point(707, 7);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
@@ -1928,24 +1946,6 @@
             refreshButtonPortfolio.Name = "refreshButtonPortfolio";
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
-            // 
-            // label19
-            // 
-            label19.BorderStyle = BorderStyle.FixedSingle;
-            label19.Location = new Point(967, 46);
-            label19.Name = "label19";
-            label19.Size = new Size(2, 30);
-            label19.TabIndex = 25;
-            label19.Text = "label19";
-            // 
-            // label20
-            // 
-            label20.BorderStyle = BorderStyle.FixedSingle;
-            label20.Location = new Point(1113, 46);
-            label20.Name = "label20";
-            label20.Size = new Size(2, 30);
-            label20.TabIndex = 26;
-            label20.Text = "label20";
             // 
             // MainForm
             // 
