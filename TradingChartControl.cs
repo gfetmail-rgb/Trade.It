@@ -66,6 +66,7 @@ namespace Trade.It
         private double volumePanelResizeStartRatio;
         private bool volumePanelVisible = true;
         private bool testMode;
+        private bool testStartSelected;
         private int testEndIndex = -1;
 
         private sealed class ChartDrawing
@@ -332,6 +333,7 @@ namespace Trade.It
         public void SetTestMode(bool enabled)
         {
             testMode = enabled;
+            testStartSelected = false;
             testEndIndex = -1;
 
             // با ورود/خروج از حالت تست، هیچ وضعیت نیمه‌کاره‌ای از
@@ -380,6 +382,7 @@ namespace Trade.It
             var dataX = (location.X - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
             var relativeIndex = Math.Clamp((int)Math.Round(dataX), 0, count - 1);
             testEndIndex = Math.Clamp(firstIndex + relativeIndex, 0, points.Count - 1);
+            testStartSelected = true;
             crosshairIndex = -1;
             Invalidate();
         }
@@ -478,7 +481,7 @@ namespace Trade.It
             if (e.Button == MouseButtons.Right) { CancelDrawing(); return; }
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button != MouseButtons.Left) return;
-            if (testMode)
+            if (testMode && !testStartSelected)
             {
                 SetTestEndFromMouse(e.Location);
                 Focus();
