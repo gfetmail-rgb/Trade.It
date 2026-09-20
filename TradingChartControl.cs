@@ -731,11 +731,14 @@ namespace Trade.It
                 }
                 else
                 {
-                    // محور افقی فقط مسئول زوم است.
-                    // هیچ‌یک از متغیرهای پَن (firstIndex / horizontalPanOffset)
-                    // در این حالت تغییر نمی‌کنند؛ بنابراین کشیدن ماوس روی محور
-                    // باعث حرکت افقی چارت نمی‌شود.
+                    // محور افقی فقط زوم است. نقطه مرکزی نمودار ثابت می‌ماند؛
+                    // تغییر firstIndex در اینجا «پَن» نیست، بلکه برای نگه‌داشتن
+                    // مرکز هنگام باز و بسته شدن زوم ضروری است.
                     visibleCount = newCount;
+                    firstIndex = Math.Clamp(
+                        (int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0),
+                        0,
+                        Math.Max(0, points.Count - newCount));
                     horizontalPanOffset = 0;
                 }
 
