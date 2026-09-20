@@ -114,7 +114,11 @@ namespace Trade.It
 
             DrawDrawings(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
             RenderAdvancedDrawings(e.Graphics);
-            RenderExtraDrawings(e.Graphics, plot, visible.Count, min, max);
+            // Extra drawingها باید دقیقاً با همان مختصات داده/صفحه‌ای
+            // رندر شوند که چارت اصلی در مد تست استفاده می‌کند.
+            // استفاده از visible.Count در اینجا باعث جهش Pitchfork و
+            // Fibonacci Extension می‌شد چون visible در مد تست کوتاه‌تر است.
+            RenderExtraDrawings(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
