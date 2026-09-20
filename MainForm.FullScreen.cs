@@ -71,6 +71,8 @@ namespace Trade.It
             chartTabControl.Visible = true;
 
             fullScreenChartButton.Text = "بازگشت";
+            if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
+                ownerDrawnButton.Active = true;
 
             // Keep the designer z-order. chartToolbarPanel is Dock.Top and
             // chartTabControl is Dock.Fill; changing sibling z-order here causes
@@ -103,6 +105,8 @@ namespace Trade.It
                 WindowState = savedWindowState;
 
             fullScreenChartButton.Text = "تمام صفحه";
+            if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
+                ownerDrawnButton.Active = false;
 
             chartPanel.PerformLayout();
             chartTabControl.PerformLayout();
