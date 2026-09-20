@@ -545,13 +545,15 @@ namespace Trade.It
             // ناحیه زوم افقی است؛ لازم نیست ماوس دقیقاً روی خود خط محور باشد.
             // فقط نوار باریکِ وسط جداکننده برای تغییر ارتفاع پنل حجم محفوظ می‌ماند.
             var volumePlot = GetVolumePlotRectangle();
-            var axisBandBottom = volumePlot == Rectangle.Empty
-                ? Math.Max(plotBottom + 12, Height - 35)
-                : volumePlot.Top;
+
+            // محور افقی در پایین‌ترین نوار کنترل چارت قرار دارد؛ وقتی پنل حجم
+            // فعال است، این نوار بعد از پنل حجم است. قبلاً محدوده زوم را بین
+            // plot قیمت و volumePlot.Top گذاشته بودیم که عملاً فقط همان فاصله
+            // باریکِ جداکننده را قابل گرفتن می‌کرد.
+            var axisBandTop = Math.Max(plotBottom, Height - 35);
 
             // Drag معمولی روی محور همیشه Zoom است.
-            // برای جلوگیری از تداخل با جداکننده پنل حجم، تغییر ارتفاع پنل
-            // فقط با Shift + Drag روی جداکننده انجام می‌شود.
+            // تغییر ارتفاع پنل حجم فقط با Shift + Drag روی جداکننده انجام می‌شود.
             var onVolumeSeparator = volumePanelVisible &&
                                     IsVolumePanelSeparator(e.Location.Y) &&
                                     (ModifierKeys & Keys.Shift) == Keys.Shift;
@@ -567,8 +569,8 @@ namespace Trade.It
             }
 
             horizontalAxisDrag =
-                e.Y >= plotBottom - 12 &&
-                e.Y < axisBandBottom &&
+                e.Y >= axisBandTop &&
+                e.Y < Height &&
                 e.X >= plotLeft;
 
             if (horizontalAxisDrag)
