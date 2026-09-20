@@ -731,27 +731,11 @@ namespace Trade.It
                 }
                 else
                 {
-                    // زوم محور زمان باید حول مرکز دید انجام شود، نه اینکه
-                    // با تغییر visibleCount چارت به چپ یا راست سر بخورد.
-                    var plot = GetPlotRectangle();
-                    var centerX = plot.Left + plot.Width / 2.0;
-                    var oldStep = plot.Width / (double)Math.Max(1, horizontalAxisStartVisibleCount);
-                    var initialOffset = -plot.Width * 0.25;
-                    var centerDataIndex =
-                        firstIndex +
-                        (centerX - plot.Left - initialOffset - horizontalPanOffset) / oldStep - 0.5;
-
+                    // محور افقی فقط مسئول زوم زمانی است؛
+                    // با حرکت ماوس روی آن نباید چارت پَن/جابجا شود.
+                    // firstIndex عمداً ثابت می‌ماند و فقط تعداد کندل‌های
+                    // قابل مشاهده تغییر می‌کند.
                     visibleCount = newCount;
-
-                    var newStep = plot.Width / (double)Math.Max(1, visibleCount);
-                    var newFirst =
-                        centerDataIndex -
-                        (centerX - plot.Left - initialOffset - horizontalPanOffset) / newStep + 0.5;
-
-                    firstIndex = Math.Clamp(
-                        (int)Math.Round(newFirst),
-                        0,
-                        Math.Max(0, points.Count - visibleCount));
                 }
 
                 crosshairIndex = -1;
