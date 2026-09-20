@@ -646,3 +646,50 @@ namespace Trade.It
 
         private int HitTestExtraDrawing(Point location, Rectangle plot)
         {
+            if (!TryGetExtraContext(out _, out var visibleCountForDrawing, out var min, out var max))
+                return -1;
+
+            for (var i = extraDrawings.Count - 1; i >= 0; i--)
+            {
+                var d = extraDrawings[i];
+                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+
+                var handle = HitTestHandle(location, p1, p2, p3);
+                if (handle != 0)
+                    return i;
+
+                if (IsExtraDrawingBodyHit(location, d, plot, visibleCountForDrawing, min, max))
+                    return i;
+            }
+
+            return -1;
+        }
+
+        private static float DistanceToPoint(Point location, PointF point)
+        {
+            var dx = location.X - point.X;
+            var dy = location.Y - point.Y;
+            return MathF.Sqrt(dx * dx + dy * dy);
+        }
+
+        private static float DistanceToSegment(Point location, PointF a, PointF b)
+        {
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+
+            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
+                return DistanceToPoint(location, a);
+
+            var t = ((location.X - a.X) * dx + (location.Y - a.Y) * dy) /
+                    (dx * dx + dy * dy);
+
+            t = Math.Clamp(t, 0f, 1f);
+
+            return DistanceToPoint(
+                location,
+                new PointF(a.X + t * dx, a.Y + t * dy));
+        }
+    }
+}
