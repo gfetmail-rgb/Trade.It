@@ -338,6 +338,20 @@ namespace Trade.It
             Invalidate();
         }
 
+        public void StepTest(int delta)
+        {
+            if (!testMode || points.Count == 0)
+                return;
+
+            var naturalEndIndex = Math.Min(points.Count - 1, firstIndex + Math.Max(1, visibleCount) - 1);
+            if (testEndIndex < 0)
+                testEndIndex = naturalEndIndex;
+
+            testEndIndex = Math.Clamp(testEndIndex + delta, firstIndex, naturalEndIndex);
+            crosshairIndex = -1;
+            Invalidate();
+        }
+
         private void SetTestEndFromMouse(Point location)
         {
             if (!testMode || points.Count == 0 || !IsInsidePlot(location))
