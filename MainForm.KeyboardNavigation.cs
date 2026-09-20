@@ -17,7 +17,6 @@ namespace Trade.It
 
             if (stocksDataGridView.ContainsFocus)
             {
-                var keyCode = keyData & Keys.KeyCode;
                 if (keyCode == Keys.Up ||
                     keyCode == Keys.Down ||
                     keyCode == Keys.Enter ||
