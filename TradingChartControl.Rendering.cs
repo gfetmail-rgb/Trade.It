@@ -60,7 +60,7 @@ namespace Trade.It
             var step = plot.Width / (double)layoutCount;
             var initialOffset = -plot.Width * 0.25;
 
-            DrawRectangleFillsBehindChart(e.Graphics, plot, visible.Count, min, max);
+            DrawRectangleFillsBehindChart(e.Graphics, plot, layoutCount, min, max);
 
             if (drawingInProgress && activeDrawingTool == ChartDrawingTool.Rectangle && IsInsidePlot(drawingCurrentPoint))
                 DrawRectanglePreviewFillBehindChart(e.Graphics, drawingStartPoint, drawingCurrentPoint);
@@ -110,14 +110,14 @@ namespace Trade.It
                 }
             }
 
-            DrawDrawings(e.Graphics, plot, visible.Count, min, max);
+            DrawDrawings(e.Graphics, plot, layoutCount, min, max);
             RenderAdvancedDrawings(e.Graphics);
             RenderExtraDrawings(e.Graphics, plot, visible.Count, min, max);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
                 using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawDrawingPreview(e.Graphics, previewPen, plot, visible.Count, min, max);
+                DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, min, max);
             }
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
