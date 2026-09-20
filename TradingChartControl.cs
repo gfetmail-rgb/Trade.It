@@ -537,6 +537,36 @@ namespace Trade.It
             }
             if (activeDrawingTool != ChartDrawingTool.None) { BeginOrCompleteDrawing(e.Location); return; }
 
+            var plot = GetPlotRectangle();
+            var plotLeft = plot.Left;
+            var plotBottom = plot.Bottom;
+
+            // خودِ محور افقی باید قبل از ناحیه تغییر ارتفاع پنل حجم تشخیص داده شود.
+            // در غیر این صورت، ناحیه جداکننده پنل حجم کلیک روی محور را می‌بلعد
+            // و ماوس وارد حالت Pan/Resize می‌شود.
+            horizontalAxisDrag =
+                e.Y >= plotBottom - 3 &&
+                e.Y <= plotBottom + 2 &&
+                e.X >= plotLeft;
+
+            if (horizontalAxisDrag)
+            {
+                panning = false;
+                volumePanelResizeDrag = false;
+                horizontalAxisStartPoint = e.Location;
+                horizontalAxisStartVisibleCount = Math.Max(2, visibleCount);
+
+                var axisStep = plot.Width / (double)Math.Max(2, visibleCount);
+                var axisInitialOffset = -plot.Width * 0.25;
+                var axisRelativeX =
+                    (e.X - plotLeft - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
+                horizontalAxisCenterIndex = firstIndex + axisRelativeX;
+
+                Capture = true;
+                Cursor = Cursors.SizeWE;
+                return;
+            }
+
             if (volumePanelVisible && IsVolumePanelSeparator(e.Location.Y))
             {
                 volumePanelResizeDrag = true;
@@ -547,7 +577,6 @@ namespace Trade.It
                 return;
             }
 
-            var plot = GetPlotRectangle();
             var handleIndex = HitTestDrawingHandle(e.Location, plot, out var handle);
             if (handleIndex >= 0)
             {
@@ -570,32 +599,7 @@ namespace Trade.It
             selectedDrawingIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
-            var plotLeft = GetPlotRectangle().Left;
-            var plotBottom = GetPlotRectangle().Bottom;
-            // ناحیه محور افقی را کمی بزرگ می‌گیریم تا کلیک دقیقاً روی یک پیکسل
-            // لازم نباشد؛ این ناحیه شامل فاصله زیر چارت قیمت نیز هست.
-            horizontalAxisDrag = e.Y >= plotBottom &&
-                                 e.Y <= plotBottom + Math.Clamp(volumePanelGap, 2, 30) + 8 &&
-                                 e.X >= plotLeft;
             verticalAxisDrag = e.X <= plotLeft && e.Y <= plotBottom;
-            if (horizontalAxisDrag)
-            {
-                panning = false;
-                horizontalAxisStartPoint = e.Location;
-                horizontalAxisStartVisibleCount = Math.Max(2, visibleCount);
-
-                // نقطه‌ای که ماوس روی محور افقی گرفته شده، لنگر زوم است.
-                // بنابراین با زوم، همان بخش از چارت زیر ماوس باقی می‌ماند
-                // و چارت به‌صورت Pan جابه‌جا نمی‌شود.
-                var axisPlot = GetPlotRectangle();
-                var axisStep = axisPlot.Width / (double)Math.Max(2, visibleCount);
-                var axisInitialOffset = -axisPlot.Width * 0.25;
-                var axisRelativeX =
-                    (e.X - axisPlot.Left - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
-                horizontalAxisCenterIndex = firstIndex + axisRelativeX;
-
-                Capture = true; Cursor = Cursors.SizeWE; return;
-            }
             if (verticalAxisDrag)
             {
                 panning = false;
