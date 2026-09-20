@@ -28,6 +28,8 @@ namespace Trade.It
             crossButton.Click += CrossButton_Click;
             indicatorPanelButton.Click += IndicatorPanelButton_Click;
             testModeButton.Click += TestModeButton_Click;
+            testStepBackButton.Click += TestStepBackButton_Click;
+            testStepForwardButton.Click += TestStepForwardButton_Click;
             hideChartButton.Click += HideChartButton_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
@@ -45,9 +47,28 @@ namespace Trade.It
 
         private void TestModeButton_Click(object? sender, EventArgs e)
         {
+            var chart = GetActiveChart();
+            if (chart == null)
+                return;
+
             testMode = !testMode;
+            chart.SetTestMode(testMode);
             testModeButton.Text = testMode ? "خروج تست" : "تست";
             SetToggleButtonState(testModeButton, testMode);
+        }
+
+        private void TestStepBackButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart != null && chart.TestMode)
+                chart.StepTest(-1);
+        }
+
+        private void TestStepForwardButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart != null && chart.TestMode)
+                chart.StepTest(1);
         }
 
         private void IndicatorPanelButton_Click(object? sender, EventArgs e)
