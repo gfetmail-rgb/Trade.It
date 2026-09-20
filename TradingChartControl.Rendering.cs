@@ -54,7 +54,10 @@ namespace Trade.It
             var chartState = e.Graphics.Save();
             e.Graphics.SetClip(plot, CombineMode.Intersect);
 
-            var step = plot.Width / (double)Math.Max(1, visible.Count);
+            var layoutCount = testMode && testEndIndex >= 0
+                ? Math.Max(1, naturalEndIndex - firstIndex)
+                : Math.Max(1, visible.Count);
+            var step = plot.Width / (double)layoutCount;
             var initialOffset = -plot.Width * 0.25;
 
             DrawRectangleFillsBehindChart(e.Graphics, plot, visible.Count, min, max);
