@@ -541,12 +541,12 @@ namespace Trade.It
             var plotLeft = plot.Left;
             var plotBottom = plot.Bottom;
 
-            // خودِ محور افقی باید قبل از ناحیه تغییر ارتفاع پنل حجم تشخیص داده شود.
-            // در غیر این صورت، ناحیه جداکننده پنل حجم کلیک روی محور را می‌بلعد
-            // و ماوس وارد حالت Pan/Resize می‌شود.
+            // ناحیه مخصوص محور افقی را داخل خودِ نوار پایینی نمودار قیمت قرار می‌دهیم.
+            // این ناحیه عمداً از پنل حجم و جداکننده آن مستقل است تا کلیک روی محور
+            // هرگز وارد Pan یا تغییر ارتفاع پنل حجم نشود.
             horizontalAxisDrag =
-                e.Y >= plotBottom - 3 &&
-                e.Y <= plotBottom + 2 &&
+                e.Y >= plotBottom - 12 &&
+                e.Y <= plotBottom &&
                 e.X >= plotLeft;
 
             if (horizontalAxisDrag)
@@ -758,12 +758,16 @@ namespace Trade.It
                     var zoomPlot = GetPlotRectangle();
                     var zoomStep = zoomPlot.Width / (double)Math.Max(2, newCount);
                     var zoomInitialOffset = -zoomPlot.Width * 0.25;
-                    var mouseRelativeIndex =
-                        (e.X - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
+
+                    // لنگر همان نقطه‌ای است که Drag روی محور شروع شده است.
+                    // نباید با حرکت بعدی ماوس، لنگر دوباره محاسبه شود؛
+                    // وگرنه نمودار به‌جای زوم حول نقطه شروع، جابه‌جا می‌شود.
+                    var anchorRelativeIndex =
+                        (horizontalAxisStartPoint.X - zoomPlot.Left - zoomInitialOffset)
                         / zoomStep - 0.5;
 
                     firstIndex = Math.Clamp(
-                        (int)Math.Round(horizontalAxisCenterIndex - mouseRelativeIndex),
+                        (int)Math.Round(horizontalAxisCenterIndex - anchorRelativeIndex),
                         0,
                         Math.Max(0, points.Count - newCount));
 
