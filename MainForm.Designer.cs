@@ -31,6 +31,7 @@
         private System.Windows.Forms.Button gridButton;
         private System.Windows.Forms.Button crossButton;
         private System.Windows.Forms.Button indicatorPanelButton;
+        private System.Windows.Forms.Button testModeButton;
         private System.Windows.Forms.Button zoomInButton;
         private System.Windows.Forms.Button zoomOutButton;
         private System.Windows.Forms.Button resetChartButton;
@@ -233,6 +234,7 @@
             gridButton = new Button();
             crossButton = new Button();
             indicatorPanelButton = new Button();
+            testModeButton = new Button();
             zoomInButton = new Button();
             zoomOutButton = new Button();
             resetChartButton = new Button();
@@ -1590,6 +1592,7 @@
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
             chartToolbarPanel.Controls.Add(indicatorPanelButton);
+            chartToolbarPanel.Controls.Add(testModeButton);
             chartToolbarPanel.Controls.Add(zoomInButton);
             chartToolbarPanel.Controls.Add(zoomOutButton);
             chartToolbarPanel.Controls.Add(resetChartButton);
@@ -1689,6 +1692,15 @@
             indicatorPanelButton.Text = "اندیکاتورها";
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
+            // testModeButton
+            // 
+            testModeButton.Location = new Point(970, 46);
+            testModeButton.Name = "testModeButton";
+            testModeButton.Size = new Size(82, 34);
+            testModeButton.TabIndex = 22;
+            testModeButton.Text = "تست";
+            testModeButton.UseVisualStyleBackColor = true;
+            // 
             // zoomInButton
             // 
             zoomInButton.Location = new Point(314, 7);
@@ -1725,7 +1737,7 @@
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(970, 46);
+            hideToolsButton.Location = new Point(1000, 46);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
