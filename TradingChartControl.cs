@@ -395,10 +395,15 @@ namespace Trade.It
             relativeIndex = Math.Clamp(relativeIndex, 0, count - 1);
 
             var desiredFirst = testEndIndex - relativeIndex;
+
+            // در مد تست لازم است حتی در انتهای داده نیز فضای خالی سمت راست
+            // حفظ شود تا کندل لنگر دقیقاً در همان مختصات صفحه بماند.
+            // محدود کردن firstIndex به points.Count - count باعث می‌شد
+            // در حرکت با کلید راست، لنگر به سمت راست سر بخورد.
             firstIndex = Math.Clamp(
                 desiredFirst,
                 0,
-                Math.Max(0, points.Count - count));
+                Math.Max(0, points.Count - 1));
         }
 
         private void SetTestEndFromMouse(Point location)
