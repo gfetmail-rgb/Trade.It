@@ -53,7 +53,7 @@ namespace Trade.It
 
             testMode = !testMode;
             chart.SetTestMode(testMode);
-            testModeButton.Text = testMode ? "تحلیل" : "تست";
+            testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
         }
 
@@ -303,7 +303,7 @@ namespace Trade.It
 
             // همگام‌سازی وضعیت دکمه تست با چارت فعال.
             testMode = chart?.TestMode == true;
-            testModeButton.Text = testMode ? "تحلیل" : "تست";
+            testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
 
             ResetDrawingToolButtons();
@@ -401,7 +401,7 @@ namespace Trade.It
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
                 testMode = chart.TestMode;
-                testModeButton.Text = testMode ? "خروج تست" : "تست";
+                testModeButton.Text = "تست";
                 SetToggleButtonState(testModeButton, testMode);
 
                 chart.Visible = true;
@@ -500,8 +500,21 @@ namespace Trade.It
         private static void SetToggleButtonState(Button button, bool active)
         {
             button.UseVisualStyleBackColor = false;
-            button.BackColor = active ? SystemColors.Highlight : SystemColors.Control;
-            button.ForeColor = active ? SystemColors.HighlightText : SystemColors.ControlText;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 1;
+
+            if (active)
+            {
+                button.BackColor = SystemColors.Highlight;
+                button.ForeColor = SystemColors.HighlightText;
+                button.FlatAppearance.BorderColor = SystemColors.Highlight;
+            }
+            else
+            {
+                button.BackColor = SystemColors.Control;
+                button.ForeColor = SystemColors.ControlText;
+                button.FlatAppearance.BorderColor = SystemColors.ControlDark;
+            }
         }
 
         private void PrintChartButton_Click(object? sender, EventArgs e)
