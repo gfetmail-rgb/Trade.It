@@ -298,7 +298,6 @@ namespace Trade.It
             extraDataCount = points.Count;
             extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
             extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
-
             selectedDrawingIndex = -1;
             draggingDrawingIndex = -1;
             selectedAdvancedDrawingIndex = -1;
@@ -602,9 +601,7 @@ namespace Trade.It
         private int GetDrawingLayoutCount()
         {
             var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            return testMode && testEndIndex >= 0
-                ? Math.Max(1, naturalEndIndex - firstIndex)
-                : Math.Max(1, naturalEndIndex - firstIndex);
+            return Math.Max(1, naturalEndIndex - firstIndex);
         }
 
         private bool IsInsidePlot(Point point) => GetPlotRectangle().Contains(point);
@@ -648,89 +645,3 @@ namespace Trade.It
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (volumePanelResizeDrag && Capture)
             {
-                var delta = e.Location.Y - volumePanelResizeStartY;
-                var totalHeight = Math.Max(120, Height - 35 - 15);
-                var deltaRatio = -delta / (double)totalHeight;
-                volumePanelRatio = Math.Clamp(
-                    volumePanelResizeStartRatio + deltaRatio,
-                    0.10,
-                    0.45);
-                Invalidate();
-                return;
-            }
-
-            if (showCrosshair)
-            {
-                var plot = GetPlotRectangle();
-                var plotLeft = plot.Left;
-                var plotRight = plot.Right;
-                var plotTop = plot.Top;
-                var plotBottom = plot.Bottom;
-                var plotWidth = Math.Max(1, plotRight - plotLeft);
-                var step = plotWidth / (double)Math.Max(1, visibleCount);
-                var initialOffset = -plotWidth * 0.25;
-                var relativeX = e.X - plotLeft - initialOffset - horizontalPanOffset;
-                var nearest = (int)Math.Round(relativeX / step - 0.5);
-                crosshairIndex = Math.Clamp(nearest, 0, Math.Max(0, visibleCount - 1));
-                crosshairPoint = new Point((int)Math.Round(plotLeft + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset), Math.Clamp(e.Y, plotTop, plotBottom));
-                Invalidate();
-            }
-            if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None) { drawingCurrentPoint = e.Location; Invalidate(); return; }
-            if (draggingDrawingIndex >= 0 && draggingDrawingIndex < drawings.Count && Capture)
-            {
-                MoveOrResizeDrawing(draggingDrawingIndex, draggingHandle, e.Location); draggingLastPoint = e.Location; Invalidate(); return;
-            }
-            if (horizontalAxisDrag && Capture && points.Count > 1)
-            {
-                var delta = e.X - horizontalAxisStartPoint.X;
-                var factor = Math.Exp(-delta / 300.0);
-                var newCount = Math.Clamp((int)Math.Round(horizontalAxisStartVisibleCount * factor), 2, points.Count);
-                visibleCount = newCount;
-                firstIndex = Math.Clamp((int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0), 0, Math.Max(0, points.Count - newCount));
-                crosshairIndex = -1; Invalidate(); return;
-            }
-            if (verticalAxisDrag && Capture && points.Count > 1)
-            {
-                var delta = e.Y - verticalAxisStartPoint.Y;
-                verticalZoom = Math.Clamp(verticalAxisStartZoom * Math.Exp(delta / 200.0), 0.1, 20.0); Invalidate(); return;
-            }
-            if (panning && Capture && points.Count > 1)
-            {
-                var dx = e.X - panStartPoint.X;
-                var dy = e.Y - panStartPoint.Y;
-                var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
-                var indexDelta = (int)Math.Round(-dx / step);
-                firstIndex = Math.Clamp(panStartFirstIndex + indexDelta, 0, Math.Max(0, points.Count - visibleCount));
-                verticalPanOffset = panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
-                horizontalPanOffset = panStartHorizontalOffset + dx;
-                Invalidate();
-            }
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-            if (extraInputHandled) { extraInputHandled = false; return; }
-            if (e.Button == MouseButtons.Left)
-            {
-                if (volumePanelResizeDrag)
-                {
-                    volumePanelResizeDrag = false;
-                    Capture = false;
-                    Cursor = Cursors.Default;
-                    Invalidate();
-                    return;
-                }
-
-                if (draggingDrawingIndex >= 0)
-                {
-                    draggingDrawingIndex = -1; draggingHandle = 0; Capture = false; Cursor = Cursors.Default; Invalidate(); return;
-                }
-                if (horizontalAxisDrag || verticalAxisDrag || panning)
-                {
-                    horizontalAxisDrag = false; verticalAxisDrag = false; panning = false; Capture = false; Cursor = Cursors.Default; Invalidate();
-                }
-            }
-        }
-    }
-}
