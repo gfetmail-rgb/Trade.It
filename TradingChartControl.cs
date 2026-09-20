@@ -546,7 +546,7 @@ namespace Trade.It
             // فقط نوار باریکِ وسط جداکننده برای تغییر ارتفاع پنل حجم محفوظ می‌ماند.
             var volumePlot = GetVolumePlotRectangle();
             var axisBandBottom = volumePlot == Rectangle.Empty
-                ? plotBottom + 12
+                ? Math.Max(plotBottom + 12, Height - 35)
                 : volumePlot.Top;
 
             var onVolumeSeparator = volumePanelVisible &&
