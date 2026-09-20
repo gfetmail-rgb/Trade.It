@@ -572,7 +572,11 @@ namespace Trade.It
             draggingHandle = 0;
             var plotLeft = GetPlotRectangle().Left;
             var plotBottom = GetPlotRectangle().Bottom;
-            horizontalAxisDrag = e.Y >= plotBottom && e.Y <= plotBottom + 6 && e.X >= plotLeft;
+            // ناحیه محور افقی را کمی بزرگ می‌گیریم تا کلیک دقیقاً روی یک پیکسل
+            // لازم نباشد؛ این ناحیه شامل فاصله زیر چارت قیمت نیز هست.
+            horizontalAxisDrag = e.Y >= plotBottom &&
+                                 e.Y <= plotBottom + Math.Clamp(volumePanelGap, 2, 30) + 8 &&
+                                 e.X >= plotLeft;
             verticalAxisDrag = e.X <= plotLeft && e.Y <= plotBottom;
             if (horizontalAxisDrag)
             {
@@ -741,15 +745,21 @@ namespace Trade.It
                 }
                 else
                 {
-                    // محور افقی فقط زوم است؛ Pan در این حالت ممنوع است.
-                    // مرکز داده‌ای پنجره در شروع Drag ثابت می‌ماند و فقط تعداد
-                    // کندل‌های قابل مشاهده تغییر می‌کند. بنابراین حرکت ماوس روی
-                    // محور باعث جابه‌جایی نمودار نمی‌شود.
-                    var zoomCenterIndex = firstIndex + (horizontalAxisStartVisibleCount - 1) / 2.0;
+                    // محور افقی فقط زوم است؛ نقطه‌ای که ماوس هنگام شروع
+                    // Drag روی محور گرفته، لنگر زوم است. در نتیجه با حرکت ماوس
+                    // فقط تعداد کندل‌ها تغییر می‌کند و آن نقطه روی همان مختصات
+                    // صفحه باقی می‌ماند؛ هیچ Pan افقی انجام نمی‌شود.
                     visibleCount = newCount;
 
+                    var zoomPlot = GetPlotRectangle();
+                    var zoomStep = zoomPlot.Width / (double)Math.Max(2, newCount);
+                    var zoomInitialOffset = -zoomPlot.Width * 0.25;
+                    var mouseRelativeIndex =
+                        (e.X - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
+                        / zoomStep - 0.5;
+
                     firstIndex = Math.Clamp(
-                        (int)Math.Round(zoomCenterIndex - (newCount - 1) / 2.0),
+                        (int)Math.Round(horizontalAxisCenterIndex - mouseRelativeIndex),
                         0,
                         Math.Max(0, points.Count - newCount));
 
