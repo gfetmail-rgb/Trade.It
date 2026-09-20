@@ -281,7 +281,9 @@ namespace Trade.It
         private void FullScreenChartButton_Click(object? sender, EventArgs e)
         {
             mainSplitContainer.Panel1Collapsed = !mainSplitContainer.Panel1Collapsed;
-            fullScreenChartButton.Text = mainSplitContainer.Panel1Collapsed ? "بازگشت" : "تمام صفحه";
+            var isFullScreen = mainSplitContainer.Panel1Collapsed;
+            fullScreenChartButton.Text = isFullScreen ? "بازگشت" : "تمام صفحه";
+            SetToggleButtonState(fullScreenChartButton, isFullScreen);
         }
 
         protected override void OnHandleCreated(EventArgs e)
