@@ -599,6 +599,14 @@ namespace Trade.It
             activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate();
         }
 
+        private int GetDrawingLayoutCount()
+        {
+            var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            return testMode && testEndIndex >= 0
+                ? Math.Max(1, naturalEndIndex - firstIndex)
+                : Math.Max(1, naturalEndIndex - firstIndex);
+        }
+
         private bool IsInsidePlot(Point point) => GetPlotRectangle().Contains(point);
         private void AddDrawing(Point start, Point end) => AddDrawing(start, end, Point.Empty);
 
@@ -608,10 +616,11 @@ namespace Trade.It
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
             if (visible.Count == 0) return;
-            GetVerticalRange(visible, out var min, out var max);
-            var x1 = ScreenToDataX(start.X, plot, visible.Count);
+            GetVerticalRange(points.Skip(firstIndex).Take(Math.Max(1, Math.Min(points.Count - firstIndex, visibleCount))).ToList(), out var min, out var max);
+            var layoutCount = GetDrawingLayoutCount();
+            var x1 = ScreenToDataX(start.X, plot, layoutCount);
             var y1 = ScreenToPrice(start.Y, plot, min, max);
-            var x2 = ScreenToDataX(end.X, plot, visible.Count);
+            var x2 = ScreenToDataX(end.X, plot, layoutCount);
             var y2 = ScreenToPrice(end.Y, plot, min, max);
             switch (activeDrawingTool)
             {
@@ -621,7 +630,7 @@ namespace Trade.It
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 }); break;
                 case ChartDrawingTool.TrendChannel:
                     if (third == Point.Empty) return;
-                    var x3 = ScreenToDataX(third.X, plot, visible.Count);
+                    var x3 = ScreenToDataX(third.X, plot, layoutCount);
                     var y3 = ScreenToPrice(third.Y, plot, min, max);
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 }); break;
                 case ChartDrawingTool.HorizontalLine:
