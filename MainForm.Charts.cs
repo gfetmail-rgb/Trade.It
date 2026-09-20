@@ -9,6 +9,7 @@ namespace Trade.It
         private readonly Dictionary<string, TradingChartControl> chartControls = new(StringComparer.OrdinalIgnoreCase);
         private bool chartRuntimeInitialized;
         private string? activeChartSymbol;
+        private bool testMode;
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
@@ -26,6 +27,7 @@ namespace Trade.It
             gridButton.Click += GridButton_Click;
             crossButton.Click += CrossButton_Click;
             indicatorPanelButton.Click += IndicatorPanelButton_Click;
+            testModeButton.Click += TestModeButton_Click;
             hideChartButton.Click += HideChartButton_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
@@ -39,6 +41,13 @@ namespace Trade.It
             SetIndicatorPanelButtonState(GetActiveChart());
             SetToggleButtonState(hideChartButton, false);
             ApplyChartDisplayMode();
+        }
+
+        private void TestModeButton_Click(object? sender, EventArgs e)
+        {
+            testMode = !testMode;
+            testModeButton.Text = testMode ? "خروج تست" : "تست";
+            SetToggleButtonState(testModeButton, testMode);
         }
 
         private void IndicatorPanelButton_Click(object? sender, EventArgs e)
