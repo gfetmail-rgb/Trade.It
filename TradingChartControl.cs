@@ -65,6 +65,8 @@ namespace Trade.It
         private int volumePanelResizeStartY;
         private double volumePanelResizeStartRatio;
         private bool volumePanelVisible = true;
+        private bool testMode;
+        private int testEndIndex = -1;
 
         private sealed class ChartDrawing
         {
@@ -103,6 +105,7 @@ namespace Trade.It
 
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
+            testEndIndex = -1;
             verticalZoom = 1.0;
             verticalPanOffset = 0;
             horizontalPanOffset = 0;
@@ -324,6 +327,33 @@ namespace Trade.It
         public bool GridVisible => showGrid;
         public void ToggleCrosshair() { showCrosshair = !showCrosshair; Invalidate(); }
         public bool CrosshairVisible => showCrosshair;
+        public bool TestMode => testMode;
+
+        public void SetTestMode(bool enabled)
+        {
+            testMode = enabled;
+            testEndIndex = -1;
+            if (enabled)
+                CancelDrawing();
+            Invalidate();
+        }
+
+        private void SetTestEndFromMouse(Point location)
+        {
+            if (!testMode || points.Count == 0 || !IsInsidePlot(location))
+                return;
+
+            var plot = GetPlotRectangle();
+            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var count = Math.Max(1, endIndex - firstIndex);
+            var step = plot.Width / (double)count;
+            var initialOffset = -plot.Width * 0.25;
+            var dataX = (location.X - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
+            var relativeIndex = Math.Clamp((int)Math.Round(dataX), 0, count - 1);
+            testEndIndex = Math.Clamp(firstIndex + relativeIndex, 0, points.Count - 1);
+            crosshairIndex = -1;
+            Invalidate();
+        }
         public ChartDrawingTool ActiveDrawingTool => activeDrawingTool;
         public bool DrawingInProgress => drawingInProgress;
 
@@ -419,6 +449,12 @@ namespace Trade.It
             if (e.Button == MouseButtons.Right) { CancelDrawing(); return; }
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button != MouseButtons.Left) return;
+            if (testMode)
+            {
+                SetTestEndFromMouse(e.Location);
+                Focus();
+                return;
+            }
             if (ExtraDrawingActive || extraDrawingInProgress || extraDraggingHandleActive)
             {
                 panning = false;
