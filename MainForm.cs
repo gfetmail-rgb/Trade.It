@@ -283,7 +283,24 @@ namespace Trade.It
             mainSplitContainer.Panel1Collapsed = !mainSplitContainer.Panel1Collapsed;
             var isFullScreen = mainSplitContainer.Panel1Collapsed;
             fullScreenChartButton.Text = isFullScreen ? "بازگشت" : "تمام صفحه";
-            SetToggleButtonState(fullScreenChartButton, isFullScreen);
+
+            // وضعیت تمام‌صفحه باید به‌صورت واضح با پس‌زمینه آبی خود دکمه دیده شود.
+            fullScreenChartButton.UseVisualStyleBackColor = false;
+            fullScreenChartButton.FlatStyle = FlatStyle.Flat;
+            fullScreenChartButton.FlatAppearance.BorderSize = 1;
+
+            if (isFullScreen)
+            {
+                fullScreenChartButton.BackColor = SystemColors.Highlight;
+                fullScreenChartButton.ForeColor = SystemColors.HighlightText;
+                fullScreenChartButton.FlatAppearance.BorderColor = SystemColors.Highlight;
+            }
+            else
+            {
+                fullScreenChartButton.BackColor = SystemColors.Control;
+                fullScreenChartButton.ForeColor = SystemColors.ControlText;
+                fullScreenChartButton.FlatAppearance.BorderColor = SystemColors.ControlDark;
+            }
         }
 
         protected override void OnHandleCreated(EventArgs e)
