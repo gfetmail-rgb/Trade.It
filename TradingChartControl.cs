@@ -333,8 +333,23 @@ namespace Trade.It
         {
             testMode = enabled;
             testEndIndex = -1;
+
+            // با ورود/خروج از حالت تست، هیچ وضعیت نیمه‌کاره‌ای از
+            // ورودی ماوس نباید به رسم ابزارهای معمولی منتقل شود.
+            extraInputHandled = false;
+            Capture = false;
+            panning = false;
+            horizontalAxisDrag = false;
+            verticalAxisDrag = false;
+            volumePanelResizeDrag = false;
+            draggingDrawingIndex = -1;
+            draggingHandle = 0;
+
             if (enabled)
                 CancelDrawing();
+
+            Cursor = Cursors.Default;
+            Focus();
             Invalidate();
         }
 
