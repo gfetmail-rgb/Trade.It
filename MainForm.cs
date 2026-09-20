@@ -278,18 +278,26 @@ namespace Trade.It
             secondOffsetTextBox.Clear();
         }
 
+        private bool isFullScreenChart;
+
         private void FullScreenChartButton_Click(object? sender, EventArgs e)
         {
             mainSplitContainer.Panel1Collapsed = !mainSplitContainer.Panel1Collapsed;
-            var isFullScreen = mainSplitContainer.Panel1Collapsed;
-            fullScreenChartButton.Text = isFullScreen ? "بازگشت" : "تمام صفحه";
+            isFullScreenChart = mainSplitContainer.Panel1Collapsed;
+            ApplyFullScreenChartButtonStyle();
 
-            // وضعیت تمام‌صفحه باید به‌صورت واضح با پس‌زمینه آبی خود دکمه دیده شود.
+        private void ApplyFullScreenChartButtonStyle()
+        {
+            fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
             fullScreenChartButton.UseVisualStyleBackColor = false;
             fullScreenChartButton.FlatStyle = FlatStyle.Flat;
             fullScreenChartButton.FlatAppearance.BorderSize = 1;
+            fullScreenChartButton.FlatAppearance.MouseOverBackColor =
+                isFullScreenChart ? SystemColors.Highlight : SystemColors.Control;
+            fullScreenChartButton.FlatAppearance.MouseDownBackColor =
+                isFullScreenChart ? SystemColors.Highlight : SystemColors.Control;
 
-            if (isFullScreen)
+            if (isFullScreenChart)
             {
                 fullScreenChartButton.BackColor = SystemColors.Highlight;
                 fullScreenChartButton.ForeColor = SystemColors.HighlightText;
@@ -301,6 +309,9 @@ namespace Trade.It
                 fullScreenChartButton.ForeColor = SystemColors.ControlText;
                 fullScreenChartButton.FlatAppearance.BorderColor = SystemColors.ControlDark;
             }
+
+            fullScreenChartButton.Invalidate();
+        }
         }
 
         protected override void OnHandleCreated(EventArgs e)
