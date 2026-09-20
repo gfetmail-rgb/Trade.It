@@ -549,8 +549,12 @@ namespace Trade.It
                 ? Math.Max(plotBottom + 12, Height - 35)
                 : volumePlot.Top;
 
+            // Drag معمولی روی محور همیشه Zoom است.
+            // برای جلوگیری از تداخل با جداکننده پنل حجم، تغییر ارتفاع پنل
+            // فقط با Shift + Drag روی جداکننده انجام می‌شود.
             var onVolumeSeparator = volumePanelVisible &&
-                                    IsVolumePanelSeparator(e.Location.Y);
+                                    IsVolumePanelSeparator(e.Location.Y) &&
+                                    (ModifierKeys & Keys.Shift) == Keys.Shift;
 
             if (onVolumeSeparator)
             {
