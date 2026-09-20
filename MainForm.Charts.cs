@@ -53,7 +53,7 @@ namespace Trade.It
 
             testMode = !testMode;
             chart.SetTestMode(testMode);
-            testModeButton.Text = testMode ? "خروج تست" : "تست";
+            testModeButton.Text = testMode ? "تحلیل" : "تست";
             SetToggleButtonState(testModeButton, testMode);
         }
 
@@ -303,7 +303,7 @@ namespace Trade.It
 
             // همگام‌سازی وضعیت دکمه تست با چارت فعال.
             testMode = chart?.TestMode == true;
-            testModeButton.Text = testMode ? "خروج تست" : "تست";
+            testModeButton.Text = testMode ? "تحلیل" : "تست";
             SetToggleButtonState(testModeButton, testMode);
 
             ResetDrawingToolButtons();
