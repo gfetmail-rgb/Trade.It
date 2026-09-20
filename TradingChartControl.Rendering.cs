@@ -14,8 +14,11 @@ namespace Trade.It
                 return;
 
             var plot = GetPlotRectangle();
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
+            var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var endIndex = testMode && testEndIndex >= 0
+                ? Math.Min(naturalEndIndex, testEndIndex + 1)
+                : naturalEndIndex;
+            var visible = points.Skip(firstIndex).Take(Math.Max(0, endIndex - firstIndex)).ToList();
             if (visible.Count == 0)
                 return;
             GetVerticalRange(visible, out var min, out var max);
