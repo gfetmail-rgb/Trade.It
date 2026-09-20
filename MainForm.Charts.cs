@@ -11,6 +11,10 @@ namespace Trade.It
         private string? activeChartSymbol;
         private bool testMode;
 
+        // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
+        private bool lastVolumePanelVisible = true;
+        private double lastVolumePanelRatio = 0.22;
+
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
         private readonly System.Windows.Forms.Timer analysisAutoSaveTimer = new();
@@ -436,6 +440,9 @@ namespace Trade.It
         {
             if (chartControls.TryGetValue(symbol, out var existing)) return existing;
             var chart = new TradingChartControl { Dock = DockStyle.Fill };
+            chart.VolumeSettingsChanged += Chart_VolumeSettingsChanged;
+            chart.SetVolumePanelVisible(lastVolumePanelVisible);
+            chart.VolumePanelRatio = lastVolumePanelRatio;
             chartControls[symbol] = chart;
             return chart;
         }
@@ -469,6 +476,15 @@ namespace Trade.It
         {
             if (chartDisplayMode == ChartDisplayMode.SingleTab) return chartTabPage.Controls.OfType<TradingChartControl>().FirstOrDefault();
             return chartTabControl.SelectedTab?.Controls.OfType<TradingChartControl>().FirstOrDefault();
+        }
+
+        private void Chart_VolumeSettingsChanged(object? sender, EventArgs e)
+        {
+            if (sender is not TradingChartControl chart)
+                return;
+
+            lastVolumePanelVisible = chart.VolumePanelVisible;
+            lastVolumePanelRatio = chart.VolumePanelRatio;
         }
 
         private void GridButton_Click(object? sender, EventArgs e)
