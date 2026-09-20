@@ -506,13 +506,20 @@ namespace Trade.It
                 button.BackColor = SystemColors.Highlight;
                 button.ForeColor = SystemColors.HighlightText;
                 button.FlatAppearance.BorderColor = SystemColors.Highlight;
+                button.FlatAppearance.MouseOverBackColor = SystemColors.Highlight;
+                button.FlatAppearance.MouseDownBackColor = SystemColors.Highlight;
             }
             else
             {
                 button.BackColor = SystemColors.Control;
                 button.ForeColor = SystemColors.ControlText;
                 button.FlatAppearance.BorderColor = SystemColors.ControlDark;
+                button.FlatAppearance.MouseOverBackColor = SystemColors.Control;
+                button.FlatAppearance.MouseDownBackColor = SystemColors.Control;
             }
+
+            button.Invalidate();
+            button.Update();
         }
 
         private void PrintChartButton_Click(object? sender, EventArgs e)
