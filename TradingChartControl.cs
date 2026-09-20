@@ -683,10 +683,16 @@ namespace Trade.It
         private void AddDrawing(Point start, Point end, Point third)
         {
             var plot = GetPlotRectangle();
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
+            var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var endIndex = testMode && testEndIndex >= 0
+                ? Math.Min(naturalEndIndex, testEndIndex + 1)
+                : naturalEndIndex;
+            var visible = points.Skip(firstIndex).Take(Math.Max(0, endIndex - firstIndex)).ToList();
             if (visible.Count == 0) return;
-            GetVerticalRange(points.Skip(firstIndex).Take(Math.Max(1, Math.Min(points.Count - firstIndex, visibleCount))).ToList(), out var min, out var max);
+            // در حالت تست، ابزار باید با همان محدوده عمودی‌ای که همان لحظه
+            // خود کندل‌ها با آن رسم می‌شوند تبدیل شود؛ در غیر این صورت
+            // ابزار هنگام نهایی شدن رسم به بالا/پایین می‌پرد.
+            GetVerticalRange(visible, out var min, out var max);
             var layoutCount = GetDrawingLayoutCount();
             var x1 = ScreenToDataX(start.X, plot, layoutCount);
             var y1 = ScreenToPrice(start.Y, plot, min, max);
