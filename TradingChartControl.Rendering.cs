@@ -62,7 +62,7 @@ namespace Trade.It
             var step = plot.Width / (double)layoutCount;
             var initialOffset = -plot.Width * 0.25;
 
-            DrawRectangleFillsBehindChart(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
+            DrawRectangleFillsBehindChart(e.Graphics, plot, layoutCount, min, max);
 
             if (drawingInProgress && activeDrawingTool == ChartDrawingTool.Rectangle && IsInsidePlot(drawingCurrentPoint))
                 DrawRectanglePreviewFillBehindChart(e.Graphics, drawingStartPoint, drawingCurrentPoint);
@@ -112,18 +112,18 @@ namespace Trade.It
                 }
             }
 
-            DrawDrawings(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
+            DrawDrawings(e.Graphics, plot, layoutCount, min, max);
             RenderAdvancedDrawings(e.Graphics);
             // Extra drawingها باید دقیقاً با همان مختصات داده/صفحه‌ای
             // رندر شوند که چارت اصلی در مد تست استفاده می‌کند.
             // استفاده از visible.Count در اینجا باعث جهش Pitchfork و
             // Fibonacci Extension می‌شد چون visible در مد تست کوتاه‌تر است.
-            RenderExtraDrawings(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
+            RenderExtraDrawings(e.Graphics, plot, layoutCount, min, max);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
             {
                 using var previewPen = new Pen(GetDrawingColor(activeDrawingTool), LineAppearanceSettings.DrawingLineWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, drawingMin, drawingMax);
+                DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, min, max);
             }
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
@@ -208,7 +208,7 @@ namespace Trade.It
             using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
-            DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, drawingMin, drawingMax);
+            DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, min, max);
         }
 
         private void DrawRectangleFillsBehindChart(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
