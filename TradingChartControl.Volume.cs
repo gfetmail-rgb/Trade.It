@@ -37,6 +37,11 @@ namespace Trade.It
 
         public bool VolumePanelVisible => volumePanelVisible;
 
+        internal void NotifyVolumeSettingsChanged()
+        {
+            VolumeSettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         public void ToggleVolumePanel()
         {
             volumePanelVisible = !volumePanelVisible;
