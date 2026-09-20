@@ -297,8 +297,7 @@ namespace Trade.It
                 return;
 
             var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing);
-            var y1 = ScreenToPrice(start.Y, plot, min, max);
-            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing);
+            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing);
             var y2 = ScreenToPrice(end.Y, plot, min, max);
 
             if (Math.Abs(x2 - x1) < 0.001 || Math.Abs(y2 - y1) < 1e-12)
@@ -326,8 +325,7 @@ namespace Trade.It
         private bool TryGetAdvancedContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
         {
             plot = GetPlotRectangle();
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            visibleCountForDrawing = Math.Max(1, endIndex - firstIndex);
+            visibleCountForDrawing = GetDrawingLayoutCount();
             var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
             if (visible.Count == 0)
             {
