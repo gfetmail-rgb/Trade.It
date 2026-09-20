@@ -87,10 +87,10 @@ namespace Trade.It
                 return;
 
             extraDrawingEventsInitialized = true;
-            Paint += ExtraDrawing_Paint;
-            MouseDown += ExtraDrawing_MouseDown;
-            MouseMove += ExtraDrawing_MouseMove;
-            MouseUp += ExtraDrawing_MouseUp;
+            // Mouse input is dispatched centrally by WndProc so the same click
+            // cannot be processed once by WndProc and once by Control events.
+            // Rendering is performed from TradingChartControl.OnPaint; subscribing
+            // to Paint here would render completed Extra drawings a second time.
             KeyDown += ExtraDrawing_KeyDown;
         }
 
@@ -297,8 +297,7 @@ namespace Trade.It
                     d.X2 += dx; d.Y2 += dy;
                     d.X3 += dx; d.Y3 += dy;
                 }
-                else
-                {
+                else                {
                     var x = ScreenToDataX(e.X, plot, visibleCountForDrawing);
                     var y = ScreenToPrice(e.Y, plot, min, max);
                     if (extraDraggingHandle == 1) { d.X1 = x; d.Y1 = y; }
@@ -437,8 +436,7 @@ namespace Trade.It
         private bool TryGetExtraContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
         {
             plot = GetPlotRectangle();
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            visibleCountForDrawing = Math.Max(1, endIndex - firstIndex);
+            visibleCountForDrawing = GetDrawingLayoutCount();
             var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
             if (visible.Count == 0)
             {
@@ -648,39 +646,3 @@ namespace Trade.It
 
         private int HitTestExtraDrawing(Point location, Rectangle plot)
         {
-            if (!TryGetExtraContext(out _, out var visibleCountForDrawing, out var min, out var max))
-                return -1;
-
-            for (var i = extraDrawings.Count - 1; i >= 0; i--)
-            {
-                var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
-                if (DistanceToPoint(location, p1) <= 10f || DistanceToPoint(location, p2) <= 10f || DistanceToPoint(location, p3) <= 10f)
-                    return i;
-                if (IsExtraDrawingBodyHit(location, d, plot, visibleCountForDrawing, min, max))
-                    return i;
-            }
-            return -1;
-        }
-
-        private static float DistanceToPoint(Point location, PointF point)
-        {
-            var dx = location.X - point.X;
-            var dy = location.Y - point.Y;
-            return MathF.Sqrt(dx * dx + dy * dy);
-        }
-
-        private static float DistanceToSegment(Point location, PointF a, PointF b)
-        {
-            var dx = b.X - a.X;
-            var dy = b.Y - a.Y;
-            if (Math.Abs(dx) + Math.Abs(dy) < 0.001f)
-                return DistanceToPoint(location, a);
-            var t = ((location.X - a.X) * dx + (location.Y - a.Y) * dy) / (dx * dx + dy * dy);
-            t = Math.Clamp(t, 0f, 1f);
-            return DistanceToPoint(location, new PointF(a.X + t * dx, a.Y + t * dy));
-        }
-    }
-}
