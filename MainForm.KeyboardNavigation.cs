@@ -4,6 +4,17 @@ namespace Trade.It
     {
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            var chart = GetActiveChart();
+            var keyCode = keyData & Keys.KeyCode;
+
+            if (chart != null &&
+                chart.TestMode &&
+                (keyCode == Keys.Left || keyCode == Keys.Right))
+            {
+                chart.StepTest(keyCode == Keys.Left ? -1 : 1);
+                return true;
+            }
+
             if (stocksDataGridView.ContainsFocus)
             {
                 var keyCode = keyData & Keys.KeyCode;
