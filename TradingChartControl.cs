@@ -753,7 +753,7 @@ namespace Trade.It
             if (horizontalAxisDrag && Capture && points.Count > 1)
             {
                 var delta = e.X - horizontalAxisStartPoint.X;
-                var factor = Math.Exp(-delta / 300.0);
+                var factor = Math.Exp(-delta / 900.0);
                 var newCount = Math.Clamp((int)Math.Round(horizontalAxisStartVisibleCount * factor), 2, points.Count);
 
                 if (testMode && testStartSelected)
