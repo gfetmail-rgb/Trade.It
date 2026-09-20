@@ -249,7 +249,7 @@
             hideToolsButton = new Button();
             printChartButton = new Button();
             snapshotChartButton = new Button();
-            fullScreenChartButton = new Button();
+            fullScreenChartButton = new FullScreenToggleButton();
             drawTrendLineButton = new Button();
             drawTrendChannelButton = new Button();
             drawHorizontalDoubleButton = new Button();
