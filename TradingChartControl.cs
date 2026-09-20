@@ -579,7 +579,17 @@ namespace Trade.It
                 panning = false;
                 horizontalAxisStartPoint = e.Location;
                 horizontalAxisStartVisibleCount = Math.Max(2, visibleCount);
-                horizontalAxisCenterIndex = firstIndex + horizontalAxisStartVisibleCount / 2.0;
+
+                // نقطه‌ای که ماوس روی محور افقی گرفته شده، لنگر زوم است.
+                // بنابراین با زوم، همان بخش از چارت زیر ماوس باقی می‌ماند
+                // و چارت به‌صورت Pan جابه‌جا نمی‌شود.
+                var axisPlot = GetPlotRectangle();
+                var axisStep = axisPlot.Width / (double)Math.Max(2, visibleCount);
+                var axisInitialOffset = -axisPlot.Width * 0.25;
+                var axisRelativeX =
+                    (e.X - axisPlot.Left - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
+                horizontalAxisCenterIndex = firstIndex + axisRelativeX;
+
                 Capture = true; Cursor = Cursors.SizeWE; return;
             }
             if (verticalAxisDrag)
@@ -735,8 +745,15 @@ namespace Trade.It
                     // تغییر firstIndex در اینجا «پَن» نیست، بلکه برای نگه‌داشتن
                     // مرکز هنگام باز و بسته شدن زوم ضروری است.
                     visibleCount = newCount;
+                    var currentPlot = GetPlotRectangle();
+                    var currentStep = currentPlot.Width / (double)Math.Max(2, newCount);
+                    var currentInitialOffset = -currentPlot.Width * 0.25;
+                    var anchorRelativeX =
+                        (horizontalAxisStartPoint.X - currentPlot.Left - currentInitialOffset - horizontalPanOffset)
+                        / currentStep - 0.5;
+
                     firstIndex = Math.Clamp(
-                        (int)Math.Round(horizontalAxisCenterIndex - newCount / 2.0),
+                        (int)Math.Round(horizontalAxisCenterIndex - anchorRelativeX),
                         0,
                         Math.Max(0, points.Count - newCount));
                     horizontalPanOffset = 0;
