@@ -300,6 +300,12 @@ namespace Trade.It
             chart?.CancelAdvancedDrawing();
             chart?.CancelExtraDrawing();
             chart?.EnableExtraDrawingMouseSafety();
+
+            // همگام‌سازی وضعیت دکمه تست با چارت فعال.
+            testMode = chart?.TestMode == true;
+            testModeButton.Text = testMode ? "خروج تست" : "تست";
+            SetToggleButtonState(testModeButton, testMode);
+
             ResetDrawingToolButtons();
         }
 
@@ -391,6 +397,12 @@ namespace Trade.It
                     if (savedAnalysis != null)
                         ApplyAnalysisDocument(chart, savedAnalysis);
                 }
+
+                // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
+                // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
+                testMode = chart.TestMode;
+                testModeButton.Text = testMode ? "خروج تست" : "تست";
+                SetToggleButtonState(testModeButton, testMode);
 
                 chart.Visible = true;
                 SetToggleButtonState(hideChartButton, false);
