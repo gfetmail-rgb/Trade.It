@@ -6,6 +6,21 @@ namespace Trade.It
 {
     internal sealed class FullScreenToggleButton : Button
     {
+        private bool active;
+
+        public bool Active
+        {
+            get => active;
+            set
+            {
+                if (active == value)
+                    return;
+
+                active = value;
+                Invalidate();
+            }
+        }
+
         public FullScreenToggleButton()
         {
             SetStyle(
@@ -24,8 +39,18 @@ namespace Trade.It
             rect.Width--;
             rect.Height--;
 
-            using var background = new SolidBrush(BackColor);
-            using var border = new Pen(FlatAppearance.BorderColor);
+            var backgroundColor = active
+                ? SystemColors.Highlight
+                : SystemColors.Control;
+            var foregroundColor = active
+                ? SystemColors.HighlightText
+                : SystemColors.ControlText;
+            var borderColor = active
+                ? SystemColors.Highlight
+                : SystemColors.ControlDark;
+
+            using var background = new SolidBrush(backgroundColor);
+            using var border = new Pen(borderColor);
 
             e.Graphics.FillRectangle(background, rect);
             e.Graphics.DrawRectangle(border, rect);
@@ -35,7 +60,7 @@ namespace Trade.It
                 Text,
                 Font,
                 ClientRectangle,
-                ForeColor,
+                foregroundColor,
                 TextFormatFlags.HorizontalCenter |
                 TextFormatFlags.VerticalCenter |
                 TextFormatFlags.SingleLine);
@@ -328,6 +353,8 @@ namespace Trade.It
         private void ApplyFullScreenChartButtonStyle()
         {
             fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
+            if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
+                ownerDrawnButton.Active = isFullScreenChart;
             fullScreenChartButton.UseVisualStyleBackColor = false;
             fullScreenChartButton.FlatStyle = FlatStyle.Flat;
             fullScreenChartButton.FlatAppearance.BorderSize = 1;
