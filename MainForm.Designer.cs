@@ -32,6 +32,8 @@
         private System.Windows.Forms.Button crossButton;
         private System.Windows.Forms.Button indicatorPanelButton;
         private System.Windows.Forms.Button testModeButton;
+        private System.Windows.Forms.Button testStepBackButton;
+        private System.Windows.Forms.Button testStepForwardButton;
         private System.Windows.Forms.Button zoomInButton;
         private System.Windows.Forms.Button zoomOutButton;
         private System.Windows.Forms.Button resetChartButton;
@@ -235,6 +237,8 @@
             crossButton = new Button();
             indicatorPanelButton = new Button();
             testModeButton = new Button();
+            testStepBackButton = new Button();
+            testStepForwardButton = new Button();
             zoomInButton = new Button();
             zoomOutButton = new Button();
             resetChartButton = new Button();
@@ -1593,6 +1597,8 @@
             chartToolbarPanel.Controls.Add(crossButton);
             chartToolbarPanel.Controls.Add(indicatorPanelButton);
             chartToolbarPanel.Controls.Add(testModeButton);
+            chartToolbarPanel.Controls.Add(testStepBackButton);
+            chartToolbarPanel.Controls.Add(testStepForwardButton);
             chartToolbarPanel.Controls.Add(zoomInButton);
             chartToolbarPanel.Controls.Add(zoomOutButton);
             chartToolbarPanel.Controls.Add(resetChartButton);
@@ -1694,12 +1700,30 @@
             // 
             // testModeButton
             // 
-            testModeButton.Location = new Point(970, 46);
+            testModeButton.Location = new Point(792, 7);
             testModeButton.Name = "testModeButton";
-            testModeButton.Size = new Size(82, 34);
+            testModeButton.Size = new Size(58, 34);
             testModeButton.TabIndex = 22;
             testModeButton.Text = "تست";
             testModeButton.UseVisualStyleBackColor = true;
+            // 
+            // testStepBackButton
+            // 
+            testStepBackButton.Location = new Point(854, 7);
+            testStepBackButton.Name = "testStepBackButton";
+            testStepBackButton.Size = new Size(34, 34);
+            testStepBackButton.TabIndex = 23;
+            testStepBackButton.Text = "◀";
+            testStepBackButton.UseVisualStyleBackColor = true;
+            // 
+            // testStepForwardButton
+            // 
+            testStepForwardButton.Location = new Point(892, 7);
+            testStepForwardButton.Name = "testStepForwardButton";
+            testStepForwardButton.Size = new Size(34, 34);
+            testStepForwardButton.TabIndex = 24;
+            testStepForwardButton.Text = "▶";
+            testStepForwardButton.UseVisualStyleBackColor = true;
             // 
             // zoomInButton
             // 
@@ -1737,7 +1761,7 @@
             // 
             // hideToolsButton
             // 
-            hideToolsButton.Location = new Point(1000, 46);
+            hideToolsButton.Location = new Point(970, 46);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
