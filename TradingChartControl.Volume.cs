@@ -2,6 +2,7 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
+        public event EventHandler? VolumeSettingsChanged;
         private bool IsVolumePanelSeparator(int y)
         {
             var plot = GetPlotRectangle();
@@ -14,8 +15,13 @@ namespace Trade.It
             get => volumePanelRatio;
             set
             {
-                volumePanelRatio = Math.Clamp(value, 0.10, 0.45);
+                var newValue = Math.Clamp(value, 0.10, 0.45);
+                if (Math.Abs(volumePanelRatio - newValue) < 0.0001)
+                    return;
+
+                volumePanelRatio = newValue;
                 Invalidate();
+                VolumeSettingsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -31,6 +37,11 @@ namespace Trade.It
 
         public bool VolumePanelVisible => volumePanelVisible;
 
+        internal void NotifyVolumeSettingsChanged()
+        {
+            VolumeSettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         public void ToggleVolumePanel()
         {
             volumePanelVisible = !volumePanelVisible;
@@ -42,10 +53,14 @@ namespace Trade.It
             }
 
             Invalidate();
+            VolumeSettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void SetVolumePanelVisible(bool visible)
         {
+            if (volumePanelVisible == visible)
+                return;
+
             volumePanelVisible = visible;
             if (!visible)
             {
@@ -55,6 +70,7 @@ namespace Trade.It
             }
 
             Invalidate();
+            VolumeSettingsChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
