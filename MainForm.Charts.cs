@@ -90,9 +90,7 @@ namespace Trade.It
                 return;
             }
 
-            indicatorPanelButton.Text = chart.VolumePanelVisible
-                ? "پنهان اندیکاتور"
-                : "نمایش اندیکاتور";
+            indicatorPanelButton.Text = "حجم";
             SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
         }
 
