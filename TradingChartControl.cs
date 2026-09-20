@@ -793,6 +793,7 @@ namespace Trade.It
                     Capture = false;
                     Cursor = Cursors.Default;
                     Invalidate();
+                    NotifyVolumeSettingsChanged();
                     return;
                 }
 
