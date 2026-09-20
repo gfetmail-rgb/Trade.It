@@ -92,6 +92,7 @@ namespace Trade.It
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             Load += MainForm_Portfolios_Load;
             fullScreenChartButton.Click += FullScreenChartButton_Click;
+            fullScreenChartButton.Paint += FullScreenChartButton_Paint;
 
             AttachOhlcChangeFilterEvents();
             InitializeFilterComboEmptyOptions();
@@ -292,25 +293,60 @@ namespace Trade.It
             fullScreenChartButton.UseVisualStyleBackColor = false;
             fullScreenChartButton.FlatStyle = FlatStyle.Flat;
             fullScreenChartButton.FlatAppearance.BorderSize = 1;
-            fullScreenChartButton.FlatAppearance.MouseOverBackColor =
-                isFullScreenChart ? SystemColors.Highlight : SystemColors.Control;
-            fullScreenChartButton.FlatAppearance.MouseDownBackColor =
-                isFullScreenChart ? SystemColors.Highlight : SystemColors.Control;
-
-            if (isFullScreenChart)
-            {
-                fullScreenChartButton.BackColor = SystemColors.Highlight;
-                fullScreenChartButton.ForeColor = SystemColors.HighlightText;
-                fullScreenChartButton.FlatAppearance.BorderColor = SystemColors.Highlight;
-            }
-            else
-            {
-                fullScreenChartButton.BackColor = SystemColors.Control;
-                fullScreenChartButton.ForeColor = SystemColors.ControlText;
-                fullScreenChartButton.FlatAppearance.BorderColor = SystemColors.ControlDark;
-            }
+            fullScreenChartButton.BackColor = isFullScreenChart
+                ? SystemColors.Highlight
+                : SystemColors.Control;
+            fullScreenChartButton.ForeColor = isFullScreenChart
+                ? SystemColors.HighlightText
+                : SystemColors.ControlText;
+            fullScreenChartButton.FlatAppearance.BorderColor = isFullScreenChart
+                ? SystemColors.Highlight
+                : SystemColors.ControlDark;
+            fullScreenChartButton.FlatAppearance.MouseOverBackColor = fullScreenChartButton.BackColor;
+            fullScreenChartButton.FlatAppearance.MouseDownBackColor = fullScreenChartButton.BackColor;
 
             fullScreenChartButton.Invalidate();
+            fullScreenChartButton.Refresh();
+
+            BeginInvoke(new Action(() =>
+            {
+                if (IsDisposed || !IsHandleCreated)
+                    return;
+
+                fullScreenChartButton.BackColor = isFullScreenChart
+                    ? SystemColors.Highlight
+                    : SystemColors.Control;
+                fullScreenChartButton.ForeColor = isFullScreenChart
+                    ? SystemColors.HighlightText
+                    : SystemColors.ControlText;
+                fullScreenChartButton.Invalidate();
+                fullScreenChartButton.Refresh();
+            }));
+        }
+
+        private void FullScreenChartButton_Paint(object? sender, PaintEventArgs e)
+        {
+            if (!isFullScreenChart)
+                return;
+
+            var rect = fullScreenChartButton.ClientRectangle;
+            rect.Width--;
+            rect.Height--;
+
+            using var backBrush = new SolidBrush(SystemColors.Highlight);
+            using var borderPen = new Pen(SystemColors.Highlight);
+            e.Graphics.FillRectangle(backBrush, rect);
+            e.Graphics.DrawRectangle(borderPen, rect);
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                "بازگشت",
+                fullScreenChartButton.Font,
+                fullScreenChartButton.ClientRectangle,
+                SystemColors.HighlightText,
+                TextFormatFlags.HorizontalCenter |
+                TextFormatFlags.VerticalCenter |
+                TextFormatFlags.SingleLine);
         }
         
 
