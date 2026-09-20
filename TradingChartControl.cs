@@ -541,12 +541,30 @@ namespace Trade.It
             var plotLeft = plot.Left;
             var plotBottom = plot.Bottom;
 
-            // ناحیه مخصوص محور افقی را داخل خودِ نوار پایینی نمودار قیمت قرار می‌دهیم.
-            // این ناحیه عمداً از پنل حجم و جداکننده آن مستقل است تا کلیک روی محور
-            // هرگز وارد Pan یا تغییر ارتفاع پنل حجم نشود.
+            // تمام نوار محور افقی، از داخل نمودار تا قبل از پنل حجم،
+            // ناحیه زوم افقی است؛ لازم نیست ماوس دقیقاً روی خود خط محور باشد.
+            // فقط نوار باریکِ وسط جداکننده برای تغییر ارتفاع پنل حجم محفوظ می‌ماند.
+            var volumePlot = GetVolumePlotRectangle();
+            var axisBandBottom = volumePlot == Rectangle.Empty
+                ? plotBottom + 12
+                : volumePlot.Top;
+
+            var onVolumeSeparator = volumePanelVisible &&
+                                    IsVolumePanelSeparator(e.Location.Y);
+
+            if (onVolumeSeparator)
+            {
+                volumePanelResizeDrag = true;
+                volumePanelResizeStartY = e.Location.Y;
+                volumePanelResizeStartRatio = volumePanelRatio;
+                Capture = true;
+                Cursor = Cursors.SizeNS;
+                return;
+            }
+
             horizontalAxisDrag =
                 e.Y >= plotBottom - 12 &&
-                e.Y <= plotBottom &&
+                e.Y < axisBandBottom &&
                 e.X >= plotLeft;
 
             if (horizontalAxisDrag)
@@ -564,16 +582,6 @@ namespace Trade.It
 
                 Capture = true;
                 Cursor = Cursors.SizeWE;
-                return;
-            }
-
-            if (volumePanelVisible && IsVolumePanelSeparator(e.Location.Y))
-            {
-                volumePanelResizeDrag = true;
-                volumePanelResizeStartY = e.Location.Y;
-                volumePanelResizeStartRatio = volumePanelRatio;
-                Capture = true;
-                Cursor = Cursors.SizeNS;
                 return;
             }
 
