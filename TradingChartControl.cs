@@ -741,21 +741,18 @@ namespace Trade.It
                 }
                 else
                 {
-                    // محور افقی فقط زوم است. نقطه مرکزی نمودار ثابت می‌ماند؛
-                    // تغییر firstIndex در اینجا «پَن» نیست، بلکه برای نگه‌داشتن
-                    // مرکز هنگام باز و بسته شدن زوم ضروری است.
+                    // محور افقی فقط زوم است؛ Pan در این حالت ممنوع است.
+                    // مرکز داده‌ای پنجره در شروع Drag ثابت می‌ماند و فقط تعداد
+                    // کندل‌های قابل مشاهده تغییر می‌کند. بنابراین حرکت ماوس روی
+                    // محور باعث جابه‌جایی نمودار نمی‌شود.
+                    var zoomCenterIndex = firstIndex + (horizontalAxisStartVisibleCount - 1) / 2.0;
                     visibleCount = newCount;
-                    var currentPlot = GetPlotRectangle();
-                    var currentStep = currentPlot.Width / (double)Math.Max(2, newCount);
-                    var currentInitialOffset = -currentPlot.Width * 0.25;
-                    var anchorRelativeX =
-                        (horizontalAxisStartPoint.X - currentPlot.Left - currentInitialOffset - horizontalPanOffset)
-                        / currentStep - 0.5;
 
                     firstIndex = Math.Clamp(
-                        (int)Math.Round(horizontalAxisCenterIndex - anchorRelativeX),
+                        (int)Math.Round(zoomCenterIndex - (newCount - 1) / 2.0),
                         0,
                         Math.Max(0, points.Count - newCount));
+
                     horizontalPanOffset = 0;
                 }
 
