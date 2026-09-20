@@ -15,15 +15,16 @@ namespace Trade.It
 
             var plot = GetPlotRectangle();
             var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var endIndex = testMode && testEndIndex >= 0
-                ? Math.Min(naturalEndIndex, testEndIndex + 1)
-                : naturalEndIndex;
-            var visible = points.Skip(firstIndex).Take(Math.Max(0, endIndex - firstIndex)).ToList();
+            var visible = points.Skip(firstIndex).Take(Math.Max(1, naturalEndIndex - firstIndex)).ToList();
             if (visible.Count == 0)
                 return;
+
+            // Test Mode فقط تعداد کندل‌های نمایش‌داده‌شده را محدود می‌کند؛
+            // تمام تبدیل‌های مختصات و مقیاس‌بندی دقیقاً همان حالت عادی است.
             GetVerticalRange(visible, out var min, out var max);
-            var naturalVisible = points.Skip(firstIndex).Take(Math.Max(1, naturalEndIndex - firstIndex)).ToList();
-            GetVerticalRange(naturalVisible, out var drawingMin, out var drawingMax);
+            var displayedCount = testMode && testEndIndex >= firstIndex
+                ? Math.Clamp(testEndIndex - firstIndex + 1, 0, visible.Count)
+                : visible.Count;
 
             using var gridPen = new Pen(LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineWidth) { DashStyle = LineAppearanceSettings.GridLineStyle };
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
@@ -56,9 +57,7 @@ namespace Trade.It
             var chartState = e.Graphics.Save();
             e.Graphics.SetClip(plot, CombineMode.Intersect);
 
-            var layoutCount = testMode && testEndIndex >= 0
-                ? Math.Max(1, naturalEndIndex - firstIndex)
-                : Math.Max(1, visible.Count);
+            var layoutCount = Math.Max(1, visible.Count);
             var step = plot.Width / (double)layoutCount;
             var initialOffset = -plot.Width * 0.25;
 
@@ -70,7 +69,7 @@ namespace Trade.It
             if (chartType == TradingChartType.Line)
             {
                 var linePoints = new List<PointF>();
-                for (var i = 0; i < visible.Count; i++)
+                for (var i = 0; i < displayedCount; i++)
                 {
                     var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
                     var y = PriceToScreen(visible[i].Close, plot, min, max);
@@ -82,7 +81,7 @@ namespace Trade.It
             else
             {
                 var candleWidth = Math.Max(2f, (float)(step * 0.65));
-                for (var i = 0; i < visible.Count; i++)
+                for (var i = 0; i < displayedCount; i++)
                 {
                     var item = visible[i];
                     var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
@@ -126,7 +125,7 @@ namespace Trade.It
                 DrawDrawingPreview(e.Graphics, previewPen, plot, layoutCount, min, max);
             }
 
-            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
+            if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < displayedCount)
             {
                 var x = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
                 using var crosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth) { DashStyle = LineAppearanceSettings.CrosshairLineStyle };
@@ -136,7 +135,7 @@ namespace Trade.It
             e.Graphics.Restore(chartState);
 
             var volumePlot = GetVolumePlotRectangle();
-            RenderVolumePanel(e.Graphics, volumePlot, visible, step, initialOffset);
+            RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
@@ -180,7 +179,7 @@ namespace Trade.It
                 e.Graphics.FillRectangle(crosshairLabelBrush, priceRect);
                 e.Graphics.DrawString(priceText, axisTextFont, crosshairLabelTextBrush, priceRect.X + 3f, priceRect.Y + 2f);
 
-                if (!IsSyntheticNoDateAxis())
+                if (!IsSyntheticNoDateAxis() && crosshairIndex >= 0 && crosshairIndex < displayedCount)
                 {
                     var date = visible[crosshairIndex].Date;
                     var calendar = new PersianCalendar();
@@ -201,7 +200,9 @@ namespace Trade.It
             var headerIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
                 ? crosshairIndex
                 : visible.Count - 1;
-            var headerPoint = visible[Math.Clamp(headerIndex, 0, visible.Count - 1)];
+            if (displayedCount == 0)
+                return;
+            var headerPoint = visible[Math.Clamp(headerIndex, 0, displayedCount - 1)];
             var headerText = string.IsNullOrWhiteSpace(chartSymbol)
                 ? $"O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
                 : $"{chartSymbol}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
