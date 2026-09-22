@@ -35,6 +35,7 @@ namespace Trade.It
             chart.Dock = DockStyle.Fill;
             chart.Margin = new Padding(2);
             chart.Tag = timeFrame;
+
             chart.MouseEnter += Chart_MouseEnter;
             chart.MouseDown += Chart_MouseDown;
             chart.ViewChanged += Chart_ViewChanged;

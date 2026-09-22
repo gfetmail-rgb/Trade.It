@@ -603,14 +603,15 @@ namespace Trade.It
         }
 
         private List<(string FilePath, string TimeFrame)> GetSymbolTimeframeFiles(
-            PortfolioDefinition definition,
-            string symbol)
+      PortfolioDefinition definition,
+      string symbol)
         {
             var result = new List<(string FilePath, string TimeFrame)>();
 
             if (definition == null ||
                 string.IsNullOrWhiteSpace(definition.DataPath) ||
-                !Directory.Exists(definition.DataPath))
+                !Directory.Exists(definition.DataPath) ||
+                string.IsNullOrWhiteSpace(symbol))
                 return result;
 
             var extension = definition.FileType?.Trim().ToUpperInvariant() switch
@@ -620,17 +621,70 @@ namespace Trade.It
                 _ => ".txt"
             };
 
-            foreach (var file in Directory.EnumerateFiles(
-                definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
+            if (definition.SymbolSource != SymbolSource.FileName)
+                return result;
+
+            // نماد پایه را از نماد فعال استخراج می‌کنیم.
+            // مثال:
+            // EURUSD@H1  -> EURUSD
+            // EURUSD@M15 -> EURUSD
+            var baseSymbol = symbol;
+            var atIndex = baseSymbol.IndexOf('@');
+            if (atIndex > 0)
+                baseSymbol = baseSymbol[..atIndex];
+
+            foreach (var basketSymbol in definition.Symbols ?? new List<string>())
             {
-                var name = Path.GetFileNameWithoutExtension(file);
-                var suffix = GetTimeframeSuffix(name, symbol);
-                if (suffix == null)
+                if (string.IsNullOrWhiteSpace(basketSymbol))
                     continue;
 
-                var detected = DetectTimeframeFromFile(definition, file);
-                var finalTimeframe = detected ?? suffix;
-                result.Add((file, finalTimeframe));
+                var memberName = basketSymbol.Trim();
+
+                if (Path.HasExtension(memberName))
+                    memberName = Path.GetFileNameWithoutExtension(memberName);
+
+                // فقط اعضای همین سبد که متعلق به نماد پایه فعلی هستند.
+                if (!memberName.StartsWith(baseSymbol, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var remainder = memberName.Substring(baseSymbol.Length);
+
+                if (string.IsNullOrWhiteSpace(remainder))
+                    continue;
+
+                remainder = remainder.TrimStart('@', '_', '-', '.', ' ', '\\');
+
+                var timeframe = remainder.ToUpperInvariant() switch
+                {
+                    "M1" => "M1",
+                    "M5" => "M5",
+                    "M15" => "M15",
+                    "M30" => "M30",
+                    "H1" => "1H",
+                    "H4" => "4H",
+                    "1H" => "1H",
+                    "4H" => "4H",
+                    "D" => "D",
+                    "M" => "M",
+                    "Y" => "Y",
+                    _ => null
+                };
+
+                if (timeframe == null)
+                    continue;
+
+                var filePath = Path.Combine(
+                    definition.DataPath,
+                    memberName + extension);
+
+                if (!File.Exists(filePath))
+                    continue;
+
+                // تشخیص از روی داده داخل فایل نیز انجام می‌شود.
+                var detected = DetectTimeframeFromFile(definition, filePath);
+                var finalTimeframe = detected ?? timeframe;
+
+                result.Add((filePath, finalTimeframe));
             }
 
             return result
@@ -639,7 +693,6 @@ namespace Trade.It
                 .OrderBy(x => TimeframeOrder(x.TimeFrame))
                 .ToList();
         }
-
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
             if (!fileNameWithoutExtension.StartsWith(symbol, StringComparison.OrdinalIgnoreCase))
@@ -649,7 +702,7 @@ namespace Trade.It
             if (remainder.Length == 0)
                 return null;
 
-            remainder = remainder.TrimStart('_', '-', '.', ' ', '\');
+            remainder = remainder.TrimStart('_', '-', '.', ' ', '\\');
             var candidates = new[] { "M15", "M30", "1H", "4H", "M1", "M5", "D", "M", "Y" };
 
             foreach (var candidate in candidates)
@@ -660,7 +713,6 @@ namespace Trade.It
 
             return null;
         }
-
         private string? DetectTimeframeFromFile(PortfolioDefinition definition, string filePath)
         {
             if (definition.NoDateTime)
