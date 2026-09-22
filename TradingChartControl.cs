@@ -805,7 +805,10 @@ namespace Trade.It
                 var indexDelta = (int)Math.Round(-dx / step);
                 firstIndex = Math.Clamp(panStartFirstIndex + indexDelta, 0, Math.Max(0, points.Count - visibleCount));
                 verticalPanOffset = panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
-                horizontalPanOffset = panStartHorizontalOffset + dx;
+                // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
+                // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
+                // خروج چارت از محدوده Plot و بریده شدن آن توسط Clip می‌شد.
+                horizontalPanOffset = panStartHorizontalOffset;
                 Invalidate();
             }
         }
