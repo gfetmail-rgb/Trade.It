@@ -58,6 +58,39 @@ namespace Trade.It
             verticalPanOffset = range * percent / (2.0 * factor);
         }
 
+        private double ClampVerticalPanOffset(double requestedPanOffset)
+        {
+            if (points.Count == 0)
+                return requestedPanOffset;
+
+            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var visible = points
+                .Skip(firstIndex)
+                .Take(Math.Max(1, endIndex - firstIndex))
+                .ToList();
+
+            if (visible.Count == 0)
+                return requestedPanOffset;
+
+            var dataMin = visible.Min(x => x.Low);
+            var dataMax = visible.Max(x => x.High);
+            var rawRange = Math.Max(
+                dataMax - dataMin,
+                Math.Max(Math.Abs(dataMax), 1.0) * 0.01);
+
+            var adjustedRange = rawRange / Math.Max(verticalZoom, 0.0001);
+            var rawCenter = (dataMin + dataMax) / 2.0;
+            var percent = Math.Clamp(ChartTopEmptyPercent, 0.0, 50.0) / 100.0;
+
+            // حداقل مرکز نمودار طوری تعیین می‌شود که High داده‌ها
+            // هیچ‌وقت از مرز فضای خالی تنظیم‌شده بالاتر نرود.
+            var minimumCenter =
+                dataMax - adjustedRange * (0.5 - percent);
+
+            var minimumPanOffset = minimumCenter - rawCenter;
+            return Math.Max(requestedPanOffset, minimumPanOffset);
+        }
+
         private void FitVerticalRange()
         {
             ResetView();
