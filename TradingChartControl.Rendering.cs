@@ -128,7 +128,7 @@ namespace Trade.It
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < displayedCount)
             {
-                var x = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var x = (float)(plot.Left + step * ((crosshairPosition >= 0 ? crosshairPosition : crosshairIndex) + 0.5) + initialOffset + horizontalPanOffset);
                 using var crosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth) { DashStyle = LineAppearanceSettings.CrosshairLineStyle };
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
@@ -145,7 +145,7 @@ namespace Trade.It
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
-                var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var crosshairX = (float)(plot.Left + step * ((crosshairPosition >= 0 ? crosshairPosition : crosshairIndex) + 0.5) + initialOffset + horizontalPanOffset);
                 using var fullCrosshairPen = new Pen(LineAppearanceSettings.CrosshairColor, LineAppearanceSettings.CrosshairLineWidth)
                 {
                     DashStyle = LineAppearanceSettings.CrosshairLineStyle
@@ -196,7 +196,7 @@ namespace Trade.It
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
-                var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var crosshairX = (float)(plot.Left + step * ((crosshairPosition >= 0 ? crosshairPosition : crosshairIndex) + 0.5) + initialOffset + horizontalPanOffset);
                 var crosshairY = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
                 var crosshairPrice = max - ((crosshairY - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
                 crosshairPrice = Math.Clamp(crosshairPrice, min, max);
