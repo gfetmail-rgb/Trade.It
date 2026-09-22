@@ -70,6 +70,10 @@ namespace Trade.It
         private int testEndIndex = -1;
         private int testAnchorIndex = -1;
         private float testAnchorScreenX;
+        private bool suppressSyncNotifications;
+
+        public event EventHandler? ViewChanged;
+        public event EventHandler? CrosshairDateChanged;
 
         private sealed class ChartDrawing
         {
@@ -125,6 +129,119 @@ namespace Trade.It
         }
 
         public string ChartSymbol => chartSymbol;
+        public IReadOnlyList<TradingChartPoint> Points => points;
+        public DateTime? CrosshairDate =>
+            crosshairIndex >= 0 && crosshairIndex < visibleCount &&
+            firstIndex + crosshairIndex < points.Count
+                ? points[firstIndex + crosshairIndex].Date
+                : null;
+
+        public (DateTime Start, DateTime End)? GetVisibleDateRange()
+        {
+            if (points.Count == 0)
+                return null;
+
+            var startIndex = Math.Clamp(firstIndex, 0, points.Count - 1);
+            var endIndex = Math.Clamp(firstIndex + Math.Max(1, visibleCount) - 1, startIndex, points.Count - 1);
+            return (points[startIndex].Date, points[endIndex].Date);
+        }
+
+        public void SetVisibleDateRange(DateTime start, DateTime end)
+        {
+            if (points.Count == 0)
+                return;
+
+            if (end < start)
+                (start, end) = (end, start);
+
+            var startIndex = FindNearestPointIndex(start);
+            var endIndex = FindNearestPointIndex(end);
+
+            if (endIndex < startIndex)
+                (startIndex, endIndex) = (endIndex, startIndex);
+
+            var count = Math.Max(2, endIndex - startIndex + 1);
+            count = Math.Min(count, points.Count);
+            firstIndex = Math.Clamp(startIndex, 0, Math.Max(0, points.Count - count));
+            visibleCount = count;
+            crosshairIndex = -1;
+            EnsureChartPanCompensation();
+            Invalidate();
+        }
+
+        public void SetCrosshairDate(DateTime date)
+        {
+            if (!showCrosshair || points.Count == 0)
+                return;
+
+            var absoluteIndex = FindNearestPointIndex(date);
+            if (absoluteIndex < firstIndex ||
+                absoluteIndex >= firstIndex + visibleCount)
+            {
+                return;
+            }
+
+            crosshairIndex = absoluteIndex - firstIndex;
+            var plot = GetPlotRectangle();
+            var step = plot.Width / (double)Math.Max(1, visibleCount);
+            var initialOffset = -plot.Width * 0.25;
+            crosshairPoint = new Point(
+                (int)Math.Round(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset),
+                plot.Top + plot.Height / 2);
+            Invalidate();
+        }
+
+        private int FindNearestPointIndex(DateTime date)
+        {
+            if (points.Count == 0)
+                return 0;
+
+            var lo = 0;
+            var hi = points.Count - 1;
+            while (lo < hi)
+            {
+                var mid = lo + (hi - lo) / 2;
+                if (points[mid].Date < date)
+                    lo = mid + 1;
+                else
+                    hi = mid;
+            }
+
+            if (lo == 0)
+                return 0;
+
+            var previous = lo - 1;
+            return Math.Abs((points[lo].Date - date).Ticks) <
+                   Math.Abs((points[previous].Date - date).Ticks)
+                ? lo
+                : previous;
+        }
+
+        private void NotifyViewChanged()
+        {
+            if (!suppressSyncNotifications)
+                ViewChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void NotifyCrosshairDateChanged()
+        {
+            if (!suppressSyncNotifications)
+                CrosshairDateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void ApplySyncedDateRange(DateTime start, DateTime end)
+        {
+            suppressSyncNotifications = true;
+            try { SetVisibleDateRange(start, end); }
+            finally { suppressSyncNotifications = false; }
+        }
+
+        internal void ApplySyncedCrosshairDate(DateTime date)
+        {
+            suppressSyncNotifications = true;
+            try { SetCrosshairDate(date); }
+            finally { suppressSyncNotifications = false; }
+        }
 
         public TradingChartType ChartType => chartType;
 
@@ -461,6 +578,7 @@ namespace Trade.It
             crosshairIndex = -1;
             EnsureChartPanCompensation();
             Invalidate();
+            NotifyViewChanged();
         }
 
         public void ZoomX(double factor)
@@ -473,6 +591,7 @@ namespace Trade.It
             firstIndex = Math.Max(0, points.Count - newCount);
             crosshairIndex = -1;
             Invalidate();
+            NotifyViewChanged();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -743,9 +862,12 @@ namespace Trade.It
                 var initialOffset = -plotWidth * 0.25;
                 var relativeX = e.X - plotLeft - initialOffset - horizontalPanOffset;
                 var nearest = (int)Math.Round(relativeX / step - 0.5);
+                var oldCrosshairDate = CrosshairDate;
                 crosshairIndex = Math.Clamp(nearest, 0, Math.Max(0, visibleCount - 1));
                 crosshairPoint = new Point((int)Math.Round(plotLeft + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset), Math.Clamp(e.Y, plotTop, plotBottom));
                 Invalidate();
+                if (CrosshairDate.HasValue && CrosshairDate != oldCrosshairDate)
+                    CrosshairDateChanged?.Invoke(this, EventArgs.Empty);
             }
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None) { drawingCurrentPoint = e.Location; Invalidate(); return; }
             if (draggingDrawingIndex >= 0 && draggingDrawingIndex < drawings.Count && Capture)
@@ -819,6 +941,7 @@ namespace Trade.It
                 // خروج چارت از محدوده Plot و بریده شدن آن توسط Clip می‌شد.
                 horizontalPanOffset = panStartHorizontalOffset;
                 Invalidate();
+                NotifyViewChanged();
             }
         }
 
