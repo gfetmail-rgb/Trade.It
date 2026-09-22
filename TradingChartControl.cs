@@ -512,8 +512,14 @@ namespace Trade.It
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-            if (e.Button == MouseButtons.Left && GetPlotRectangle().Contains(e.Location))
+            var plot = GetPlotRectangle();
+            if (e.Button == MouseButtons.Left &&
+                e.Y >= plot.Top &&
+                e.Y <= plot.Bottom &&
+                (e.X <= plot.Left + 12 || plot.Contains(e.Location)))
+            {
                 FitVerticalView();
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -808,10 +814,10 @@ namespace Trade.It
                 var requestedVerticalPanOffset =
                     panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
 
-                // فضای خالی بالای نمودار سقف مجاز حرکت عمودی را تعیین می‌کند.
-                // بنابراین Drag نمی‌تواند High را از مرز فضای خالی
-                // تنظیم‌شده بالاتر ببرد.
-                verticalPanOffset = ClampVerticalPanOffset(requestedVerticalPanOffset);
+                // فضای خالی بالای نمودار فقط در حالت Fit تعیین‌کننده است.
+                // هنگام Drag، چارت باید بتواند از لبه بالای Plot عبور کند
+                // و توسط Clip بریده/پنهان شود؛ درست مانند حرکت از پایین.
+                verticalPanOffset = requestedVerticalPanOffset;
 
                 // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
                 // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
