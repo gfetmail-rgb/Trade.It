@@ -598,7 +598,7 @@ namespace Trade.It
 
         private Rectangle GetPlotRectangle()
         {
-            var left = 78;
+            var left = 65;
             var top = 15;
             var right = Math.Max(left + 1, Width - 15);
             var overallBottom = Math.Max(top + 1, Height - 35);
