@@ -116,7 +116,7 @@ namespace Trade.It
         private void SaveAnalysisButton_Click(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            if (multiTimeframeWorkspace != null || chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
             {
                 MessageBox.Show(this, "ابتدا یک چارت فعال انتخاب کنید.", "ذخیره تحلیل", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -148,7 +148,7 @@ namespace Trade.It
         private void AnalysisAutoSaveTimer_Tick(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            if (multiTimeframeWorkspace != null || chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
                 return;
 
             try
@@ -875,6 +875,7 @@ namespace Trade.It
 
         private void CloseAllChartTabs()
         {
+            CloseMultiTimeframeWorkspace();
             foreach (var chart in chartControls.Values.ToList()) chart.Parent = null;
             chartControls.Clear();
             activeChartSymbol = null;
