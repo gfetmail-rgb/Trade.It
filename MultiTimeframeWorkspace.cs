@@ -25,7 +25,11 @@ namespace Trade.It
 
         public IReadOnlyList<TradingChartControl> Charts => items.Select(x => x.Chart).ToList();
         public int ChartCount => items.Count;
-        public TradingChartControl? ActiveChart => activeChart;
+
+        // در حالت چندتایم‌فریمی، فقط اولین چارت «چارت اصلی» است.
+        // تمام ابزارهای رسم و فرمان‌های تولبار MainForm باید فقط روی همین چارت اعمال شوند.
+        public TradingChartControl? ActiveChart =>
+            items.Count > 0 ? items[0].Chart : null;
 
         public void AddChart(TradingChartControl chart, string timeFrame)
         {
@@ -36,6 +40,8 @@ namespace Trade.It
             chart.Margin = new Padding(2);
             chart.Tag = timeFrame;
 
+            // رویدادهای انتخاب چارت عمداً نگه داشته شده‌اند تا ورودی ماوس چارت‌های
+            // فرعی باعث تغییر ActiveChart نشود؛ ActiveChart همیشه چارت اول است.
             chart.MouseEnter += Chart_MouseEnter;
             chart.MouseDown += Chart_MouseDown;
             chart.UserInteractionStarted += Chart_UserInteractionStarted;
@@ -46,7 +52,7 @@ namespace Trade.It
             RebuildLayout();
 
             if (activeChart == null)
-                SetActiveChart(chart);
+                SetPrimaryChart();
         }
 
         public void SelectFirstChart()
@@ -54,53 +60,39 @@ namespace Trade.It
             if (items.Count == 0)
                 return;
 
-            SetActiveChart(items[0].Chart);
+            SetPrimaryChart();
             SynchronizeAllToActiveChart();
         }
 
         private void Chart_MouseEnter(object? sender, EventArgs e)
         {
-            if (sender is TradingChartControl chart)
-                SetActiveChart(chart);
+            // عمداً خالی است: در Workspace چندتایم‌فریمی فقط چارت اول Active است.
         }
 
         private void Chart_MouseDown(object? sender, MouseEventArgs e)
         {
-            if (sender is TradingChartControl chart)
-                SetActiveChart(chart);
+            // عمداً خالی است: در Workspace چندتایم‌فریمی فقط چارت اول Active است.
         }
 
         private void Chart_UserInteractionStarted(object? sender, EventArgs e)
         {
-            if (sender is not TradingChartControl chart || IsDisposed || Disposing)
-                return;
-
-            // WndProc این رویداد را قبل از dispatch عادی ماوس اعلام می‌کند.
-            // انتخاب چارت را یک پیام UI عقب می‌اندازیم تا Focus/MouseDown خود
-            // کنترل کامل شود و انتخاب چارت بعد از پایان dispatch تثبیت شود.
-            BeginInvoke(new Action(() =>
-            {
-                if (IsDisposed || Disposing)
-                    return;
-
-                if (items.Any(x => ReferenceEquals(x.Chart, chart)))
-                    SetActiveChart(chart);
-            }));
+            // عمداً خالی است: کلیک روی چارت‌های فرعی هرگز ActiveChart را تغییر نمی‌دهد.
         }
 
-        private void SetActiveChart(TradingChartControl chart)
+        private void SetPrimaryChart()
         {
-            if (!items.Any(x => ReferenceEquals(x.Chart, chart)))
+            if (items.Count == 0)
                 return;
 
-            if (ReferenceEquals(activeChart, chart))
+            var primary = items[0].Chart;
+
+            if (ReferenceEquals(activeChart, primary))
             {
-                chart.Focus();
                 return;
             }
 
-            activeChart = chart;
-            chart.Focus();
+            activeChart = primary;
+            primary.Focus();
             ActiveChartChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -160,10 +152,11 @@ namespace Trade.It
 
         private void SynchronizeAllToActiveChart()
         {
-            if (activeChart == null)
+            var primary = ActiveChart;
+            if (primary == null)
                 return;
 
-            var range = activeChart.GetVisibleDateRange();
+            var range = primary.GetVisibleDateRange();
             if (!range.HasValue)
                 return;
 
@@ -172,7 +165,7 @@ namespace Trade.It
             {
                 foreach (var item in items)
                 {
-                    if (!ReferenceEquals(item.Chart, activeChart))
+                    if (!ReferenceEquals(item.Chart, primary))
                         item.Chart.ApplySyncedDateRange(range.Value.Start, range.Value.End);
                 }
             }
@@ -185,6 +178,14 @@ namespace Trade.It
         private void Chart_ViewChanged(object? sender, EventArgs e)
         {
             if (syncing || sender is not TradingChartControl source)
+                return;
+
+            var primary = ActiveChart;
+            if (primary == null)
+                return;
+
+            // فقط چارت اصلی منبع تغییر View است. چارت‌های فرعی صرفاً نمایش همگام‌شده‌اند.
+            if (!ReferenceEquals(source, primary))
                 return;
 
             var range = source.GetVisibleDateRange();
@@ -209,6 +210,10 @@ namespace Trade.It
         private void Chart_CrosshairDateChanged(object? sender, EventArgs e)
         {
             if (syncing || sender is not TradingChartControl source)
+                return;
+
+            var primary = ActiveChart;
+            if (primary == null || !ReferenceEquals(source, primary))
                 return;
 
             var date = source.CrosshairDate;
