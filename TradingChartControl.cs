@@ -512,8 +512,8 @@ namespace Trade.It
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-            if (e.Button == MouseButtons.Left && e.X <= GetPlotRectangle().Left + 12 && e.Y <= GetPlotRectangle().Bottom)
-                ResetView();
+            if (e.Button == MouseButtons.Left && GetPlotRectangle().Contains(e.Location))
+                FitVerticalView();
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -808,10 +808,10 @@ namespace Trade.It
                 var requestedVerticalPanOffset =
                     panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
 
-                // فضای خالی بالای نمودار یک محدودیت واقعی است، نه فقط
-                // مقدار اولیه. بنابراین Drag عمودی نباید بتواند سقف نمودار
-                // را از درصد تنظیم‌شده بالاتر ببرد.
-                verticalPanOffset = requestedVerticalPanOffset;
+                // فضای خالی بالای نمودار سقف مجاز حرکت عمودی را تعیین می‌کند.
+                // بنابراین Drag نمی‌تواند High را از مرز فضای خالی
+                // تنظیم‌شده بالاتر ببرد.
+                verticalPanOffset = ClampVerticalPanOffset(requestedVerticalPanOffset);
 
                 // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
                 // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
