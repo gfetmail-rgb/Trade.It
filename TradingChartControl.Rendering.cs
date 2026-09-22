@@ -19,8 +19,6 @@ namespace Trade.It
             if (visible.Count == 0)
                 return;
 
-            // Test Mode فقط تعداد کندل‌های نمایش‌داده‌شده را محدود می‌کند؛
-            // تمام تبدیل‌های مختصات و مقیاس‌بندی دقیقاً همان حالت عادی است.
             GetVerticalRange(visible, out var min, out var max);
             var displayedCount = testMode && testEndIndex >= firstIndex
                 ? Math.Clamp(testEndIndex - firstIndex + 1, 0, visible.Count)
@@ -34,7 +32,7 @@ namespace Trade.It
             using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
-            using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
+            using var axisTextFont = new Font(Font.FontFamily, Math.Max(6.0f, Font.Size - 3.0f), Font.Style);
             using var headerFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size), FontStyle.Bold);
 
             if (showGrid)
@@ -113,10 +111,6 @@ namespace Trade.It
 
             DrawDrawings(e.Graphics, plot, layoutCount, min, max);
             RenderAdvancedDrawings(e.Graphics);
-            // Extra drawingها باید دقیقاً با همان مختصات داده/صفحه‌ای
-            // رندر شوند که چارت اصلی در مد تست استفاده می‌کند.
-            // استفاده از visible.Count در اینجا باعث جهش Pitchfork و
-            // Fibonacci Extension می‌شد چون visible در مد تست کوتاه‌تر است.
             RenderExtraDrawings(e.Graphics, plot, layoutCount, min, max);
 
             if (drawingInProgress && activeDrawingTool != ChartDrawingTool.None && IsInsidePlot(drawingCurrentPoint))
@@ -137,8 +131,6 @@ namespace Trade.It
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
-            // محور زمان: بر اساس تاریخ واقعی کندل‌ها، با تعداد Tick متناسب با فضای موجود.
-            // در محورهای مصنوعی/بدون تاریخ، این بخش عمداً چیزی رسم نمی‌کند تا NoDateAxis مسئول نمایش شماره کندل بماند.
             if (!IsSyntheticNoDateAxis())
                 DrawTimeAxis(e.Graphics, plot, volumePlot, visible, displayedCount, step, initialOffset, axisTextFont, axisPen, textBrush);
 
@@ -161,16 +153,9 @@ namespace Trade.It
             {
                 var value = max - (max - min) * i / 5.0;
                 var y = PriceToScreen(value, plot, min, max);
-                // داده‌های بورس ایران در این چارت به‌صورت قیمت صحیح هستند.
-                // مقدارهای میانی محور ممکن است در اثر تقسیم بازه اعشاری شوند؛
-                // برای نمایش، آنها را به نزدیک‌ترین قیمت صحیح تبدیل می‌کنیم.
                 var text = Math.Round(value, MidpointRounding.AwayFromZero).ToString("0", CultureInfo.InvariantCulture);
                 var size = e.Graphics.MeasureString(text, axisTextFont);
 
-                // برچسب قیمت باید کاملاً در ناحیه اختصاص‌یافته به محور قیمت
-                // قرار بگیرد و هرگز وارد محدوده Plot نشود.
-                // راست‌چین کردن متن داخل یک ناحیه ثابت، مشکل سرریز عددهای
-                // طولانی را بدون تغییر مقیاس یا مختصات خود نمودار حل می‌کند.
                 var axisLabelWidth = Math.Max(1f, plot.Left - 7f);
                 var axisLabelRect = new RectangleF(
                     1f,
@@ -200,9 +185,6 @@ namespace Trade.It
                 var crosshairPrice = max - ((crosshairY - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
                 crosshairPrice = Math.Clamp(crosshairPrice, min, max);
 
-                // قیمت کراس برای این چارت باید صحیح نمایش داده شود.
-                // مختصات ماوس فقط موقعیت عمودی را تعیین می‌کند و نباید باعث
-                // تولید اعشار یا قالب‌بندی مصنوعی قیمت شود.
                 var priceText = Math.Round(
                     crosshairPrice,
                     MidpointRounding.AwayFromZero)
@@ -236,7 +218,6 @@ namespace Trade.It
                 }
             }
 
-            // Chart header: symbol and OHLCV for the candle under the crosshair.
             var headerIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
                 ? crosshairIndex
                 : visible.Count - 1;
@@ -251,7 +232,6 @@ namespace Trade.It
 
             DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, min, max);
         }
-
 
         private void DrawTimeAxis(
             Graphics g,
@@ -317,7 +297,6 @@ namespace Trade.It
                 var label = FormatTime(sample[index].Date);
                 var size = g.MeasureString(label, labelFont);
 
-                // اگر دو برچسب در اثر گرد شدن شاخص‌ها به هم نزدیک شدند، Tick دوم حذف می‌شود.
                 if (usedX.Any(previous => Math.Abs(previous - x) < Math.Max(45f, size.Width + 10f)))
                     continue;
 
@@ -366,147 +345,11 @@ namespace Trade.It
             var top = Math.Min(start.Y, end.Y);
             var right = Math.Max(start.X, end.X);
             var bottom = Math.Max(start.Y, end.Y);
-            if (right <= left || bottom <= top)
-                return;
-
-            using var fill = new SolidBrush(Color.FromArgb(242, 248, 255));
-            g.FillRectangle(fill, RectangleF.FromLTRB(left, top, right, bottom));
-        }
-
-        private void DrawDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            for (var i = 0; i < drawings.Count; i++)
+            if (right > left && bottom > top)
             {
-                var selected = i == selectedDrawingIndex;
-                var color = GetDrawingColor(drawings[i].Tool);
-                var width = selected ? LineAppearanceSettings.DrawingLineWidth + 1.4f : LineAppearanceSettings.DrawingLineWidth;
-                using var drawingPen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);                if (selected)
-                    DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
+                using var fill = new SolidBrush(Color.FromArgb(242, 248, 255));
+                g.FillRectangle(fill, RectangleF.FromLTRB(left, top, right, bottom));
             }
-        }
-
-        private void DrawDrawingPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            if (activeDrawingTool == ChartDrawingTool.TrendChannel)
-            {
-                if (drawingStage == 1)
-                {
-                    g.DrawLine(pen, drawingStartPoint, drawingCurrentPoint);
-                    return;
-                }
-                DrawScreenTrendChannel(g, pen, plot, drawingStartPoint, drawingSecondPoint, drawingCurrentPoint);
-                return;
-            }
-            DrawSinglePreview(g, pen, activeDrawingTool, drawingStartPoint, drawingCurrentPoint, plot);
-        }
-
-        private void DrawSelectionHandles(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            using var handleBrush = new SolidBrush(Color.White);
-            using var handlePen = new Pen(GetDrawingColor(drawing.Tool), 1.5f);
-            const float radius = 4f;
-            var handles = GetScreenHandles(drawing, plot, visibleCountForDrawing, min, max);
-            foreach (var handle in handles)
-            {
-                g.FillEllipse(handleBrush, handle.X - radius, handle.Y - radius, radius * 2, radius * 2);
-                g.DrawEllipse(handlePen, handle.X - radius, handle.Y - radius, radius * 2, radius * 2);
-            }
-        }
-
-        private List<PointF> GetScreenHandles(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-            if (drawing.Tool == ChartDrawingTool.Rectangle)
-                return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
-            if (drawing.Tool == ChartDrawingTool.TrendChannel)
-            {
-                var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
-                return new List<PointF> { start, end, third };
-            }
-            return new List<PointF> { start, end };
-        }
-
-        private void DrawSingleDrawing(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-            switch (drawing.Tool)
-            {
-                case ChartDrawingTool.TrendLine:
-                    g.DrawLine(pen, start, end); break;
-                case ChartDrawingTool.TrendLineWithArrow:
-                    g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
-                case ChartDrawingTool.TrendChannel:
-                    DrawTrendChannel(g, pen, drawing, plot, visibleCountForDrawing, min, max); break;
-                case ChartDrawingTool.HorizontalLine:
-                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
-                case ChartDrawingTool.VerticalLine:
-                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
-                case ChartDrawingTool.HorizontalRay:
-                    var direction = end.X >= start.X ? 1f : -1f;
-                    var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
-                    g.DrawLine(pen, start, rayEnd); break;
-                case ChartDrawingTool.Rectangle:
-                    var left = Math.Min(start.X, end.X);
-                    var top = Math.Min(start.Y, end.Y);
-                    var right = Math.Max(start.X, end.X);
-                    var bottom = Math.Max(start.Y, end.Y);
-                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle })
-                        g.DrawRectangle(rectanglePen, left, top, right - left, bottom - top);
-                    break;
-            }
-        }
-
-        private void DrawSinglePreview(Graphics g, Pen pen, ChartDrawingTool tool, Point start, Point end, Rectangle plot)
-        {
-            switch (tool)
-            {
-                case ChartDrawingTool.TrendLine:
-                    g.DrawLine(pen, start, end); break;
-                case ChartDrawingTool.TrendLineWithArrow:
-                    g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
-                case ChartDrawingTool.HorizontalLine:
-                    g.DrawLine(pen, plot.Left, start.Y, plot.Right, start.Y); break;
-                case ChartDrawingTool.VerticalLine:
-                    g.DrawLine(pen, start.X, plot.Top, start.X, plot.Bottom); break;
-                case ChartDrawingTool.HorizontalRay:
-                    var direction = end.X >= start.X ? 1f : -1f;
-                    var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
-                    g.DrawLine(pen, start, rayEnd); break;
-                case ChartDrawingTool.Rectangle:
-                    var left = Math.Min(start.X, end.X);
-                    var top = Math.Min(start.Y, end.Y);
-                    var width = Math.Abs(end.X - start.X);
-                    var height = Math.Abs(end.Y - start.Y);
-                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle })
-                        g.DrawRectangle(rectanglePen, left, top, width, height);
-                    break;
-            }
-        }
-
-        private void DrawTrendChannel(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
-        {
-            var first = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-            var second = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-            var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
-            DrawScreenTrendChannel(g, pen, plot, first, second, third);
-        }
-
-        private static void DrawScreenTrendChannel(Graphics g, Pen pen, Rectangle plot, PointF first, PointF second, PointF third)
-        {
-            var dx = second.X - first.X;
-            var dy = second.Y - first.Y;
-            if (Math.Abs(dx) < 0.001f)
-            {
-                var offsetX = third.X - first.X;
-                g.DrawLine(pen, first, second);
-                g.DrawLine(pen, new PointF(first.X + offsetX, first.Y), new PointF(second.X + offsetX, second.Y));
-                return;
-            }
-            var slope = dy / dx;
-            var offset = third.Y - (first.Y + slope * (third.X - first.X));
-            g.DrawLine(pen, first, second);
-            g.DrawLine(pen, new PointF(first.X, first.Y + offset), new PointF(second.X, second.Y + offset));
         }
 
         private void GetDrawingScreenPoints(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max, out PointF start, out PointF end)
@@ -629,7 +472,8 @@ namespace Trade.It
                 drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
                 drawing.Y2 = drawing.Y1; return;
             }
-            if (drawing.Tool == ChartDrawingTool.VerticalLine)            {
+            if (drawing.Tool == ChartDrawingTool.VerticalLine)
+            {
                 var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount());
                 drawing.X1 = x; drawing.X2 = x; return;
             }
@@ -707,8 +551,6 @@ namespace Trade.It
             var right = Math.Max(left + 1, Width - 15);
             var overallBottom = Math.Max(top + 1, Height - 35);
 
-            // وقتی پنل اندیکاتور/حجم مخفی است، چارت قیمت باید تمام فضای
-            // آزاد تا انتهای ناحیه چارت را در اختیار داشته باشد.
             if (!volumePanelVisible)
                 return Rectangle.FromLTRB(left, top, right, overallBottom);
 
