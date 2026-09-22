@@ -212,10 +212,8 @@ namespace Trade.It
             if (syncing || sender is not TradingChartControl source)
                 return;
 
-            var primary = ActiveChart;
-            if (primary == null || !ReferenceEquals(source, primary))
-                return;
-
+            // کراس می‌تواند از هر کدام از پنجره‌ها شروع شود؛
+            // اما تاریخ واقعی آن بین همه‌ی تایم‌فریم‌ها همگام می‌شود.
             var date = source.CrosshairDate;
             if (!date.HasValue)
                 return;
