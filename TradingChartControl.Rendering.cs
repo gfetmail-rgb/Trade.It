@@ -35,6 +35,7 @@ namespace Trade.It
             using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
+            using var priceAxisTextFont = new Font(Font.FontFamily, Math.Max(6.0f, Font.Size - 3.0f), Font.Style);
             using var headerFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size), FontStyle.Bold);
 
             if (showGrid)
@@ -165,7 +166,7 @@ namespace Trade.It
                 // مقدارهای میانی محور ممکن است در اثر تقسیم بازه اعشاری شوند؛
                 // برای نمایش، آنها را به نزدیک‌ترین قیمت صحیح تبدیل می‌کنیم.
                 var text = Math.Round(value, MidpointRounding.AwayFromZero).ToString("0", CultureInfo.InvariantCulture);
-                var size = e.Graphics.MeasureString(text, axisTextFont);
+                var size = e.Graphics.MeasureString(text, priceAxisTextFont);
 
                 // برچسب قیمت باید کاملاً در ناحیه اختصاص‌یافته به محور قیمت
                 // قرار بگیرد و هرگز وارد محدوده Plot نشود.
@@ -187,7 +188,7 @@ namespace Trade.It
 
                 e.Graphics.DrawString(
                     text,
-                    axisTextFont,
+                    priceAxisTextFont,
                     textBrush,
                     axisLabelRect,
                     axisLabelFormat);
