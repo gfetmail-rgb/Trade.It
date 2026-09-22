@@ -158,8 +158,31 @@ namespace Trade.It
                 var y = PriceToScreen(value, plot, min, max);
                 var text = value.ToString("0.##");
                 var size = e.Graphics.MeasureString(text, axisTextFont);
-                var x = Math.Max(1f, plot.Left - size.Width - 4f);
-                e.Graphics.DrawString(text, axisTextFont, textBrush, x, y - size.Height / 2f);
+
+                // برچسب قیمت باید کاملاً در ناحیه اختصاص‌یافته به محور قیمت
+                // قرار بگیرد و هرگز وارد محدوده Plot نشود.
+                // راست‌چین کردن متن داخل یک ناحیه ثابت، مشکل سرریز عددهای
+                // طولانی را بدون تغییر مقیاس یا مختصات خود نمودار حل می‌کند.
+                var axisLabelWidth = Math.Max(1f, plot.Left - 7f);
+                var axisLabelRect = new RectangleF(
+                    1f,
+                    y - size.Height / 2f,
+                    axisLabelWidth,
+                    size.Height);
+
+                using var axisLabelFormat = new StringFormat
+                {
+                    Alignment = StringAlignment.Far,
+                    LineAlignment = StringAlignment.Center,
+                    FormatFlags = StringFormatFlags.NoWrap
+                };
+
+                e.Graphics.DrawString(
+                    text,
+                    axisTextFont,
+                    textBrush,
+                    axisLabelRect,
+                    axisLabelFormat);
             }
 
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
