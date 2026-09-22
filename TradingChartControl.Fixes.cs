@@ -6,6 +6,9 @@ namespace Trade.It
     {
         private double chartPanCompensation;
 
+        // این رویداد فقط برای Workspace چندتایم‌فریمی است. در حالت عادی هیچ مصرف‌کننده‌ای ندارد.
+        public event EventHandler? UserInteractionStarted;
+
         protected override void WndProc(ref Message m)
         {
             const int WM_PAINT = 0x000F;
@@ -23,6 +26,12 @@ namespace Trade.It
             }
 
             var location = GetMousePointFromMessage(m);
+
+            // قبل از اینکه WndProc در ابزارهای Extra ورودی را تصاحب کند،
+            // به Workspace فرصت می‌دهیم چارتِ مورد کلیک را به‌عنوان چارت فعال بشناسد.
+            // این فقط در حالت چندتایم‌فریمی مصرف می‌شود و منطق چارت تکی را تغییر نمی‌دهد.
+            if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN)
+                UserInteractionStarted?.Invoke(this, EventArgs.Empty);
 
             // Extra drawing tools own their mouse input completely. Do not pass
             // these messages to Control.WndProc because the normal chart handler
