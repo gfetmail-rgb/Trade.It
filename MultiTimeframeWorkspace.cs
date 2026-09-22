@@ -49,8 +49,11 @@ namespace Trade.It
 
         public void SelectFirstChart()
         {
-            if (items.Count > 0)
-                SetActiveChart(items[0].Chart);
+            if (items.Count == 0)
+                return;
+
+            SetActiveChart(items[0].Chart);
+            SynchronizeAllToActiveChart();
         }
 
         private void Chart_MouseEnter(object? sender, EventArgs e)
@@ -99,8 +102,57 @@ namespace Trade.It
 
             for (var i = 0; i < count; i++)
             {
-                var chart = items[i].Chart;
-                grid.Controls.Add(chart, i % columns, i / columns);
+                var item = items[i];
+                var host = new Panel
+                {
+                    Dock = DockStyle.Fill,
+                    Margin = new Padding(2),
+                    Padding = new Padding(0),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    BackColor = SystemColors.Window
+                };
+
+                var title = new Label
+                {
+                    Dock = DockStyle.Top,
+                    Height = 26,
+                    Text = item.TimeFrame,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    BackColor = SystemColors.Control,
+                    ForeColor = SystemColors.ControlText,
+                    Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                    Cursor = Cursors.Default
+                };
+
+                item.Chart.Dock = DockStyle.Fill;
+                item.Chart.Margin = new Padding(0);
+                host.Controls.Add(item.Chart);
+                host.Controls.Add(title);
+                grid.Controls.Add(host, i % columns, i / columns);
+            }
+        }
+
+        private void SynchronizeAllToActiveChart()
+        {
+            if (activeChart == null)
+                return;
+
+            var range = activeChart.GetVisibleDateRange();
+            if (!range.HasValue)
+                return;
+
+            syncing = true;
+            try
+            {
+                foreach (var item in items)
+                {
+                    if (!ReferenceEquals(item.Chart, activeChart))
+                        item.Chart.ApplySyncedDateRange(range.Value.Start, range.Value.End);
+                }
+            }
+            finally
+            {
+                syncing = false;
             }
         }
 
