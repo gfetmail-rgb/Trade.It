@@ -2,32 +2,11 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
-        private const int WmLButtonDblClk = 0x0203;
-        private static bool verticalFitMessageFilterRegistered;
-        private readonly bool verticalFitFilterInitialized = RegisterVerticalFitMessageFilter();
-
-        private static bool RegisterVerticalFitMessageFilter()
-        {
-            if (!verticalFitMessageFilterRegistered)
-            {
-                Application.AddMessageFilter(new VerticalFitMessageFilter());
-                verticalFitMessageFilterRegistered = true;
-            }
-
-            return true;
-        }
-
         private void FitVerticalView()
         {
             if (points.Count == 0)
                 return;
 
-            ApplyConfiguredVerticalFit();
-            Invalidate();
-        }
-
-        private void ApplyConfiguredVerticalFit()
-        {
             var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points
                 .Skip(firstIndex)
@@ -44,80 +23,31 @@ namespace Trade.It
                 Math.Max(Math.Abs(dataMax), 1.0) * 0.01);
 
             var percent = Math.Clamp(ChartTopEmptyPercent, 0.0, 50.0) / 100.0;
+
             if (percent <= 0.0001)
             {
                 verticalZoom = 1.0;
-                verticalPanOffset = 0;
-                return;
+                verticalPanOffset = 0.0;
+            }
+            else
+            {
+                // بعد از Fit:
+                // - Low دقیقاً روی پایین Plot قرار می‌گیرد.
+                // - High دقیقاً روی مرز فضای خالی بالای Plot قرار می‌گیرد.
+                // verticalZoom در GetVerticalRange به صورت range / zoom
+                // استفاده می‌شود، بنابراین برای اشغال (1-percent) از ارتفاع
+                // باید zoom برابر همان ضریب باشد.
+                var factor = 1.0 - percent;
+                verticalZoom = factor;
+                verticalPanOffset = range * percent / (2.0 * factor);
             }
 
-            // range باید طوری بزرگ شود که data دقیقاً از پایین شروع شود
-            // و درصد تنظیم‌شده از کل ارتفاع Plot در بالا خالی بماند.
-            var factor = 1.0 - percent;
-            verticalZoom = factor;
-            verticalPanOffset = range * percent / (2.0 * factor);
-        }
-
-        private double ClampVerticalPanOffset(double requestedPanOffset)
-        {
-            if (points.Count == 0)
-                return requestedPanOffset;
-
-            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
-            var visible = points
-                .Skip(firstIndex)
-                .Take(Math.Max(1, endIndex - firstIndex))
-                .ToList();
-
-            if (visible.Count == 0)
-                return requestedPanOffset;
-
-            var dataMin = visible.Min(x => x.Low);
-            var dataMax = visible.Max(x => x.High);
-            var rawRange = Math.Max(
-                dataMax - dataMin,
-                Math.Max(Math.Abs(dataMax), 1.0) * 0.01);
-
-            var adjustedRange = rawRange / Math.Max(verticalZoom, 0.0001);
-            var rawCenter = (dataMin + dataMax) / 2.0;
-            var percent = Math.Clamp(ChartTopEmptyPercent, 0.0, 50.0) / 100.0;
-
-            // حداقل مرکز نمودار طوری تعیین می‌شود که High داده‌ها
-            // هیچ‌وقت از مرز فضای خالی تنظیم‌شده بالاتر نرود.
-            var minimumCenter =
-                dataMax - adjustedRange * (0.5 - percent);
-
-            var minimumPanOffset = minimumCenter - rawCenter;
-            return Math.Max(requestedPanOffset, minimumPanOffset);
+            Invalidate();
         }
 
         private void FitVerticalRange()
         {
-            ResetView();
-        }
-
-        private sealed class VerticalFitMessageFilter : IMessageFilter
-        {
-            public bool PreFilterMessage(ref Message m)
-            {
-                if (m.Msg != WmLButtonDblClk)
-                    return false;
-
-                if (Control.FromHandle(m.HWnd) is not TradingChartControl chart)
-                    return false;
-
-                var lParam = m.LParam.ToInt64();
-                var x = (short)(lParam & 0xFFFF);
-                var y = (short)((lParam >> 16) & 0xFFFF);
-
-                if (x <= chart.GetPlotRectangle().Left + 12 && y >= 0 && y <= chart.GetPlotRectangle().Bottom)
-                {
-                    chart.FitVerticalView();
-                    return true;
-                }
-
-                return false;
-            }
+            FitVerticalView();
         }
     }
 }
