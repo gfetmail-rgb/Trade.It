@@ -11,59 +11,7 @@ namespace Trade.It
         public bool Active
         {
             get => active;
-            set
-            {
-                if (active == value)
-                    return;
-
-                active = value;
-                Invalidate();
-            }
-        }
-
-        public FullScreenToggleButton()
-        {
-            SetStyle(
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.OptimizedDoubleBuffer,
-                true);
-
-            FlatStyle = FlatStyle.Flat;
-            FlatAppearance.BorderSize = 1;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var rect = ClientRectangle;
-            rect.Width--;
-            rect.Height--;
-
-            var backgroundColor = active
-                ? SystemColors.Highlight
-                : SystemColors.Control;
-            var foregroundColor = active
-                ? SystemColors.HighlightText
-                : SystemColors.ControlText;
-            var borderColor = active
-                ? SystemColors.Highlight
-                : SystemColors.ControlDark;
-
-            using var background = new SolidBrush(backgroundColor);
-            using var border = new Pen(borderColor);
-
-            e.Graphics.FillRectangle(background, rect);
-            e.Graphics.DrawRectangle(border, rect);
-
-            TextRenderer.DrawText(
-                e.Graphics,
-                Text,
-                Font,
-                ClientRectangle,
-                foregroundColor,
-                TextFormatFlags.HorizontalCenter |
-                TextFormatFlags.VerticalCenter |
-                TextFormatFlags.SingleLine);
+            set => active = value;
         }
     }
 
@@ -352,41 +300,9 @@ namespace Trade.It
         }
         private void ApplyFullScreenChartButtonStyle()
         {
+            // فقط متن دکمه با وضعیت تمام‌صفحه تغییر می‌کند.
+            // ظاهر دکمه همان تنظیمات Designer باقی می‌ماند.
             fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
-            if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
-                ownerDrawnButton.Active = isFullScreenChart;
-            fullScreenChartButton.UseVisualStyleBackColor = false;
-            fullScreenChartButton.FlatStyle = FlatStyle.Flat;
-            fullScreenChartButton.FlatAppearance.BorderSize = 1;
-            fullScreenChartButton.BackColor = isFullScreenChart
-                ? SystemColors.Highlight
-                : SystemColors.Control;
-            fullScreenChartButton.ForeColor = isFullScreenChart
-                ? SystemColors.HighlightText
-                : SystemColors.ControlText;
-            fullScreenChartButton.FlatAppearance.BorderColor = isFullScreenChart
-                ? SystemColors.Highlight
-                : SystemColors.ControlDark;
-            fullScreenChartButton.FlatAppearance.MouseOverBackColor = fullScreenChartButton.BackColor;
-            fullScreenChartButton.FlatAppearance.MouseDownBackColor = fullScreenChartButton.BackColor;
-
-            fullScreenChartButton.Invalidate();
-            fullScreenChartButton.Refresh();
-
-            BeginInvoke(new Action(() =>
-            {
-                if (IsDisposed || !IsHandleCreated)
-                    return;
-
-                fullScreenChartButton.BackColor = isFullScreenChart
-                    ? SystemColors.Highlight
-                    : SystemColors.Control;
-                fullScreenChartButton.ForeColor = isFullScreenChart
-                    ? SystemColors.HighlightText
-                    : SystemColors.ControlText;
-                fullScreenChartButton.Invalidate();
-                fullScreenChartButton.Refresh();
-            }));
         }
 
 
