@@ -513,8 +513,29 @@ namespace Trade.It
 
         private static void SetToggleButtonState(Button button, bool active)
         {
-            // ظاهر دکمه باید دقیقاً همان ظاهر تعریف‌شده در Designer بماند.
-            // هیچ رنگ، FlatStyle، Border یا حالت Highlight در زمان اجرا اعمال نمی‌شود.
+            if (active)
+            {
+                // فقط در حالت فعال، دکمه به حالت آبی تغییر می‌کند.
+                button.UseVisualStyleBackColor = false;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 1;
+                button.BackColor = SystemColors.Highlight;
+                button.ForeColor = SystemColors.HighlightText;
+                button.FlatAppearance.BorderColor = SystemColors.Highlight;
+                button.FlatAppearance.MouseOverBackColor = SystemColors.Highlight;
+                button.FlatAppearance.MouseDownBackColor = SystemColors.Highlight;
+            }
+            else
+            {
+                // در حالت عادی، تمام تنظیمات ظاهری به حالت استاندارد Designer برمی‌گردد.
+                button.UseVisualStyleBackColor = true;
+                button.FlatStyle = FlatStyle.Standard;
+                button.ForeColor = SystemColors.ControlText;
+                button.BackColor = SystemColors.Control;
+                button.FlatAppearance.BorderSize = 1;
+            }
+
+            button.Invalidate();
         }
 
         private void PrintChartButton_Click(object? sender, EventArgs e)
