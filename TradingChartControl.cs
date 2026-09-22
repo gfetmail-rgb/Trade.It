@@ -366,7 +366,7 @@ namespace Trade.It
             if (!testMode || points.Count == 0 || !testStartSelected)
                 return;
 
-            if (testEndIndex < 0 || testAnchorIndex < 0)
+            if (testEndIndex < 0)
                 return;
 
             var nextEnd = Math.Clamp(testEndIndex + delta, 0, points.Count - 1);
@@ -381,29 +381,20 @@ namespace Trade.It
 
         private void KeepTestAnchorFixed()
         {
-            if (!testMode || testAnchorIndex < 0 || testEndIndex < 0 || points.Count == 0)
+            if (!testMode || testEndIndex < 0 || points.Count == 0)
                 return;
 
-            var plot = GetPlotRectangle();
-            var count = Math.Max(2, visibleCount);
-            var step = plot.Width / (double)count;
-            var initialOffset = -plot.Width * 0.25;
+            // در Test Mode، کندل آخرِ قابل مشاهده باید در همان موقعیت
+            // افقی بماند و با هر Step فقط پنجره‌ی داده یک کندل جابه‌جا شود.
+            // بنابراین با حرکت به راست، firstIndex هم به همان اندازه جلو می‌رود
+            // و کندل‌های قبلی به سمت چپ کشیده می‌شوند.
+            var count = Math.Max(1, visibleCount);
+            var desiredFirst = testEndIndex - count + 1;
 
-            var relativeIndex = (int)Math.Round(
-                (testAnchorScreenX - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5);
-
-            relativeIndex = Math.Clamp(relativeIndex, 0, count - 1);
-
-            var desiredFirst = testEndIndex - relativeIndex;
-
-            // در مد تست لازم است حتی در انتهای داده نیز فضای خالی سمت راست
-            // حفظ شود تا کندل لنگر دقیقاً در همان مختصات صفحه بماند.
-            // محدود کردن firstIndex به points.Count - count باعث می‌شد
-            // در حرکت با کلید راست، لنگر به سمت راست سر بخورد.
             firstIndex = Math.Clamp(
                 desiredFirst,
                 0,
-                Math.Max(0, points.Count - 1));
+                Math.Max(0, points.Count - count));
         }
 
         private void SetTestEndFromMouse(Point location)
@@ -418,6 +409,10 @@ namespace Trade.It
             var initialOffset = -plot.Width * 0.25;
             var dataX = (location.X - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
             var relativeIndex = Math.Clamp((int)Math.Round(dataX), 0, count - 1);
+
+            // کندل انتخاب‌شده، آخرین کندل قابل مشاهده در Test Mode است.
+            // موقعیت آن در صفحه ثابت می‌ماند و Step فقط داده‌های قبل از آن
+            // را یک کندل به چپ/راست جابه‌جا می‌کند.
             testEndIndex = Math.Clamp(firstIndex + relativeIndex, 0, points.Count - 1);
             testAnchorIndex = testEndIndex;
             testAnchorScreenX = location.X;
