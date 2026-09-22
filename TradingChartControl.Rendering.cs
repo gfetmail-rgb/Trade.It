@@ -161,7 +161,10 @@ namespace Trade.It
             {
                 var value = max - (max - min) * i / 5.0;
                 var y = PriceToScreen(value, plot, min, max);
-                var text = value.ToString("0.##");
+                // داده‌های بورس ایران در این چارت به‌صورت قیمت صحیح هستند.
+                // مقدارهای میانی محور ممکن است در اثر تقسیم بازه اعشاری شوند؛
+                // برای نمایش، آنها را به نزدیک‌ترین قیمت صحیح تبدیل می‌کنیم.
+                var text = Math.Round(value, MidpointRounding.AwayFromZero).ToString("0", CultureInfo.InvariantCulture);
                 var size = e.Graphics.MeasureString(text, axisTextFont);
 
                 // برچسب قیمت باید کاملاً در ناحیه اختصاص‌یافته به محور قیمت
@@ -193,13 +196,17 @@ namespace Trade.It
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
                 var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
-                var crosshairPrice = max - ((crosshairPoint.Y - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
+                var crosshairY = Math.Clamp(crosshairPoint.Y, plot.Top, plot.Bottom);
+                var crosshairPrice = max - ((crosshairY - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
+                crosshairPrice = Math.Clamp(crosshairPrice, min, max);
 
-                // برچسب قیمت کراس نباید به‌صورت خودکار اعشار اضافه کند.
-                // دقت نمایش را از خود داده‌های چارت می‌گیریم؛ بنابراین اگر
-                // قیمت‌های چارت صحیح باشند، برچسب نیز صحیح نمایش داده می‌شود.
-                var decimalPlaces = GetPriceDecimalPlaces(visible, displayedCount);
-                var priceText = crosshairPrice.ToString("F" + decimalPlaces);
+                // قیمت کراس برای این چارت باید صحیح نمایش داده شود.
+                // مختصات ماوس فقط موقعیت عمودی را تعیین می‌کند و نباید باعث
+                // تولید اعشار یا قالب‌بندی مصنوعی قیمت شود.
+                var priceText = Math.Round(
+                    crosshairPrice,
+                    MidpointRounding.AwayFromZero)
+                    .ToString("0", CultureInfo.InvariantCulture);
                 var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
                 var priceRect = new RectangleF(
                     Math.Max(1f, plot.Left - priceSize.Width - 9f),
@@ -245,40 +252,6 @@ namespace Trade.It
             DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, min, max);
         }
 
-
-        private static int GetPriceDecimalPlaces(List<TradingChartPoint> visible, int displayedCount)
-        {
-            var decimalPlaces = 0;
-            var count = Math.Min(displayedCount, visible.Count);
-
-            for (var i = 0; i < count; i++)
-            {
-                var point = visible[i];
-
-                decimalPlaces = Math.Max(decimalPlaces, GetDecimalPlaces(point.Open));
-                decimalPlaces = Math.Max(decimalPlaces, GetDecimalPlaces(point.High));
-                decimalPlaces = Math.Max(decimalPlaces, GetDecimalPlaces(point.Low));
-                decimalPlaces = Math.Max(decimalPlaces, GetDecimalPlaces(point.Close));
-
-                if (decimalPlaces >= 6)
-                    return 6;
-            }
-
-            return decimalPlaces;
-        }
-
-        private static int GetDecimalPlaces(double value)
-        {
-            if (double.IsNaN(value) || double.IsInfinity(value))
-                return 0;
-
-            var text = value.ToString("0.######", CultureInfo.InvariantCulture);
-            var separatorIndex = text.IndexOf('.');
-            if (separatorIndex < 0)
-                return 0;
-
-            return text.Length - separatorIndex - 1;
-        }
 
         private void DrawTimeAxis(
             Graphics g,
