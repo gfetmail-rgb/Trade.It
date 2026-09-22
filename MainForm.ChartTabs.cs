@@ -89,6 +89,17 @@ namespace Trade.It
             if (index < 0 || index >= chartTabControl.TabPages.Count)
                 return;
 
+            if (multiTimeframeWorkspace != null && ReferenceEquals(chartTabControl.TabPages[index], chartTabPage))
+            {
+                CloseMultiTimeframeWorkspace();
+                activeChartSymbol = null;
+                chartInfoLabel.Text = "هنوز سهمی برای نمایش انتخاب نشده است.";
+                chartPlaceholderLabel.Visible = true;
+                chartTabControl.Invalidate();
+                SyncChartToolbarFromActiveChart();
+                return;
+            }
+
             var page = chartTabControl.TabPages[index];
             var chart = page.Controls.OfType<TradingChartControl>().FirstOrDefault();
             var wasSelected = ReferenceEquals(page, chartTabControl.SelectedTab);
