@@ -512,7 +512,7 @@ namespace Trade.It
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
             base.OnMouseDoubleClick(e);
-            if (e.Button == MouseButtons.Left && e.X <= 55 && e.Y <= Height - 35)
+            if (e.Button == MouseButtons.Left && e.X <= GetPlotRectangle().Left + 12 && e.Y <= GetPlotRectangle().Bottom)
                 ResetView();
         }
 
@@ -811,7 +811,7 @@ namespace Trade.It
                 // فضای خالی بالای نمودار یک محدودیت واقعی است، نه فقط
                 // مقدار اولیه. بنابراین Drag عمودی نباید بتواند سقف نمودار
                 // را از درصد تنظیم‌شده بالاتر ببرد.
-                verticalPanOffset = ClampVerticalPanOffset(requestedVerticalPanOffset);
+                verticalPanOffset = requestedVerticalPanOffset;
 
                 // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
                 // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
