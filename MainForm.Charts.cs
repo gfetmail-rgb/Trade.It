@@ -527,11 +527,11 @@ namespace Trade.It
             }
             else
             {
-                // در حالت عادی، تمام تنظیمات ظاهری به حالت استاندارد Designer برمی‌گردد.
+                // در حالت عادی هیچ رنگی به‌صورت دستی تحمیل نمی‌شود.
+                // با فعال بودن VisualStyle، ظاهر دقیقاً از Theme/Designer ویندوز گرفته می‌شود.
                 button.UseVisualStyleBackColor = true;
                 button.FlatStyle = FlatStyle.Standard;
                 button.ForeColor = SystemColors.ControlText;
-                button.BackColor = SystemColors.Control;
                 button.FlatAppearance.BorderSize = 1;
             }
 
