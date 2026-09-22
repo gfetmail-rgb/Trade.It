@@ -110,7 +110,7 @@ namespace Trade.It
                 var x = (short)(lParam & 0xFFFF);
                 var y = (short)((lParam >> 16) & 0xFFFF);
 
-                if (x <= 55 && y >= 0 && y <= chart.Height - 35)
+                if (x <= chart.GetPlotRectangle().Left + 12 && y >= 0 && y <= chart.GetPlotRectangle().Bottom)
                 {
                     chart.FitVerticalView();
                     return true;
