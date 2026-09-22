@@ -34,7 +34,7 @@ namespace Trade.It
             using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
-            using var axisTextFont = new Font(Font.FontFamily, Math.Max(6.0f, Font.Size - 3.0f), Font.Style);
+            using var axisTextFont = new Font(Font.FontFamily, Math.Max(5.0f, Font.Size - 4.0f), Font.Style);
             using var headerFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size), FontStyle.Bold);
 
             if (showGrid)
