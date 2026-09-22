@@ -34,7 +34,7 @@ namespace Trade.It
             using var risingPen = new Pen(ChartAppearanceSettings.RisingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var fallingPen = new Pen(ChartAppearanceSettings.FallingCandleColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
             using var linePen = new Pen(ChartAppearanceSettings.LineChartColor, LineAppearanceSettings.ChartLineWidth) { DashStyle = LineAppearanceSettings.ChartLineStyle };
-            using var axisTextFont = new Font(Font.FontFamily, Math.Max(5.0f, Font.Size - 4.0f), Font.Style);
+            using var axisTextFont = new Font(Font.FontFamily, Math.Max(7.0f, Font.Size - 2.0f), Font.Style);
             using var headerFont = new Font(Font.FontFamily, Math.Max(8.0f, Font.Size), FontStyle.Bold);
 
             if (showGrid)
@@ -702,7 +702,7 @@ namespace Trade.It
 
         private Rectangle GetPlotRectangle()
         {
-            var left = 65;
+            var left = 70;
             var top = 15;
             var right = Math.Max(left + 1, Width - 15);
             var overallBottom = Math.Max(top + 1, Height - 35);
