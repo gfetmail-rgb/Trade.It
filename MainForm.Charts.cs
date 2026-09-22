@@ -1,6 +1,7 @@
 using System.Drawing.Printing;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Trade.It
 {
@@ -10,6 +11,7 @@ namespace Trade.It
         private bool chartRuntimeInitialized;
         private string? activeChartSymbol;
         private bool testMode;
+        private MultiTimeframeWorkspace? multiTimeframeWorkspace;
 
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
@@ -38,6 +40,19 @@ namespace Trade.It
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
+
+            // باز کردن خودکار همه تایم‌فریم‌های موجود برای نماد فعال.
+            var multiTimeframeMenuItem = new ToolStripMenuItem("باز کردن همه تایم‌فریم‌ها");
+            multiTimeframeMenuItem.Click += (_, _) =>
+            {
+                var symbol = activeChartSymbol;
+                if (!string.IsNullOrWhiteSpace(symbol))
+                    ShowMultiTimeframeCharts(symbol);
+                else
+                    MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+            };
+            mainMenuStrip.Items.Insert(Math.Min(1, mainMenuStrip.Items.Count), multiTimeframeMenuItem);
             analysisAutoSaveTimer.Interval = 1000;
             analysisAutoSaveTimer.Tick += AnalysisAutoSaveTimer_Tick;
             analysisAutoSaveTimer.Start();
@@ -362,6 +377,7 @@ namespace Trade.It
 
         private void ShowSymbolChart(string symbol)
         {
+            CloseMultiTimeframeWorkspace();
             var currentChart = GetActiveChart();
             if (currentChart != null && !string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
             {
@@ -474,9 +490,290 @@ namespace Trade.It
 
         private TradingChartControl? GetActiveChart()
         {
-            if (chartDisplayMode == ChartDisplayMode.SingleTab) return chartTabPage.Controls.OfType<TradingChartControl>().FirstOrDefault();
+            if (multiTimeframeWorkspace != null)
+                return multiTimeframeWorkspace.ActiveChart;
+
+            if (chartDisplayMode == ChartDisplayMode.SingleTab)
+                return chartTabPage.Controls.OfType<TradingChartControl>().FirstOrDefault();
+
             return chartTabControl.SelectedTab?.Controls.OfType<TradingChartControl>().FirstOrDefault();
         }
+
+        private void ShowMultiTimeframeCharts(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                return;
+
+            try
+            {
+                var files = GetSymbolTimeframeFiles(definition, symbol);
+                if (files.Count == 0)
+                {
+                    MessageBox.Show(
+                        this,
+                        $"برای «{symbol}» فایل تایم‌فریم استانداردی پیدا نشد.",
+                        "تایم‌فریم‌ها",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                CloseMultiTimeframeWorkspace();
+
+                multiTimeframeWorkspace = new MultiTimeframeWorkspace
+                {
+                    Dock = DockStyle.Fill,
+                    RightToLeft = RightToLeft.No
+                };
+
+                foreach (var item in files)
+                {
+                    var points = LoadChartData(definition, symbol, new[] { item.FilePath });
+                    if (points.Count == 0)
+                        continue;
+
+                    var chart = GetOrCreateChart(symbol + "|" + item.TimeFrame);
+                    chart.SetData(points, symbol);
+                    chart.SetChartType(GetSelectedChartType());
+                    chart.SetVolumePanelVisible(lastVolumePanelVisible);
+                    chart.VolumePanelRatio = lastVolumePanelRatio;
+
+                    // تحلیل‌های ذخیره‌شده فقط برای چارت عادی نماد بازیابی می‌شوند؛
+                    // در Workspace چندتایم‌فریمی هر پنجره نمایشی مستقل است.
+                    multiTimeframeWorkspace.AddChart(chart, item.TimeFrame);
+                }
+
+                if (multiTimeframeWorkspace.ChartCount == 0)
+                {
+                    multiTimeframeWorkspace.Dispose();
+                    multiTimeframeWorkspace = null;
+                    MessageBox.Show(this, $"هیچ داده قابل رسم برای «{symbol}» پیدا نشد.",
+                        "تایم‌فریم‌ها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                activeChartSymbol = symbol;
+                chartInfoLabel.Text = $"{symbol}   |   {multiTimeframeWorkspace.ChartCount:N0} تایم‌فریم";
+                chartPlaceholderLabel.Visible = false;
+
+                chartTabPage.Controls.Clear();
+                chartTabPage.Controls.Add(multiTimeframeWorkspace);
+                chartTabPage.Text = symbol + " | چندتایم‌فریم";
+                chartTabControl.SelectedTab = chartTabPage;
+                chartTabControl.Visible = true;
+
+                multiTimeframeWorkspace.ActiveChartChanged += (_, _) => SyncChartToolbarFromActiveChart();
+                multiTimeframeWorkspace.SelectFirstChart();
+
+                SetToggleButtonState(hideChartButton, false);
+                SetIndicatorPanelButtonState(GetActiveChart());
+            }
+            catch (Exception ex)
+            {
+                CloseMultiTimeframeWorkspace();
+                MessageBox.Show(this,
+                    $"باز کردن تایم‌فریم‌ها انجام نشد:\n{ex.Message}",
+                    "تایم‌فریم‌ها", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CloseMultiTimeframeWorkspace()
+        {
+            if (multiTimeframeWorkspace == null)
+                return;
+
+            var workspace = multiTimeframeWorkspace;
+            multiTimeframeWorkspace = null;
+
+            foreach (var chart in workspace.Charts.ToList())
+            {
+                foreach (var item in chartControls.Where(x => ReferenceEquals(x.Value, chart)).ToList())
+                    chartControls.Remove(item.Key);
+
+                chart.Dispose();
+            }
+
+            workspace.Dispose();
+
+            chartTabPage.Controls.Clear();
+            chartTabPage.Controls.Add(chartInfoPanel);
+            chartTabPage.Controls.Add(chartPlaceholderLabel);
+            chartTabPage.Text = string.IsNullOrWhiteSpace(activeChartSymbol) ? "چارت" : activeChartSymbol;
+        }
+
+        private List<(string FilePath, string TimeFrame)> GetSymbolTimeframeFiles(
+            PortfolioDefinition definition,
+            string symbol)
+        {
+            var result = new List<(string FilePath, string TimeFrame)>();
+
+            if (definition == null ||
+                string.IsNullOrWhiteSpace(definition.DataPath) ||
+                !Directory.Exists(definition.DataPath))
+                return result;
+
+            var extension = definition.FileType?.Trim().ToUpperInvariant() switch
+            {
+                "CSV" => ".csv",
+                "PRN" => ".prn",
+                _ => ".txt"
+            };
+
+            foreach (var file in Directory.EnumerateFiles(
+                definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                var suffix = GetTimeframeSuffix(name, symbol);
+                if (suffix == null)
+                    continue;
+
+                var detected = DetectTimeframeFromFile(definition, file);
+                var finalTimeframe = detected ?? suffix;
+                result.Add((file, finalTimeframe));
+            }
+
+            return result
+                .GroupBy(x => x.TimeFrame, StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.First())
+                .OrderBy(x => TimeframeOrder(x.TimeFrame))
+                .ToList();
+        }
+
+        private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
+        {
+            if (!fileNameWithoutExtension.StartsWith(symbol, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var remainder = fileNameWithoutExtension.Substring(symbol.Length);
+            if (remainder.Length == 0)
+                return null;
+
+            remainder = remainder.TrimStart('_', '-', '.', ' ', '\');
+            var candidates = new[] { "M15", "M30", "1H", "4H", "M1", "M5", "D", "M", "Y" };
+
+            foreach (var candidate in candidates)
+            {
+                if (string.Equals(remainder, candidate, StringComparison.OrdinalIgnoreCase))
+                    return candidate;
+            }
+
+            return null;
+        }
+
+        private string? DetectTimeframeFromFile(PortfolioDefinition definition, string filePath)
+        {
+            if (definition.NoDateTime)
+                return null;
+
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            var timeColumn = GetMappingColumn(definition, "زمان");
+            if (timeColumn <= 0) timeColumn = GetMappingColumn(definition, "ساعت لاتین");
+
+            if (dateColumn <= 0)
+                return null;
+
+            var dates = new List<DateTime>();
+            try
+            {
+                foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var row = SplitTradingDataLine(line, definition.Separator);
+                    if (definition.HasHeader && dates.Count == 0)
+                    {
+                        // هدر فقط زمانی رد می‌شود که ستون تاریخ در آن قابل تبدیل نباشد.
+                        if (dateColumn > row.Length ||
+                            !TryParseChartDate(row[dateColumn - 1], definition, out _))
+                            continue;
+                    }
+
+                    if (dateColumn > row.Length ||
+                        !TryParseChartDate(row[dateColumn - 1], definition, out var date))
+                        continue;
+
+                    if (timeColumn > 0 && timeColumn <= row.Length &&
+                        TryParseChartTime(row[timeColumn - 1], out var time))
+                        date = date.Date.Add(time);
+
+                    dates.Add(date);
+                    if (dates.Count >= 300)
+                        break;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (dates.Count < 3)
+                return null;
+
+            dates = dates.OrderBy(x => x).Distinct().ToList();
+            if (dates.Count < 3)
+                return null;
+
+            var minuteSteps = new List<double>();
+            for (var i = 1; i < dates.Count; i++)
+            {
+                var minutes = (dates[i] - dates[i - 1]).TotalMinutes;
+                if (minutes > 0 && minutes < 10000000)
+                    minuteSteps.Add(minutes);
+            }
+
+            if (minuteSteps.Count == 0)
+                return null;
+
+            var median = minuteSteps.OrderBy(x => x).ElementAt(minuteSteps.Count / 2);
+
+            if (median <= 1.5) return "M1";
+            if (median <= 6) return "M5";
+            if (median <= 16) return "M15";
+            if (median <= 31) return "M30";
+            if (median <= 90) return "1H";
+            if (median <= 300) return "4H";
+
+            var first = dates[0];
+            var second = dates[1];
+
+            if (first.AddYears(1).Year == second.Year &&
+                first.Month == second.Month &&
+                first.Day == second.Day)
+                return "Y";
+
+            if (first.AddMonths(1).Year == second.Year &&
+                first.AddMonths(1).Month == second.Month)
+                return "M";
+
+            if (first.Date.AddDays(1) == second.Date)
+                return "D";
+
+            // برای فایل‌هایی که به دلیل تعطیلی بازار فاصله‌های چندروزه دارند،
+            // وجود یک تغییر روزانه/تقویمی همچنان می‌تواند Daily باشد.
+            if (first.TimeOfDay == second.TimeOfDay &&
+                second.Date > first.Date &&
+                (second.Date - first.Date).TotalDays <= 7)
+                return "D";
+
+            return null;
+        }
+
+        private static int TimeframeOrder(string value) => value.ToUpperInvariant() switch
+        {
+            "M1" => 1,
+            "M5" => 2,
+            "M15" => 3,
+            "M30" => 4,
+            "1H" => 5,
+            "4H" => 6,
+            "D" => 7,
+            "M" => 8,
+            "Y" => 9,
+            _ => 99
+        };
 
         private void Chart_VolumeSettingsChanged(object? sender, EventArgs e)
         {
@@ -594,7 +891,7 @@ namespace Trade.It
             SetToggleButtonState(hideChartButton, false);
         }
 
-        private List<TradingChartPoint> LoadChartData(PortfolioDefinition definition, string symbol)
+        private List<TradingChartPoint> LoadChartData(PortfolioDefinition definition, string symbol, IEnumerable<string>? specificFiles = null)
         {
             var result = new List<TradingChartPoint>();
 
@@ -624,7 +921,7 @@ namespace Trade.It
 
             try
             {
-                foreach (var filePath in GetSymbolFiles(definition, symbol))
+                foreach (var filePath in specificFiles ?? GetSymbolFiles(definition, symbol))
                 {
                     var firstLine = true;
                     foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
