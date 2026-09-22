@@ -513,29 +513,8 @@ namespace Trade.It
 
         private static void SetToggleButtonState(Button button, bool active)
         {
-            button.UseVisualStyleBackColor = false;
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 1;
-
-            if (active)
-            {
-                button.BackColor = SystemColors.Highlight;
-                button.ForeColor = SystemColors.HighlightText;
-                button.FlatAppearance.BorderColor = SystemColors.Highlight;
-                button.FlatAppearance.MouseOverBackColor = SystemColors.Highlight;
-                button.FlatAppearance.MouseDownBackColor = SystemColors.Highlight;
-            }
-            else
-            {
-                button.BackColor = SystemColors.Control;
-                button.ForeColor = SystemColors.ControlText;
-                button.FlatAppearance.BorderColor = SystemColors.ControlDark;
-                button.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-                button.FlatAppearance.MouseDownBackColor = SystemColors.Control;
-            }
-
-            button.Invalidate();
-            button.Update();
+            // ظاهر دکمه باید دقیقاً همان ظاهر تعریف‌شده در Designer بماند.
+            // هیچ رنگ، FlatStyle، Border یا حالت Highlight در زمان اجرا اعمال نمی‌شود.
         }
 
         private void PrintChartButton_Click(object? sender, EventArgs e)
