@@ -22,8 +22,11 @@ namespace Trade.It
             if (points.Count == 0)
                 return;
 
+            // دابل‌کلیک محور قیمت باید Fit عمودی را انجام دهد، اما
+            // درصد فضای خالی تنظیم‌شده در بالای چارت را نیز حفظ کند.
             verticalPanOffset = 0;
-            verticalZoom = 1.10;
+            verticalZoom = 1.0;
+            EnsureInitialTopMargin();
             Invalidate();
         }
 
