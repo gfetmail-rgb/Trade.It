@@ -72,14 +72,32 @@ namespace Trade.It
 
         private void Chart_UserInteractionStarted(object? sender, EventArgs e)
         {
-            if (sender is TradingChartControl chart)
-                SetActiveChart(chart);
+            if (sender is not TradingChartControl chart || IsDisposed || Disposing)
+                return;
+
+            // WndProc این رویداد را قبل از dispatch عادی ماوس اعلام می‌کند.
+            // انتخاب چارت را یک پیام UI عقب می‌اندازیم تا Focus/MouseDown خود
+            // کنترل کامل شود و انتخاب چارت بعد از پایان dispatch تثبیت شود.
+            BeginInvoke(new Action(() =>
+            {
+                if (IsDisposed || Disposing)
+                    return;
+
+                if (items.Any(x => ReferenceEquals(x.Chart, chart)))
+                    SetActiveChart(chart);
+            }));
         }
 
         private void SetActiveChart(TradingChartControl chart)
         {
-            if (ReferenceEquals(activeChart, chart))
+            if (!items.Any(x => ReferenceEquals(x.Chart, chart)))
                 return;
+
+            if (ReferenceEquals(activeChart, chart))
+            {
+                chart.Focus();
+                return;
+            }
 
             activeChart = chart;
             chart.Focus();
