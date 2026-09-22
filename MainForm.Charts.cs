@@ -513,12 +513,12 @@ namespace Trade.It
 
         private static void SetToggleButtonState(Button button, bool active)
         {
-            button.UseVisualStyleBackColor = false;
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 1;
-
             if (active)
             {
+                // فقط در حالت فعال، دکمه به حالت آبی تغییر می‌کند.
+                button.UseVisualStyleBackColor = false;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 1;
                 button.BackColor = SystemColors.Highlight;
                 button.ForeColor = SystemColors.HighlightText;
                 button.FlatAppearance.BorderColor = SystemColors.Highlight;
@@ -527,15 +527,15 @@ namespace Trade.It
             }
             else
             {
-                button.BackColor = SystemColors.Control;
+                // در حالت عادی، تمام تنظیمات ظاهری به حالت استاندارد Designer برمی‌گردد.
+                button.UseVisualStyleBackColor = true;
+                button.FlatStyle = FlatStyle.Standard;
                 button.ForeColor = SystemColors.ControlText;
-                button.FlatAppearance.BorderColor = SystemColors.ControlDark;
-                button.FlatAppearance.MouseOverBackColor = SystemColors.Control;
-                button.FlatAppearance.MouseDownBackColor = SystemColors.Control;
+                button.BackColor = SystemColors.Control;
+                button.FlatAppearance.BorderSize = 1;
             }
 
             button.Invalidate();
-            button.Update();
         }
 
         private void PrintChartButton_Click(object? sender, EventArgs e)
