@@ -461,7 +461,7 @@ namespace Trade.It
             verticalZoom = 1;
             verticalPanOffset = 0;
             horizontalPanOffset = 0;
-            ApplyConfiguredVerticalFit();
+            FitVerticalView();
             chartPanCompensation = 0;
             crosshairIndex = -1;
             EnsureChartPanCompensation();
