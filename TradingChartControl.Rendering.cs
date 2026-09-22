@@ -137,6 +137,11 @@ namespace Trade.It
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
+            // محور زمان: بر اساس تاریخ واقعی کندل‌ها، با تعداد Tick متناسب با فضای موجود.
+            // در محورهای مصنوعی/بدون تاریخ، این بخش عمداً چیزی رسم نمی‌کند تا NoDateAxis مسئول نمایش شماره کندل بماند.
+            if (!IsSyntheticNoDateAxis())
+                DrawTimeAxis(e.Graphics, plot, volumePlot, visible, displayedCount, step, initialOffset, axisTextFont, axisPen, textBrush);
+
             if (showCrosshair && crosshairIndex >= 0 && crosshairIndex < visible.Count)
             {
                 var crosshairX = (float)(plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset);
@@ -233,6 +238,93 @@ namespace Trade.It
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
             DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, min, max);
+        }
+
+
+        private void DrawTimeAxis(
+            Graphics g,
+            Rectangle plot,
+            Rectangle volumePlot,
+            List<TradingChartPoint> visible,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            Font labelFont,
+            Pen axisPen,
+            Brush textBrush)
+        {
+            if (displayedCount <= 0 || plot.Width <= 0)
+                return;
+
+            var axisBottom = volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom;
+            var axisY = axisBottom + 1f;
+            g.DrawLine(axisPen, plot.Left, axisBottom, plot.Right, axisBottom);
+
+            var sample = visible.Take(displayedCount).ToList();
+            if (sample.Count == 0)
+                return;
+
+            var calendar = new PersianCalendar();
+            var hasIntradayTime = sample.Any(p => p.Date.TimeOfDay != TimeSpan.Zero);
+            var totalSpan = sample[^1].Date - sample[0].Date;
+
+            string FormatTime(DateTime date)
+            {
+                if (!hasIntradayTime)
+                    return $"{calendar.GetYear(date):0000}/{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00}";
+
+                if (totalSpan.TotalDays <= 1.5)
+                    return $"{calendar.GetHour(date):00}:{calendar.GetMinute(date):00}";
+
+                if (totalSpan.TotalDays <= 7)
+                    return $"{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00} {calendar.GetHour(date):00}:{calendar.GetMinute(date):00}";
+
+                return $"{calendar.GetYear(date):0000}/{calendar.GetMonth(date):00}/{calendar.GetDayOfMonth(date):00}";
+            }
+
+            var firstLabel = FormatTime(sample[0].Date);
+            var measured = g.MeasureString(firstLabel, labelFont);
+            var minSpacing = Math.Max(70f, measured.Width + 18f);
+            var maxTicks = Math.Max(2, (int)(plot.Width / minSpacing) + 1);
+            var tickCount = Math.Min(sample.Count, maxTicks);
+
+            if (tickCount == 1 && sample.Count > 1)
+                tickCount = 2;
+
+            var usedX = new List<float>();
+            for (var t = 0; t < tickCount; t++)
+            {
+                var index = tickCount == 1
+                    ? 0
+                    : (int)Math.Round(t * (sample.Count - 1) / (double)(tickCount - 1));
+
+                var x = (float)(plot.Left + step * (index + 0.5) + initialOffset + horizontalPanOffset);
+                if (x < plot.Left || x > plot.Right)
+                    continue;
+
+                var label = FormatTime(sample[index].Date);
+                var size = g.MeasureString(label, labelFont);
+
+                // اگر دو برچسب در اثر گرد شدن شاخص‌ها به هم نزدیک شدند، Tick دوم حذف می‌شود.
+                if (usedX.Any(previous => Math.Abs(previous - x) < Math.Max(45f, size.Width + 10f)))
+                    continue;
+
+                usedX.Add(x);
+
+                g.DrawLine(axisPen, x, axisBottom, x, axisBottom + 5f);
+
+                var labelX = Math.Clamp(
+                    x - size.Width / 2f,
+                    plot.Left,
+                    Math.Max(plot.Left, plot.Right - size.Width));
+
+                g.DrawString(
+                    label,
+                    labelFont,
+                    textBrush,
+                    labelX,
+                    axisY + 4f);
+            }
         }
 
         private void DrawRectangleFillsBehindChart(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
