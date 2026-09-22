@@ -805,7 +805,14 @@ namespace Trade.It
                 var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
                 var indexDelta = (int)Math.Round(-dx / step);
                 firstIndex = Math.Clamp(panStartFirstIndex + indexDelta, 0, Math.Max(0, points.Count - visibleCount));
-                verticalPanOffset = panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
+                var requestedVerticalPanOffset =
+                    panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
+
+                // فضای خالی بالای نمودار یک محدودیت واقعی است، نه فقط
+                // مقدار اولیه. بنابراین Drag عمودی نباید بتواند سقف نمودار
+                // را از درصد تنظیم‌شده بالاتر ببرد.
+                verticalPanOffset = ClampVerticalPanOffset(requestedVerticalPanOffset);
+
                 // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
                 // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
                 // خروج چارت از محدوده Plot و بریده شدن آن توسط Clip می‌شد.
