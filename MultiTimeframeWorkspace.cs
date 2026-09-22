@@ -38,6 +38,7 @@ namespace Trade.It
 
             chart.MouseEnter += Chart_MouseEnter;
             chart.MouseDown += Chart_MouseDown;
+            chart.UserInteractionStarted += Chart_UserInteractionStarted;
             chart.ViewChanged += Chart_ViewChanged;
             chart.CrosshairDateChanged += Chart_CrosshairDateChanged;
 
@@ -64,6 +65,12 @@ namespace Trade.It
         }
 
         private void Chart_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (sender is TradingChartControl chart)
+                SetActiveChart(chart);
+        }
+
+        private void Chart_UserInteractionStarted(object? sender, EventArgs e)
         {
             if (sender is TradingChartControl chart)
                 SetActiveChart(chart);
@@ -215,6 +222,7 @@ namespace Trade.It
                     item.Chart.CrosshairDateChanged -= Chart_CrosshairDateChanged;
                     item.Chart.MouseEnter -= Chart_MouseEnter;
                     item.Chart.MouseDown -= Chart_MouseDown;
+                    item.Chart.UserInteractionStarted -= Chart_UserInteractionStarted;
                 }
 
                 grid.Dispose();
