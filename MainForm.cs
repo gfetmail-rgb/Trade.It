@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Trade.It
 {
-    internal sealed class FullScreenToggleButton : Button
+    /*internal sealed class FullScreenToggleButton : Button
     {
         private bool active;
 
@@ -13,9 +13,9 @@ namespace Trade.It
             get => active;
             set => active = value;
         }
-    }
+    }*/
 
-
+    
     public partial class MainForm : Form
     {
         private readonly Dictionary<string, PortfolioDefinition> loadedPortfolios = new(StringComparer.OrdinalIgnoreCase);
