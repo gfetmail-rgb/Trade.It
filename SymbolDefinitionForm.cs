@@ -285,7 +285,8 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    item.AssetCategory);
+                    item.AssetCategory,
+                    item.OtherItem);
 
                 symbolsDataGridView.Rows[r].Tag = item;
             }
@@ -348,7 +349,8 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    item.AssetCategory);
+                    item.AssetCategory,
+                    item.OtherItem);
 
                 symbolsDataGridView.Rows[rowIndex].Tag = item;
                 if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
@@ -377,6 +379,7 @@ public sealed partial class SymbolDefinitionForm : Form
         4 => GetMarketPath(item).Market,
         5 => GetMarketPath(item).Board,
         6 => item.AssetCategory ?? item.AssetType ?? string.Empty,
+        7 => item.OtherItem ?? string.Empty,
         _ => string.Empty
     };
 
