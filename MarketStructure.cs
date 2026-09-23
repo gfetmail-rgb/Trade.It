@@ -81,34 +81,56 @@ public static class MarketStructureStore
     {
         var data = new MarketStructureData();
 
-        AddTree(data, "بورس اوراق بهادار تهران",
-            ("بازار اول",
-                ("تابلوی اصلی"),
-                ("تابلوی فرعی")),
-            ("بازار دوم"),
-            ("بازار صندوق‌های سرمایه‌گذاری"));
+        AddBranch(data, "", "بورس اوراق بهادار تهران", new[]
+        {
+            "بازار اول",
+            "بازار دوم",
+            "بازار صندوق‌های سرمایه‌گذاری"
+        });
 
-        AddTree(data, "فرابورس ایران",
-            ("بازار اول"),
-            ("بازار دوم"),
-            ("بازار پایه",
-                ("بازار پایه زرد"),
-                ("بازار پایه نارنجی"),
-                ("بازار پایه قرمز")),
-            ("بازار شرکت‌های کوچک و متوسط"),
-            ("بازار ابزارهای نوین مالی",
-                ("صندوق‌های سرمایه‌گذاری"),
-                ("سایر ابزارهای مالی")),
-            ("بازار مشتقه",
-                ("اوراق اختیار معامله"),
-                ("قراردادهای آتی")));
+        var tehranFirst = data.Nodes.First(x => x.Title == "بازار اول");
+        AddNode(data, tehranFirst.Id, "تابلوی اصلی");
+        AddNode(data, tehranFirst.Id, "تابلوی فرعی");
 
-        AddTree(data, "بورس کالای ایران",
-            ("بازار مشتقه",
-                ("قراردادهای آتی"),
-                ("قراردادهای اختیار معامله")),
-            ("بازار مالی",
-                ("گواهی سپرده کالایی")));
+        AddBranch(data, "", "فرابورس ایران", new[]
+        {
+            "بازار اول",
+            "بازار دوم",
+            "بازار پایه",
+            "بازار شرکت‌های کوچک و متوسط",
+            "بازار ابزارهای نوین مالی",
+            "بازار مشتقه"
+        });
+
+        var otcBase = data.Nodes.First(x => x.Title == "بازار پایه");
+        AddNode(data, otcBase.Id, "بازار پایه زرد");
+        AddNode(data, otcBase.Id, "بازار پایه نارنجی");
+        AddNode(data, otcBase.Id, "بازار پایه قرمز");
+
+        var otcModern = data.Nodes.First(x => x.Title == "بازار ابزارهای نوین مالی");
+        AddNode(data, otcModern.Id, "صندوق‌های سرمایه‌گذاری");
+        AddNode(data, otcModern.Id, "سایر ابزارهای مالی");
+
+        var otcDerivatives = data.Nodes.First(x => x.Title == "بازار مشتقه");
+        AddNode(data, otcDerivatives.Id, "اوراق اختیار معامله");
+        AddNode(data, otcDerivatives.Id, "قراردادهای آتی");
+
+        AddBranch(data, "", "بورس کالای ایران", new[]
+        {
+            "بازار مشتقه",
+            "بازار مالی"
+        });
+
+        var commodityDerivatives = data.Nodes.First(x =>
+            x.Title == "بازار مشتقه" &&
+            x.ParentId == data.Nodes.First(y => y.Title == "بورس کالای ایران").Id);
+        AddNode(data, commodityDerivatives.Id, "قراردادهای آتی");
+        AddNode(data, commodityDerivatives.Id, "قراردادهای اختیار معامله");
+
+        var commodityFinancial = data.Nodes.First(x =>
+            x.Title == "بازار مالی" &&
+            x.ParentId == data.Nodes.First(y => y.Title == "بورس کالای ایران").Id);
+        AddNode(data, commodityFinancial.Id, "گواهی سپرده کالایی");
 
         data.AssetCategories.AddRange(new[]
         {
@@ -122,6 +144,17 @@ public static class MarketStructureStore
         });
 
         return data;
+    }
+
+    private static void AddBranch(
+        MarketStructureData data,
+        string parentId,
+        string title,
+        IEnumerable<string> children)
+    {
+        var parent = AddNode(data, parentId, title);
+        foreach (var child in children)
+            AddNode(data, parent.Id, child);
     }
 
     private static void AddTree(
