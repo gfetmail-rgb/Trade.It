@@ -23,6 +23,9 @@ public sealed partial class MarketStructureForm : Form
         addCategoryButton.Click += (_, _) => AddCategory();
         renameCategoryButton.Click += (_, _) => RenameCategory();
         deleteCategoryButton.Click += (_, _) => DeleteCategory();
+        addOtherCategoryButton.Click += (_, _) => AddOtherCategory();
+        renameOtherCategoryButton.Click += (_, _) => RenameOtherCategory();
+        deleteOtherCategoryButton.Click += (_, _) => DeleteOtherCategory();
         closeButton.Click += (_, _) => Close();
 
         LoadData();
@@ -52,7 +55,13 @@ public sealed partial class MarketStructureForm : Form
             categoryListBox.Items.Add(category);
 
         categoryTextBox.Clear();
+        otherCategoryTextBox.Clear();
         marketTitleTextBox.Clear();
+
+        otherCategoryListBox.Items.Clear();
+        foreach (var item in data.OtherCategories)
+            otherCategoryListBox.Items.Add(item);
+
         UpdateMarketButtons();
     }
 
@@ -388,6 +397,124 @@ public sealed partial class MarketStructureForm : Form
         LoadData();
 
         categoryListBox.SelectedIndex = index;
+    }
+
+    private void AddOtherCategory()
+    {
+        var title = otherCategoryTextBox.Text.Trim();
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            MessageBox.Show(this, "مقدار «سایر موارد» را وارد کنید.", "سایر موارد",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        if (data.OtherCategories.Any(x =>
+            string.Equals(x, title, StringComparison.OrdinalIgnoreCase)))
+        {
+            MessageBox.Show(this, "این مقدار «سایر موارد» قبلاً ثبت شده است.", "سایر موارد",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        data.OtherCategories.Add(title);
+        MarketStructureStore.Save(data);
+        LoadData();
+        otherCategoryListBox.SelectedIndex = otherCategoryListBox.Items.Count - 1;
+    }
+
+    private void RenameOtherCategory()
+    {
+        if (otherCategoryListBox.SelectedIndex < 0)
+            return;
+
+        var oldValue = otherCategoryListBox.SelectedItem?.ToString() ?? "";
+        var newValue = otherCategoryTextBox.Text.Trim();
+
+        if (string.IsNullOrWhiteSpace(newValue) || newValue == oldValue)
+            return;
+
+        if (data.OtherCategories.Any(x =>
+            !string.Equals(x, oldValue, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(x, newValue, StringComparison.OrdinalIgnoreCase)))
+        {
+            MessageBox.Show(this, "این مقدار «سایر موارد» قبلاً ثبت شده است.", "سایر موارد",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        var index = otherCategoryListBox.SelectedIndex;
+        var normalizedOldValue =
+            SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(oldValue);
+
+        var symbolDefinitions = SymbolDefinitionForm.SymbolDefinitionStore.Load();
+
+        foreach (var symbol in symbolDefinitions)
+        {
+            var otherItem =
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol.OtherItem);
+
+            if (string.Equals(otherItem, normalizedOldValue, StringComparison.OrdinalIgnoreCase))
+                symbol.OtherItem = newValue;
+        }
+
+        data.OtherCategories[index] = newValue;
+
+        MarketStructureStore.Save(data);
+        SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
+
+        LoadData();
+        otherCategoryListBox.SelectedIndex = index;
+    }
+
+    private void DeleteOtherCategory()
+    {
+        if (otherCategoryListBox.SelectedIndex < 0)
+            return;
+
+        var value = otherCategoryListBox.SelectedItem?.ToString() ?? "";
+        var normalizedValue = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value);
+
+        var assignedSymbols = SymbolDefinitionForm.SymbolDefinitionStore
+            .Load()
+            .Where(x => string.Equals(
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.OtherItem),
+                normalizedValue,
+                StringComparison.OrdinalIgnoreCase))
+            .Select(x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (assignedSymbols.Count > 0)
+        {
+            var preview = string.Join("، ", assignedSymbols.Take(10));
+            if (assignedSymbols.Count > 10)
+                preview += "، ...";
+
+            MessageBox.Show(
+                this,
+                $"مقدار «{value}» به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
+                $"نمادها: {preview}",
+                "حذف سایر موارد",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            return;
+        }
+
+        if (MessageBox.Show(
+                this,
+                $"مقدار «{value}» حذف شود؟",
+                "حذف سایر موارد",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning) != DialogResult.Yes)
+            return;
+
+        data.OtherCategories.RemoveAt(otherCategoryListBox.SelectedIndex);
+        MarketStructureStore.Save(data);
+        LoadData();
     }
 
     private void DeleteCategory()
