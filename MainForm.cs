@@ -920,18 +920,19 @@ namespace Trade.It
                             : item.AssetCategory);
                     var otherItem = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(item.OtherItem);
 
-                    var hasClassificationFilter =
-                        appliedMarketAssets.Count > 0 || appliedMarketOtherItems.Count > 0;
+                    var hasAssetFilter = appliedMarketAssets.Count > 0;
+                    var hasOtherFilter = appliedMarketOtherItems.Count > 0;
 
-                    if (!hasClassificationFilter)
+                    if (!hasAssetFilter && !hasOtherFilter)
                         return true;
 
-                    var assetMatch = appliedMarketAssets.Count > 0 &&
-                                     appliedMarketAssets.Contains(asset);
-                    var otherMatch = appliedMarketOtherItems.Count > 0 &&
-                                     appliedMarketOtherItems.Contains(otherItem);
+                    if (hasAssetFilter && !appliedMarketAssets.Contains(asset))
+                        return false;
 
-                    return assetMatch || otherMatch;
+                    if (hasOtherFilter && !appliedMarketOtherItems.Contains(otherItem))
+                        return false;
+
+                    return true;
                 })
                 .ToList();
         }
