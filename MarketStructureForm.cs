@@ -222,6 +222,33 @@ public sealed partial class MarketStructureForm : Form
             return;
 
         var descendants = GetDescendants(node.Id);
+        var ids = descendants.Select(x => x.Id).Append(node.Id).ToHashSet();
+
+        var assignedSymbols = SymbolDefinitionForm.SymbolDefinitionStore
+            .Load()
+            .Where(x => ids.Contains(
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.MarketNodeId)))
+            .Select(x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (assignedSymbols.Count > 0)
+        {
+            var preview = string.Join("، ", assignedSymbols.Take(10));
+            if (assignedSymbols.Count > 10)
+                preview += "، ...";
+
+            MessageBox.Show(
+                this,
+                $"این گره یا یکی از زیرمجموعه‌های آن به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
+                $"نمادها: {preview}",
+                "حذف ساختار بازار",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            return;
+        }
 
         if (MessageBox.Show(
                 this,
@@ -231,7 +258,6 @@ public sealed partial class MarketStructureForm : Form
                 MessageBoxIcon.Warning) != DialogResult.Yes)
             return;
 
-        var ids = descendants.Select(x => x.Id).Append(node.Id).ToHashSet();
         data.Nodes.RemoveAll(x => ids.Contains(x.Id));
 
         RecalculateSortOrders();
