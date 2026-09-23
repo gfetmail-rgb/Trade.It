@@ -397,8 +397,7 @@ public sealed partial class MarketStructureForm : Form
 
         MarketStructureStore.Save(data);
 
-        if (changedSymbols > 0)
-            SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
+        SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
 
         LoadData();
 
