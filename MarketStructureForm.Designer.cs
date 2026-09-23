@@ -6,6 +6,7 @@ partial class MarketStructureForm
     private TabControl tabs;
     private TabPage marketPage;
     private TabPage categoryPage;
+    private TabPage otherPage;
     private TreeView marketTreeView;
     private FlowLayoutPanel marketButtons;
     private TextBox marketTitleTextBox;
@@ -20,6 +21,12 @@ partial class MarketStructureForm
     private Button addCategoryButton;
     private Button renameCategoryButton;
     private Button deleteCategoryButton;
+    private ListBox otherCategoryListBox;
+    private TextBox otherCategoryTextBox;
+    private FlowLayoutPanel otherCategoryButtons;
+    private Button addOtherCategoryButton;
+    private Button renameOtherCategoryButton;
+    private Button deleteOtherCategoryButton;
     private Panel bottomPanel;
     private Button closeButton;
 
@@ -38,6 +45,7 @@ partial class MarketStructureForm
         tabs = new TabControl();
         marketPage = new TabPage();
         categoryPage = new TabPage();
+        otherPage = new TabPage();
 
         marketTreeView = new TreeView();
         marketButtons = new FlowLayoutPanel();
@@ -55,6 +63,13 @@ partial class MarketStructureForm
         renameCategoryButton = new Button();
         deleteCategoryButton = new Button();
 
+        otherCategoryListBox = new ListBox();
+        otherCategoryTextBox = new TextBox();
+        otherCategoryButtons = new FlowLayoutPanel();
+        addOtherCategoryButton = new Button();
+        renameOtherCategoryButton = new Button();
+        deleteOtherCategoryButton = new Button();
+
         bottomPanel = new Panel();
         closeButton = new Button();
 
@@ -62,6 +77,7 @@ partial class MarketStructureForm
         tabs.SuspendLayout();
         marketPage.SuspendLayout();
         categoryPage.SuspendLayout();
+        otherPage.SuspendLayout();
         marketButtons.SuspendLayout();
         categoryButtons.SuspendLayout();
         bottomPanel.SuspendLayout();
@@ -80,7 +96,7 @@ partial class MarketStructureForm
         // tabs
         tabs.Dock = DockStyle.Fill;
         tabs.Name = "tabs";
-        tabs.TabPages.AddRange(new TabPage[] { marketPage, categoryPage });
+        tabs.TabPages.AddRange(new TabPage[] { marketPage, categoryPage, otherPage });
 
         // marketPage
         marketPage.Text = "ساختار بازارها";
@@ -156,6 +172,39 @@ partial class MarketStructureForm
         categoryPage.Controls.Add(categoryTextBox);
         categoryPage.Controls.Add(categoryButtons);
 
+        // otherPage
+        otherPage.Text = "سایر موارد";
+        otherPage.Padding = new Padding(12);
+        otherPage.UseVisualStyleBackColor = true;
+
+        otherCategoryListBox.Dock = DockStyle.Fill;
+        otherCategoryListBox.RightToLeft = RightToLeft.Yes;
+        otherCategoryListBox.Name = "otherCategoryListBox";
+
+        otherCategoryTextBox.Dock = DockStyle.Bottom;
+        otherCategoryTextBox.Height = 32;
+        otherCategoryTextBox.Name = "otherCategoryTextBox";
+        otherCategoryTextBox.PlaceholderText = "مقدار سایر موارد";
+
+        otherCategoryButtons.Dock = DockStyle.Bottom;
+        otherCategoryButtons.FlowDirection = FlowDirection.RightToLeft;
+        otherCategoryButtons.Height = 52;
+        otherCategoryButtons.Name = "otherCategoryButtons";
+        otherCategoryButtons.Padding = new Padding(0, 7, 0, 0);
+        otherCategoryButtons.WrapContents = false;
+
+        ConfigureDesignerButton(addOtherCategoryButton, "افزودن");
+        ConfigureDesignerButton(renameOtherCategoryButton, "تغییر نام");
+        ConfigureDesignerButton(deleteOtherCategoryButton, "حذف");
+
+        otherCategoryButtons.Controls.Add(deleteOtherCategoryButton);
+        otherCategoryButtons.Controls.Add(renameOtherCategoryButton);
+        otherCategoryButtons.Controls.Add(addOtherCategoryButton);
+
+        otherPage.Controls.Add(otherCategoryListBox);
+        otherPage.Controls.Add(otherCategoryTextBox);
+        otherPage.Controls.Add(otherCategoryButtons);
+
         // bottomPanel
         bottomPanel.Dock = DockStyle.Bottom;
         bottomPanel.Height = 55;
@@ -176,6 +225,9 @@ partial class MarketStructureForm
         categoryButtons.ResumeLayout(false);
         categoryPage.ResumeLayout(false);
         categoryPage.PerformLayout();
+        otherCategoryButtons.ResumeLayout(false);
+        otherPage.ResumeLayout(false);
+        otherPage.PerformLayout();
         marketButtons.ResumeLayout(false);
         marketPage.ResumeLayout(false);
         marketPage.PerformLayout();
