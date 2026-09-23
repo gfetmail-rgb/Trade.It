@@ -35,30 +35,6 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
     }
 
-    internal void CopyFilterItemsTo(
-        CheckedListBox exchange,
-        CheckedListBox market,
-        CheckedListBox board,
-        CheckedListBox asset,
-        CheckedListBox fundType,
-        CheckedListBox industryGroup)
-    {
-        exchange.Items.Clear();
-        market.Items.Clear();
-        board.Items.Clear();
-        CopyItems(assetComboBox, asset);
-        fundType.Items.Clear();
-        industryGroup.Items.Clear();
-    }
-
-    private static void CopyItems(ComboBox source, CheckedListBox target)
-    {
-        target.Items.Clear();
-
-        foreach (var item in source.Items)
-            target.Items.Add(item);
-    }
-
     private void SetComboDefaults()
     {
         assetComboBox.Items.Clear();
