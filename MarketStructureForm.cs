@@ -359,9 +359,47 @@ public sealed partial class MarketStructureForm : Form
         }
 
         var index = categoryListBox.SelectedIndex;
+        var normalizedOldValue =
+            SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(oldValue);
+        var normalizedNewValue =
+            SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(newValue);
+
+        var symbolDefinitions = SymbolDefinitionForm.SymbolDefinitionStore.Load();
+        var changedSymbols = 0;
+
+        foreach (var symbol in symbolDefinitions)
+        {
+            var category =
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol.AssetCategory);
+
+            var assetType =
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol.AssetType);
+
+            var changed = false;
+
+            if (string.Equals(category, normalizedOldValue, StringComparison.OrdinalIgnoreCase))
+            {
+                symbol.AssetCategory = newValue;
+                changed = true;
+            }
+
+            if (string.Equals(assetType, normalizedOldValue, StringComparison.OrdinalIgnoreCase))
+            {
+                symbol.AssetType = newValue;
+                changed = true;
+            }
+
+            if (changed)
+                changedSymbols++;
+        }
+
         data.AssetCategories[index] = newValue;
 
         MarketStructureStore.Save(data);
+
+        if (changedSymbols > 0)
+            SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
+
         LoadData();
 
         categoryListBox.SelectedIndex = index;
