@@ -365,7 +365,6 @@ public sealed partial class MarketStructureForm : Form
             SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(newValue);
 
         var symbolDefinitions = SymbolDefinitionForm.SymbolDefinitionStore.Load();
-        var changedSymbols = 0;
 
         foreach (var symbol in symbolDefinitions)
         {
@@ -389,8 +388,7 @@ public sealed partial class MarketStructureForm : Form
                 changed = true;
             }
 
-            if (changed)
-                changedSymbols++;
+
         }
 
         data.AssetCategories[index] = newValue;
