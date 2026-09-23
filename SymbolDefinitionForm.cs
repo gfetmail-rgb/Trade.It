@@ -281,9 +281,6 @@ public sealed partial class SymbolDefinitionForm : Form
         if (loading || symbolsDataGridView.SelectedRows.Count == 0 || symbolsDataGridView.SelectedRows[0].Tag is not SymbolDefinition x) return;
         symbolTextBox.Text = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
         nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
-        SelectComboValue(exchangeComboBox, x.ExchangeTitle);
-        SelectComboValue(marketComboBox, x.MarketType);
-        SelectComboValue(boardComboBox, x.BoardType);
         SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
         SelectMarketTreeNode(x.MarketNodeId);
         SelectComboValue(groupComboBox, x.FundType);
@@ -332,9 +329,6 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolTextBox.Focus();
             return null;
         }
-        var exchange = SymbolDefinitionRules.NormalizeText(exchangeComboBox.Text);
-        var market = SymbolDefinitionRules.NormalizeText(marketComboBox.Text);
-        var board = SymbolDefinitionRules.NormalizeText(boardComboBox.Text);
         var marketNodeId = GetSelectedMarketNodeId();
         if (string.IsNullOrWhiteSpace(marketNodeId))
         {
@@ -353,9 +347,9 @@ public sealed partial class SymbolDefinitionForm : Form
             SymbolTitle = symbol,
             Name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text),
             MarketNodeId = marketNodeId,
-            ExchangeTitle = exchange,
-            MarketType = market,
-            BoardType = board,
+            ExchangeTitle = "",
+            MarketType = "",
+            BoardType = "",
             AssetType = asset,
             AssetCategory = asset,
             FundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text),
