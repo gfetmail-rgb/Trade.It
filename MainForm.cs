@@ -279,6 +279,13 @@ namespace Trade.It
             appliedMarketAssets.RemoveWhere(x =>
                 !validAssetCategories.Contains(x));
 
+            var validMarketNodeIds = data.Nodes
+                .Select(x => x.Id)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            appliedMarketNodeIds.RemoveWhere(x =>
+                !validMarketNodeIds.Contains(x));
+
             marketFilterExplicitNodeIds.Clear();
             foreach (var nodeId in appliedMarketNodeIds)
                 marketFilterExplicitNodeIds.Add(nodeId);
