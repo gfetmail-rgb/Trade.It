@@ -8,6 +8,7 @@ namespace Trade.It;
 public sealed partial class SymbolDefinitionForm : Form
 {
     private bool loading;
+    private string selectedMarketNodeId = "";
     private int sortColumnIndex = -1;
     private SortOrder sortOrder = SortOrder.None;
 
@@ -27,6 +28,10 @@ public sealed partial class SymbolDefinitionForm : Form
         exportButton.Click += (_, _) => ExportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
+        marketTreeView.AfterSelect += (_, e) =>
+        {
+            selectedMarketNodeId = e.Node?.Tag as string ?? e.Node?.Name ?? "";
+        };
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
     }
 
@@ -118,6 +123,9 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private string GetSelectedMarketNodeId()
     {
+        if (!string.IsNullOrWhiteSpace(selectedMarketNodeId))
+            return selectedMarketNodeId;
+
         var selectedNode = marketTreeView.SelectedNode;
         if (selectedNode == null)
             return "";
@@ -128,6 +136,7 @@ public sealed partial class SymbolDefinitionForm : Form
     private void SelectMarketTreeNode(string nodeId)
     {
         marketTreeView.SelectedNode = null;
+        selectedMarketNodeId = "";
 
         nodeId = SymbolDefinitionRules.NormalizeText(nodeId);
         if (string.IsNullOrWhiteSpace(nodeId))
@@ -139,6 +148,7 @@ public sealed partial class SymbolDefinitionForm : Form
             if (found != null)
             {
                 marketTreeView.SelectedNode = found;
+                selectedMarketNodeId = found.Tag as string ?? found.Name ?? "";
                 found.EnsureVisible();
                 return;
             }
@@ -334,7 +344,7 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolTextBox.Focus();
             return null;
         }
-        var marketNodeId = GetSelectedMarketNodeId();
+        var marketNodeId = SymbolDefinitionRules.NormalizeText(GetSelectedMarketNodeId());
         if (string.IsNullOrWhiteSpace(marketNodeId))
         {
             MessageBox.Show(this, "ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
