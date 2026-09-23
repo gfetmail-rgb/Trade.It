@@ -122,7 +122,7 @@ public sealed partial class SymbolDefinitionForm : Form
         if (selectedNode == null)
             return "";
 
-        return selectedNode.Name ?? "";
+        return selectedNode.Tag as string ?? selectedNode.Name ?? "";
     }
 
     private void SelectMarketTreeNode(string nodeId)
@@ -147,7 +147,9 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private static TreeNode? FindMarketTreeNode(TreeNode node, string nodeId)
     {
-        if (string.Equals(node.Tag as string, nodeId, StringComparison.Ordinal))
+        var tagId = node.Tag as string;
+        if (string.Equals(tagId, nodeId, StringComparison.Ordinal) ||
+            string.Equals(node.Name, nodeId, StringComparison.Ordinal))
             return node;
 
         foreach (TreeNode child in node.Nodes)
@@ -336,6 +338,14 @@ public sealed partial class SymbolDefinitionForm : Form
         if (string.IsNullOrWhiteSpace(marketNodeId))
         {
             MessageBox.Show(this, "ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            marketTreeView.Focus();
+            return null;
+        }
+
+        var marketData = MarketStructureStore.Load();
+        if (!marketData.Nodes.Any(x => string.Equals(x.Id, marketNodeId, StringComparison.Ordinal)))
+        {
+            MessageBox.Show(this, "ردیف انتخاب‌شده در ساختار بازار معتبر نیست. دوباره یک ردیف را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketTreeView.Focus();
             return null;
         }
