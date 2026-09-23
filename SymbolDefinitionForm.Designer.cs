@@ -7,6 +7,7 @@ partial class SymbolDefinitionForm
     private TextBox nameTextBox = null!;
     private ComboBox exchangeComboBox = null!;
     private ComboBox marketComboBox = null!;
+    private TreeView marketTreeView = null!;
     private ComboBox boardComboBox = null!;
     private ComboBox assetComboBox = null!;
     private ComboBox groupComboBox = null!;
@@ -42,6 +43,7 @@ partial class SymbolDefinitionForm
         nameTextBox = new TextBox();
         exchangeComboBox = new ComboBox();
         marketComboBox = new ComboBox();
+        marketTreeView = new TreeView();
         boardComboBox = new ComboBox();
         assetComboBox = new ComboBox();
         groupComboBox = new ComboBox();
@@ -367,7 +369,7 @@ partial class SymbolDefinitionForm
         label30.Name = "label30";
         label30.Size = new Size(76, 30);
         label30.TabIndex = 19;
-        label30.Text = "بازار";
+        label30.Text = "ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label01
