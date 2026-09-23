@@ -412,9 +412,44 @@ public sealed partial class MarketStructureForm : Form
 
         var value = categoryListBox.SelectedItem?.ToString() ?? "";
 
+        var normalizedValue = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value);
+
+        var assignedSymbols = SymbolDefinitionForm.SymbolDefinitionStore
+            .Load()
+            .Where(x =>
+                string.Equals(
+                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetCategory),
+                    normalizedValue,
+                    StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(
+                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetType),
+                    normalizedValue,
+                    StringComparison.OrdinalIgnoreCase))
+            .Select(x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (assignedSymbols.Count > 0)
+        {
+            var preview = string.Join("، ", assignedSymbols.Take(10));
+            if (assignedSymbols.Count > 10)
+                preview += "، ...";
+
+            MessageBox.Show(
+                this,
+                $"نوع دارایی «{value}» به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
+                $"نمادها: {preview}",
+                "حذف نوع دارایی",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            return;
+        }
+
         if (MessageBox.Show(
                 this,
-                $"نوع «{value}» حذف شود؟",
+                $"نوع «{value}» حذف شود؟
                 "حذف نوع دارایی",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)
