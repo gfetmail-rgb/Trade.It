@@ -32,9 +32,11 @@ namespace Trade.It
 
         private readonly HashSet<string> appliedMarketNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketOtherItems = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private bool updatingMarketFilterTree;
         private bool updatingMarketAssetChecks;
+        private bool updatingMarketOtherChecks;
 
         public MainForm()
         {
@@ -43,6 +45,7 @@ namespace Trade.It
 
             marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
             marketAssetCheckedListBox.ItemCheck += MarketAssetCheckedListBox_ItemCheck;
+            marketOtherCheckedListBox.ItemCheck += MarketOtherCheckedListBox_ItemCheck;
 
             marketApplyButton.Click += (_, _) =>
             {
@@ -51,6 +54,7 @@ namespace Trade.It
                     appliedMarketNodeIds.Add(nodeId);
 
                 CopyCheckedItems(appliedMarketAssets, marketAssetCheckedListBox);
+                CopyCheckedItems(appliedMarketOtherItems, marketOtherCheckedListBox);
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
@@ -136,6 +140,7 @@ namespace Trade.It
             appliedMarketNodeIds.Clear();
             appliedMarketAssets.Clear();
             marketFilterExplicitNodeIds.Clear();
+            appliedMarketOtherItems.Clear();
 
             updatingMarketFilterTree = true;
             try
@@ -149,6 +154,7 @@ namespace Trade.It
             }
 
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
+            SetOtherCheckedItems(marketOtherCheckedListBox, appliedMarketOtherItems);
         }
 
         private void MarketFilterTreeView_AfterCheck(object? sender, TreeViewEventArgs e)
@@ -246,6 +252,63 @@ namespace Trade.It
             }
         }
 
+        private void MarketOtherCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
+        {
+            if (updatingMarketOtherChecks)
+                return;
+
+            var allIndex = -1;
+            for (var i = 0; i < marketOtherCheckedListBox.Items.Count; i++)
+            {
+                if (string.Equals(marketOtherCheckedListBox.Items[i]?.ToString()?.Trim(), "همه", StringComparison.OrdinalIgnoreCase))
+                {
+                    allIndex = i;
+                    break;
+                }
+            }
+
+            if (allIndex < 0)
+                return;
+
+            updatingMarketOtherChecks = true;
+            try
+            {
+                if (e.Index == allIndex && e.NewValue == CheckState.Checked)
+                {
+                    for (var i = 0; i < marketOtherCheckedListBox.Items.Count; i++)
+                        if (i != allIndex)
+                            marketOtherCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
+                }
+                else if (e.Index != allIndex && e.NewValue == CheckState.Checked)
+                {
+                    marketOtherCheckedListBox.SetItemCheckState(allIndex, CheckState.Unchecked);
+                }
+                else if (e.Index != allIndex && e.NewValue == CheckState.Unchecked)
+                {
+                    var anotherItemChecked = false;
+
+                    for (var i = 0; i < marketOtherCheckedListBox.Items.Count; i++)
+                    {
+                        if (i == allIndex || i == e.Index)
+                            continue;
+
+                        if (marketOtherCheckedListBox.GetItemChecked(i))
+                        {
+                            anotherItemChecked = true;
+                            break;
+                        }
+                    }
+
+                    if (!anotherItemChecked)
+                        marketOtherCheckedListBox.SetItemCheckState(allIndex, CheckState.Checked);
+                }
+            }
+            finally
+            {
+                updatingMarketOtherChecks = false;
+            }
+        }
+
         private void LoadMarketFilterItemsFromSymbolDefinition()
         {
             var data = MarketStructureStore.Load();
@@ -273,11 +336,22 @@ namespace Trade.It
             foreach (var category in data.AssetCategories)
                 marketAssetCheckedListBox.Items.Add(category);
 
+            marketOtherCheckedListBox.Items.Clear();
+            marketOtherCheckedListBox.Items.Add("همه");
+            foreach (var item in data.OtherCategories)
+                marketOtherCheckedListBox.Items.Add(item);
+
             var validAssetCategories = data.AssetCategories
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             appliedMarketAssets.RemoveWhere(x =>
                 !validAssetCategories.Contains(x));
+
+            var validOtherCategories = data.OtherCategories
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            appliedMarketOtherItems.RemoveWhere(x =>
+                !validOtherCategories.Contains(x));
 
             var validMarketNodeIds = data.Nodes
                 .Select(x => x.Id)
@@ -292,6 +366,7 @@ namespace Trade.It
 
             RefreshMarketFilterTreeChecks();
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
+            SetOtherCheckedItems(marketOtherCheckedListBox, appliedMarketOtherItems);
         }
 
         private static TreeNode CreateMarketFilterTreeNode(
@@ -457,6 +532,38 @@ namespace Trade.It
             finally
             {
                 updatingMarketAssetChecks = false;
+            }
+        }
+
+        private void SetOtherCheckedItems(CheckedListBox listBox, HashSet<string> values)
+        {
+            updatingMarketOtherChecks = true;
+            try
+            {
+                var allIndex = -1;
+
+                for (var i = 0; i < listBox.Items.Count; i++)
+                {
+                    if (string.Equals(listBox.Items[i]?.ToString()?.Trim(), "همه", StringComparison.OrdinalIgnoreCase))
+                    {
+                        allIndex = i;
+                        break;
+                    }
+                }
+
+                for (var i = 0; i < listBox.Items.Count; i++)
+                {
+                    var value = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
+                    listBox.SetItemChecked(
+                        i,
+                        allIndex >= 0 && i == allIndex
+                            ? values.Count == 0
+                            : values.Contains(value));
+                }
+            }
+            finally
+            {
+                updatingMarketOtherChecks = false;
             }
         }
 
@@ -760,7 +867,8 @@ namespace Trade.It
 
             var hasMarketFilter =
                 appliedMarketNodeIds.Count > 0 ||
-                appliedMarketAssets.Count > 0;
+                appliedMarketAssets.Count > 0 ||
+                appliedMarketOtherItems.Count > 0;
 
             if (!hasMarketFilter)
                 return portfolioSymbols;
@@ -809,9 +917,20 @@ namespace Trade.It
                         string.IsNullOrWhiteSpace(item.AssetCategory)
                             ? item.AssetType
                             : item.AssetCategory);
+                    var otherItem = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(item.OtherItem);
 
-                    return appliedMarketAssets.Count == 0 ||
-                           appliedMarketAssets.Contains(asset);
+                    var hasClassificationFilter =
+                        appliedMarketAssets.Count > 0 || appliedMarketOtherItems.Count > 0;
+
+                    if (!hasClassificationFilter)
+                        return true;
+
+                    var assetMatch = appliedMarketAssets.Count > 0 &&
+                                     appliedMarketAssets.Contains(asset);
+                    var otherMatch = appliedMarketOtherItems.Count > 0 &&
+                                     appliedMarketOtherItems.Contains(otherItem);
+
+                    return assetMatch || otherMatch;
                 })
                 .ToList();
         }
