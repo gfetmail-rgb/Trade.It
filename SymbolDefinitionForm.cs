@@ -17,6 +17,7 @@ public sealed partial class SymbolDefinitionForm : Form
         foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
             column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
         SetComboDefaults();
+        LoadMarketTree();
         LoadGrid();
         newButton.Click += (_, _) => ClearEditor();
         saveButton.Click += (_, _) => SaveCurrent();
@@ -66,6 +67,94 @@ public sealed partial class SymbolDefinitionForm : Form
 
         groupComboBox.SelectedIndex = -1;
         industryGroupComboBox.SelectedIndex = -1;
+    }
+
+    private void LoadMarketTree(string? selectedNodeId = null)
+    {
+        marketTreeView.BeginUpdate();
+        try
+        {
+            marketTreeView.Nodes.Clear();
+
+            var data = MarketStructureStore.Load();
+            var roots = data.Nodes
+                .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
+                .OrderBy(x => x.SortOrder)
+                .ToList();
+
+            foreach (var root in roots)
+                marketTreeView.Nodes.Add(CreateMarketTreeNode(root, data.Nodes, selectedNodeId));
+
+            if (string.IsNullOrWhiteSpace(selectedNodeId))
+                marketTreeView.SelectedNode = null;
+        }
+        finally
+        {
+            marketTreeView.EndUpdate();
+        }
+    }
+
+    private static TreeNode CreateMarketTreeNode(
+        MarketStructureNode item,
+        IReadOnlyList<MarketStructureNode> allNodes,
+        string? selectedNodeId)
+    {
+        var node = new TreeNode(item.Title)
+        {
+            Name = item.Id,
+            Tag = item.Id
+        };
+
+        if (string.Equals(item.Id, selectedNodeId, StringComparison.Ordinal))
+            node.Checked = false;
+
+        foreach (var child in allNodes
+            .Where(x => string.Equals(x.ParentId, item.Id, StringComparison.Ordinal))
+            .OrderBy(x => x.SortOrder))
+        {
+            node.Nodes.Add(CreateMarketTreeNode(child, allNodes, selectedNodeId));
+        }
+
+        return node;
+    }
+
+    private string GetSelectedMarketNodeId()
+    {
+        return marketTreeView.SelectedNode?.Tag as string ?? "";
+    }
+
+    private void SelectMarketTreeNode(string nodeId)
+    {
+        marketTreeView.SelectedNode = null;
+
+        if (string.IsNullOrWhiteSpace(nodeId))
+            return;
+
+        foreach (TreeNode root in marketTreeView.Nodes)
+        {
+            var found = FindMarketTreeNode(root, nodeId);
+            if (found != null)
+            {
+                marketTreeView.SelectedNode = found;
+                found.EnsureVisible();
+                return;
+            }
+        }
+    }
+
+    private static TreeNode? FindMarketTreeNode(TreeNode node, string nodeId)
+    {
+        if (string.Equals(node.Tag as string, nodeId, StringComparison.Ordinal))
+            return node;
+
+        foreach (TreeNode child in node.Nodes)
+        {
+            var found = FindMarketTreeNode(child, nodeId);
+            if (found != null)
+                return found;
+        }
+
+        return null;
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -196,6 +285,7 @@ public sealed partial class SymbolDefinitionForm : Form
         SelectComboValue(marketComboBox, x.MarketType);
         SelectComboValue(boardComboBox, x.BoardType);
         SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
+        SelectMarketTreeNode(x.MarketNodeId);
         SelectComboValue(groupComboBox, x.FundType);
         SelectComboValue(industryGroupComboBox, x.IndustryGroup);
     }
@@ -229,6 +319,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Clear();
         nameTextBox.Clear();
         SetComboDefaults();
+        marketTreeView.SelectedNode = null;
         symbolTextBox.Focus();
     }
 
@@ -259,6 +350,13 @@ public sealed partial class SymbolDefinitionForm : Form
             boardComboBox.Focus();
             return null;
         }
+        var marketNodeId = GetSelectedMarketNodeId();
+        if (string.IsNullOrWhiteSpace(marketNodeId))
+        {
+            MessageBox.Show(this, "ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            marketTreeView.Focus();
+            return null;
+        }
         if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, assetComboBox.Items, out var asset))
         {
             MessageBox.Show(this, "نوع دارایی را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -269,6 +367,7 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             SymbolTitle = symbol,
             Name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text),
+            MarketNodeId = marketNodeId,
             ExchangeTitle = exchange,
             MarketType = market,
             BoardType = board,
@@ -296,6 +395,7 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             existing.SymbolTitle = item.SymbolTitle;
             existing.Name = item.Name;
+            existing.MarketNodeId = item.MarketNodeId;
             existing.ExchangeTitle = item.ExchangeTitle;
             existing.MarketType = item.MarketType;
             existing.BoardType = item.BoardType;
