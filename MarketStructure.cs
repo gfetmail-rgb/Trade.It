@@ -67,15 +67,38 @@ public static class MarketStructureStore
         data.Nodes ??= new();
         data.AssetCategories ??= new();
 
+        var usedIds = new HashSet<string>(StringComparer.Ordinal);
+
         foreach (var node in data.Nodes)
         {
             node.Id = string.IsNullOrWhiteSpace(node.Id)
                 ? Guid.NewGuid().ToString("N")
-                : node.Id;
+                : node.Id.Trim();
 
-            node.ParentId ??= "";
+            if (!usedIds.Add(node.Id))
+                node.Id = CreateUniqueId(usedIds);
+
+            node.ParentId = (node.ParentId ?? "").Trim();
             node.Title = (node.Title ?? "").Trim();
         }
+
+        var nodeIds = data.Nodes
+            .Select(x => x.Id)
+            .ToHashSet(StringComparer.Ordinal);
+
+        foreach (var node in data.Nodes)
+        {
+            if (string.IsNullOrWhiteSpace(node.ParentId))
+                continue;
+
+            if (string.Equals(node.ParentId, node.Id, StringComparison.Ordinal) ||
+                !nodeIds.Contains(node.ParentId))
+            {
+                node.ParentId = "";
+            }
+        }
+
+        RecalculateSortOrders(data);
 
         if (!data.Nodes.Any(x =>
             string.IsNullOrEmpty(x.ParentId) &&
@@ -89,6 +112,33 @@ public static class MarketStructureStore
             .Select(x => x.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
+    }
+
+    private static string CreateUniqueId(HashSet<string> usedIds)
+    {
+        string id;
+        do
+        {
+            id = Guid.NewGuid().ToString("N");
+        }
+        while (!usedIds.Add(id));
+
+        return id;
+    }
+
+    private static void RecalculateSortOrders(MarketStructureData data)
+    {
+        foreach (var group in data.Nodes
+            .GroupBy(x => x.ParentId, StringComparer.Ordinal))
+        {
+            var ordered = group
+                .OrderBy(x => x.SortOrder)
+                .ThenBy(x => x.Title, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            for (var i = 0; i < ordered.Count; i++)
+                ordered[i].SortOrder = i;
+        }
     }
 
     public static MarketStructureData CreateDefault()
