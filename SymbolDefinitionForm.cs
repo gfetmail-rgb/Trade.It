@@ -195,7 +195,7 @@ public sealed partial class SymbolDefinitionForm : Form
         SelectComboValue(exchangeComboBox, x.ExchangeTitle);
         SelectComboValue(marketComboBox, x.MarketType);
         SelectComboValue(boardComboBox, x.BoardType);
-        SelectComboValue(assetComboBox, x.AssetType);
+        SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
         SelectComboValue(groupComboBox, x.FundType);
         SelectComboValue(industryGroupComboBox, x.IndustryGroup);
     }
@@ -273,6 +273,7 @@ public sealed partial class SymbolDefinitionForm : Form
             MarketType = market,
             BoardType = board,
             AssetType = asset,
+            AssetCategory = asset,
             FundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text),
             IndustryGroup = SymbolDefinitionRules.NormalizeText(industryGroupComboBox.Text),
             IndustryGroupOrFundType = ""
@@ -299,6 +300,7 @@ public sealed partial class SymbolDefinitionForm : Form
             existing.MarketType = item.MarketType;
             existing.BoardType = item.BoardType;
             existing.AssetType = item.AssetType;
+            existing.AssetCategory = item.AssetCategory;
             existing.FundType = item.FundType;
             existing.IndustryGroup = item.IndustryGroup;
             existing.IndustryGroupOrFundType = "";
