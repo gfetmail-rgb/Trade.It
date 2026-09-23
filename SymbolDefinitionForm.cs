@@ -39,12 +39,17 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private void SetComboDefaults()
     {
+        var marketData = MarketStructureStore.Load();
+
         assetComboBox.Items.Clear();
-        foreach (var category in MarketStructureStore.Load().AssetCategories)
+        foreach (var category in marketData.AssetCategories)
             assetComboBox.Items.Add(category);
         assetComboBox.SelectedIndex = -1;
 
-
+        otherItemComboBox.Items.Clear();
+        foreach (var item in marketData.OtherCategories)
+            otherItemComboBox.Items.Add(item);
+        otherItemComboBox.SelectedIndex = -1;
     }
 
     private void LoadMarketTree(string? selectedNodeId = null)
@@ -381,6 +386,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Text = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
         nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
         SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
+        SelectComboValue(otherItemComboBox, x.OtherItem);
         SelectMarketTreeNode(x.MarketNodeId);
 
     }
@@ -462,6 +468,7 @@ public sealed partial class SymbolDefinitionForm : Form
             BoardType = "",
             AssetType = asset,
             AssetCategory = asset,
+            OtherItem = SymbolDefinitionRules.NormalizeText(otherItemComboBox.Text),
             FundType = "",
             IndustryGroup = "",
             IndustryGroupOrFundType = ""
@@ -503,6 +510,7 @@ public sealed partial class SymbolDefinitionForm : Form
             existing.BoardType = item.BoardType;
             existing.AssetType = item.AssetType;
             existing.AssetCategory = item.AssetCategory;
+            existing.OtherItem = item.OtherItem;
             existing.FundType = item.FundType;
             existing.IndustryGroup = item.IndustryGroup;
             existing.IndustryGroupOrFundType = "";
@@ -722,6 +730,7 @@ public sealed partial class SymbolDefinitionForm : Form
         public string MarketType { get; set; } = "";
         public string BoardType { get; set; } = "";
         public string AssetType { get; set; } = "";
+        public string OtherItem { get; set; } = "";
         public string FundType { get; set; } = "";
         public string IndustryGroup { get; set; } = "";
         public string IndustryGroupOrFundType { get; set; } = "";
@@ -863,6 +872,7 @@ public sealed partial class SymbolDefinitionForm : Form
             x.MarketType = NormalizeOption(x.MarketType);
             x.BoardType = NormalizeOption(x.BoardType);
             x.AssetType = NormalizeOption(x.AssetType);
+            x.OtherItem = NormalizeOption(x.OtherItem);
             x.FundType = NormalizeOption(x.FundType);
             x.IndustryGroup = NormalizeOption(x.IndustryGroup);
             x.IndustryGroupOrFundType = NormalizeOption(x.IndustryGroupOrFundType);
