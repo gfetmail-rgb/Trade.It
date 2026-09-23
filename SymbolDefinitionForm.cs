@@ -172,6 +172,39 @@ public sealed partial class SymbolDefinitionForm : Form
         return null;
     }
 
+    private static (string Exchange, string Market, string Board) GetMarketPath(SymbolDefinition item)
+    {
+        var nodeId = SymbolDefinitionRules.NormalizeText(item.MarketNodeId);
+        if (string.IsNullOrWhiteSpace(nodeId))
+            return ("", "", "");
+
+        var data = MarketStructureStore.Load();
+        var byId = data.Nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
+
+        if (!byId.TryGetValue(nodeId, out var node))
+            return ("", "", "");
+
+        var path = new List<string>();
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+
+        while (node != null && visited.Add(node.Id))
+        {
+            path.Add(node.Title);
+            if (string.IsNullOrWhiteSpace(node.ParentId))
+                break;
+
+            if (!byId.TryGetValue(node.ParentId, out node!))
+                break;
+        }
+
+        path.Reverse();
+
+        return (
+            path.Count > 0 ? path[0] : "",
+            path.Count > 1 ? path[1] : "",
+            path.Count > 2 ? path[2] : "");
+    }
+
     private void LoadGrid(string? selectSymbol = null)
     {
         loading = true;
@@ -181,14 +214,16 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in SymbolDefinitionStore.Load().OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase))
             {
+                var marketPath = GetMarketPath(item);
+
                 int r = symbolsDataGridView.Rows.Add(
                     rowNumber++,
                     item.SymbolTitle,
                     item.Name,
-                    item.ExchangeTitle,
-                    item.MarketType,
-                    item.BoardType,
-                    item.AssetType,
+                    marketPath.Exchange,
+                    marketPath.Market,
+                    marketPath.Board,
+                    item.AssetCategory,
                     item.FundType,
                     item.IndustryGroup);
 
@@ -244,14 +279,16 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
+                var marketPath = GetMarketPath(item);
+
                 int rowIndex = symbolsDataGridView.Rows.Add(
                     rowNumber++,
                     item.SymbolTitle,
                     item.Name,
-                    item.ExchangeTitle,
-                    item.MarketType,
-                    item.BoardType,
-                    item.AssetType,
+                    marketPath.Exchange,
+                    marketPath.Market,
+                    marketPath.Board,
+                    item.AssetCategory,
                     item.FundType,
                     item.IndustryGroup);
 
@@ -278,10 +315,10 @@ public sealed partial class SymbolDefinitionForm : Form
     {
         1 => item.SymbolTitle ?? string.Empty,
         2 => item.Name ?? string.Empty,
-        3 => item.ExchangeTitle ?? string.Empty,
-        4 => item.MarketType ?? string.Empty,
-        5 => item.BoardType ?? string.Empty,
-        6 => item.AssetType ?? string.Empty,
+        3 => GetMarketPath(item).Exchange,
+        4 => GetMarketPath(item).Market,
+        5 => GetMarketPath(item).Board,
+        6 => item.AssetCategory ?? item.AssetType ?? string.Empty,
         7 => string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
             ? string.Empty
             : item.FundType,
