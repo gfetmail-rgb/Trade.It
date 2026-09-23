@@ -68,6 +68,7 @@ public static class MarketStructureStore
         data.AssetCategories ??= new();
 
         var usedIds = new HashSet<string>(StringComparer.Ordinal);
+        var duplicateIds = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var node in data.Nodes)
         {
@@ -76,7 +77,10 @@ public static class MarketStructureStore
                 : node.Id.Trim();
 
             if (!usedIds.Add(node.Id))
+            {
+                duplicateIds.Add(node.Id);
                 node.Id = CreateUniqueId(usedIds);
+            }
 
             node.ParentId = (node.ParentId ?? "").Trim();
             node.Title = (node.Title ?? "").Trim();
@@ -91,7 +95,8 @@ public static class MarketStructureStore
             if (string.IsNullOrWhiteSpace(node.ParentId))
                 continue;
 
-            if (string.Equals(node.ParentId, node.Id, StringComparison.Ordinal) ||
+            if (duplicateIds.Contains(node.ParentId) ||
+                string.Equals(node.ParentId, node.Id, StringComparison.Ordinal) ||
                 !nodeIds.Contains(node.ParentId))
             {
                 node.ParentId = "";
