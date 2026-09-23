@@ -407,4 +407,5 @@ partial class SymbolDefinitionForm
     private DataGridViewTextBoxColumn marketColumn;
     private DataGridViewTextBoxColumn boardColumn;
     private DataGridViewTextBoxColumn assetColumn;
+    private DataGridViewTextBoxColumn otherItemColumn;
 }
