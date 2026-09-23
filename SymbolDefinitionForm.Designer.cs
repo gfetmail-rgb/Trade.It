@@ -240,6 +240,8 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.Name = "symbolsDataGridView";
         symbolsDataGridView.ReadOnly = true;
         symbolsDataGridView.RightToLeft = RightToLeft.Yes;
+        symbolsDataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        symbolsDataGridView.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         symbolsDataGridView.RowHeadersVisible = false;
         symbolsDataGridView.RowHeadersWidth = 62;
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -253,6 +255,7 @@ partial class SymbolDefinitionForm
         rowNumberColumn.MinimumWidth = 45;
         rowNumberColumn.Name = "rowNumberColumn";
         rowNumberColumn.ReadOnly = true;
+        rowNumberColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         rowNumberColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // symbolTitleColumn
@@ -261,6 +264,7 @@ partial class SymbolDefinitionForm
         symbolTitleColumn.MinimumWidth = 8;
         symbolTitleColumn.Name = "symbolTitleColumn";
         symbolTitleColumn.ReadOnly = true;
+        symbolTitleColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // nameColumn
@@ -270,6 +274,7 @@ partial class SymbolDefinitionForm
         nameColumn.MinimumWidth = 8;
         nameColumn.Name = "nameColumn";
         nameColumn.ReadOnly = true;
+        nameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // exchangeColumn
@@ -278,6 +283,7 @@ partial class SymbolDefinitionForm
         exchangeColumn.MinimumWidth = 8;
         exchangeColumn.Name = "exchangeColumn";
         exchangeColumn.ReadOnly = true;
+        exchangeColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // marketColumn
@@ -286,6 +292,7 @@ partial class SymbolDefinitionForm
         marketColumn.MinimumWidth = 8;
         marketColumn.Name = "marketColumn";
         marketColumn.ReadOnly = true;
+        marketColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // boardColumn
@@ -294,6 +301,7 @@ partial class SymbolDefinitionForm
         boardColumn.MinimumWidth = 8;
         boardColumn.Name = "boardColumn";
         boardColumn.ReadOnly = true;
+        boardColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // assetColumn
@@ -303,6 +311,7 @@ partial class SymbolDefinitionForm
         assetColumn.MinimumWidth = 8;
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
+        assetColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // fundTypeColumn
@@ -312,6 +321,7 @@ partial class SymbolDefinitionForm
         fundTypeColumn.MinimumWidth = 8;
         fundTypeColumn.Name = "fundTypeColumn";
         fundTypeColumn.ReadOnly = true;
+        fundTypeColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         fundTypeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // industryGroupColumn
@@ -321,6 +331,7 @@ partial class SymbolDefinitionForm
         industryGroupColumn.MinimumWidth = 8;
         industryGroupColumn.Name = "industryGroupColumn";
         industryGroupColumn.ReadOnly = true;
+        industryGroupColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         industryGroupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // label00
