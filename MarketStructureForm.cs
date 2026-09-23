@@ -449,7 +449,7 @@ public sealed partial class MarketStructureForm : Form
 
         if (MessageBox.Show(
                 this,
-                $"نوع «{value}» حذف شود؟
+                $"نوع «{value}» حذف شود؟",
                 "حذف نوع دارایی",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)
