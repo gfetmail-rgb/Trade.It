@@ -30,12 +30,8 @@ namespace Trade.It
         private TextBox textBox1;
 
 
-        private readonly HashSet<string> appliedMarketExchanges = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> appliedMarketTypes = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> appliedMarketBoards = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> appliedMarketNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> appliedMarketFundTypes = new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> appliedMarketIndustryGroups = new(StringComparer.OrdinalIgnoreCase);
 
         public MainForm()
         {
@@ -44,12 +40,17 @@ namespace Trade.It
 
             marketApplyButton.Click += (_, _) =>
             {
-                CopyCheckedItems(appliedMarketExchanges, marketExchangeCheckedListBox);
-                CopyCheckedItems(appliedMarketTypes, marketTypeCheckedListBox);
-                CopyCheckedItems(appliedMarketBoards, marketBoardCheckedListBox);
+                appliedMarketNodeIds.Clear();
+                foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+                {
+                    if (node.Checked && node.Tag is string nodeId &&
+                        !string.IsNullOrWhiteSpace(nodeId))
+                    {
+                        appliedMarketNodeIds.Add(nodeId);
+                    }
+                }
+
                 CopyCheckedItems(appliedMarketAssets, marketAssetCheckedListBox);
-                CopyCheckedItems(appliedMarketFundTypes, marketFundTypeCheckedListBox);
-                CopyCheckedItems(appliedMarketIndustryGroups, marketIndustryGroupCheckedListBox);
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
@@ -122,29 +123,19 @@ namespace Trade.It
 
         private void RestoreAppliedMarketFilters()
         {
-            SetCheckedItems(marketExchangeCheckedListBox, appliedMarketExchanges);
-            SetCheckedItems(marketTypeCheckedListBox, appliedMarketTypes);
-            SetCheckedItems(marketBoardCheckedListBox, appliedMarketBoards);
+            SetCheckedMarketNodes(appliedMarketNodeIds);
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
-            SetCheckedItems(marketFundTypeCheckedListBox, appliedMarketFundTypes);
-            SetCheckedItems(marketIndustryGroupCheckedListBox, appliedMarketIndustryGroups);
         }
 
         private void ClearMarketSelections()
         {
-            appliedMarketExchanges.Clear();
-            appliedMarketTypes.Clear();
-            appliedMarketBoards.Clear();
+            appliedMarketNodeIds.Clear();
             appliedMarketAssets.Clear();
-            appliedMarketFundTypes.Clear();
-            appliedMarketIndustryGroups.Clear();
 
-            ClearCheckedListBox(marketExchangeCheckedListBox);
-            ClearCheckedListBox(marketTypeCheckedListBox);
-            ClearCheckedListBox(marketBoardCheckedListBox);
+            foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+                node.Checked = false;
+
             ClearCheckedListBox(marketAssetCheckedListBox);
-            ClearCheckedListBox(marketFundTypeCheckedListBox);
-            ClearCheckedListBox(marketIndustryGroupCheckedListBox);
         }
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
@@ -155,15 +146,81 @@ namespace Trade.It
 
         private void LoadMarketFilterItemsFromSymbolDefinition()
         {
-            using var symbolDefinitionForm = new SymbolDefinitionForm();
+            var data = MarketStructureStore.Load();
 
-            symbolDefinitionForm.CopyFilterItemsTo(
-                marketExchangeCheckedListBox,
-                marketTypeCheckedListBox,
-                marketBoardCheckedListBox,
-                marketAssetCheckedListBox,
-                marketFundTypeCheckedListBox,
-                marketIndustryGroupCheckedListBox);
+            marketFilterTreeView.BeginUpdate();
+            try
+            {
+                marketFilterTreeView.Nodes.Clear();
+
+                var roots = data.Nodes
+                    .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
+                    .OrderBy(x => x.SortOrder)
+                    .ToList();
+
+                foreach (var root in roots)
+                    marketFilterTreeView.Nodes.Add(CreateMarketFilterTreeNode(root, data.Nodes));
+            }
+            finally
+            {
+                marketFilterTreeView.EndUpdate();
+            }
+
+            marketAssetCheckedListBox.Items.Clear();
+            foreach (var category in data.AssetCategories)
+                marketAssetCheckedListBox.Items.Add(category);
+
+            SetCheckedMarketNodes(appliedMarketNodeIds);
+            SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
+        }
+
+        private static TreeNode CreateMarketFilterTreeNode(
+            MarketStructureNode item,
+            IReadOnlyList<MarketStructureNode> allNodes)
+        {
+            var node = new TreeNode(item.Title)
+            {
+                Name = item.Id,
+                Tag = item.Id
+            };
+
+            foreach (var child in allNodes
+                .Where(x => string.Equals(x.ParentId, item.Id, StringComparison.Ordinal))
+                .OrderBy(x => x.SortOrder))
+            {
+                node.Nodes.Add(CreateMarketFilterTreeNode(child, allNodes));
+            }
+
+            return node;
+        }
+
+        private static IEnumerable<TreeNode> GetAllTreeNodes(TreeView treeView)
+        {
+            foreach (TreeNode root in treeView.Nodes)
+            {
+                foreach (var node in GetTreeNodeAndChildren(root))
+                    yield return node;
+            }
+        }
+
+        private static IEnumerable<TreeNode> GetTreeNodeAndChildren(TreeNode node)
+        {
+            yield return node;
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                foreach (var descendant in GetTreeNodeAndChildren(child))
+                    yield return descendant;
+            }
+        }
+
+        private void SetCheckedMarketNodes(HashSet<string> values)
+        {
+            foreach (var node in GetAllTreeNodes(marketFilterTreeView))
+            {
+                var nodeId = node.Tag as string ?? node.Name;
+                node.Checked = !string.IsNullOrWhiteSpace(nodeId) && values.Contains(nodeId);
+            }
         }
 
         private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)
@@ -500,15 +557,22 @@ namespace Trade.It
                 .ToList();
 
             var hasMarketFilter =
-                appliedMarketExchanges.Count > 0 ||
-                appliedMarketTypes.Count > 0 ||
-                appliedMarketBoards.Count > 0 ||
-                appliedMarketAssets.Count > 0 ||
-                appliedMarketFundTypes.Count > 0 ||
-                appliedMarketIndustryGroups.Count > 0;
+                appliedMarketNodeIds.Count > 0 ||
+                appliedMarketAssets.Count > 0;
 
             if (!hasMarketFilter)
                 return portfolioSymbols;
+
+            var marketData = MarketStructureStore.Load();
+            var nodesById = marketData.Nodes
+                .ToDictionary(x => x.Id, StringComparer.Ordinal);
+
+            var selectedNodesByDepth = appliedMarketNodeIds
+                .Where(nodesById.ContainsKey)
+                .GroupBy(id => GetMarketNodeDepth(id, nodesById))
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.ToHashSet(StringComparer.OrdinalIgnoreCase));
 
             var definitions = SymbolDefinitionForm.SymbolDefinitionStore.Load()
                 .ToDictionary(
@@ -523,15 +587,66 @@ namespace Trade.It
                     if (!definitions.TryGetValue(key, out var item))
                         return false;
 
-                    return
-                        MatchesSelection(item.ExchangeTitle, appliedMarketExchanges) &&
-                        MatchesSelection(item.MarketType, appliedMarketTypes) &&
-                        MatchesSelection(item.BoardType, appliedMarketBoards) &&
-                        MatchesSelection(item.AssetType, appliedMarketAssets) &&
-                        MatchesSelection(item.FundType, appliedMarketFundTypes) &&
-                        MatchesSelection(item.IndustryGroup, appliedMarketIndustryGroups);
+                    if (selectedNodesByDepth.Count > 0)
+                    {
+                        var pathIds = GetMarketPathIds(item.MarketNodeId, nodesById);
+
+                        if (!selectedNodesByDepth.All(group =>
+                            pathIds.Count > group.Key &&
+                            group.Value.Contains(pathIds[group.Key])))
+                        {
+                            return false;
+                        }
+                    }
+
+                    var asset = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(
+                        string.IsNullOrWhiteSpace(item.AssetCategory)
+                            ? item.AssetType
+                            : item.AssetCategory);
+
+                    return appliedMarketAssets.Count == 0 ||
+                           appliedMarketAssets.Contains(asset);
                 })
                 .ToList();
+        }
+
+        private static int GetMarketNodeDepth(
+            string nodeId,
+            IReadOnlyDictionary<string, MarketStructureNode> nodesById)
+        {
+            var depth = 0;
+            var currentId = nodeId;
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+
+            while (nodesById.TryGetValue(currentId, out var node) &&
+                   !string.IsNullOrWhiteSpace(node.ParentId) &&
+                   visited.Add(currentId))
+            {
+                depth++;
+                currentId = node.ParentId;
+            }
+
+            return depth;
+        }
+
+        private static List<string> GetMarketPathIds(
+            string nodeId,
+            IReadOnlyDictionary<string, MarketStructureNode> nodesById)
+        {
+            var result = new List<string>();
+            var currentId = nodeId;
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+
+            while (!string.IsNullOrWhiteSpace(currentId) &&
+                   nodesById.TryGetValue(currentId, out var node) &&
+                   visited.Add(currentId))
+            {
+                result.Add(node.Id);
+                currentId = node.ParentId;
+            }
+
+            result.Reverse();
+            return result;
         }
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
