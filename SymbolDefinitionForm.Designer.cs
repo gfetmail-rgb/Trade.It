@@ -111,6 +111,17 @@ partial class SymbolDefinitionForm
         marketComboBox.Size = new Size(186, 30);
         marketComboBox.TabIndex = 3;
         // 
+        // marketTreeView
+        // 
+        marketTreeView.Location = new Point(1075, 20);
+        marketTreeView.Name = "marketTreeView";
+        marketTreeView.Size = new Size(186, 86);
+        marketTreeView.TabIndex = 25;
+        marketTreeView.HideSelection = false;
+        marketTreeView.RightToLeft = RightToLeft.Yes;
+        marketTreeView.RightToLeftLayout = true;
+        // 
+        // 
         // boardComboBox
         // 
         boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -433,7 +444,7 @@ partial class SymbolDefinitionForm
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
         Controls.Add(exchangeComboBox);
-        Controls.Add(marketComboBox);
+        Controls.Add(marketTreeView);
         Controls.Add(boardComboBox);
         Controls.Add(assetComboBox);
         Controls.Add(groupComboBox);
