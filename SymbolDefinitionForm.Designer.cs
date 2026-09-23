@@ -181,7 +181,7 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         symbolsDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, fundTypeColumn, industryGroupColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn });
         symbolsDataGridView.Location = new Point(10, 165);
         symbolsDataGridView.MultiSelect = false;
         symbolsDataGridView.Name = "symbolsDataGridView";
@@ -337,7 +337,6 @@ partial class SymbolDefinitionForm
         ResumeLayout(false);
         PerformLayout();
     }
-    private Label label1;
     private ToolTip toolTip1;
     private Button exportButton;
     private DataGridViewTextBoxColumn rowNumberColumn;
