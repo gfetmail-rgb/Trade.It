@@ -2040,6 +2040,7 @@
         private Label label11;
         private Label label10;
         private ToolStripMenuItem symbolDefinitionMenuItem;
+        private ToolStripMenuItem marketStructureMenuItem;
         private ComboBox marketTypeComboBox;
         private ComboBox marketBoardComboBox;
         private ComboBox marketAssetComboBox;
