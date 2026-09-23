@@ -756,12 +756,16 @@ namespace Trade.It
             var nodesById = marketData.Nodes
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
-            var selectedNodesByDepth = appliedMarketNodeIds
+            var selectedNodesByRoot = appliedMarketNodeIds
                 .Where(nodesById.ContainsKey)
-                .GroupBy(id => GetMarketNodeDepth(id, nodesById))
+                .GroupBy(id => GetMarketRootNodeId(id, nodesById))
                 .ToDictionary(
-                    g => g.Key,
-                    g => g.ToHashSet(StringComparer.OrdinalIgnoreCase));
+                    rootGroup => rootGroup.Key,
+                    rootGroup => rootGroup
+                        .GroupBy(id => GetMarketNodeDepth(id, nodesById))
+                        .ToDictionary(
+                            depthGroup => depthGroup.Key,
+                            depthGroup => depthGroup.ToHashSet(StringComparer.OrdinalIgnoreCase)));
 
             var definitions = SymbolDefinitionForm.SymbolDefinitionStore.Load()
                 .ToDictionary(
@@ -776,16 +780,16 @@ namespace Trade.It
                     if (!definitions.TryGetValue(key, out var item))
                         return false;
 
-                    if (selectedNodesByDepth.Count > 0)
+                    if (selectedNodesByRoot.Count > 0)
                     {
                         var pathIds = GetMarketPathIds(item.MarketNodeId, nodesById);
+                        var matchingRoot = selectedNodesByRoot.Any(rootGroup =>
+                            rootGroup.Value.All(depthGroup =>
+                                pathIds.Count > depthGroup.Key &&
+                                depthGroup.Value.Contains(pathIds[depthGroup.Key])));
 
-                        if (!selectedNodesByDepth.All(group =>
-                            pathIds.Count > group.Key &&
-                            group.Value.Contains(pathIds[group.Key])))
-                        {
+                        if (!matchingRoot)
                             return false;
-                        }
                     }
 
                     var asset = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(
@@ -797,6 +801,23 @@ namespace Trade.It
                            appliedMarketAssets.Contains(asset);
                 })
                 .ToList();
+        }
+
+        private static string GetMarketRootNodeId(
+            string nodeId,
+            IReadOnlyDictionary<string, MarketStructureNode> nodesById)
+        {
+            var currentId = nodeId;
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+
+            while (nodesById.TryGetValue(currentId, out var node) &&
+                   !string.IsNullOrWhiteSpace(node.ParentId) &&
+                   visited.Add(currentId))
+            {
+                currentId = node.ParentId;
+            }
+
+            return currentId;
         }
 
         private static int GetMarketNodeDepth(
