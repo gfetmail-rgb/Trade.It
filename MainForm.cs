@@ -32,23 +32,21 @@ namespace Trade.It
 
         private readonly HashSet<string> appliedMarketNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
+        private bool updatingMarketFilterTree;
 
         public MainForm()
         {
             InitializeComponent();
             InitializeSymbolsPrintButton();
 
+            marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
+
             marketApplyButton.Click += (_, _) =>
             {
                 appliedMarketNodeIds.Clear();
-                foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
-                {
-                    if (node.Checked && node.Tag is string nodeId &&
-                        !string.IsNullOrWhiteSpace(nodeId))
-                    {
-                        appliedMarketNodeIds.Add(nodeId);
-                    }
-                }
+                foreach (var nodeId in marketFilterExplicitNodeIds)
+                    appliedMarketNodeIds.Add(nodeId);
 
                 CopyCheckedItems(appliedMarketAssets, marketAssetCheckedListBox);
 
@@ -123,7 +121,11 @@ namespace Trade.It
 
         private void RestoreAppliedMarketFilters()
         {
-            SetCheckedMarketNodes(appliedMarketNodeIds);
+            marketFilterExplicitNodeIds.Clear();
+            foreach (var nodeId in appliedMarketNodeIds)
+                marketFilterExplicitNodeIds.Add(nodeId);
+
+            RefreshMarketFilterTreeChecks();
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
         }
 
@@ -131,11 +133,70 @@ namespace Trade.It
         {
             appliedMarketNodeIds.Clear();
             appliedMarketAssets.Clear();
+            marketFilterExplicitNodeIds.Clear();
 
-            foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
-                node.Checked = false;
+            updatingMarketFilterTree = true;
+            try
+            {
+                foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+                    node.Checked = false;
+            }
+            finally
+            {
+                updatingMarketFilterTree = false;
+            }
 
             ClearCheckedListBox(marketAssetCheckedListBox);
+        }
+
+        private void MarketFilterTreeView_AfterCheck(object? sender, TreeViewEventArgs e)
+        {
+            if (updatingMarketFilterTree || e.Node?.Tag is not string nodeId ||
+                string.IsNullOrWhiteSpace(nodeId))
+                return;
+
+            if (e.Node.Checked)
+            {
+                marketFilterExplicitNodeIds.Add(nodeId);
+
+                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
+                {
+                    if (child == e.Node)
+                        continue;
+
+                    var childId = child.Tag as string ?? child.Name;
+                    if (!string.IsNullOrWhiteSpace(childId))
+                        marketFilterExplicitNodeIds.Remove(childId);
+                }
+            }
+            else
+            {
+                marketFilterExplicitNodeIds.Remove(nodeId);
+
+                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
+                {
+                    if (child == e.Node)
+                        continue;
+
+                    var childId = child.Tag as string ?? child.Name;
+                    if (!string.IsNullOrWhiteSpace(childId))
+                        marketFilterExplicitNodeIds.Remove(childId);
+                }
+            }
+
+            updatingMarketFilterTree = true;
+            try
+            {
+                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
+                {
+                    if (child != e.Node)
+                        child.Checked = e.Node.Checked;
+                }
+            }
+            finally
+            {
+                updatingMarketFilterTree = false;
+            }
         }
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
@@ -170,7 +231,11 @@ namespace Trade.It
             foreach (var category in data.AssetCategories)
                 marketAssetCheckedListBox.Items.Add(category);
 
-            SetCheckedMarketNodes(appliedMarketNodeIds);
+            marketFilterExplicitNodeIds.Clear();
+            foreach (var nodeId in appliedMarketNodeIds)
+                marketFilterExplicitNodeIds.Add(nodeId);
+
+            RefreshMarketFilterTreeChecks();
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
         }
 
@@ -214,13 +279,61 @@ namespace Trade.It
             }
         }
 
-        private void SetCheckedMarketNodes(HashSet<string> values)
+        private void RefreshMarketFilterTreeChecks()
         {
-            foreach (var node in GetAllTreeNodes(marketFilterTreeView))
+            updatingMarketFilterTree = true;
+            try
             {
-                var nodeId = node.Tag as string ?? node.Name;
-                node.Checked = !string.IsNullOrWhiteSpace(nodeId) && values.Contains(nodeId);
+                foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+                    node.Checked = false;
+
+                foreach (var nodeId in marketFilterExplicitNodeIds)
+                {
+                    var node = FindMarketFilterTreeNode(nodeId);
+                    if (node == null)
+                        continue;
+
+                    node.Checked = true;
+
+                    foreach (TreeNode child in GetTreeNodeAndChildren(node))
+                    {
+                        if (child != node)
+                            child.Checked = true;
+                    }
+                }
             }
+            finally
+            {
+                updatingMarketFilterTree = false;
+            }
+        }
+
+        private TreeNode? FindMarketFilterTreeNode(string nodeId)
+        {
+            foreach (TreeNode root in marketFilterTreeView.Nodes)
+            {
+                var found = FindMarketFilterTreeNode(root, nodeId);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
+        }
+
+        private static TreeNode? FindMarketFilterTreeNode(TreeNode node, string nodeId)
+        {
+            var currentId = node.Tag as string ?? node.Name;
+            if (string.Equals(currentId, nodeId, StringComparison.OrdinalIgnoreCase))
+                return node;
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                var found = FindMarketFilterTreeNode(child, nodeId);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
         }
 
         private static void CopyCheckedItems(HashSet<string> target, CheckedListBox source)
