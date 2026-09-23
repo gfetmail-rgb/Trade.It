@@ -509,12 +509,7 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             var imported = ExcelSymbolReader.Read(
                 d.FileName,
-                Array.Empty<string>(),
-                Array.Empty<string>(),
-                Array.Empty<string>(),
                 ComboValues(assetComboBox),
-                Array.Empty<string>(),
-                Array.Empty<string>(),
                 out var invalidRows,
                 out var invalidDetails);
 
@@ -707,16 +702,11 @@ public sealed partial class SymbolDefinitionForm : Form
 
     internal static class ExcelSymbolReader
     {
-        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "نوع صندوق", "گروه صنعت" };
+        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی" };
 
         public static List<SymbolDefinition> Read(
             string path,
-            IReadOnlyCollection<string> exchanges,
-            IReadOnlyCollection<string> markets,
-            IReadOnlyCollection<string> boards,
             IReadOnlyCollection<string> assets,
-            IReadOnlyCollection<string> fundTypes,
-            IReadOnlyCollection<string> industryGroups,
             out int invalidRows,
             out string invalidDetails)
         {
@@ -766,21 +756,20 @@ public sealed partial class SymbolDefinitionForm : Form
                 var market = V(Headers[3]);
                 var board = V(Headers[4]);
                 var asset = V(Headers[5]);
-                var fundType = V(Headers[6]);
-                var industryGroup = V(Headers[7]);
 
                 var errors = new List<string>();
-                if (!SymbolDefinitionRules.IsAllowed(exchange, exchanges, out var standardExchange)) errors.Add($"عنوان بورس «{exchange}»");
-                if (!SymbolDefinitionRules.IsAllowed(market, markets, out var standardMarket)) errors.Add($"نوع بازار «{market}»");
-                if (!SymbolDefinitionRules.IsAllowed(board, boards, out var standardBoard)) errors.Add($"نوع تابلو «{board}»");
-                if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset)) errors.Add($"نوع دارایی «{asset}»");
-                if (!SymbolDefinitionRules.IsAllowed(fundType, fundTypes, out var standardFundType)) errors.Add($"نوع صندوق «{fundType}»");
-                if (!SymbolDefinitionRules.IsAllowed(industryGroup, industryGroups, out var standardIndustryGroup)) errors.Add($"گروه صنعت «{industryGroup}»");
+
+                if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset))
+                    errors.Add($"نوع دارایی «{asset}»");
+
+                var marketNodeId = ResolveMarketNodeId(exchange, market, board, out var marketError);
+                if (marketNodeId == "")
+                    errors.Add(marketError);
 
                 if (errors.Count > 0)
                 {
                     invalidRows++;
-                    if (details.Count < 20) details.Add($"ردیف {excelRow}: {string.Join("، ", errors)} نامعتبر است.");
+                    if (details.Count < 20) details.Add($"ردیف {excelRow}: {string.Join("، ", errors)}");
                     continue;
                 }
 
@@ -788,12 +777,14 @@ public sealed partial class SymbolDefinitionForm : Form
                 {
                     SymbolTitle = symbol,
                     Name = V(Headers[1]),
-                    ExchangeTitle = standardExchange,
-                    MarketType = standardMarket,
-                    BoardType = standardBoard,
+                    MarketNodeId = marketNodeId,
+                    ExchangeTitle = exchange,
+                    MarketType = market,
+                    BoardType = board,
                     AssetType = standardAsset,
-                    FundType = standardFundType,
-                    IndustryGroup = standardIndustryGroup,
+                    AssetCategory = standardAsset,
+                    FundType = "",
+                    IndustryGroup = "",
                     IndustryGroupOrFundType = ""
                 });
             }
@@ -802,6 +793,78 @@ public sealed partial class SymbolDefinitionForm : Form
         }
 
         private static bool HeaderMatches(string actual, string expected) => actual == SymbolDefinitionRules.NormalizeText(expected) || actual.Replace(" ", "") == SymbolDefinitionRules.NormalizeText(expected).Replace(" ", "");
+        private static string ResolveMarketNodeId(
+            string exchange,
+            string market,
+            string board,
+            out string error)
+        {
+            error = "";
+            exchange = SymbolDefinitionRules.NormalizeText(exchange);
+            market = SymbolDefinitionRules.NormalizeText(market);
+            board = SymbolDefinitionRules.NormalizeText(board);
+
+            if (string.IsNullOrWhiteSpace(exchange))
+            {
+                error = "عنوان بورس خالی است.";
+                return "";
+            }
+
+            if (string.IsNullOrWhiteSpace(market) && string.IsNullOrWhiteSpace(board))
+            {
+                error = "ساختار بازار خالی است.";
+                return "";
+            }
+
+            var data = MarketStructureStore.Load();
+            var roots = data.Nodes
+                .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
+                .ToList();
+
+            var exchangeNode = roots.FirstOrDefault(x =>
+                string.Equals(x.Title, exchange, StringComparison.OrdinalIgnoreCase));
+
+            if (exchangeNode == null)
+            {
+                error = $"بورس «{exchange}» در ساختار بازار پیدا نشد.";
+                return "";
+            }
+
+            var currentParentId = exchangeNode.Id;
+
+            if (!string.IsNullOrWhiteSpace(market))
+            {
+                var marketNode = data.Nodes.FirstOrDefault(x =>
+                    string.Equals(x.ParentId, currentParentId, StringComparison.Ordinal) &&
+                    string.Equals(x.Title, market, StringComparison.OrdinalIgnoreCase));
+
+                if (marketNode == null)
+                {
+                    error = $"بازار «{market}» زیر «{exchange}» پیدا نشد.";
+                    return "";
+                }
+
+                currentParentId = marketNode.Id;
+            }
+
+            if (!string.IsNullOrWhiteSpace(board))
+            {
+                var boardNode = data.Nodes.FirstOrDefault(x =>
+                    string.Equals(x.ParentId, currentParentId, StringComparison.Ordinal) &&
+                    string.Equals(x.Title, board, StringComparison.OrdinalIgnoreCase));
+
+                if (boardNode == null)
+                {
+                    error = $"تابلو/زیرشاخه «{board}» زیر «{market}» پیدا نشد.";
+                    return "";
+                }
+
+                currentParentId = boardNode.Id;
+            }
+
+            return currentParentId;
+        }
+
 
         private static Dictionary<int, string> Row(XElement row, XNamespace s, IReadOnlyList<string> shared)
         {
@@ -845,7 +908,7 @@ public sealed partial class SymbolDefinitionForm : Form
     internal static class ExcelSymbolWriter
     {
         private static readonly string[] Headers =
-            { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "نوع صندوق", "گروه صنعت" };
+            { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی" };
 
         public static void Write(string path, IEnumerable<SymbolDefinition> items)
         {
@@ -900,11 +963,17 @@ public sealed partial class SymbolDefinitionForm : Form
             for (int i = 0; i < items.Count; i++)
             {
                 var x = items[i];
+                var marketPath = GetMarketPath(x);
+
                 var values = new[]
                 {
-                x.SymbolTitle, x.Name, x.ExchangeTitle, x.MarketType,
-                x.BoardType, x.AssetType, x.FundType, x.IndustryGroup
-            };
+                    x.SymbolTitle,
+                    x.Name,
+                    marketPath.Exchange,
+                    marketPath.Market,
+                    marketPath.Board,
+                    x.AssetCategory ?? x.AssetType
+                };
 
                 sheetData.Add(new XElement(ns + "row",
                     new XAttribute("r", (i + 2).ToString()),
