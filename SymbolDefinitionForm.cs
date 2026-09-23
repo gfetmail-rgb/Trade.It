@@ -597,6 +597,7 @@ public sealed partial class SymbolDefinitionForm : Form
             var imported = ExcelSymbolReader.Read(
                 d.FileName,
                 ComboValues(assetComboBox),
+                ComboValues(otherItemComboBox),
                 out var invalidRows,
                 out var invalidDetails);
 
@@ -920,11 +921,12 @@ public sealed partial class SymbolDefinitionForm : Form
 
     internal static class ExcelSymbolReader
     {
-        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی" };
+        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "سایر موارد" };
 
         public static List<SymbolDefinition> Read(
             string path,
             IReadOnlyCollection<string> assets,
+            IReadOnlyCollection<string> otherItems,
             out int invalidRows,
             out string invalidDetails)
         {
@@ -974,11 +976,15 @@ public sealed partial class SymbolDefinitionForm : Form
                 var market = V(Headers[3]);
                 var board = V(Headers[4]);
                 var asset = V(Headers[5]);
+                var otherItem = V(Headers[6]);
 
                 var errors = new List<string>();
 
                 if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset))
                     errors.Add($"نوع دارایی «{asset}»");
+
+                if (!SymbolDefinitionRules.IsAllowed(otherItem, otherItems, out var standardOtherItem))
+                    errors.Add($"سایر موارد «{otherItem}»");
 
                 var marketNodeId = ResolveMarketNodeId(exchange, market, board, out var marketError);
                 if (marketNodeId == "")
@@ -1001,6 +1007,7 @@ public sealed partial class SymbolDefinitionForm : Form
                     BoardType = board,
                     AssetType = standardAsset,
                     AssetCategory = standardAsset,
+                    OtherItem = standardOtherItem,
                     FundType = "",
                     IndustryGroup = "",
                     IndustryGroupOrFundType = ""
@@ -1190,7 +1197,8 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    x.AssetCategory ?? x.AssetType
+                    x.AssetCategory ?? x.AssetType,
+                    x.OtherItem
                 };
 
                 sheetData.Add(new XElement(ns + "row",
