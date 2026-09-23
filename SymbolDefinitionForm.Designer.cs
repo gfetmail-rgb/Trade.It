@@ -113,9 +113,9 @@ partial class SymbolDefinitionForm
         // 
         // marketTreeView
         // 
-        marketTreeView.Location = new Point(970, 20);
+        marketTreeView.Location = new Point(860, 55);
         marketTreeView.Name = "marketTreeView";
-        marketTreeView.Size = new Size(291, 120);
+        marketTreeView.Size = new Size(401, 360);
         marketTreeView.TabIndex = 25;
         marketTreeView.HideSelection = false;
         marketTreeView.RightToLeft = RightToLeft.Yes;
