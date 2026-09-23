@@ -467,6 +467,8 @@ public sealed partial class SymbolDefinitionForm : Form
     {
         public string SymbolTitle { get; set; } = "";
         public string Name { get; set; } = "";
+        public string MarketNodeId { get; set; } = "";
+        public string AssetCategory { get; set; } = "";
         public string ExchangeTitle { get; set; } = "";
         public string MarketType { get; set; } = "";
         public string BoardType { get; set; } = "";
@@ -522,6 +524,8 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             x.SymbolTitle = NormalizeText(x.SymbolTitle);
             x.Name = NormalizeText(x.Name);
+            x.MarketNodeId = NormalizeText(x.MarketNodeId);
+            x.AssetCategory = NormalizeOption(x.AssetCategory);
             x.ExchangeTitle = NormalizeOption(x.ExchangeTitle);
             x.MarketType = NormalizeOption(x.MarketType);
             x.BoardType = NormalizeOption(x.BoardType);
