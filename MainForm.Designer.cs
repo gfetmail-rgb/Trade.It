@@ -1266,8 +1266,10 @@
             marketsTabPage.Controls.Add(marketCountLabel);
             marketsTabPage.Controls.Add(marketClearButton);
             marketsTabPage.Controls.Add(marketApplyButton);
+            marketsTabPage.Controls.Add(marketOtherCheckedListBox);
             marketsTabPage.Controls.Add(marketAssetCheckedListBox);
             marketsTabPage.Controls.Add(marketFilterTreeView);
+            marketsTabPage.Controls.Add(label17);
             marketsTabPage.Controls.Add(label16);
             marketsTabPage.Controls.Add(label13);
             marketsTabPage.Location = new Point(4, 34);
@@ -1328,17 +1330,39 @@
             marketAssetCheckedListBox.Location = new Point(8, 548);
             marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
             marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketAssetCheckedListBox.Size = new Size(270, 184);
+            marketAssetCheckedListBox.Size = new Size(270, 120);
             marketAssetCheckedListBox.TabIndex = 7;
+            // 
+            // marketOtherCheckedListBox
+            // 
+            marketOtherCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketOtherCheckedListBox.CheckOnClick = true;
+            marketOtherCheckedListBox.FormattingEnabled = true;
+            marketOtherCheckedListBox.HorizontalScrollbar = true;
+            marketOtherCheckedListBox.Location = new Point(8, 686);
+            marketOtherCheckedListBox.Name = "marketOtherCheckedListBox";
+            marketOtherCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketOtherCheckedListBox.Size = new Size(270, 96);
+            marketOtherCheckedListBox.TabIndex = 8;
             // 
             // label16
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label16.AutoSize = true;
-            label16.Location = new Point(278, 625);
+            label16.Location = new Point(278, 570);
             label16.Name = "label16";
             label16.Size = new Size(93, 25);
             label16.TabIndex = 3;
             label16.Text = "نوع دارایی:";
+            // 
+            // label17
+            // 
+            label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label17.AutoSize = true;
+            label17.Location = new Point(278, 710);
+            label17.Name = "label17";
+            label17.Size = new Size(93, 25);
+            label17.TabIndex = 4;
+            label17.Text = "سایر موارد:";
             // 
             // label13
             label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -1940,6 +1964,7 @@
         private ComboBox marketExchangeComboBox;
         private TreeView marketFilterTreeView;
         private CheckedListBox marketAssetCheckedListBox;
+        private CheckedListBox marketOtherCheckedListBox;
         private Button marketClearButton;
         private Button marketApplyButton;
         private Label label16;
