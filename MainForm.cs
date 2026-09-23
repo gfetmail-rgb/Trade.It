@@ -184,19 +184,7 @@ namespace Trade.It
                 }
             }
 
-            updatingMarketFilterTree = true;
-            try
-            {
-                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
-                {
-                    if (child != e.Node)
-                        child.Checked = e.Node.Checked;
-                }
-            }
-            finally
-            {
-                updatingMarketFilterTree = false;
-            }
+            RefreshMarketFilterTreeChecks();
         }
 
         private static void ClearCheckedListBox(CheckedListBox listBox)
