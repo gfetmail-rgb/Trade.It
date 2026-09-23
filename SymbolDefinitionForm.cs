@@ -610,6 +610,51 @@ public sealed partial class SymbolDefinitionForm : Form
                 return;
             }
 
+            var existingDuplicates = SymbolDefinitionStore.FindDuplicateSymbols();
+            if (existingDuplicates.Count > 0)
+            {
+                var preview = string.Join("، ", existingDuplicates.Take(10));
+                if (existingDuplicates.Count > 10)
+                    preview += "، ...";
+
+                MessageBox.Show(
+                    this,
+                    $"فایل فعلی نمادها شامل {existingDuplicates.Count} نماد تکراری است و قبل از ورود Excel باید اصلاح شود.{Environment.NewLine}{Environment.NewLine}" +
+                    $"نمادهای تکراری: {preview}",
+                    "ورود از Excel",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            var importedDuplicates = imported
+                .GroupBy(
+                    x => SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                    StringComparer.OrdinalIgnoreCase)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (importedDuplicates.Count > 0)
+            {
+                var preview = string.Join("، ", importedDuplicates.Take(10));
+                if (importedDuplicates.Count > 10)
+                    preview += "، ...";
+
+                MessageBox.Show(
+                    this,
+                    $"در فایل Excel، {importedDuplicates.Count} نماد بیش از یک بار آمده است.{Environment.NewLine}{Environment.NewLine}" +
+                    $"نمادهای تکراری: {preview}{Environment.NewLine}{Environment.NewLine}" +
+                    "برای جلوگیری از ثبت یا به‌روزرسانی مبهم، ورود انجام نشد.",
+                    "ورود از Excel",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
             var map = SymbolDefinitionStore
                 .Load()
                 .ToDictionary(
@@ -1192,3 +1237,4 @@ public sealed partial class SymbolDefinitionForm : Form
         }
     }
 }
+
