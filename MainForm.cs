@@ -133,6 +133,7 @@ namespace Trade.It
 
             RefreshMarketFilterTreeChecks();
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
+            SetOtherCheckedItems(marketOtherCheckedListBox, appliedMarketOtherItems);
         }
 
         private void ClearMarketSelections()
