@@ -210,17 +210,9 @@
             marketCountLabel = new Label();
             marketClearButton = new Button();
             marketApplyButton = new Button();
-            marketIndustryGroupCheckedListBox = new CheckedListBox();
-            marketFundTypeCheckedListBox = new CheckedListBox();
+            marketFilterTreeView = new TreeView();
             marketAssetCheckedListBox = new CheckedListBox();
-            marketBoardCheckedListBox = new CheckedListBox();
-            marketTypeCheckedListBox = new CheckedListBox();
-            marketExchangeCheckedListBox = new CheckedListBox();
-            label18 = new Label();
-            label17 = new Label();
             label16 = new Label();
-            label15 = new Label();
-            label14 = new Label();
             label13 = new Label();
             chartPanel = new Panel();
             chartTabControl = new TabControl();
@@ -1274,17 +1266,9 @@
             marketsTabPage.Controls.Add(marketCountLabel);
             marketsTabPage.Controls.Add(marketClearButton);
             marketsTabPage.Controls.Add(marketApplyButton);
-            marketsTabPage.Controls.Add(marketIndustryGroupCheckedListBox);
-            marketsTabPage.Controls.Add(marketFundTypeCheckedListBox);
             marketsTabPage.Controls.Add(marketAssetCheckedListBox);
-            marketsTabPage.Controls.Add(marketBoardCheckedListBox);
-            marketsTabPage.Controls.Add(marketTypeCheckedListBox);
-            marketsTabPage.Controls.Add(marketExchangeCheckedListBox);
-            marketsTabPage.Controls.Add(label18);
-            marketsTabPage.Controls.Add(label17);
+            marketsTabPage.Controls.Add(marketFilterTreeView);
             marketsTabPage.Controls.Add(label16);
-            marketsTabPage.Controls.Add(label15);
-            marketsTabPage.Controls.Add(label14);
             marketsTabPage.Controls.Add(label13);
             marketsTabPage.Location = new Point(4, 34);
             marketsTabPage.Name = "marketsTabPage";
@@ -1325,29 +1309,15 @@
             marketApplyButton.Text = "تایید";
             marketApplyButton.UseVisualStyleBackColor = true;
             // 
-            // marketIndustryGroupCheckedListBox
-            // 
-            marketIndustryGroupCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketIndustryGroupCheckedListBox.CheckOnClick = true;
-            marketIndustryGroupCheckedListBox.FormattingEnabled = true;
-            marketIndustryGroupCheckedListBox.HorizontalScrollbar = true;
-            marketIndustryGroupCheckedListBox.Location = new Point(6, 656);
-            marketIndustryGroupCheckedListBox.Name = "marketIndustryGroupCheckedListBox";
-            marketIndustryGroupCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketIndustryGroupCheckedListBox.Size = new Size(270, 116);
-            marketIndustryGroupCheckedListBox.TabIndex = 11;
-            // 
-            // marketFundTypeCheckedListBox
-            // 
-            marketFundTypeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketFundTypeCheckedListBox.CheckOnClick = true;
-            marketFundTypeCheckedListBox.FormattingEnabled = true;
-            marketFundTypeCheckedListBox.HorizontalScrollbar = true;
-            marketFundTypeCheckedListBox.Location = new Point(6, 532);
-            marketFundTypeCheckedListBox.Name = "marketFundTypeCheckedListBox";
-            marketFundTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketFundTypeCheckedListBox.Size = new Size(270, 116);
-            marketFundTypeCheckedListBox.TabIndex = 10;
+            // marketFilterTreeView
+            marketFilterTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFilterTreeView.CheckBoxes = true;
+            marketFilterTreeView.Location = new Point(8, 38);
+            marketFilterTreeView.Name = "marketFilterTreeView";
+            marketFilterTreeView.RightToLeft = RightToLeft.Yes;
+            marketFilterTreeView.RightToLeftLayout = true;
+            marketFilterTreeView.Size = new Size(270, 455);
+            marketFilterTreeView.TabIndex = 6;
             // 
             // marketAssetCheckedListBox
             // 
@@ -1355,108 +1325,29 @@
             marketAssetCheckedListBox.CheckOnClick = true;
             marketAssetCheckedListBox.FormattingEnabled = true;
             marketAssetCheckedListBox.HorizontalScrollbar = true;
-            marketAssetCheckedListBox.Location = new Point(6, 409);
+            marketAssetCheckedListBox.Location = new Point(8, 548);
             marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
             marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketAssetCheckedListBox.Size = new Size(270, 116);
-            marketAssetCheckedListBox.TabIndex = 9;
-            // 
-            // marketBoardCheckedListBox
-            // 
-            marketBoardCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketBoardCheckedListBox.CheckOnClick = true;
-            marketBoardCheckedListBox.FormattingEnabled = true;
-            marketBoardCheckedListBox.HorizontalScrollbar = true;
-            marketBoardCheckedListBox.Location = new Point(9, 258);
-            marketBoardCheckedListBox.Name = "marketBoardCheckedListBox";
-            marketBoardCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketBoardCheckedListBox.Size = new Size(270, 144);
-            marketBoardCheckedListBox.TabIndex = 8;
-            // 
-            // marketTypeCheckedListBox
-            // 
-            marketTypeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketTypeCheckedListBox.CheckOnClick = true;
-            marketTypeCheckedListBox.FormattingEnabled = true;
-            marketTypeCheckedListBox.HorizontalScrollbar = true;
-            marketTypeCheckedListBox.Location = new Point(9, 134);
-            marketTypeCheckedListBox.Name = "marketTypeCheckedListBox";
-            marketTypeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketTypeCheckedListBox.Size = new Size(270, 116);
-            marketTypeCheckedListBox.TabIndex = 7;
-            // 
-            // marketExchangeCheckedListBox
-            // 
-            marketExchangeCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketExchangeCheckedListBox.CheckOnClick = true;
-            marketExchangeCheckedListBox.FormattingEnabled = true;
-            marketExchangeCheckedListBox.HorizontalScrollbar = true;
-            marketExchangeCheckedListBox.Location = new Point(9, 11);
-            marketExchangeCheckedListBox.Name = "marketExchangeCheckedListBox";
-            marketExchangeCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketExchangeCheckedListBox.Size = new Size(270, 116);
-            marketExchangeCheckedListBox.TabIndex = 6;
-            // 
-            // label18
-            // 
-            label18.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label18.AutoSize = true;
-            label18.Location = new Point(276, 694);
-            label18.Name = "label18";
-            label18.Size = new Size(106, 25);
-            label18.TabIndex = 5;
-            label18.Text = "گروه صنعت:";
-            // 
-            // label17
-            // 
-            label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label17.AutoSize = true;
-            label17.Location = new Point(284, 182);
-            label17.Name = "label17";
-            label17.Size = new Size(77, 25);
-            label17.TabIndex = 4;
-            label17.Text = "نوع بازار:";
-            label17.Click += label17_Click;
+            marketAssetCheckedListBox.Size = new Size(270, 184);
+            marketAssetCheckedListBox.TabIndex = 7;
             // 
             // label16
-            // 
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label16.AutoSize = true;
-            label16.Location = new Point(281, 455);
+            label16.Location = new Point(278, 625);
             label16.Name = "label16";
             label16.Size = new Size(93, 25);
             label16.TabIndex = 3;
             label16.Text = "نوع دارایی:";
             // 
-            // label15
-            // 
-            label15.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label15.AutoSize = true;
-            label15.Location = new Point(285, 331);
-            label15.Name = "label15";
-            label15.Size = new Size(79, 25);
-            label15.TabIndex = 2;
-            label15.Text = "نوع تابلو:";
-            // 
-            // label14
-            // 
-            label14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label14.AutoSize = true;
-            label14.Location = new Point(278, 581);
-            label14.Name = "label14";
-            label14.Size = new Size(103, 25);
-            label14.TabIndex = 1;
-            label14.Text = "نوع صندوق:";
-            // 
             // label13
-            // 
             label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label13.AutoSize = true;
-            label13.Location = new Point(285, 59);
+            label13.Location = new Point(278, 62);
             label13.Name = "label13";
             label13.Size = new Size(89, 25);
             label13.TabIndex = 0;
-            label13.Text = "نوع بورس:";
+            label13.Text = "ساختار بازار:";
             // 
             // chartPanel
             // 
@@ -2047,19 +1938,11 @@
         private ComboBox marketFundTypeComboBox;
         private ComboBox marketIndustryGroupComboBox;
         private ComboBox marketExchangeComboBox;
-        private CheckedListBox marketExchangeCheckedListBox;
-        private CheckedListBox marketTypeCheckedListBox;
-        private CheckedListBox marketBoardCheckedListBox;
+        private TreeView marketFilterTreeView;
         private CheckedListBox marketAssetCheckedListBox;
-        private CheckedListBox marketFundTypeCheckedListBox;
-        private CheckedListBox marketIndustryGroupCheckedListBox;
         private Button marketClearButton;
         private Button marketApplyButton;
-        private Label label18;
-        private Label label17;
         private Label label16;
-        private Label label15;
-        private Label label14;
         private Label label13;
         private Label label20;
         private Label label19;
