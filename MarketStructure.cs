@@ -77,6 +77,13 @@ public static class MarketStructureStore
             node.Title = (node.Title ?? "").Trim();
         }
 
+        if (!data.Nodes.Any(x =>
+            string.IsNullOrEmpty(x.ParentId) &&
+            string.Equals(x.Title, "بورس انرژی ایران", StringComparison.OrdinalIgnoreCase)))
+        {
+            AddNode(data, "", "بورس انرژی ایران");
+        }
+
         data.AssetCategories = data.AssetCategories
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Select(x => x.Trim())
