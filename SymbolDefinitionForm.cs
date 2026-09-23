@@ -212,22 +212,51 @@ public sealed partial class SymbolDefinitionForm : Form
             return;
 
         var invalidSymbols = SymbolDefinitionStore.FindInvalidMarketReferences();
+        var duplicateSymbols = SymbolDefinitionStore.FindDuplicateSymbols();
 
-        if (invalidSymbols.Count == 0)
+        if (invalidSymbols.Count == 0 && duplicateSymbols.Count == 0)
             return;
 
         invalidMarketReferenceWarningShown = true;
 
-        var preview = string.Join("، ", invalidSymbols.Take(10));
+        var message = new StringBuilder();
 
-        if (invalidSymbols.Count > 10)
-            preview += "، ...";
+        if (invalidSymbols.Count > 0)
+        {
+            var preview = string.Join("، ", invalidSymbols.Take(10));
+            if (invalidSymbols.Count > 10)
+                preview += "، ...";
+
+            message.AppendLine(
+                $"برای {invalidSymbols.Count} نماد، ساختار بازار ثبت‌شده در فایل نمادها معتبر نیست یا دیگر در ساختار بازار وجود ندارد.");
+            message.AppendLine();
+            message.AppendLine($"نمادها: {preview}");
+            message.AppendLine();
+            message.AppendLine(
+                "این نمادها حذف یا اصلاح نشده‌اند. برای جلوگیری از انتساب اشتباه، ابتدا ساختار بازار مربوط به آنها را بررسی کنید.");
+        }
+
+        if (duplicateSymbols.Count > 0)
+        {
+            if (message.Length > 0)
+                message.AppendLine().AppendLine();
+
+            var preview = string.Join("، ", duplicateSymbols.Take(10));
+            if (duplicateSymbols.Count > 10)
+                preview += "، ...";
+
+            message.AppendLine(
+                $"تعداد {duplicateSymbols.Count} نماد در فایل نمادها بیش از یک بار ثبت شده است.");
+            message.AppendLine();
+            message.AppendLine($"نمادهای تکراری: {preview}");
+            message.AppendLine();
+            message.AppendLine(
+                "نمادهای تکراری خودکار حذف یا ادغام نشده‌اند.");
+        }
 
         MessageBox.Show(
             this,
-            $"برای {invalidSymbols.Count} نماد، ساختار بازار ثبت‌شده در فایل نمادها معتبر نیست یا دیگر در ساختار بازار وجود ندارد.{Environment.NewLine}{Environment.NewLine}" +
-            $"نمادها: {preview}{Environment.NewLine}{Environment.NewLine}" +
-            "این نمادها حذف یا اصلاح نشده‌اند. برای جلوگیری از انتساب اشتباه، ابتدا ساختار بازار مربوط به آنها را بررسی کنید.",
+            message.ToString().TrimEnd(),
             "اعتبارسنجی نمادها",
             MessageBoxButtons.OK,
             MessageBoxIcon.Warning);
