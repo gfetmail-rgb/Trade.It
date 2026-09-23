@@ -14,6 +14,9 @@ public sealed partial class MarketStructureForm : Form
         categoryListBox.SelectedIndexChanged += (_, _) =>
             categoryTextBox.Text = categoryListBox.SelectedItem?.ToString() ?? "";
 
+        otherCategoryListBox.SelectedIndexChanged += (_, _) =>
+            otherCategoryTextBox.Text = otherCategoryListBox.SelectedItem?.ToString() ?? "";
+
         addChildButton.Click += (_, _) => AddChild();
         renameButton.Click += (_, _) => RenameNode();
         deleteButton.Click += (_, _) => DeleteNode();
