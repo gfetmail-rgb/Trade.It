@@ -384,13 +384,26 @@ public sealed partial class SymbolDefinitionForm : Form
         var item = ReadEditor();
         if (item == null) return;
         var all = SymbolDefinitionStore.Load();
-        var existing = all.FirstOrDefault(x => string.Equals(x.SymbolTitle.Trim(), item.SymbolTitle, StringComparison.OrdinalIgnoreCase));
-        if (existing != null && symbolsDataGridView.SelectedRows.Count == 0)
+        var selectedSymbol = symbolsDataGridView.SelectedRows.Count > 0
+            ? (symbolsDataGridView.SelectedRows[0].Tag as SymbolDefinition)?.SymbolTitle
+            : null;
+
+        var existing = all.FirstOrDefault(x =>
+            string.Equals(x.SymbolTitle.Trim(), item.SymbolTitle, StringComparison.OrdinalIgnoreCase));
+
+        if (existing != null &&
+            (string.IsNullOrWhiteSpace(selectedSymbol) ||
+             !string.Equals(existing.SymbolTitle, selectedSymbol, StringComparison.OrdinalIgnoreCase)))
         {
-            MessageBox.Show(this, "این نماد قبلاً ثبت شده است. برای ویرایش، ابتدا نماد را از جدول انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "این نماد قبلاً ثبت شده است.", "تعریف نمادها",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
-        if (existing == null) all.Add(item);
+
+        if (existing == null)
+        {
+            all.Add(item);
+        }
         else
         {
             existing.SymbolTitle = item.SymbolTitle;
