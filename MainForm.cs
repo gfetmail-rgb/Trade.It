@@ -273,6 +273,12 @@ namespace Trade.It
             foreach (var category in data.AssetCategories)
                 marketAssetCheckedListBox.Items.Add(category);
 
+            var validAssetCategories = data.AssetCategories
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            appliedMarketAssets.RemoveWhere(x =>
+                !validAssetCategories.Contains(x));
+
             marketFilterExplicitNodeIds.Clear();
             foreach (var nodeId in appliedMarketNodeIds)
                 marketFilterExplicitNodeIds.Add(nodeId);
