@@ -5,13 +5,8 @@ partial class SymbolDefinitionForm
     private System.ComponentModel.IContainer components = null!;
     private TextBox symbolTextBox = null!;
     private TextBox nameTextBox = null!;
-    private ComboBox exchangeComboBox = null!;
-    private ComboBox marketComboBox = null!;
     private TreeView marketTreeView = null!;
-    private ComboBox boardComboBox = null!;
     private ComboBox assetComboBox = null!;
-    private ComboBox groupComboBox = null!;
-    private ComboBox industryGroupComboBox = null!;
     private Button newButton = null!;
     private Button saveButton = null!;
     private Button deleteButton = null!;
@@ -22,12 +17,8 @@ partial class SymbolDefinitionForm
     private DataGridView symbolsDataGridView = null!;
     private Label label00 = null!;
     private Label label10 = null!;
-    private Label label20 = null!;
     private Label label30 = null!;
-    private Label label01 = null!;
     private Label label11 = null!;
-    private Label label21 = null!;
-    private Label label22 = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -39,26 +30,10 @@ partial class SymbolDefinitionForm
     {
         components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SymbolDefinitionForm));
-        DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle17 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle18 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle19 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle20 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
         symbolTextBox = new TextBox();
         nameTextBox = new TextBox();
-        exchangeComboBox = new ComboBox();
-        marketComboBox = new ComboBox();
         marketTreeView = new TreeView();
-        boardComboBox = new ComboBox();
         assetComboBox = new ComboBox();
-        groupComboBox = new ComboBox();
-        industryGroupComboBox = new ComboBox();
         newButton = new Button();
         saveButton = new Button();
         deleteButton = new Button();
@@ -75,17 +50,10 @@ partial class SymbolDefinitionForm
         marketColumn = new DataGridViewTextBoxColumn();
         boardColumn = new DataGridViewTextBoxColumn();
         assetColumn = new DataGridViewTextBoxColumn();
-        fundTypeColumn = new DataGridViewTextBoxColumn();
-        industryGroupColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
-        label20 = new Label();
         label30 = new Label();
-        label01 = new Label();
         label11 = new Label();
-        label21 = new Label();
-        label22 = new Label();
-        label1 = new Label();
         toolTip1 = new ToolTip(components);
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
@@ -104,42 +72,16 @@ partial class SymbolDefinitionForm
         nameTextBox.Size = new Size(370, 29);
         nameTextBox.TabIndex = 1;
         // 
-        // exchangeComboBox
-        // 
-        exchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        exchangeComboBox.Items.AddRange(new object[] { "بورس", "فرابورس", "بورس کالا", "بورس انرژی" });
-        exchangeComboBox.Location = new Point(814, 20);
-        exchangeComboBox.Name = "exchangeComboBox";
-        exchangeComboBox.Size = new Size(180, 30);
-        exchangeComboBox.TabIndex = 2;
-        // 
-        // marketComboBox
-        // 
-        marketComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketComboBox.Items.AddRange(new object[] { "اول", "دوم", "پایه", "SME", "نوآفرین" });
-        marketComboBox.Location = new Point(1075, 20);
-        marketComboBox.Name = "marketComboBox";
-        marketComboBox.Size = new Size(186, 33);
-        marketComboBox.TabIndex = 3;
-        // 
         // marketTreeView
         // 
-        marketTreeView.HideSelection = false;
-        marketTreeView.Location = new Point(653, 380);
+        marketTreeView.Location = new Point(860, 55);
         marketTreeView.Name = "marketTreeView";
+        marketTreeView.Size = new Size(401, 360);
+        marketTreeView.TabIndex = 25;
+        marketTreeView.HideSelection = false;
         marketTreeView.RightToLeft = RightToLeft.Yes;
         marketTreeView.RightToLeftLayout = true;
-        marketTreeView.Size = new Size(621, 308);
-        marketTreeView.TabIndex = 25;
         // 
-        // boardComboBox
-        // 
-        boardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        boardComboBox.Items.AddRange(new object[] { "اصلی", "فرعی", "رشد", "دانش بنیان", "زرد", "نارنجی", "قرمز" });
-        boardComboBox.Location = new Point(75, 76);
-        boardComboBox.Name = "boardComboBox";
-        boardComboBox.Size = new Size(176, 30);
-        boardComboBox.TabIndex = 4;
         // 
         // assetComboBox
         // 
@@ -149,24 +91,6 @@ partial class SymbolDefinitionForm
         assetComboBox.Name = "assetComboBox";
         assetComboBox.Size = new Size(175, 30);
         assetComboBox.TabIndex = 5;
-        // 
-        // groupComboBox
-        // 
-        groupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        groupComboBox.Items.AddRange(new object[] { "سهامی", "اهرمی", "شاخصی", "بخشی", "مختلط", "در صندوق", "تضمین اصل سرمایه", "رمین و ساختمان", "پروژه", "جسورانه", "خصوصی", "درآمد ثابت", "مبتنی بر سپرده کالایی - طلا", "مبتنی بر سپرده کالایی - نقره", "مبتنی بر سپرده کالایی - انرژی", "مبتنی بر سپرده کالایی - کشاورزی", "سهام نیست" });
-        groupComboBox.Location = new Point(653, 75);
-        groupComboBox.Name = "groupComboBox";
-        groupComboBox.Size = new Size(247, 30);
-        groupComboBox.TabIndex = 6;
-        // 
-        // industryGroupComboBox
-        // 
-        industryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        industryGroupComboBox.Items.AddRange(new object[] { "ابزار پزشکی، اپتیکی و اندازه‌گیری", "استخراج زغال سنگ", "استخراج سایر معادن", "استخراج کانه های فلزی", "استخراج نفت گاز و خدمات جنبی جز اکتشاف", "اطلاعات و ارتباطات", "انبوه سازی، املاک و مستغلات", "انتشار، چاپ و تکثیر", "بانكها و موسسات اعتباری", "بیمه و صندوق بازنشستگی به جز تامین اجتماعی", "پیمانكاری صنعتی", "تجارت عمده فروشی به جز وسایل نقلیه موتور", "تولید محصولات كامپیوتری الكترونیكی ونوری", "حمل و نقل آبی", "حمل ونقل، انبارداری و ارتباطات", "خدمات فنی و مهندسی", "خرده فروشی،باستثنای وسایل نقلیه موتوری", "خودرو و ساخت قطعات", "دباغی، پرداخت چرم و ساخت انواع پاپوش", "رایانه و فعالیت‌های وابسته به آن", "زراعت و خدمات وابسته", "ساخت دستگاه‌ها و وسایل ارتباطی", "ساخت محصولات فلزی", "سایر محصولات كانی غیرفلزی", "سایر واسطه گری های مالی", "سرمایه گذاری ها", "سلامت انسان و مددكاری اجتماعی", "سیمان، آهك و گچ", "شرکتهای چند رشته ای صنعتی", "عرضه برق، گاز، بخار و آب گرم", "فراورده های نفتی، كك و سوخت هسته ای", "فعالیت مهندسی، تجزیه، تحلیل و آزمایش فنی", "فعالیت های هنری، سرگرمی و خلاقانه", "فعالیتهای فرهنگی و ورزشی", "فعالیتهای كمكی به نهادهای مالی واسط", "فلزات اساسی", "قند و شكر", "کاشی و سرامیک", "لاستیك و پلاستیك", "ماشین آلات و تجهیزات", "ماشین آلات و دستگاه‌های برقی", "محصولات چوبی", "محصولات شیمیایی", "محصولات غذایی و آشامیدنی به جز قند و شكر", "محصولات كاغذی", "مخابرات", "منسوجات", "مواد و محصولات دارویی", "واسطه‌گری های مالی و پولی", "هتل و رستوران", "صندوق نیست" });
-        industryGroupComboBox.Location = new Point(1008, 75);
-        industryGroupComboBox.Name = "industryGroupComboBox";
-        industryGroupComboBox.Size = new Size(253, 30);
-        industryGroupComboBox.TabIndex = 7;
         // 
         // newButton
         // 
@@ -256,29 +180,15 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.AllowUserToResizeRows = false;
         symbolsDataGridView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         symbolsDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleRight;
-        dataGridViewCellStyle12.BackColor = SystemColors.Control;
-        dataGridViewCellStyle12.Font = new Font("Tahoma", 9F);
-        dataGridViewCellStyle12.ForeColor = SystemColors.WindowText;
-        dataGridViewCellStyle12.SelectionBackColor = SystemColors.Highlight;
-        dataGridViewCellStyle12.SelectionForeColor = SystemColors.HighlightText;
-        dataGridViewCellStyle12.WrapMode = DataGridViewTriState.True;
-        symbolsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle12;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, fundTypeColumn, industryGroupColumn });
-        dataGridViewCellStyle22.Alignment = DataGridViewContentAlignment.MiddleRight;
-        dataGridViewCellStyle22.BackColor = SystemColors.Window;
-        dataGridViewCellStyle22.Font = new Font("Tahoma", 9F);
-        dataGridViewCellStyle22.ForeColor = SystemColors.ControlText;
-        dataGridViewCellStyle22.SelectionBackColor = SystemColors.Highlight;
-        dataGridViewCellStyle22.SelectionForeColor = SystemColors.HighlightText;
-        dataGridViewCellStyle22.WrapMode = DataGridViewTriState.False;
-        symbolsDataGridView.DefaultCellStyle = dataGridViewCellStyle22;
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn });
         symbolsDataGridView.Location = new Point(10, 165);
         symbolsDataGridView.MultiSelect = false;
         symbolsDataGridView.Name = "symbolsDataGridView";
         symbolsDataGridView.ReadOnly = true;
         symbolsDataGridView.RightToLeft = RightToLeft.Yes;
+        symbolsDataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        symbolsDataGridView.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         symbolsDataGridView.RowHeadersVisible = false;
         symbolsDataGridView.RowHeadersWidth = 62;
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -287,98 +197,69 @@ partial class SymbolDefinitionForm
         // 
         // rowNumberColumn
         // 
-        dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleRight;
-        rowNumberColumn.DefaultCellStyle = dataGridViewCellStyle13;
         rowNumberColumn.FillWeight = 45F;
         rowNumberColumn.HeaderText = "ردیف";
         rowNumberColumn.MinimumWidth = 45;
         rowNumberColumn.Name = "rowNumberColumn";
         rowNumberColumn.ReadOnly = true;
+        rowNumberColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         rowNumberColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // symbolTitleColumn
         // 
-        dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleRight;
-        symbolTitleColumn.DefaultCellStyle = dataGridViewCellStyle14;
         symbolTitleColumn.HeaderText = "نماد";
         symbolTitleColumn.MinimumWidth = 8;
         symbolTitleColumn.Name = "symbolTitleColumn";
         symbolTitleColumn.ReadOnly = true;
+        symbolTitleColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         symbolTitleColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // nameColumn
         // 
-        dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleRight;
-        nameColumn.DefaultCellStyle = dataGridViewCellStyle15;
         nameColumn.FillWeight = 150F;
         nameColumn.HeaderText = "نام";
         nameColumn.MinimumWidth = 8;
         nameColumn.Name = "nameColumn";
         nameColumn.ReadOnly = true;
+        nameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // exchangeColumn
         // 
-        dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleRight;
-        exchangeColumn.DefaultCellStyle = dataGridViewCellStyle16;
         exchangeColumn.HeaderText = "بورس";
         exchangeColumn.MinimumWidth = 8;
         exchangeColumn.Name = "exchangeColumn";
         exchangeColumn.ReadOnly = true;
+        exchangeColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // marketColumn
         // 
-        dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleRight;
-        marketColumn.DefaultCellStyle = dataGridViewCellStyle17;
         marketColumn.HeaderText = "بازار";
         marketColumn.MinimumWidth = 8;
         marketColumn.Name = "marketColumn";
         marketColumn.ReadOnly = true;
+        marketColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // boardColumn
         // 
-        dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleRight;
-        boardColumn.DefaultCellStyle = dataGridViewCellStyle18;
         boardColumn.HeaderText = "تابلو";
         boardColumn.MinimumWidth = 8;
         boardColumn.Name = "boardColumn";
         boardColumn.ReadOnly = true;
+        boardColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // assetColumn
         // 
-        dataGridViewCellStyle19.Alignment = DataGridViewContentAlignment.MiddleRight;
-        assetColumn.DefaultCellStyle = dataGridViewCellStyle19;
         assetColumn.FillWeight = 80F;
         assetColumn.HeaderText = "دارایی";
         assetColumn.MinimumWidth = 8;
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
+        assetColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // fundTypeColumn
-        // 
-        dataGridViewCellStyle20.Alignment = DataGridViewContentAlignment.MiddleRight;
-        fundTypeColumn.DefaultCellStyle = dataGridViewCellStyle20;
-        fundTypeColumn.FillWeight = 125F;
-        fundTypeColumn.HeaderText = "نوع صندوق";
-        fundTypeColumn.MinimumWidth = 8;
-        fundTypeColumn.Name = "fundTypeColumn";
-        fundTypeColumn.ReadOnly = true;
-        fundTypeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // industryGroupColumn
-        // 
-        dataGridViewCellStyle21.Alignment = DataGridViewContentAlignment.MiddleRight;
-        industryGroupColumn.DefaultCellStyle = dataGridViewCellStyle21;
-        industryGroupColumn.FillWeight = 125F;
-        industryGroupColumn.HeaderText = "گروه صنعت";
-        industryGroupColumn.MinimumWidth = 8;
-        industryGroupColumn.Name = "industryGroupColumn";
-        industryGroupColumn.ReadOnly = true;
-        industryGroupColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // label00
         // 
@@ -398,15 +279,6 @@ partial class SymbolDefinitionForm
         label10.Text = "نام";
         label10.TextAlign = ContentAlignment.MiddleRight;
         // 
-        // label20
-        // 
-        label20.Location = new Point(701, 19);
-        label20.Name = "label20";
-        label20.Size = new Size(113, 30);
-        label20.TabIndex = 18;
-        label20.Text = "بورس";
-        label20.TextAlign = ContentAlignment.MiddleRight;
-        // 
         // label30
         // 
         label30.Location = new Point(860, 20);
@@ -416,15 +288,6 @@ partial class SymbolDefinitionForm
         label30.Text = "ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
         // 
-        // label01
-        // 
-        label01.Location = new Point(22, 75);
-        label01.Name = "label01";
-        label01.Size = new Size(47, 30);
-        label01.TabIndex = 20;
-        label01.Text = "تابلو";
-        label01.TextAlign = ContentAlignment.MiddleRight;
-        // 
         // label11
         // 
         label11.Location = new Point(262, 76);
@@ -433,33 +296,6 @@ partial class SymbolDefinitionForm
         label11.TabIndex = 21;
         label11.Text = "دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label21
-        // 
-        label21.Location = new Point(536, 75);
-        label21.Name = "label21";
-        label21.Size = new Size(108, 30);
-        label21.TabIndex = 22;
-        label21.Text = "نوع صندوق";
-        label21.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label22
-        // 
-        label22.Location = new Point(560, 118);
-        label22.Name = "label22";
-        label22.Size = new Size(130, 30);
-        label22.TabIndex = 23;
-        label22.Text = "گروه صنعت";
-        label22.TextAlign = ContentAlignment.MiddleRight;
-        // 
-        // label1
-        // 
-        label1.Location = new Point(901, 76);
-        label1.Name = "label1";
-        label1.Size = new Size(101, 30);
-        label1.TabIndex = 24;
-        label1.Text = "گروه صنعت";
-        label1.TextAlign = ContentAlignment.MiddleRight;
         // 
         // toolTip1
         // 
@@ -473,15 +309,9 @@ partial class SymbolDefinitionForm
         // SymbolDefinitionForm
         // 
         ClientSize = new Size(1293, 700);
-        Controls.Add(marketTreeView);
-        Controls.Add(label1);
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
-        Controls.Add(exchangeComboBox);
-        Controls.Add(boardComboBox);
         Controls.Add(assetComboBox);
-        Controls.Add(groupComboBox);
-        Controls.Add(industryGroupComboBox);
         Controls.Add(newButton);
         Controls.Add(saveButton);
         Controls.Add(deleteButton);
@@ -493,12 +323,9 @@ partial class SymbolDefinitionForm
         Controls.Add(symbolsDataGridView);
         Controls.Add(label00);
         Controls.Add(label10);
-        Controls.Add(label20);
         Controls.Add(label30);
-        Controls.Add(label01);
         Controls.Add(label11);
-        Controls.Add(label21);
-        Controls.Add(label22);
+        Controls.Add(marketTreeView);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);
         Name = "SymbolDefinitionForm";
@@ -510,7 +337,6 @@ partial class SymbolDefinitionForm
         ResumeLayout(false);
         PerformLayout();
     }
-    private Label label1;
     private ToolTip toolTip1;
     private Button exportButton;
     private DataGridViewTextBoxColumn rowNumberColumn;
@@ -520,6 +346,4 @@ partial class SymbolDefinitionForm
     private DataGridViewTextBoxColumn marketColumn;
     private DataGridViewTextBoxColumn boardColumn;
     private DataGridViewTextBoxColumn assetColumn;
-    private DataGridViewTextBoxColumn fundTypeColumn;
-    private DataGridViewTextBoxColumn industryGroupColumn;
 }
