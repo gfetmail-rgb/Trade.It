@@ -352,6 +352,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Clear();
         nameTextBox.Clear();
         SetComboDefaults();
+        LoadGrid();
         marketTreeView.SelectedNode = null;
         symbolTextBox.Focus();
     }
