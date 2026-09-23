@@ -212,7 +212,9 @@
             marketApplyButton = new Button();
             marketFilterTreeView = new TreeView();
             marketAssetCheckedListBox = new CheckedListBox();
+            marketOtherCheckedListBox = new CheckedListBox();
             label16 = new Label();
+            label17 = new Label();
             label13 = new Label();
             chartPanel = new Panel();
             chartTabControl = new TabControl();
@@ -1968,6 +1970,7 @@
         private Button marketClearButton;
         private Button marketApplyButton;
         private Label label16;
+        private Label label17;
         private Label label13;
         private Label label20;
         private Label label19;
