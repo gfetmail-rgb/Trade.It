@@ -11,6 +11,7 @@ public sealed partial class SymbolDefinitionForm : Form
     private string selectedMarketNodeId = "";
     private int sortColumnIndex = -1;
     private SortOrder sortOrder = SortOrder.None;
+    private bool invalidMarketReferenceWarningShown;
 
     public SymbolDefinitionForm()
     {
@@ -20,6 +21,7 @@ public sealed partial class SymbolDefinitionForm : Form
         SetComboDefaults();
         LoadMarketTree();
         LoadGrid();
+        ShowInvalidMarketReferenceWarning();
         newButton.Click += (_, _) => ClearEditor();
         saveButton.Click += (_, _) => SaveCurrent();
         deleteButton.Click += (_, _) => DeleteCurrent();
@@ -202,6 +204,33 @@ public sealed partial class SymbolDefinitionForm : Form
             path.Count > 0 ? path[0] : "",
             path.Count > 1 ? path[1] : "",
             path.Count > 2 ? path[2] : "");
+    }
+
+    private void ShowInvalidMarketReferenceWarning()
+    {
+        if (invalidMarketReferenceWarningShown)
+            return;
+
+        var invalidSymbols = SymbolDefinitionStore.FindInvalidMarketReferences();
+
+        if (invalidSymbols.Count == 0)
+            return;
+
+        invalidMarketReferenceWarningShown = true;
+
+        var preview = string.Join("، ", invalidSymbols.Take(10));
+
+        if (invalidSymbols.Count > 10)
+            preview += "، ...";
+
+        MessageBox.Show(
+            this,
+            $"برای {invalidSymbols.Count} نماد، ساختار بازار ثبت‌شده در فایل نمادها معتبر نیست یا دیگر در ساختار بازار وجود ندارد.{Environment.NewLine}{Environment.NewLine}" +
+            $"نمادها: {preview}{Environment.NewLine}{Environment.NewLine}" +
+            "این نمادها حذف یا اصلاح نشده‌اند. برای جلوگیری از انتساب اشتباه، ابتدا ساختار بازار مربوط به آنها را بررسی کنید.",
+            "اعتبارسنجی نمادها",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
     }
 
     private void LoadGrid(string? selectSymbol = null)
@@ -639,6 +668,65 @@ public sealed partial class SymbolDefinitionForm : Form
                 return items;
             }
             catch { return new(); }
+        }
+
+        public static List<string> FindInvalidMarketReferences()
+        {
+            try
+            {
+                if (!File.Exists(FilePath))
+                    return new();
+
+                var items = JsonSerializer.Deserialize<List<SymbolDefinition>>(
+                    File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
+
+                var marketData = MarketStructureStore.Load();
+                var byId = marketData.Nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
+                var invalid = new List<string>();
+
+                foreach (var item in items)
+                {
+                    var nodeId = SymbolDefinitionRules.NormalizeText(item.MarketNodeId);
+
+                    if (string.IsNullOrWhiteSpace(nodeId) ||
+                        !byId.TryGetValue(nodeId, out var node) ||
+                        !HasValidMarketPath(byId, node))
+                    {
+                        var symbol = SymbolDefinitionRules.NormalizeText(item.SymbolTitle);
+
+                        if (!string.IsNullOrWhiteSpace(symbol))
+                            invalid.Add(symbol);
+                    }
+                }
+
+                return invalid
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+            catch
+            {
+                return new();
+            }
+        }
+
+        private static bool HasValidMarketPath(
+            IReadOnlyDictionary<string, MarketStructureNode> byId,
+            MarketStructureNode start)
+        {
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+            var current = start;
+
+            while (visited.Add(current.Id))
+            {
+                if (string.IsNullOrWhiteSpace(current.ParentId))
+                    return true;
+
+                if (!byId.TryGetValue(current.ParentId, out current!))
+                    return false;
+            }
+
+            return false;
         }
 
         public static void Save(IEnumerable<SymbolDefinition> items)
