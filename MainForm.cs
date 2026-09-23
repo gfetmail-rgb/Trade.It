@@ -34,6 +34,7 @@ namespace Trade.It
         private readonly HashSet<string> appliedMarketAssets = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private bool updatingMarketFilterTree;
+        private bool updatingMarketAssetChecks;
 
         public MainForm()
         {
@@ -41,6 +42,7 @@ namespace Trade.It
             InitializeSymbolsPrintButton();
 
             marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
+            marketAssetCheckedListBox.ItemCheck += MarketAssetCheckedListBox_ItemCheck;
 
             marketApplyButton.Click += (_, _) =>
             {
@@ -146,7 +148,7 @@ namespace Trade.It
                 updatingMarketFilterTree = false;
             }
 
-            ClearCheckedListBox(marketAssetCheckedListBox);
+            SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
         }
 
         private void MarketFilterTreeView_AfterCheck(object? sender, TreeViewEventArgs e)
@@ -187,10 +189,61 @@ namespace Trade.It
             RefreshMarketFilterTreeChecks();
         }
 
-        private static void ClearCheckedListBox(CheckedListBox listBox)
+        private void MarketAssetCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
         {
-            for (var i = 0; i < listBox.Items.Count; i++)
-                listBox.SetItemCheckState(i, CheckState.Unchecked);
+            if (updatingMarketAssetChecks)
+                return;
+
+            var allIndex = -1;
+            for (var i = 0; i < marketAssetCheckedListBox.Items.Count; i++)
+            {
+                if (string.Equals(marketAssetCheckedListBox.Items[i]?.ToString()?.Trim(), "همه", StringComparison.OrdinalIgnoreCase))
+                {
+                    allIndex = i;
+                    break;
+                }
+            }
+
+            if (allIndex < 0)
+                return;
+
+            updatingMarketAssetChecks = true;
+            try
+            {
+                if (e.Index == allIndex && e.NewValue == CheckState.Checked)
+                {
+                    for (var i = 0; i < marketAssetCheckedListBox.Items.Count; i++)
+                        if (i != allIndex)
+                            marketAssetCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
+                }
+                else if (e.Index != allIndex && e.NewValue == CheckState.Checked)
+                {
+                    marketAssetCheckedListBox.SetItemCheckState(allIndex, CheckState.Unchecked);
+                }
+                else if (e.Index != allIndex && e.NewValue == CheckState.Unchecked)
+                {
+                    var anotherCategoryChecked = false;
+
+                    for (var i = 0; i < marketAssetCheckedListBox.Items.Count; i++)
+                    {
+                        if (i == allIndex || i == e.Index)
+                            continue;
+
+                        if (marketAssetCheckedListBox.GetItemChecked(i))
+                        {
+                            anotherCategoryChecked = true;
+                            break;
+                        }
+                    }
+
+                    if (!anotherCategoryChecked)
+                        marketAssetCheckedListBox.SetItemCheckState(allIndex, CheckState.Checked);
+                }
+            }
+            finally
+            {
+                updatingMarketAssetChecks = false;
+            }
         }
 
         private void LoadMarketFilterItemsFromSymbolDefinition()
@@ -216,6 +269,7 @@ namespace Trade.It
             }
 
             marketAssetCheckedListBox.Items.Clear();
+            marketAssetCheckedListBox.Items.Add("همه");
             foreach (var category in data.AssetCategories)
                 marketAssetCheckedListBox.Items.Add(category);
 
@@ -338,8 +392,12 @@ namespace Trade.It
             foreach (var item in source.CheckedItems.Cast<object>())
             {
                 var value = item?.ToString()?.Trim();
-                if (!string.IsNullOrWhiteSpace(value) && value != "-")
+                if (!string.IsNullOrWhiteSpace(value) &&
+                    value != "-" &&
+                    !string.Equals(value, "همه", StringComparison.OrdinalIgnoreCase))
+                {
                     target.Add(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value));
+                }
             }
         }
 
@@ -357,12 +415,35 @@ namespace Trade.It
             return result;
         }
 
-        private static void SetCheckedItems(CheckedListBox listBox, HashSet<string> values)
+        private void SetCheckedItems(CheckedListBox listBox, HashSet<string> values)
         {
-            for (var i = 0; i < listBox.Items.Count; i++)
+            updatingMarketAssetChecks = true;
+            try
             {
-                var value = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
-                listBox.SetItemChecked(i, values.Contains(value));
+                var allIndex = -1;
+
+                for (var i = 0; i < listBox.Items.Count; i++)
+                {
+                    if (string.Equals(listBox.Items[i]?.ToString()?.Trim(), "همه", StringComparison.OrdinalIgnoreCase))
+                    {
+                        allIndex = i;
+                        break;
+                    }
+                }
+
+                for (var i = 0; i < listBox.Items.Count; i++)
+                {
+                    var value = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(listBox.Items[i]?.ToString());
+                    listBox.SetItemChecked(
+                        i,
+                        allIndex >= 0 && i == allIndex
+                            ? values.Count == 0
+                            : values.Contains(value));
+                }
+            }
+            finally
+            {
+                updatingMarketAssetChecks = false;
             }
         }
 
