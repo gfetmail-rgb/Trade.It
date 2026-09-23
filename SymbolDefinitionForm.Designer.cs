@@ -7,6 +7,7 @@ partial class SymbolDefinitionForm
     private TextBox nameTextBox = null!;
     private TreeView marketTreeView = null!;
     private ComboBox assetComboBox = null!;
+    private ComboBox otherItemComboBox = null!;
     private Button newButton = null!;
     private Button saveButton = null!;
     private Button deleteButton = null!;
@@ -19,6 +20,7 @@ partial class SymbolDefinitionForm
     private Label label10 = null!;
     private Label label30 = null!;
     private Label label11 = null!;
+    private Label label12 = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -43,6 +45,7 @@ partial class SymbolDefinitionForm
         nameTextBox = new TextBox();
         marketTreeView = new TreeView();
         assetComboBox = new ComboBox();
+        otherItemComboBox = new ComboBox();
         newButton = new Button();
         saveButton = new Button();
         deleteButton = new Button();
@@ -63,6 +66,7 @@ partial class SymbolDefinitionForm
         label10 = new Label();
         label30 = new Label();
         label11 = new Label();
+        label12 = new Label();
         toolTip1 = new ToolTip(components);
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
@@ -97,8 +101,16 @@ partial class SymbolDefinitionForm
         assetComboBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
         assetComboBox.Location = new Point(75, 76);
         assetComboBox.Name = "assetComboBox";
-        assetComboBox.Size = new Size(620, 30);
+        assetComboBox.Size = new Size(300, 30);
         assetComboBox.TabIndex = 5;
+        // 
+        // otherItemComboBox
+        // 
+        otherItemComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        otherItemComboBox.Location = new Point(405, 76);
+        otherItemComboBox.Name = "otherItemComboBox";
+        otherItemComboBox.Size = new Size(290, 30);
+        otherItemComboBox.TabIndex = 6;
         // 
         // newButton
         // 
@@ -326,6 +338,15 @@ partial class SymbolDefinitionForm
         label11.Text = "دارایی";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
+        // label12
+        // 
+        label12.Location = new Point(704, 75);
+        label12.Name = "label12";
+        label12.Size = new Size(76, 30);
+        label12.TabIndex = 22;
+        label12.Text = "سایر موارد";
+        label12.TextAlign = ContentAlignment.MiddleRight;
+        // 
         // toolTip1
         // 
         toolTip1.AutoPopDelay = 5000;
@@ -341,6 +362,7 @@ partial class SymbolDefinitionForm
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
         Controls.Add(assetComboBox);
+        Controls.Add(otherItemComboBox);
         Controls.Add(newButton);
         Controls.Add(saveButton);
         Controls.Add(deleteButton);
@@ -354,6 +376,7 @@ partial class SymbolDefinitionForm
         Controls.Add(label10);
         Controls.Add(label30);
         Controls.Add(label11);
+        Controls.Add(label12);
         Controls.Add(marketTreeView);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);
