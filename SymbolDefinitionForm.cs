@@ -58,7 +58,12 @@ public sealed partial class SymbolDefinitionForm : Form
         exchangeComboBox.SelectedIndex = -1;
         marketComboBox.SelectedIndex = -1;
         boardComboBox.SelectedIndex = -1;
+
+        assetComboBox.Items.Clear();
+        foreach (var category in MarketStructureStore.Load().AssetCategories)
+            assetComboBox.Items.Add(category);
         assetComboBox.SelectedIndex = -1;
+
         groupComboBox.SelectedIndex = -1;
         industryGroupComboBox.SelectedIndex = -1;
     }
