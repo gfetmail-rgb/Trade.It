@@ -62,6 +62,7 @@ partial class SymbolDefinitionForm
         marketColumn = new DataGridViewTextBoxColumn();
         boardColumn = new DataGridViewTextBoxColumn();
         assetColumn = new DataGridViewTextBoxColumn();
+        otherItemColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label30 = new Label();
@@ -209,7 +210,7 @@ partial class SymbolDefinitionForm
         dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
         symbolsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, otherItemColumn });
         dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
         dataGridViewCellStyle9.BackColor = SystemColors.Window;
         dataGridViewCellStyle9.Font = new Font("Tahoma", 9F);
@@ -301,6 +302,14 @@ partial class SymbolDefinitionForm
         assetColumn.Name = "assetColumn";
         assetColumn.ReadOnly = true;
         assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // otherItemColumn
+        // 
+        otherItemColumn.HeaderText = "سایر موارد";
+        otherItemColumn.Name = "otherItemColumn";
+        otherItemColumn.ReadOnly = true;
+        otherItemColumn.Width = 150;
+
         // 
         // label00
         // 
