@@ -105,8 +105,6 @@ public sealed partial class SymbolDefinitionForm : Form
             Tag = item.Id
         };
 
-        if (string.Equals(item.Id, selectedNodeId, StringComparison.Ordinal))
-            node.Checked = false;
 
         foreach (var child in allNodes
             .Where(x => string.Equals(x.ParentId, item.Id, StringComparison.Ordinal))
@@ -120,13 +118,18 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private string GetSelectedMarketNodeId()
     {
-        return marketTreeView.SelectedNode?.Tag as string ?? "";
+        var selectedNode = marketTreeView.SelectedNode;
+        if (selectedNode == null)
+            return "";
+
+        return selectedNode.Name ?? "";
     }
 
     private void SelectMarketTreeNode(string nodeId)
     {
         marketTreeView.SelectedNode = null;
 
+        nodeId = SymbolDefinitionRules.NormalizeText(nodeId);
         if (string.IsNullOrWhiteSpace(nodeId))
             return;
 
