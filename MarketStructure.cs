@@ -14,6 +14,7 @@ public sealed class MarketStructureData
 {
     public List<MarketStructureNode> Nodes { get; set; } = new();
     public List<string> AssetCategories { get; set; } = new();
+    public List<string> OtherCategories { get; set; } = new();
 }
 
 public static class MarketStructureStore
@@ -66,6 +67,7 @@ public static class MarketStructureStore
     {
         data.Nodes ??= new();
         data.AssetCategories ??= new();
+        data.OtherCategories ??= new();
 
         var usedIds = new HashSet<string>(StringComparer.Ordinal);
         var duplicateIds = new HashSet<string>(StringComparer.Ordinal);
@@ -115,6 +117,12 @@ public static class MarketStructureStore
         }
 
         data.AssetCategories = data.AssetCategories
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        data.OtherCategories = data.OtherCategories
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Select(x => x.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
