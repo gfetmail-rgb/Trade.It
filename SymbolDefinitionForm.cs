@@ -332,24 +332,9 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolTextBox.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(exchangeComboBox.Text, exchangeComboBox.Items, out var exchange))
-        {
-            MessageBox.Show(this, "عنوان بورس را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            exchangeComboBox.Focus();
-            return null;
-        }
-        if (!SymbolDefinitionRules.IsAllowed(marketComboBox.Text, marketComboBox.Items, out var market))
-        {
-            MessageBox.Show(this, "نوع بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            marketComboBox.Focus();
-            return null;
-        }
-        if (!SymbolDefinitionRules.IsAllowed(boardComboBox.Text, boardComboBox.Items, out var board))
-        {
-            MessageBox.Show(this, "نوع تابلو را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            boardComboBox.Focus();
-            return null;
-        }
+        var exchange = SymbolDefinitionRules.NormalizeText(exchangeComboBox.Text);
+        var market = SymbolDefinitionRules.NormalizeText(marketComboBox.Text);
+        var board = SymbolDefinitionRules.NormalizeText(boardComboBox.Text);
         var marketNodeId = GetSelectedMarketNodeId();
         if (string.IsNullOrWhiteSpace(marketNodeId))
         {
