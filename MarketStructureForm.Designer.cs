@@ -90,6 +90,7 @@ partial class MarketStructureForm
         // marketTreeView
         marketTreeView.Dock = DockStyle.Fill;
         marketTreeView.HideSelection = false;
+        marketTreeView.RightToLeft = RightToLeft.Yes;
         marketTreeView.Name = "marketTreeView";
 
         // marketTitleTextBox
@@ -128,6 +129,7 @@ partial class MarketStructureForm
         categoryPage.UseVisualStyleBackColor = true;
 
         categoryListBox.Dock = DockStyle.Fill;
+        categoryListBox.RightToLeft = RightToLeft.Yes;
         categoryListBox.Name = "categoryListBox";
 
         categoryTextBox.Dock = DockStyle.Bottom;
