@@ -710,6 +710,31 @@ public sealed partial class SymbolDefinitionForm : Form
             }
         }
 
+        public static List<string> FindDuplicateSymbols()
+        {
+            try
+            {
+                if (!File.Exists(FilePath))
+                    return new();
+
+                var items = JsonSerializer.Deserialize<List<SymbolDefinition>>(
+                    File.ReadAllText(FilePath, Encoding.UTF8), Options) ?? new();
+
+                return items
+                    .Select(x => SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .GroupBy(x => x, StringComparer.OrdinalIgnoreCase)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+            catch
+            {
+                return new();
+            }
+        }
+
         private static bool HasValidMarketPath(
             IReadOnlyDictionary<string, MarketStructureNode> byId,
             MarketStructureNode start)
