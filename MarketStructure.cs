@@ -98,6 +98,8 @@ public static class MarketStructureStore
             }
         }
 
+        BreakParentCycles(data);
+
         RecalculateSortOrders(data);
 
         if (!data.Nodes.Any(x =>
@@ -112,6 +114,32 @@ public static class MarketStructureStore
             .Select(x => x.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
+    }
+
+    private static void BreakParentCycles(MarketStructureData data)
+    {
+        var byId = data.Nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
+
+        foreach (var start in data.Nodes)
+        {
+            var path = new HashSet<string>(StringComparer.Ordinal);
+            var current = start;
+
+            while (!string.IsNullOrWhiteSpace(current.ParentId))
+            {
+                if (!path.Add(current.Id))
+                {
+                    current.ParentId = "";
+                    break;
+                }
+
+                if (!byId.TryGetValue(current.ParentId, out current!))
+                {
+                    current.ParentId = "";
+                    break;
+                }
+            }
+        }
     }
 
     private static string CreateUniqueId(HashSet<string> usedIds)
