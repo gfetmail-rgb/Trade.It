@@ -143,6 +143,26 @@ public sealed partial class SymbolDefinitionForm : Form
         return null;
     }
 
+    private static bool HasValidMarketPath(
+        IReadOnlyList<MarketStructureNode> nodes,
+        MarketStructureNode start)
+    {
+        var byId = nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        var current = start;
+
+        while (visited.Add(current.Id))
+        {
+            if (string.IsNullOrWhiteSpace(current.ParentId))
+                return true;
+
+            if (!byId.TryGetValue(current.ParentId, out current!))
+                return false;
+        }
+
+        return false;
+    }
+
     private static (string Exchange, string Market, string Board) GetMarketPath(SymbolDefinition item)
     {
         var nodeId = SymbolDefinitionRules.NormalizeText(item.MarketNodeId);
@@ -157,16 +177,24 @@ public sealed partial class SymbolDefinitionForm : Form
 
         var path = new List<string>();
         var visited = new HashSet<string>(StringComparer.Ordinal);
+        var reachedRoot = false;
 
         while (node != null && visited.Add(node.Id))
         {
             path.Add(node.Title);
+
             if (string.IsNullOrWhiteSpace(node.ParentId))
+            {
+                reachedRoot = true;
                 break;
+            }
 
             if (!byId.TryGetValue(node.ParentId, out node!))
                 break;
         }
+
+        if (!reachedRoot)
+            return ("", "", "");
 
         path.Reverse();
 
@@ -351,9 +379,12 @@ public sealed partial class SymbolDefinitionForm : Form
         }
 
         var marketData = MarketStructureStore.Load();
-        if (!marketData.Nodes.Any(x => string.Equals(x.Id, marketNodeId, StringComparison.Ordinal)))
+        var marketNode = marketData.Nodes.FirstOrDefault(x =>
+            string.Equals(x.Id, marketNodeId, StringComparison.Ordinal));
+
+        if (marketNode == null || !HasValidMarketPath(marketData.Nodes, marketNode))
         {
-            MessageBox.Show(this, "ردیف انتخاب‌شده در ساختار بازار معتبر نیست. دوباره یک ردیف را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "ساختار بازار انتخاب‌شده معتبر نیست. دوباره یک ردیف را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketTreeView.Focus();
             return null;
         }
