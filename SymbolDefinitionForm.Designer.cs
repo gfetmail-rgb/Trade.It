@@ -113,9 +113,9 @@ partial class SymbolDefinitionForm
         // 
         // marketTreeView
         // 
-        marketTreeView.Location = new Point(1075, 20);
+        marketTreeView.Location = new Point(970, 20);
         marketTreeView.Name = "marketTreeView";
-        marketTreeView.Size = new Size(186, 86);
+        marketTreeView.Size = new Size(291, 120);
         marketTreeView.TabIndex = 25;
         marketTreeView.HideSelection = false;
         marketTreeView.RightToLeft = RightToLeft.Yes;
@@ -376,9 +376,9 @@ partial class SymbolDefinitionForm
         // 
         // label30
         // 
-        label30.Location = new Point(997, 20);
+        label30.Location = new Point(860, 20);
         label30.Name = "label30";
-        label30.Size = new Size(76, 30);
+        label30.Size = new Size(100, 30);
         label30.TabIndex = 19;
         label30.Text = "ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
@@ -444,7 +444,6 @@ partial class SymbolDefinitionForm
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
         Controls.Add(exchangeComboBox);
-        Controls.Add(marketTreeView);
         Controls.Add(boardComboBox);
         Controls.Add(assetComboBox);
         Controls.Add(groupComboBox);
@@ -466,6 +465,7 @@ partial class SymbolDefinitionForm
         Controls.Add(label11);
         Controls.Add(label21);
         Controls.Add(label22);
+        Controls.Add(marketTreeView);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);
         Name = "SymbolDefinitionForm";
