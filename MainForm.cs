@@ -91,6 +91,13 @@ namespace Trade.It
                 RefreshPortfolioListAndClearSelection();
             };
 
+            marketStructureMenuItem.Click += (_, _) =>
+            {
+                using var form = new MarketStructureForm();
+                form.ShowDialog(this);
+                LoadMarketFilterItemsFromSymbolDefinition();
+            };
+
 
             portfolioComboBox.SelectedIndexChanged += PortfolioComboBox_SelectedIndexChanged;
             newPortfolioButton.Click += NewPortfolioButton_Click;
