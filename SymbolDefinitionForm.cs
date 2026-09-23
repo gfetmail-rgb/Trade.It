@@ -43,12 +43,12 @@ public sealed partial class SymbolDefinitionForm : Form
         CheckedListBox fundType,
         CheckedListBox industryGroup)
     {
-        CopyItems(exchangeComboBox, exchange);
-        CopyItems(marketComboBox, market);
-        CopyItems(boardComboBox, board);
+        exchange.Items.Clear();
+        market.Items.Clear();
+        board.Items.Clear();
         CopyItems(assetComboBox, asset);
-        CopyItems(groupComboBox, fundType);
-        CopyItems(industryGroupComboBox, industryGroup);
+        fundType.Items.Clear();
+        industryGroup.Items.Clear();
     }
 
     private static void CopyItems(ComboBox source, CheckedListBox target)
@@ -61,17 +61,12 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private void SetComboDefaults()
     {
-        exchangeComboBox.SelectedIndex = -1;
-        marketComboBox.SelectedIndex = -1;
-        boardComboBox.SelectedIndex = -1;
-
         assetComboBox.Items.Clear();
         foreach (var category in MarketStructureStore.Load().AssetCategories)
             assetComboBox.Items.Add(category);
         assetComboBox.SelectedIndex = -1;
 
-        groupComboBox.SelectedIndex = -1;
-        industryGroupComboBox.SelectedIndex = -1;
+
     }
 
     private void LoadMarketTree(string? selectedNodeId = null)
@@ -223,9 +218,7 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    item.AssetCategory,
-                    item.FundType,
-                    item.IndustryGroup);
+                    item.AssetCategory);
 
                 symbolsDataGridView.Rows[r].Tag = item;
             }
@@ -288,9 +281,7 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    item.AssetCategory,
-                    item.FundType,
-                    item.IndustryGroup);
+                    item.AssetCategory);
 
                 symbolsDataGridView.Rows[rowIndex].Tag = item;
                 if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
@@ -319,12 +310,6 @@ public sealed partial class SymbolDefinitionForm : Form
         4 => GetMarketPath(item).Market,
         5 => GetMarketPath(item).Board,
         6 => item.AssetCategory ?? item.AssetType ?? string.Empty,
-        7 => string.IsNullOrWhiteSpace(item.FundType) || item.FundType == SymbolDefinitionRules.EmptyOption
-            ? string.Empty
-            : item.FundType,
-        8 => string.IsNullOrWhiteSpace(item.IndustryGroup) || item.IndustryGroup == SymbolDefinitionRules.EmptyOption
-            ? string.Empty
-            : item.IndustryGroup,
         _ => string.Empty
     };
 
@@ -335,8 +320,7 @@ public sealed partial class SymbolDefinitionForm : Form
         nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
         SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
         SelectMarketTreeNode(x.MarketNodeId);
-        SelectComboValue(groupComboBox, x.FundType);
-        SelectComboValue(industryGroupComboBox, x.IndustryGroup);
+
     }
 
     private static void SelectComboValue(ComboBox comboBox, string value)
@@ -412,8 +396,8 @@ public sealed partial class SymbolDefinitionForm : Form
             BoardType = "",
             AssetType = asset,
             AssetCategory = asset,
-            FundType = SymbolDefinitionRules.NormalizeText(groupComboBox.Text),
-            IndustryGroup = SymbolDefinitionRules.NormalizeText(industryGroupComboBox.Text),
+            FundType = "",
+            IndustryGroup = "",
             IndustryGroupOrFundType = ""
         };
     }
@@ -525,12 +509,12 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             var imported = ExcelSymbolReader.Read(
                 d.FileName,
-                ComboValues(exchangeComboBox),
-                ComboValues(marketComboBox),
-                ComboValues(boardComboBox),
+                Array.Empty<string>(),
+                Array.Empty<string>(),
+                Array.Empty<string>(),
                 ComboValues(assetComboBox),
-                ComboValues(groupComboBox),
-                ComboValues(industryGroupComboBox),
+                Array.Empty<string>(),
+                Array.Empty<string>(),
                 out var invalidRows,
                 out var invalidDetails);
 
