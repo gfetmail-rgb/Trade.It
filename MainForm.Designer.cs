@@ -121,6 +121,7 @@
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
+            marketStructureMenuItem = new ToolStripMenuItem();
             mainSplitContainer = new SplitContainer();
             controlTabControl = new TabControl();
             stocksTabPage = new TabPage();
@@ -299,7 +300,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -331,6 +332,12 @@
             symbolDefinitionMenuItem.Size = new Size(132, 29);
             symbolDefinitionMenuItem.Text = "تعریف نمادها";
             symbolDefinitionMenuItem.Click += symbolDefinitionMenuItem_Click;
+            // 
+            // marketStructureMenuItem
+            // 
+            marketStructureMenuItem.Name = "marketStructureMenuItem";
+            marketStructureMenuItem.Size = new Size(150, 29);
+            marketStructureMenuItem.Text = "تعریف بازارها";
             // 
             // mainSplitContainer
             // 
