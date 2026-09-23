@@ -283,6 +283,13 @@ namespace Trade.It
 
                     node.Checked = true;
 
+                    var parent = node.Parent;
+                    while (parent != null)
+                    {
+                        parent.Checked = true;
+                        parent = parent.Parent;
+                    }
+
                     foreach (TreeNode child in GetTreeNodeAndChildren(node))
                     {
                         if (child != node)
