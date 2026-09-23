@@ -956,14 +956,16 @@ public sealed partial class SymbolDefinitionForm : Form
                 foreach (var expected in Headers)
                     if (HeaderMatches(normalized, expected)) indexByHeader[expected] = pair.Key;
             }
-            foreach (var h in Headers) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
+            foreach (var h in Headers.Take(6)) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
             var result = new List<SymbolDefinition>();
             int excelRow = 1;
             foreach (var xmlRow in rows.Skip(1))
             {
                 excelRow++;
                 var cells = Row(xmlRow, s, shared);
-                string V(string h) => cells.TryGetValue(indexByHeader[h], out var value) ? SymbolDefinitionRules.NormalizeText(value) : "";
+                string V(string h) => indexByHeader.TryGetValue(h, out var column) && cells.TryGetValue(column, out var value)
+                    ? SymbolDefinitionRules.NormalizeText(value)
+                    : "";
                 var symbol = V(Headers[0]);
                 if (string.IsNullOrWhiteSpace(symbol))
                 {
