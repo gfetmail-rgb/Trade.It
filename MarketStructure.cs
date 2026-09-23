@@ -21,7 +21,10 @@ public static class MarketStructureStore
     private static string FilePath =>
         Path.Combine(AppContext.BaseDirectory, "Data", "MarketStructure.json");
 
-    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        WriteIndented = true
+    };
 
     public static MarketStructureData Load()
     {
@@ -34,11 +37,11 @@ public static class MarketStructureStore
                 return data;
             }
 
-            var data = JsonSerializer.Deserialize<MarketStructureData>(
+            var loadedData = JsonSerializer.Deserialize<MarketStructureData>(
                 File.ReadAllText(FilePath)) ?? CreateDefault();
 
-            Normalize(data);
-            return data;
+            Normalize(loadedData);
+            return loadedData;
         }
         catch
         {
@@ -49,7 +52,10 @@ public static class MarketStructureStore
     public static void Save(MarketStructureData data)
     {
         Normalize(data);
-        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+
+        Directory.CreateDirectory(
+            Path.GetDirectoryName(FilePath)!);
+
         File.WriteAllText(
             FilePath,
             JsonSerializer.Serialize(data, Options),
@@ -66,6 +72,7 @@ public static class MarketStructureStore
             node.Id = string.IsNullOrWhiteSpace(node.Id)
                 ? Guid.NewGuid().ToString("N")
                 : node.Id;
+
             node.ParentId ??= "";
             node.Title = (node.Title ?? "").Trim();
         }
@@ -88,7 +95,9 @@ public static class MarketStructureStore
             "بازار صندوق‌های سرمایه‌گذاری"
         });
 
-        var tehranFirst = data.Nodes.First(x => x.Title == "بازار اول");
+        var tehranFirst = data.Nodes.First(
+            x => x.Title == "بازار اول");
+
         AddNode(data, tehranFirst.Id, "تابلوی اصلی");
         AddNode(data, tehranFirst.Id, "تابلوی فرعی");
 
@@ -102,16 +111,22 @@ public static class MarketStructureStore
             "بازار مشتقه"
         });
 
-        var otcBase = data.Nodes.First(x => x.Title == "بازار پایه");
+        var otcBase = data.Nodes.First(
+            x => x.Title == "بازار پایه");
+
         AddNode(data, otcBase.Id, "بازار پایه زرد");
         AddNode(data, otcBase.Id, "بازار پایه نارنجی");
         AddNode(data, otcBase.Id, "بازار پایه قرمز");
 
-        var otcModern = data.Nodes.First(x => x.Title == "بازار ابزارهای نوین مالی");
+        var otcModern = data.Nodes.First(
+            x => x.Title == "بازار ابزارهای نوین مالی");
+
         AddNode(data, otcModern.Id, "صندوق‌های سرمایه‌گذاری");
         AddNode(data, otcModern.Id, "سایر ابزارهای مالی");
 
-        var otcDerivatives = data.Nodes.First(x => x.Title == "بازار مشتقه");
+        var otcDerivatives = data.Nodes.First(
+            x => x.Title == "بازار مشتقه");
+
         AddNode(data, otcDerivatives.Id, "اوراق اختیار معامله");
         AddNode(data, otcDerivatives.Id, "قراردادهای آتی");
 
@@ -123,14 +138,30 @@ public static class MarketStructureStore
 
         var commodityDerivatives = data.Nodes.First(x =>
             x.Title == "بازار مشتقه" &&
-            x.ParentId == data.Nodes.First(y => y.Title == "بورس کالای ایران").Id);
-        AddNode(data, commodityDerivatives.Id, "قراردادهای آتی");
-        AddNode(data, commodityDerivatives.Id, "قراردادهای اختیار معامله");
+            x.ParentId ==
+            data.Nodes.First(
+                y => y.Title == "بورس کالای ایران").Id);
+
+        AddNode(
+            data,
+            commodityDerivatives.Id,
+            "قراردادهای آتی");
+
+        AddNode(
+            data,
+            commodityDerivatives.Id,
+            "قراردادهای اختیار معامله");
 
         var commodityFinancial = data.Nodes.First(x =>
             x.Title == "بازار مالی" &&
-            x.ParentId == data.Nodes.First(y => y.Title == "بورس کالای ایران").Id);
-        AddNode(data, commodityFinancial.Id, "گواهی سپرده کالایی");
+            x.ParentId ==
+            data.Nodes.First(
+                y => y.Title == "بورس کالای ایران").Id);
+
+        AddNode(
+            data,
+            commodityFinancial.Id,
+            "گواهی سپرده کالایی");
 
         data.AssetCategories.AddRange(new[]
         {
@@ -153,24 +184,9 @@ public static class MarketStructureStore
         IEnumerable<string> children)
     {
         var parent = AddNode(data, parentId, title);
+
         foreach (var child in children)
             AddNode(data, parent.Id, child);
-    }
-
-    private static void AddTree(
-        MarketStructureData data,
-        string rootTitle,
-        params (string Title, (string Title, (string Title)[] Children)[] Children)[] children)
-    {
-        var root = AddNode(data, "", rootTitle);
-
-        foreach (var child in children)
-        {
-            var childNode = AddNode(data, root.Id, child.Title);
-
-            foreach (var grandChild in child.Children)
-                AddNode(data, childNode.Id, grandChild.Title);
-        }
     }
 
     private static MarketStructureNode AddNode(
@@ -182,7 +198,8 @@ public static class MarketStructureStore
         {
             ParentId = parentId,
             Title = title,
-            SortOrder = data.Nodes.Count(x => x.ParentId == parentId)
+            SortOrder = data.Nodes.Count(
+                x => x.ParentId == parentId)
         };
 
         data.Nodes.Add(node);
