@@ -41,7 +41,6 @@
         private System.Windows.Forms.Button hideToolsButton;
         private System.Windows.Forms.Button printChartButton;
         private System.Windows.Forms.Button snapshotChartButton;
-        private System.Windows.Forms.Button fullScreenChartButton;
         private System.Windows.Forms.Button saveAnalysisButton;
         private System.Windows.Forms.Button drawTrendLineButton;
         private System.Windows.Forms.Button drawTrendChannelButton;
@@ -210,11 +209,11 @@
             marketCountLabel = new Label();
             marketClearButton = new Button();
             marketApplyButton = new Button();
-            marketFilterTreeView = new TreeView();
-            marketAssetCheckedListBox = new CheckedListBox();
             marketOtherCheckedListBox = new CheckedListBox();
-            label16 = new Label();
+            marketAssetCheckedListBox = new CheckedListBox();
+            marketFilterTreeView = new TreeView();
             label17 = new Label();
+            label16 = new Label();
             label13 = new Label();
             chartPanel = new Panel();
             chartTabControl = new TabControl();
@@ -330,7 +329,7 @@
             // marketStructureMenuItem
             // 
             marketStructureMenuItem.Name = "marketStructureMenuItem";
-            marketStructureMenuItem.Size = new Size(150, 29);
+            marketStructureMenuItem.Size = new Size(129, 29);
             marketStructureMenuItem.Text = "تعریف بازارها";
             // 
             // mainSplitContainer
@@ -1285,7 +1284,7 @@
             // 
             marketCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             marketCountLabel.Font = new Font("Segoe UI", 9F);
-            marketCountLabel.Location = new Point(16, 843);
+            marketCountLabel.Location = new Point(16, 851);
             marketCountLabel.Name = "marketCountLabel";
             marketCountLabel.RightToLeft = RightToLeft.Yes;
             marketCountLabel.Size = new Size(351, 36);
@@ -1296,7 +1295,7 @@
             // marketClearButton
             // 
             marketClearButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            marketClearButton.Location = new Point(83, 800);
+            marketClearButton.Location = new Point(83, 809);
             marketClearButton.Name = "marketClearButton";
             marketClearButton.Size = new Size(85, 35);
             marketClearButton.TabIndex = 13;
@@ -1306,34 +1305,12 @@
             // marketApplyButton
             // 
             marketApplyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            marketApplyButton.Location = new Point(229, 800);
+            marketApplyButton.Location = new Point(229, 809);
             marketApplyButton.Name = "marketApplyButton";
             marketApplyButton.Size = new Size(85, 35);
             marketApplyButton.TabIndex = 12;
             marketApplyButton.Text = "تایید";
             marketApplyButton.UseVisualStyleBackColor = true;
-            // 
-            // marketFilterTreeView
-            marketFilterTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketFilterTreeView.CheckBoxes = true;
-            marketFilterTreeView.Location = new Point(8, 38);
-            marketFilterTreeView.Name = "marketFilterTreeView";
-            marketFilterTreeView.RightToLeft = RightToLeft.Yes;
-            marketFilterTreeView.RightToLeftLayout = true;
-            marketFilterTreeView.Size = new Size(270, 455);
-            marketFilterTreeView.TabIndex = 6;
-            // 
-            // marketAssetCheckedListBox
-            // 
-            marketAssetCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            marketAssetCheckedListBox.CheckOnClick = true;
-            marketAssetCheckedListBox.FormattingEnabled = true;
-            marketAssetCheckedListBox.HorizontalScrollbar = true;
-            marketAssetCheckedListBox.Location = new Point(8, 548);
-            marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
-            marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketAssetCheckedListBox.Size = new Size(270, 120);
-            marketAssetCheckedListBox.TabIndex = 7;
             // 
             // marketOtherCheckedListBox
             // 
@@ -1341,37 +1318,61 @@
             marketOtherCheckedListBox.CheckOnClick = true;
             marketOtherCheckedListBox.FormattingEnabled = true;
             marketOtherCheckedListBox.HorizontalScrollbar = true;
-            marketOtherCheckedListBox.Location = new Point(8, 686);
+            marketOtherCheckedListBox.Location = new Point(8, 616);
             marketOtherCheckedListBox.Name = "marketOtherCheckedListBox";
             marketOtherCheckedListBox.RightToLeft = RightToLeft.Yes;
-            marketOtherCheckedListBox.Size = new Size(270, 96);
+            marketOtherCheckedListBox.Size = new Size(266, 172);
             marketOtherCheckedListBox.TabIndex = 8;
             // 
-            // label16
-            label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label16.AutoSize = true;
-            label16.Location = new Point(278, 570);
-            label16.Name = "label16";
-            label16.Size = new Size(93, 25);
-            label16.TabIndex = 3;
-            label16.Text = "نوع دارایی:";
+            // marketAssetCheckedListBox
+            // 
+            marketAssetCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetCheckedListBox.CheckOnClick = true;
+            marketAssetCheckedListBox.FormattingEnabled = true;
+            marketAssetCheckedListBox.HorizontalScrollbar = true;
+            marketAssetCheckedListBox.Location = new Point(8, 435);
+            marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
+            marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketAssetCheckedListBox.Size = new Size(266, 172);
+            marketAssetCheckedListBox.TabIndex = 7;
+            // 
+            // marketFilterTreeView
+            // 
+            marketFilterTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFilterTreeView.CheckBoxes = true;
+            marketFilterTreeView.Location = new Point(8, 38);
+            marketFilterTreeView.Name = "marketFilterTreeView";
+            marketFilterTreeView.RightToLeft = RightToLeft.Yes;
+            marketFilterTreeView.RightToLeftLayout = true;
+            marketFilterTreeView.Size = new Size(266, 391);
+            marketFilterTreeView.TabIndex = 6;
             // 
             // label17
             // 
             label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label17.AutoSize = true;
-            label17.Location = new Point(278, 710);
+            label17.Location = new Point(283, 696);
             label17.Name = "label17";
-            label17.Size = new Size(93, 25);
+            label17.Size = new Size(95, 25);
             label17.TabIndex = 4;
             label17.Text = "سایر موارد:";
             // 
+            // label16
+            // 
+            label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label16.AutoSize = true;
+            label16.Location = new Point(281, 510);
+            label16.Name = "label16";
+            label16.Size = new Size(93, 25);
+            label16.TabIndex = 3;
+            label16.Text = "نوع دارایی:";
+            // 
             // label13
+            // 
             label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label13.AutoSize = true;
-            label13.Location = new Point(278, 62);
+            label13.Location = new Point(278, 252);
             label13.Name = "label13";
-            label13.Size = new Size(89, 25);
+            label13.Size = new Size(102, 29);
             label13.TabIndex = 0;
             label13.Text = "ساختار بازار:";
             // 
@@ -1580,7 +1581,7 @@
             indicatorPanelButton.Name = "indicatorPanelButton";
             indicatorPanelButton.Size = new Size(88, 34);
             indicatorPanelButton.TabIndex = 3;
-            indicatorPanelButton.Text = "اندیکاتورها";
+            indicatorPanelButton.Text = "حجم";
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
             // testModeButton
@@ -1670,6 +1671,8 @@
             // 
             // fullScreenChartButton
             // 
+            fullScreenChartButton.Active = false;
+            fullScreenChartButton.FlatStyle = FlatStyle.Flat;
             fullScreenChartButton.Location = new Point(595, 7);
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(106, 34);
@@ -1974,5 +1977,6 @@
         private Label label13;
         private Label label20;
         private Label label19;
+        private FullScreenToggleButton fullScreenChartButton;
     }
 }

@@ -1,22 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.105.0" />
-    <Compile Update="SymbolDefinitionForm.cs" />
-    <Compile Update="SymbolDefinitionForm.Designer.cs">
-      <DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="SymbolDefinitionForm.resx">
-      <DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Remove="SymbolDefinitionForm.GridDisplay.resx" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="SymbolDefinitionForm.GridDisplay.resx" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
+	</ItemGroup>
 
 </Project>

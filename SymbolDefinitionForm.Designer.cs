@@ -74,43 +74,43 @@ partial class SymbolDefinitionForm
         // 
         // symbolTextBox
         // 
-        symbolTextBox.Location = new Point(75, 19);
+        symbolTextBox.Location = new Point(175, 19);
         symbolTextBox.Name = "symbolTextBox";
         symbolTextBox.Size = new Size(201, 29);
         symbolTextBox.TabIndex = 0;
         // 
         // nameTextBox
         // 
-        nameTextBox.Location = new Point(325, 19);
+        nameTextBox.Location = new Point(493, 19);
         nameTextBox.Name = "nameTextBox";
-        nameTextBox.Size = new Size(370, 29);
+        nameTextBox.Size = new Size(302, 29);
         nameTextBox.TabIndex = 1;
         // 
         // marketTreeView
         // 
         marketTreeView.HideSelection = false;
-        marketTreeView.Location = new Point(884, 6);
+        marketTreeView.Location = new Point(916, 48);
         marketTreeView.Name = "marketTreeView";
         marketTreeView.RightToLeft = RightToLeft.Yes;
         marketTreeView.RightToLeftLayout = true;
-        marketTreeView.Size = new Size(401, 682);
+        marketTreeView.Size = new Size(369, 640);
         marketTreeView.TabIndex = 25;
         // 
         // assetComboBox
         // 
         assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         assetComboBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
-        assetComboBox.Location = new Point(75, 76);
+        assetComboBox.Location = new Point(175, 76);
         assetComboBox.Name = "assetComboBox";
-        assetComboBox.Size = new Size(300, 30);
+        assetComboBox.Size = new Size(201, 30);
         assetComboBox.TabIndex = 5;
         // 
         // otherItemComboBox
         // 
         otherItemComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        otherItemComboBox.Location = new Point(405, 76);
+        otherItemComboBox.Location = new Point(493, 76);
         otherItemComboBox.Name = "otherItemComboBox";
-        otherItemComboBox.Size = new Size(290, 30);
+        otherItemComboBox.Size = new Size(302, 30);
         otherItemComboBox.TabIndex = 6;
         // 
         // newButton
@@ -227,7 +227,7 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.RowHeadersVisible = false;
         symbolsDataGridView.RowHeadersWidth = 62;
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        symbolsDataGridView.Size = new Size(868, 473);
+        symbolsDataGridView.Size = new Size(900, 473);
         symbolsDataGridView.TabIndex = 0;
         // 
         // rowNumberColumn
@@ -306,14 +306,13 @@ partial class SymbolDefinitionForm
         // otherItemColumn
         // 
         otherItemColumn.HeaderText = "سایر موارد";
+        otherItemColumn.MinimumWidth = 8;
         otherItemColumn.Name = "otherItemColumn";
         otherItemColumn.ReadOnly = true;
-        otherItemColumn.Width = 150;
-
         // 
         // label00
         // 
-        label00.Location = new Point(12, 18);
+        label00.Location = new Point(112, 18);
         label00.Name = "label00";
         label00.Size = new Size(57, 30);
         label00.TabIndex = 16;
@@ -322,7 +321,7 @@ partial class SymbolDefinitionForm
         // 
         // label10
         // 
-        label10.Location = new Point(229, 19);
+        label10.Location = new Point(361, 18);
         label10.Name = "label10";
         label10.Size = new Size(90, 30);
         label10.TabIndex = 17;
@@ -331,7 +330,7 @@ partial class SymbolDefinitionForm
         // 
         // label30
         // 
-        label30.Location = new Point(778, 19);
+        label30.Location = new Point(916, 9);
         label30.Name = "label30";
         label30.Size = new Size(100, 30);
         label30.TabIndex = 19;
@@ -340,7 +339,7 @@ partial class SymbolDefinitionForm
         // 
         // label11
         // 
-        label11.Location = new Point(12, 75);
+        label11.Location = new Point(112, 75);
         label11.Name = "label11";
         label11.Size = new Size(57, 30);
         label11.TabIndex = 21;
@@ -349,9 +348,9 @@ partial class SymbolDefinitionForm
         // 
         // label12
         // 
-        label12.Location = new Point(704, 75);
+        label12.Location = new Point(382, 76);
         label12.Name = "label12";
-        label12.Size = new Size(76, 30);
+        label12.Size = new Size(105, 30);
         label12.TabIndex = 22;
         label12.Text = "سایر موارد";
         label12.TextAlign = ContentAlignment.MiddleRight;
