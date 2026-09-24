@@ -57,6 +57,7 @@ partial class MarketStructureForm
         moveDownButton = new Button();
 
         categoryListBox = new ListBox();
+        categoryListBox.Sorted = true;
         categoryTextBox = new TextBox();
         categoryButtons = new FlowLayoutPanel();
         addCategoryButton = new Button();
@@ -64,6 +65,7 @@ partial class MarketStructureForm
         deleteCategoryButton = new Button();
 
         otherCategoryListBox = new ListBox();
+        otherCategoryListBox.Sorted = true;
         otherCategoryTextBox = new TextBox();
         otherCategoryButtons = new FlowLayoutPanel();
         addOtherCategoryButton = new Button();
