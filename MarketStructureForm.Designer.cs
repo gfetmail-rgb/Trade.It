@@ -21,12 +21,16 @@ partial class MarketStructureForm
     private Button addCategoryButton;
     private Button renameCategoryButton;
     private Button deleteCategoryButton;
+    private Button importCategoryButton;
+    private Button exportCategoryButton;
     private ListBox otherCategoryListBox;
     private TextBox otherCategoryTextBox;
     private FlowLayoutPanel otherCategoryButtons;
     private Button addOtherCategoryButton;
     private Button renameOtherCategoryButton;
     private Button deleteOtherCategoryButton;
+    private Button importOtherCategoryButton;
+    private Button exportOtherCategoryButton;
     private Panel bottomPanel;
     private Button closeButton;
 
@@ -63,6 +67,8 @@ partial class MarketStructureForm
         addCategoryButton = new Button();
         renameCategoryButton = new Button();
         deleteCategoryButton = new Button();
+        importCategoryButton = new Button();
+        exportCategoryButton = new Button();
 
         otherCategoryListBox = new ListBox();
         otherCategoryListBox.Sorted = true;
@@ -71,6 +77,8 @@ partial class MarketStructureForm
         addOtherCategoryButton = new Button();
         renameOtherCategoryButton = new Button();
         deleteOtherCategoryButton = new Button();
+        importOtherCategoryButton = new Button();
+        exportOtherCategoryButton = new Button();
 
         bottomPanel = new Panel();
         closeButton = new Button();
@@ -165,7 +173,11 @@ partial class MarketStructureForm
         ConfigureDesignerButton(addCategoryButton, "افزودن");
         ConfigureDesignerButton(renameCategoryButton, "تغییر نام");
         ConfigureDesignerButton(deleteCategoryButton, "حذف");
+        ConfigureDesignerButton(importCategoryButton, "ورود از Excel");
+        ConfigureDesignerButton(exportCategoryButton, "خروجی به Excel");
 
+        categoryButtons.Controls.Add(exportCategoryButton);
+        categoryButtons.Controls.Add(importCategoryButton);
         categoryButtons.Controls.Add(deleteCategoryButton);
         categoryButtons.Controls.Add(renameCategoryButton);
         categoryButtons.Controls.Add(addCategoryButton);
@@ -198,7 +210,11 @@ partial class MarketStructureForm
         ConfigureDesignerButton(addOtherCategoryButton, "افزودن");
         ConfigureDesignerButton(renameOtherCategoryButton, "تغییر نام");
         ConfigureDesignerButton(deleteOtherCategoryButton, "حذف");
+        ConfigureDesignerButton(importOtherCategoryButton, "ورود از Excel");
+        ConfigureDesignerButton(exportOtherCategoryButton, "خروجی به Excel");
 
+        otherCategoryButtons.Controls.Add(exportOtherCategoryButton);
+        otherCategoryButtons.Controls.Add(importOtherCategoryButton);
         otherCategoryButtons.Controls.Add(deleteOtherCategoryButton);
         otherCategoryButtons.Controls.Add(renameOtherCategoryButton);
         otherCategoryButtons.Controls.Add(addOtherCategoryButton);
