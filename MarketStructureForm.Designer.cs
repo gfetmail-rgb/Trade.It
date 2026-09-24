@@ -62,6 +62,7 @@ partial class MarketStructureForm
 
         categoryListBox = new ListBox();
         categoryListBox.Sorted = true;
+        categoryListBox.SelectionMode = SelectionMode.MultiExtended;
         categoryTextBox = new TextBox();
         categoryButtons = new FlowLayoutPanel();
         addCategoryButton = new Button();
@@ -72,6 +73,7 @@ partial class MarketStructureForm
 
         otherCategoryListBox = new ListBox();
         otherCategoryListBox.Sorted = true;
+        otherCategoryListBox.SelectionMode = SelectionMode.MultiExtended;
         otherCategoryTextBox = new TextBox();
         otherCategoryButtons = new FlowLayoutPanel();
         addOtherCategoryButton = new Button();
