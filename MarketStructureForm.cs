@@ -14,10 +14,14 @@ public sealed partial class MarketStructureForm : Form
         marketTitleTextBox.KeyDown += MarketTitleTextBox_KeyDown;
 
         categoryListBox.SelectedIndexChanged += (_, _) =>
-            categoryTextBox.Text = categoryListBox.SelectedItem?.ToString() ?? "";
+            categoryTextBox.Text = categoryListBox.SelectedItems.Count == 1
+                ? categoryListBox.SelectedItem?.ToString() ?? ""
+                : "";
 
         otherCategoryListBox.SelectedIndexChanged += (_, _) =>
-            otherCategoryTextBox.Text = otherCategoryListBox.SelectedItem?.ToString() ?? "";
+            otherCategoryTextBox.Text = otherCategoryListBox.SelectedItems.Count == 1
+                ? otherCategoryListBox.SelectedItem?.ToString() ?? ""
+                : "";
 
         addChildButton.Click += (_, _) => AddChild();
         renameButton.Click += (_, _) => RenameNode();
@@ -665,18 +669,24 @@ public sealed partial class MarketStructureForm : Form
 
     private void DeleteOtherCategory()
     {
-        if (otherCategoryListBox.SelectedIndex < 0)
+        var selectedValues = otherCategoryListBox.SelectedItems
+            .Cast<object>()
+            .Select(x => x?.ToString()?.Trim() ?? "")
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (selectedValues.Count == 0)
             return;
 
-        var value = otherCategoryListBox.SelectedItem?.ToString() ?? "";
-        var normalizedValue = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value);
+        var normalizedValues = selectedValues
+            .Select(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var assignedSymbols = SymbolDefinitionForm.SymbolDefinitionStore
             .Load()
-            .Where(x => string.Equals(
-                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.OtherItem),
-                normalizedValue,
-                StringComparison.OrdinalIgnoreCase))
+            .Where(x => normalizedValues.Contains(
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.OtherItem)))
             .Select(x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -690,7 +700,7 @@ public sealed partial class MarketStructureForm : Form
 
             MessageBox.Show(
                 this,
-                $"مقدار «{value}» به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
+                $"حداقل یکی از موارد انتخاب‌شده به نماد اختصاص داده شده است و حذف هیچ‌یک از موارد انتخاب‌شده انجام نشد.{Environment.NewLine}{Environment.NewLine}" +
                 $"نمادها: {preview}",
                 "حذف سایر موارد",
                 MessageBoxButtons.OK,
@@ -699,15 +709,23 @@ public sealed partial class MarketStructureForm : Form
             return;
         }
 
+        var previewValues = string.Join("، ", selectedValues.Take(10));
+        if (selectedValues.Count > 10)
+            previewValues += "، ...";
+
         if (MessageBox.Show(
                 this,
-                $"مقدار «{value}» حذف شود؟",
+                $"{selectedValues.Count} مورد انتخاب شده است و حذف خواهد شد.{Environment.NewLine}{Environment.NewLine}" +
+                $"موارد: {previewValues}{Environment.NewLine}{Environment.NewLine}ادامه می‌دهید؟",
                 "حذف سایر موارد",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)
             return;
 
-        data.OtherCategories.RemoveAt(otherCategoryListBox.SelectedIndex);
+        data.OtherCategories.RemoveAll(x =>
+            normalizedValues.Contains(
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x)));
+
         SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
@@ -715,24 +733,27 @@ public sealed partial class MarketStructureForm : Form
 
     private void DeleteCategory()
     {
-        if (categoryListBox.SelectedIndex < 0)
+        var selectedValues = categoryListBox.SelectedItems
+            .Cast<object>()
+            .Select(x => x?.ToString()?.Trim() ?? "")
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (selectedValues.Count == 0)
             return;
 
-        var value = categoryListBox.SelectedItem?.ToString() ?? "";
-
-        var normalizedValue = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(value);
+        var normalizedValues = selectedValues
+            .Select(SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var assignedSymbols = SymbolDefinitionForm.SymbolDefinitionStore
             .Load()
             .Where(x =>
-                string.Equals(
-                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetCategory),
-                    normalizedValue,
-                    StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(
-                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetType),
-                    normalizedValue,
-                    StringComparison.OrdinalIgnoreCase))
+                normalizedValues.Contains(
+                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetCategory)) ||
+                normalizedValues.Contains(
+                    SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.AssetType)))
             .Select(x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle))
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -746,24 +767,32 @@ public sealed partial class MarketStructureForm : Form
 
             MessageBox.Show(
                 this,
-                $"نوع دارایی «{value}» به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
+                $"حداقل یکی از موارد انتخاب‌شده به نماد اختصاص داده شده است و حذف هیچ‌یک از موارد انتخاب‌شده انجام نشد.{Environment.NewLine}{Environment.NewLine}" +
                 $"نمادها: {preview}",
-                "حذف نوع دارایی",
+                "حذف انواع دارایی",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
 
             return;
         }
 
+        var previewValues = string.Join("، ", selectedValues.Take(10));
+        if (selectedValues.Count > 10)
+            previewValues += "، ...";
+
         if (MessageBox.Show(
                 this,
-                $"نوع «{value}» حذف شود؟",
-                "حذف نوع دارایی",
+                $"{selectedValues.Count} مورد انتخاب شده است و حذف خواهد شد.{Environment.NewLine}{Environment.NewLine}" +
+                $"موارد: {previewValues}{Environment.NewLine}{Environment.NewLine}ادامه می‌دهید؟",
+                "حذف انواع دارایی",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)
             return;
 
-        data.AssetCategories.RemoveAt(categoryListBox.SelectedIndex);
+        data.AssetCategories.RemoveAll(x =>
+            normalizedValues.Contains(
+                SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x)));
+
         SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
