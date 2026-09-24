@@ -1,3 +1,5 @@
+using ClosedXML.Excel;
+
 namespace Trade.It;
 
 public sealed partial class MarketStructureForm : Form
@@ -26,9 +28,13 @@ public sealed partial class MarketStructureForm : Form
         addCategoryButton.Click += (_, _) => AddCategory();
         renameCategoryButton.Click += (_, _) => RenameCategory();
         deleteCategoryButton.Click += (_, _) => DeleteCategory();
+        importCategoryButton.Click += (_, _) => ImportCategoriesFromExcel();
+        exportCategoryButton.Click += (_, _) => ExportCategoriesToExcel();
         addOtherCategoryButton.Click += (_, _) => AddOtherCategory();
         renameOtherCategoryButton.Click += (_, _) => RenameOtherCategory();
         deleteOtherCategoryButton.Click += (_, _) => DeleteOtherCategory();
+        importOtherCategoryButton.Click += (_, _) => ImportOtherCategoriesFromExcel();
+        exportOtherCategoryButton.Click += (_, _) => ExportOtherCategoriesToExcel();
         closeButton.Click += (_, _) => Close();
 
         LoadData();
@@ -447,6 +453,170 @@ public sealed partial class MarketStructureForm : Form
         MarketStructureStore.Save(data);
         LoadData();
         otherCategoryListBox.SelectedItem = title;
+    }
+
+    private void ImportCategoriesFromExcel()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = "Excel files (*.xlsx)|*.xlsx",
+            Title = "ورود انواع دارایی / ابزار از Excel",
+            CheckFileExists = true,
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        var imported = ReadFirstColumnFromExcel(dialog.FileName, "انواع دارایی / ابزار");
+        var added = 0;
+
+        foreach (var value in imported)
+        {
+            if (data.AssetCategories.Any(x => string.Equals(x, value, StringComparison.CurrentCultureIgnoreCase)))
+                continue;
+
+            data.AssetCategories.Add(value);
+            added++;
+        }
+
+        if (added == 0)
+        {
+            MessageBox.Show(this, "مورد جدیدی برای افزودن پیدا نشد.", "ورود از Excel",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        SortCategoryLists();
+        MarketStructureStore.Save(data);
+        LoadData();
+
+        MessageBox.Show(this, $"{added} مورد جدید وارد شد.", "ورود از Excel",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void ExportCategoriesToExcel()
+    {
+        using var dialog = new SaveFileDialog
+        {
+            Filter = "Excel files (*.xlsx)|*.xlsx",
+            Title = "خروجی انواع دارایی / ابزار به Excel",
+            FileName = "انواع دارایی و ابزار.xlsx",
+            AddExtension = true,
+            OverwritePrompt = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        ExportFirstColumnToExcel(dialog.FileName, "انواع دارایی / ابزار", data.AssetCategories);
+        MessageBox.Show(this, "خروجی Excel با موفقیت ایجاد شد.", "خروجی به Excel",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void ImportOtherCategoriesFromExcel()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = "Excel files (*.xlsx)|*.xlsx",
+            Title = "ورود سایر موارد از Excel",
+            CheckFileExists = true,
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        var imported = ReadFirstColumnFromExcel(dialog.FileName, "سایر موارد");
+        var added = 0;
+
+        foreach (var value in imported)
+        {
+            if (data.OtherCategories.Any(x => string.Equals(x, value, StringComparison.CurrentCultureIgnoreCase)))
+                continue;
+
+            data.OtherCategories.Add(value);
+            added++;
+        }
+
+        if (added == 0)
+        {
+            MessageBox.Show(this, "مورد جدیدی برای افزودن پیدا نشد.", "ورود از Excel",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        SortCategoryLists();
+        MarketStructureStore.Save(data);
+        LoadData();
+
+        MessageBox.Show(this, $"{added} مورد جدید وارد شد.", "ورود از Excel",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void ExportOtherCategoriesToExcel()
+    {
+        using var dialog = new SaveFileDialog
+        {
+            Filter = "Excel files (*.xlsx)|*.xlsx",
+            Title = "خروجی سایر موارد به Excel",
+            FileName = "سایر موارد.xlsx",
+            AddExtension = true,
+            OverwritePrompt = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        ExportFirstColumnToExcel(dialog.FileName, "سایر موارد", data.OtherCategories);
+        MessageBox.Show(this, "خروجی Excel با موفقیت ایجاد شد.", "خروجی به Excel",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private static List<string> ReadFirstColumnFromExcel(string fileName, string header)
+    {
+        using var workbook = new XLWorkbook(fileName);
+        var worksheet = workbook.Worksheets.FirstOrDefault();
+        if (worksheet == null)
+            return new List<string>();
+
+        var result = new List<string>();
+        var first = true;
+
+        foreach (var row in worksheet.RowsUsed())
+        {
+            var value = row.Cell(1).GetString().Trim();
+            if (string.IsNullOrWhiteSpace(value))
+                continue;
+
+            if (first && string.Equals(value, header, StringComparison.CurrentCultureIgnoreCase))
+            {
+                first = false;
+                continue;
+            }
+
+            first = false;
+            if (!result.Contains(value, StringComparer.CurrentCultureIgnoreCase))
+                result.Add(value);
+        }
+
+        return result;
+    }
+
+    private static void ExportFirstColumnToExcel(string fileName, string header, IEnumerable<string> values)
+    {
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("لیست");
+
+        worksheet.Cell(1, 1).Value = header;
+        var row = 2;
+        foreach (var value in values)
+        {
+            worksheet.Cell(row++, 1).Value = value;
+        }
+
+        worksheet.Column(1).AdjustToContents();
+        workbook.SaveAs(fileName);
     }
 
     private void RenameOtherCategory()
