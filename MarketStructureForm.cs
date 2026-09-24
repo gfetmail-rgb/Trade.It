@@ -51,6 +51,7 @@ public sealed partial class MarketStructureForm : Form
     private void LoadData()
     {
         data = MarketStructureStore.Load();
+        SortCategoryLists();
         RebuildTree();
 
         categoryListBox.Items.Clear();
@@ -66,6 +67,25 @@ public sealed partial class MarketStructureForm : Form
             otherCategoryListBox.Items.Add(item);
 
         UpdateMarketButtons();
+    }
+
+    private void SortCategoryLists()
+    {
+        data.AssetCategories = data.AssetCategories
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        data.OtherCategories = data.OtherCategories
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        MarketStructureStore.Save(data);
     }
 
     private void RebuildTree(string? selectId = null)
@@ -344,10 +364,11 @@ public sealed partial class MarketStructureForm : Form
         }
 
         data.AssetCategories.Add(title);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
 
-        categoryListBox.SelectedIndex = categoryListBox.Items.Count - 1;
+        categoryListBox.SelectedItem = title;
     }
 
     private void RenameCategory()
@@ -370,7 +391,6 @@ public sealed partial class MarketStructureForm : Form
             return;
         }
 
-        var index = categoryListBox.SelectedIndex;
         var normalizedOldValue =
             SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(oldValue);
 
@@ -391,15 +411,16 @@ public sealed partial class MarketStructureForm : Form
                 symbol.AssetType = newValue;
         }
 
-        data.AssetCategories[index] = newValue;
-
+        data.AssetCategories.Remove(oldValue);
+        data.AssetCategories.Add(newValue);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
 
         SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
 
         LoadData();
 
-        categoryListBox.SelectedIndex = index;
+        categoryListBox.SelectedItem = newValue;
     }
 
     private void AddOtherCategory()
@@ -422,9 +443,10 @@ public sealed partial class MarketStructureForm : Form
         }
 
         data.OtherCategories.Add(title);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
-        otherCategoryListBox.SelectedIndex = otherCategoryListBox.Items.Count - 1;
+        otherCategoryListBox.SelectedItem = title;
     }
 
     private void RenameOtherCategory()
@@ -447,7 +469,6 @@ public sealed partial class MarketStructureForm : Form
             return;
         }
 
-        var index = otherCategoryListBox.SelectedIndex;
         var normalizedOldValue =
             SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(oldValue);
 
@@ -462,13 +483,14 @@ public sealed partial class MarketStructureForm : Form
                 symbol.OtherItem = newValue;
         }
 
-        data.OtherCategories[index] = newValue;
-
+        data.OtherCategories.Remove(oldValue);
+        data.OtherCategories.Add(newValue);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
         SymbolDefinitionForm.SymbolDefinitionStore.Save(symbolDefinitions);
 
         LoadData();
-        otherCategoryListBox.SelectedIndex = index;
+        otherCategoryListBox.SelectedItem = newValue;
     }
 
     private void DeleteOtherCategory()
@@ -516,6 +538,7 @@ public sealed partial class MarketStructureForm : Form
             return;
 
         data.OtherCategories.RemoveAt(otherCategoryListBox.SelectedIndex);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
     }
@@ -571,6 +594,7 @@ public sealed partial class MarketStructureForm : Form
             return;
 
         data.AssetCategories.RemoveAt(categoryListBox.SelectedIndex);
+        SortCategoryLists();
         MarketStructureStore.Save(data);
         LoadData();
     }
