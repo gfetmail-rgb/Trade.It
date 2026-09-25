@@ -20,8 +20,8 @@ namespace Trade.It
         }
 
         private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Trade.It",
+            AppContext.BaseDirectory,
+            "Setting",
             "LineAppearance.json");
 
         public static float ChartLineWidth { get; private set; } = 1.6f;
