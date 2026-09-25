@@ -29,8 +29,8 @@ namespace Trade.It
         }
 
         private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Trade.It",
+            AppContext.BaseDirectory,
+            "Setting",
             "ChartAppearance.json");
 
         public static double ChartRightEmptyPercent { get; private set; } = 25.0;
