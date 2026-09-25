@@ -38,7 +38,7 @@ namespace Trade.It
     {
         private static readonly string FolderPath = Path.Combine(
             AppContext.BaseDirectory,
-            "Setting");
+            "Analysis");
 
         private static string GetFilePath(string symbol)
         {
