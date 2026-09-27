@@ -158,6 +158,8 @@ partial class MarketStructureForm
         moveDownButton.Name = "moveDownButton";
         moveDownButton.Size = new Size(107, 38);
         moveDownButton.TabIndex = 0;
+        moveDownButton.Text = "انتقال به پایین";
+        moveDownButton.UseVisualStyleBackColor = true;
         // 
         // moveUpButton
         // 
@@ -166,6 +168,8 @@ partial class MarketStructureForm
         moveUpButton.Name = "moveUpButton";
         moveUpButton.Size = new Size(107, 38);
         moveUpButton.TabIndex = 1;
+        moveUpButton.Text = "انتقال به بالا";
+        moveUpButton.UseVisualStyleBackColor = true;
         // 
         // deleteButton
         // 
@@ -174,6 +178,8 @@ partial class MarketStructureForm
         deleteButton.Name = "deleteButton";
         deleteButton.Size = new Size(107, 38);
         deleteButton.TabIndex = 2;
+        deleteButton.Text = "حذف";
+        deleteButton.UseVisualStyleBackColor = true;
         // 
         // renameButton
         // 
@@ -182,6 +188,8 @@ partial class MarketStructureForm
         renameButton.Name = "renameButton";
         renameButton.Size = new Size(107, 38);
         renameButton.TabIndex = 3;
+        renameButton.Text = "تغییر نام";
+        renameButton.UseVisualStyleBackColor = true;
         // 
         // addChildButton
         // 
@@ -190,6 +198,8 @@ partial class MarketStructureForm
         addChildButton.Name = "addChildButton";
         addChildButton.Size = new Size(107, 38);
         addChildButton.TabIndex = 4;
+        addChildButton.Text = "ثبت / افزودن زیرمجموعه";
+        addChildButton.UseVisualStyleBackColor = true;
         // 
         // categoryPage
         // 
@@ -253,6 +263,8 @@ partial class MarketStructureForm
         exportCategoryButton.Name = "exportCategoryButton";
         exportCategoryButton.Size = new Size(107, 38);
         exportCategoryButton.TabIndex = 0;
+        exportCategoryButton.Text = "خروجی اکسل";
+        exportCategoryButton.UseVisualStyleBackColor = true;
         // 
         // importCategoryButton
         // 
@@ -261,6 +273,8 @@ partial class MarketStructureForm
         importCategoryButton.Name = "importCategoryButton";
         importCategoryButton.Size = new Size(107, 38);
         importCategoryButton.TabIndex = 1;
+        importCategoryButton.Text = "ورود از اکسل";
+        importCategoryButton.UseVisualStyleBackColor = true;
         // 
         // deleteCategoryButton
         // 
@@ -269,6 +283,8 @@ partial class MarketStructureForm
         deleteCategoryButton.Name = "deleteCategoryButton";
         deleteCategoryButton.Size = new Size(107, 38);
         deleteCategoryButton.TabIndex = 2;
+        deleteCategoryButton.Text = "حذف";
+        deleteCategoryButton.UseVisualStyleBackColor = true;
         // 
         // renameCategoryButton
         // 
@@ -277,6 +293,8 @@ partial class MarketStructureForm
         renameCategoryButton.Name = "renameCategoryButton";
         renameCategoryButton.Size = new Size(107, 38);
         renameCategoryButton.TabIndex = 3;
+        renameCategoryButton.Text = "تغییر نام";
+        renameCategoryButton.UseVisualStyleBackColor = true;
         // 
         // addCategoryButton
         // 
@@ -285,6 +303,8 @@ partial class MarketStructureForm
         addCategoryButton.Name = "addCategoryButton";
         addCategoryButton.Size = new Size(107, 38);
         addCategoryButton.TabIndex = 4;
+        addCategoryButton.Text = "ثبت";
+        addCategoryButton.UseVisualStyleBackColor = true;
         // 
         // otherPage
         // 
@@ -348,6 +368,8 @@ partial class MarketStructureForm
         exportOtherCategoryButton.Name = "exportOtherCategoryButton";
         exportOtherCategoryButton.Size = new Size(107, 38);
         exportOtherCategoryButton.TabIndex = 0;
+        exportOtherCategoryButton.Text = "خروجی اکسل";
+        exportOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // importOtherCategoryButton
         // 
@@ -356,6 +378,8 @@ partial class MarketStructureForm
         importOtherCategoryButton.Name = "importOtherCategoryButton";
         importOtherCategoryButton.Size = new Size(107, 38);
         importOtherCategoryButton.TabIndex = 1;
+        importOtherCategoryButton.Text = "ورود از اکسل";
+        importOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // deleteOtherCategoryButton
         // 
@@ -364,6 +388,8 @@ partial class MarketStructureForm
         deleteOtherCategoryButton.Name = "deleteOtherCategoryButton";
         deleteOtherCategoryButton.Size = new Size(107, 38);
         deleteOtherCategoryButton.TabIndex = 2;
+        deleteOtherCategoryButton.Text = "حذف";
+        deleteOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // renameOtherCategoryButton
         // 
@@ -372,6 +398,8 @@ partial class MarketStructureForm
         renameOtherCategoryButton.Name = "renameOtherCategoryButton";
         renameOtherCategoryButton.Size = new Size(107, 38);
         renameOtherCategoryButton.TabIndex = 3;
+        renameOtherCategoryButton.Text = "تغییر نام";
+        renameOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // addOtherCategoryButton
         // 
@@ -380,6 +408,8 @@ partial class MarketStructureForm
         addOtherCategoryButton.Name = "addOtherCategoryButton";
         addOtherCategoryButton.Size = new Size(107, 38);
         addOtherCategoryButton.TabIndex = 4;
+        addOtherCategoryButton.Text = "ثبت";
+        addOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // bottomPanel
         // 
