@@ -96,7 +96,7 @@ partial class MarketStructureForm
         tabs.Margin = new Padding(4, 5, 4, 5);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
-        tabs.Size = new Size(1500, 1075);
+        tabs.Size = new Size(1500, 1123);
         tabs.TabIndex = 0;
         // 
         // marketPage
@@ -108,7 +108,7 @@ partial class MarketStructureForm
         marketPage.Margin = new Padding(4, 5, 4, 5);
         marketPage.Name = "marketPage";
         marketPage.Padding = new Padding(11, 13, 11, 13);
-        marketPage.Size = new Size(1492, 1037);
+        marketPage.Size = new Size(1492, 1085);
         marketPage.TabIndex = 0;
         marketPage.Text = "ساختار بازارها";
         marketPage.UseVisualStyleBackColor = true;
@@ -121,13 +121,14 @@ partial class MarketStructureForm
         marketTreeView.Margin = new Padding(4, 5, 4, 5);
         marketTreeView.Name = "marketTreeView";
         marketTreeView.RightToLeft = RightToLeft.Yes;
-        marketTreeView.Size = new Size(1470, 893);
+        marketTreeView.Size = new Size(1470, 941);
         marketTreeView.TabIndex = 0;
         // 
         // marketTitleTextBox
         // 
+        marketTitleTextBox.BackColor = Color.Bisque;
         marketTitleTextBox.Dock = DockStyle.Bottom;
-        marketTitleTextBox.Location = new Point(11, 906);
+        marketTitleTextBox.Location = new Point(11, 954);
         marketTitleTextBox.Margin = new Padding(4, 5, 4, 5);
         marketTitleTextBox.Name = "marketTitleTextBox";
         marketTitleTextBox.PlaceholderText = "نام بازار / زیرمجموعه";
@@ -143,7 +144,7 @@ partial class MarketStructureForm
         marketButtons.Controls.Add(addChildButton);
         marketButtons.Dock = DockStyle.Bottom;
         marketButtons.FlowDirection = FlowDirection.RightToLeft;
-        marketButtons.Location = new Point(11, 937);
+        marketButtons.Location = new Point(11, 985);
         marketButtons.Margin = new Padding(4, 5, 4, 5);
         marketButtons.Name = "marketButtons";
         marketButtons.Padding = new Padding(0, 12, 0, 0);
@@ -156,24 +157,24 @@ partial class MarketStructureForm
         moveDownButton.Location = new Point(4, 17);
         moveDownButton.Margin = new Padding(4, 5, 4, 5);
         moveDownButton.Name = "moveDownButton";
-        moveDownButton.Size = new Size(107, 38);
+        moveDownButton.Size = new Size(130, 38);
         moveDownButton.TabIndex = 0;
         moveDownButton.Text = "انتقال به پایین";
         moveDownButton.UseVisualStyleBackColor = true;
         // 
         // moveUpButton
         // 
-        moveUpButton.Location = new Point(119, 17);
+        moveUpButton.Location = new Point(142, 17);
         moveUpButton.Margin = new Padding(4, 5, 4, 5);
         moveUpButton.Name = "moveUpButton";
-        moveUpButton.Size = new Size(107, 38);
+        moveUpButton.Size = new Size(129, 38);
         moveUpButton.TabIndex = 1;
         moveUpButton.Text = "انتقال به بالا";
         moveUpButton.UseVisualStyleBackColor = true;
         // 
         // deleteButton
         // 
-        deleteButton.Location = new Point(234, 17);
+        deleteButton.Location = new Point(279, 17);
         deleteButton.Margin = new Padding(4, 5, 4, 5);
         deleteButton.Name = "deleteButton";
         deleteButton.Size = new Size(107, 38);
@@ -183,7 +184,7 @@ partial class MarketStructureForm
         // 
         // renameButton
         // 
-        renameButton.Location = new Point(349, 17);
+        renameButton.Location = new Point(394, 17);
         renameButton.Margin = new Padding(4, 5, 4, 5);
         renameButton.Name = "renameButton";
         renameButton.Size = new Size(107, 38);
@@ -193,10 +194,10 @@ partial class MarketStructureForm
         // 
         // addChildButton
         // 
-        addChildButton.Location = new Point(464, 17);
+        addChildButton.Location = new Point(509, 17);
         addChildButton.Margin = new Padding(4, 5, 4, 5);
         addChildButton.Name = "addChildButton";
-        addChildButton.Size = new Size(107, 38);
+        addChildButton.Size = new Size(128, 38);
         addChildButton.TabIndex = 4;
         addChildButton.Text = "ثبت / افزودن زیرمجموعه";
         addChildButton.UseVisualStyleBackColor = true;
@@ -210,7 +211,7 @@ partial class MarketStructureForm
         categoryPage.Margin = new Padding(4, 5, 4, 5);
         categoryPage.Name = "categoryPage";
         categoryPage.Padding = new Padding(17, 20, 17, 20);
-        categoryPage.Size = new Size(1492, 1037);
+        categoryPage.Size = new Size(1492, 1085);
         categoryPage.TabIndex = 1;
         categoryPage.Text = "انواع دارایی / ابزار";
         categoryPage.UseVisualStyleBackColor = true;
@@ -224,14 +225,15 @@ partial class MarketStructureForm
         categoryListBox.Name = "categoryListBox";
         categoryListBox.RightToLeft = RightToLeft.Yes;
         categoryListBox.SelectionMode = SelectionMode.MultiExtended;
-        categoryListBox.Size = new Size(1458, 879);
+        categoryListBox.Size = new Size(1458, 927);
         categoryListBox.Sorted = true;
         categoryListBox.TabIndex = 0;
         // 
         // categoryTextBox
         // 
+        categoryTextBox.BackColor = Color.Bisque;
         categoryTextBox.Dock = DockStyle.Bottom;
-        categoryTextBox.Location = new Point(17, 899);
+        categoryTextBox.Location = new Point(17, 947);
         categoryTextBox.Margin = new Padding(4, 5, 4, 5);
         categoryTextBox.Name = "categoryTextBox";
         categoryTextBox.PlaceholderText = "نام نوع دارایی / ابزار";
@@ -248,7 +250,7 @@ partial class MarketStructureForm
         categoryButtons.Controls.Add(label2);
         categoryButtons.Dock = DockStyle.Bottom;
         categoryButtons.FlowDirection = FlowDirection.RightToLeft;
-        categoryButtons.Location = new Point(17, 930);
+        categoryButtons.Location = new Point(17, 978);
         categoryButtons.Margin = new Padding(4, 5, 4, 5);
         categoryButtons.Name = "categoryButtons";
         categoryButtons.Padding = new Padding(0, 12, 0, 0);
@@ -261,24 +263,24 @@ partial class MarketStructureForm
         exportCategoryButton.Location = new Point(4, 17);
         exportCategoryButton.Margin = new Padding(4, 5, 4, 5);
         exportCategoryButton.Name = "exportCategoryButton";
-        exportCategoryButton.Size = new Size(107, 38);
+        exportCategoryButton.Size = new Size(125, 38);
         exportCategoryButton.TabIndex = 0;
         exportCategoryButton.Text = "خروجی اکسل";
         exportCategoryButton.UseVisualStyleBackColor = true;
         // 
         // importCategoryButton
         // 
-        importCategoryButton.Location = new Point(119, 17);
+        importCategoryButton.Location = new Point(137, 17);
         importCategoryButton.Margin = new Padding(4, 5, 4, 5);
         importCategoryButton.Name = "importCategoryButton";
-        importCategoryButton.Size = new Size(107, 38);
+        importCategoryButton.Size = new Size(120, 38);
         importCategoryButton.TabIndex = 1;
         importCategoryButton.Text = "ورود از اکسل";
         importCategoryButton.UseVisualStyleBackColor = true;
         // 
         // deleteCategoryButton
         // 
-        deleteCategoryButton.Location = new Point(234, 17);
+        deleteCategoryButton.Location = new Point(265, 17);
         deleteCategoryButton.Margin = new Padding(4, 5, 4, 5);
         deleteCategoryButton.Name = "deleteCategoryButton";
         deleteCategoryButton.Size = new Size(107, 38);
@@ -288,7 +290,7 @@ partial class MarketStructureForm
         // 
         // renameCategoryButton
         // 
-        renameCategoryButton.Location = new Point(349, 17);
+        renameCategoryButton.Location = new Point(380, 17);
         renameCategoryButton.Margin = new Padding(4, 5, 4, 5);
         renameCategoryButton.Name = "renameCategoryButton";
         renameCategoryButton.Size = new Size(107, 38);
@@ -298,7 +300,7 @@ partial class MarketStructureForm
         // 
         // addCategoryButton
         // 
-        addCategoryButton.Location = new Point(464, 17);
+        addCategoryButton.Location = new Point(495, 17);
         addCategoryButton.Margin = new Padding(4, 5, 4, 5);
         addCategoryButton.Name = "addCategoryButton";
         addCategoryButton.Size = new Size(107, 38);
@@ -315,7 +317,7 @@ partial class MarketStructureForm
         otherPage.Margin = new Padding(4, 5, 4, 5);
         otherPage.Name = "otherPage";
         otherPage.Padding = new Padding(17, 20, 17, 20);
-        otherPage.Size = new Size(1492, 1037);
+        otherPage.Size = new Size(1492, 1085);
         otherPage.TabIndex = 2;
         otherPage.Text = "سایر موارد";
         otherPage.UseVisualStyleBackColor = true;
@@ -329,14 +331,15 @@ partial class MarketStructureForm
         otherCategoryListBox.Name = "otherCategoryListBox";
         otherCategoryListBox.RightToLeft = RightToLeft.Yes;
         otherCategoryListBox.SelectionMode = SelectionMode.MultiExtended;
-        otherCategoryListBox.Size = new Size(1458, 879);
+        otherCategoryListBox.Size = new Size(1458, 927);
         otherCategoryListBox.Sorted = true;
         otherCategoryListBox.TabIndex = 0;
         // 
         // otherCategoryTextBox
         // 
+        otherCategoryTextBox.BackColor = Color.Bisque;
         otherCategoryTextBox.Dock = DockStyle.Bottom;
-        otherCategoryTextBox.Location = new Point(17, 899);
+        otherCategoryTextBox.Location = new Point(17, 947);
         otherCategoryTextBox.Margin = new Padding(4, 5, 4, 5);
         otherCategoryTextBox.Name = "otherCategoryTextBox";
         otherCategoryTextBox.PlaceholderText = "مقدار سایر موارد";
@@ -353,7 +356,7 @@ partial class MarketStructureForm
         otherCategoryButtons.Controls.Add(label1);
         otherCategoryButtons.Dock = DockStyle.Bottom;
         otherCategoryButtons.FlowDirection = FlowDirection.RightToLeft;
-        otherCategoryButtons.Location = new Point(17, 930);
+        otherCategoryButtons.Location = new Point(17, 978);
         otherCategoryButtons.Margin = new Padding(4, 5, 4, 5);
         otherCategoryButtons.Name = "otherCategoryButtons";
         otherCategoryButtons.Padding = new Padding(0, 12, 0, 0);
@@ -366,24 +369,24 @@ partial class MarketStructureForm
         exportOtherCategoryButton.Location = new Point(4, 17);
         exportOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
         exportOtherCategoryButton.Name = "exportOtherCategoryButton";
-        exportOtherCategoryButton.Size = new Size(107, 38);
+        exportOtherCategoryButton.Size = new Size(124, 38);
         exportOtherCategoryButton.TabIndex = 0;
         exportOtherCategoryButton.Text = "خروجی اکسل";
         exportOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // importOtherCategoryButton
         // 
-        importOtherCategoryButton.Location = new Point(119, 17);
+        importOtherCategoryButton.Location = new Point(136, 17);
         importOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
         importOtherCategoryButton.Name = "importOtherCategoryButton";
-        importOtherCategoryButton.Size = new Size(107, 38);
+        importOtherCategoryButton.Size = new Size(121, 38);
         importOtherCategoryButton.TabIndex = 1;
         importOtherCategoryButton.Text = "ورود از اکسل";
         importOtherCategoryButton.UseVisualStyleBackColor = true;
         // 
         // deleteOtherCategoryButton
         // 
-        deleteOtherCategoryButton.Location = new Point(234, 17);
+        deleteOtherCategoryButton.Location = new Point(265, 17);
         deleteOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
         deleteOtherCategoryButton.Name = "deleteOtherCategoryButton";
         deleteOtherCategoryButton.Size = new Size(107, 38);
@@ -393,7 +396,7 @@ partial class MarketStructureForm
         // 
         // renameOtherCategoryButton
         // 
-        renameOtherCategoryButton.Location = new Point(349, 17);
+        renameOtherCategoryButton.Location = new Point(380, 17);
         renameOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
         renameOtherCategoryButton.Name = "renameOtherCategoryButton";
         renameOtherCategoryButton.Size = new Size(107, 38);
@@ -403,7 +406,7 @@ partial class MarketStructureForm
         // 
         // addOtherCategoryButton
         // 
-        addOtherCategoryButton.Location = new Point(464, 17);
+        addOtherCategoryButton.Location = new Point(495, 17);
         addOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
         addOtherCategoryButton.Name = "addOtherCategoryButton";
         addOtherCategoryButton.Size = new Size(107, 38);
@@ -415,19 +418,19 @@ partial class MarketStructureForm
         // 
         bottomPanel.Controls.Add(closeButton);
         bottomPanel.Dock = DockStyle.Bottom;
-        bottomPanel.Location = new Point(0, 1075);
+        bottomPanel.Location = new Point(0, 1123);
         bottomPanel.Margin = new Padding(4, 5, 4, 5);
         bottomPanel.Name = "bottomPanel";
-        bottomPanel.Size = new Size(1500, 92);
+        bottomPanel.Size = new Size(1500, 44);
         bottomPanel.TabIndex = 1;
         // 
         // closeButton
         // 
         closeButton.Dock = DockStyle.Right;
-        closeButton.Location = new Point(1343, 0);
+        closeButton.Location = new Point(1420, 0);
         closeButton.Margin = new Padding(4, 5, 4, 5);
         closeButton.Name = "closeButton";
-        closeButton.Size = new Size(157, 92);
+        closeButton.Size = new Size(80, 44);
         closeButton.TabIndex = 0;
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
@@ -435,18 +438,20 @@ partial class MarketStructureForm
         // label2
         // 
         label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        label2.Location = new Point(578, 12);
+        label2.ForeColor = Color.Brown;
+        label2.Location = new Point(609, 12);
         label2.Name = "label2";
-        label2.Size = new Size(877, 58);
-        label2.TabIndex = 6;
+        label2.Size = new Size(823, 34);
+        label2.TabIndex = 7;
         label2.Text = "اکسل باید فاقد هدر باشد. غیر تکراری ها (نسبت به مقادیر موجود) وارد خواهند شد و تکراری ها وارد نمی شوند";
         // 
         // label1
         // 
         label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        label1.Location = new Point(578, 12);
+        label1.ForeColor = Color.Brown;
+        label1.Location = new Point(609, 12);
         label1.Name = "label1";
-        label1.Size = new Size(877, 58);
+        label1.Size = new Size(823, 34);
         label1.TabIndex = 7;
         label1.Text = "اکسل باید فاقد هدر باشد. غیر تکراری ها (نسبت به مقادیر موجود) وارد خواهند شد و تکراری ها وارد نمی شوند";
         // 
