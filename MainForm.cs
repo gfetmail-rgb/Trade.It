@@ -26,6 +26,7 @@ namespace Trade.It
         private bool comparisonFiltersInitialized;
         private bool comparisonFilterEventsAttached;
         private bool ohlcChangeFilterEventsAttached;
+        private bool filtersApplied;
         private int latestTradeDateLoadVersion;
         private Button filterApplyButton;
         private TextBox textBox1;
@@ -65,7 +66,7 @@ namespace Trade.It
             };
 
             clearFiltersButton.Click += ClearFiltersButton_Click;
-            filterApplyButton.Click += (_, _) => ApplyTradingStatusFilterWithWaitCursor();
+            filterApplyButton.Click += FilterApplyButton_Click;
 
             marketClearButton.Click += (_, _) =>
             {
@@ -1352,7 +1353,7 @@ namespace Trade.It
                 return;
             if (sender is RadioButton radio && !radio.Checked)
                 return;
-            ApplyTradingStatusFilterWithWaitCursor();
+            UpdateFilterControlAvailability();
         }
 
         private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
@@ -1360,7 +1361,6 @@ namespace Trade.It
             if (resettingFilters)
                 return;
             UpdateFilterControlAvailability();
-            ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private void TradingStatusRefreshChanged(object? sender, EventArgs e)
@@ -1368,21 +1368,67 @@ namespace Trade.It
             if (resettingFilters)
                 return;
             UpdateFilterControlAvailability();
-            ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private void NameFilterChanged(object? sender, EventArgs e)
         {
             if (resettingFilters)
                 return;
-            ApplyTradingStatusFilterWithWaitCursor();
+            UpdateFilterControlAvailability();
         }
 
         private void AdditionalFilterChanged(object? sender, EventArgs e)
         {
             if (resettingFilters)
                 return;
+            UpdateFilterControlAvailability();
+        }
+
+        private void FilterApplyButton_Click(object? sender, EventArgs e)
+        {
+            if (filtersApplied)
+            {
+                filtersApplied = false;
+                filterApplyButton.Text = "تایید";
+                UpdateFilterControlAvailability();
+                ShowAllPortfolioSymbols();
+                return;
+            }
+
             ApplyTradingStatusFilterWithWaitCursor();
+            filtersApplied = true;
+            filterApplyButton.Text = "خاموش";
+            UpdateFilterControlAvailability();
+        }
+
+        private void ShowAllPortfolioSymbols()
+        {
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                return;
+
+            var result = (definition.Symbols ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            internalPortfolioUpdate = true;
+            try
+            {
+                stocksDataGridView.Rows.Clear();
+                for (var i = 0; i < result.Count; i++)
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
+            }
+            finally
+            {
+                internalPortfolioUpdate = false;
+            }
+
+            selectAllCheckBox.Checked = false;
+            selectNoneCheckBox.Checked = result.Count > 0;
+            UpdateSelectionControls();
+            UpdateFilterCounts();
+            _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);
         }
 
         private void UpdateFilterControlAvailability()
@@ -1395,16 +1441,18 @@ namespace Trade.It
             var hasDate = hasStocks && HasDateColumn(definition);
             var hasVolume = hasStocks && HasVolumeColumn(definition);
 
-            // When no portfolio is selected or its stock grid is empty, all filters are disabled.
-            // Once stocks exist, date/volume-dependent filters are enabled only when their data exists.
-            tradingStatusGroup.Enabled = hasStocks && hasDate;
-            pastDaysGroup.Enabled = hasStocks && hasDate;
-            volumeRatioGroup.Enabled = hasStocks && hasVolume;
-            nameFilterGroup.Enabled = hasStocks;
-            comparisonGroup7.Enabled = hasStocks;
-            comparisonGroup8.Enabled = hasStocks;
-            groupBox3.Enabled = hasStocks;
-            ohlcChangeFilterGroup.Enabled = hasStocks;
+            var filtersEnabled = hasStocks && !filtersApplied;
+            tradingStatusGroup.Enabled = filtersEnabled && hasDate;
+            pastDaysGroup.Enabled = filtersEnabled && hasDate;
+            volumeRatioGroup.Enabled = filtersEnabled && hasVolume;
+            nameFilterGroup.Enabled = filtersEnabled;
+            comparisonGroup7.Enabled = filtersEnabled;
+            comparisonGroup8.Enabled = filtersEnabled;
+            groupBox3.Enabled = filtersEnabled;
+            ohlcChangeFilterGroup.Enabled = filtersEnabled;
+
+            filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
+            filterApplyButton.Enabled = hasStocks;
 
             if (!hasDate)
             {
