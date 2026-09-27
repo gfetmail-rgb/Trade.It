@@ -117,6 +117,7 @@
             stocksTabPage = new TabPage();
             stocksGridCountLabel = new Label();
             groupBox2 = new GroupBox();
+            symbolsPrintButton = new Button();
             navigationButton = new Button();
             selectAllCheckBox = new CheckBox();
             selectNoneCheckBox = new CheckBox();
@@ -381,6 +382,7 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(symbolsPrintButton);
             groupBox2.Controls.Add(navigationButton);
             groupBox2.Controls.Add(selectAllCheckBox);
             groupBox2.Controls.Add(selectNoneCheckBox);
@@ -394,6 +396,17 @@
             groupBox2.Size = new Size(371, 131);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
+            // 
+            // symbolsPrintButton
+            // 
+            symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            symbolsPrintButton.Location = new Point(191, 86);
+            symbolsPrintButton.Name = "symbolsPrintButton";
+            symbolsPrintButton.Size = new Size(72, 34);
+            symbolsPrintButton.TabIndex = 4;
+            symbolsPrintButton.Text = "پرینت";
+            symbolsPrintButton.UseVisualStyleBackColor = true;
+            // 
             // 
             // navigationButton
             // 
@@ -1808,6 +1821,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private GroupBox groupBox2;
+        private Button symbolsPrintButton;
         private DataGridViewTextBoxColumn rowColumn;
         private DataGridViewTextBoxColumn symbolColumn;
         private DataGridViewTextBoxColumn lastTradeColumn;
