@@ -2127,7 +2127,6 @@ namespace Trade.It
         {
             if (resettingFilters) return;
             UpdateOhlcChangeFilterAvailability();
-            UpdateOhlcChangeFilterAvailability();
         }
 
         private void UpdateOhlcChangeFilterAvailability() => ohlcChangeFilterGroup.Enabled = true;
