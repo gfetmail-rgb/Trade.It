@@ -436,7 +436,7 @@
             // 
             // refreshButton
             // 
-            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             refreshButton.Location = new Point(114, 86);
             refreshButton.Name = "refreshButton";
             refreshButton.Size = new Size(75, 34);
@@ -445,7 +445,7 @@
             // 
             // deleteButton
             // 
-            deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             deleteButton.Location = new Point(24, 86);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
@@ -454,7 +454,7 @@
             // 
             // newPortfolioButton
             // 
-            newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             newPortfolioButton.Location = new Point(287, 86);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(69, 34);
