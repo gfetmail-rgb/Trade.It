@@ -1315,6 +1315,10 @@ namespace Trade.It
 
         private void ClearFiltersButton_Click(object? sender, EventArgs e)
         {
+            // تا وقتی فیلترها فعال هستند، «پاک کردن» مجاز نیست.
+            if (filtersApplied)
+                return;
+
             resettingFilters = true;
             try
             {
@@ -1457,6 +1461,9 @@ namespace Trade.It
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
             filterApplyButton.Enabled = hasStocks;
+
+            // «پاک کردن» فقط زمانی مجاز است که فیلترها خاموش باشند.
+            clearFiltersButton.Enabled = hasStocks && !filtersApplied;
 
             if (!hasDate)
             {
