@@ -72,6 +72,7 @@
         private System.Windows.Forms.Button filterComparison8ClearButton;
         private System.Windows.Forms.Button filterComparison9ClearButton;
         private System.Windows.Forms.Button filterOhlcChangeClearButton;
+        private System.Windows.Forms.Button filterApplyButton;
 
         private System.Windows.Forms.GroupBox tradingStatusGroup;
         private System.Windows.Forms.RadioButton statusAllRadio;
@@ -153,6 +154,7 @@
             comparisonSecondComboBox3 = new ComboBox();
             filterComparison9ClearButton = new Button();
             clearFiltersButton = new Button();
+            filterApplyButton = new Button();
             filterCountLabel = new Label();
             ohlcChangeFilterGroup = new GroupBox();
             ohlcChangeFieldLabel = new Label();
@@ -558,6 +560,7 @@
             tabPage2.AutoScroll = true;
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(clearFiltersButton);
+            tabPage2.Controls.Add(filterApplyButton);
             tabPage2.Controls.Add(filterCountLabel);
             tabPage2.Controls.Add(ohlcChangeFilterGroup);
             tabPage2.Controls.Add(comparisonGroup8);
@@ -694,13 +697,22 @@
             clearFiltersButton.Text = "پاک کردن";
             clearFiltersButton.UseVisualStyleBackColor = true;
             // 
+            // filterApplyButton
+            // 
+            filterApplyButton.Location = new Point(279, 858);
+            filterApplyButton.Name = "filterApplyButton";
+            filterApplyButton.Size = new Size(100, 36);
+            filterApplyButton.TabIndex = 10;
+            filterApplyButton.Text = "تایید";
+            filterApplyButton.UseVisualStyleBackColor = true;
+            // 
             // filterCountLabel
             // 
             filterCountLabel.Font = new Font("Segoe UI", 9F);
             filterCountLabel.Location = new Point(112, 858);
             filterCountLabel.Name = "filterCountLabel";
             filterCountLabel.RightToLeft = RightToLeft.Yes;
-            filterCountLabel.Size = new Size(237, 36);
+            filterCountLabel.Size = new Size(161, 36);
             filterCountLabel.TabIndex = 11;
             filterCountLabel.Text = "کل: ۰    پیدا شده: ۰";
             filterCountLabel.TextAlign = ContentAlignment.MiddleCenter;
