@@ -72,7 +72,6 @@
         private System.Windows.Forms.Button filterComparison8ClearButton;
         private System.Windows.Forms.Button filterComparison9ClearButton;
         private System.Windows.Forms.Button filterOhlcChangeClearButton;
-        private System.Windows.Forms.Button filterApplyButton;
 
         private System.Windows.Forms.GroupBox tradingStatusGroup;
         private System.Windows.Forms.RadioButton statusAllRadio;
