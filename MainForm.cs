@@ -43,7 +43,6 @@ namespace Trade.It
         public MainForm()
         {
             InitializeComponent();
-            InitializeSymbolsPrintButton();
 
             marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
             marketAssetCheckedListBox.ItemCheck += MarketAssetCheckedListBox_ItemCheck;
