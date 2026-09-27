@@ -371,7 +371,7 @@
             // 
             stocksGridCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(148, 743);
+            stocksGridCountLabel.Location = new Point(149, 743);
             stocksGridCountLabel.Name = "stocksGridCountLabel";
             stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
             stocksGridCountLabel.Size = new Size(77, 25);
@@ -399,14 +399,13 @@
             // 
             // symbolsPrintButton
             // 
-            symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            symbolsPrintButton.Location = new Point(191, 86);
+            symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            symbolsPrintButton.Location = new Point(202, 86);
             symbolsPrintButton.Name = "symbolsPrintButton";
             symbolsPrintButton.Size = new Size(72, 34);
             symbolsPrintButton.TabIndex = 4;
             symbolsPrintButton.Text = "پرینت";
             symbolsPrintButton.UseVisualStyleBackColor = true;
-            // 
             // 
             // navigationButton
             // 
@@ -553,7 +552,6 @@
             // 
             // tabPage2
             // 
-            tabPage2.AutoScroll = false;
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(clearFiltersButton);
             tabPage2.Controls.Add(filterApplyButton);
