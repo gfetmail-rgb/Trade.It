@@ -553,7 +553,7 @@
             // 
             // tabPage2
             // 
-            tabPage2.AutoScroll = true;
+            tabPage2.AutoScroll = false;
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(clearFiltersButton);
             tabPage2.Controls.Add(filterApplyButton);
