@@ -146,6 +146,7 @@
             filterApplyButton = new Button();
             filterCountLabel = new Label();
             ohlcChangeFilterGroup = new GroupBox();
+            label14 = new Label();
             ohlcChangeFieldLabel = new Label();
             ohlcChangeFieldComboBox = new ComboBox();
             ohlcChangeDaysLabel = new Label();
@@ -248,7 +249,6 @@
             marketExchangeComboBox = new ComboBox();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
-            label14 = new Label();
             mainMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
@@ -398,7 +398,7 @@
             // navigationButton
             // 
             navigationButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            navigationButton.Location = new Point(269, 16);
+            navigationButton.Location = new Point(243, 18);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(87, 34);
             navigationButton.TabIndex = 0;
@@ -428,7 +428,7 @@
             // 
             speedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(112, 19);
+            speedLabel.Location = new Point(141, 19);
             speedLabel.Name = "speedLabel";
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 2;
@@ -439,14 +439,14 @@
             refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             refreshButton.Location = new Point(114, 86);
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(154, 34);
+            refreshButton.Size = new Size(75, 34);
             refreshButton.TabIndex = 2;
             refreshButton.Text = "تازه";
             // 
             // deleteButton
             // 
             deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deleteButton.Location = new Point(283, 86);
+            deleteButton.Location = new Point(24, 86);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
             deleteButton.TabIndex = 3;
@@ -455,7 +455,7 @@
             // newPortfolioButton
             // 
             newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            newPortfolioButton.Location = new Point(24, 86);
+            newPortfolioButton.Location = new Point(287, 86);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(69, 34);
             newPortfolioButton.TabIndex = 1;
@@ -464,7 +464,7 @@
             // navigationSpeedTextBox
             // 
             navigationSpeedTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            navigationSpeedTextBox.Location = new Point(24, 18);
+            navigationSpeedTextBox.Location = new Point(53, 18);
             navigationSpeedTextBox.Name = "navigationSpeedTextBox";
             navigationSpeedTextBox.Size = new Size(87, 31);
             navigationSpeedTextBox.TabIndex = 3;
@@ -661,7 +661,7 @@
             clearFiltersButton.Name = "clearFiltersButton";
             clearFiltersButton.Size = new Size(100, 36);
             clearFiltersButton.TabIndex = 9;
-            clearFiltersButton.Text = "پاک کردن";
+            clearFiltersButton.Text = "پاک";
             clearFiltersButton.UseVisualStyleBackColor = true;
             // 
             // filterApplyButton
@@ -701,6 +701,15 @@
             ohlcChangeFilterGroup.TabIndex = 8;
             ohlcChangeFilterGroup.TabStop = false;
             ohlcChangeFilterGroup.Text = "درصد تغییر";
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(103, 31);
+            label14.Name = "label14";
+            label14.Size = new Size(122, 25);
+            label14.TabIndex = 7;
+            label14.Text = "آخرین کندل به ";
             // 
             // ohlcChangeFieldLabel
             // 
@@ -1167,7 +1176,7 @@
             marketClearButton.Name = "marketClearButton";
             marketClearButton.Size = new Size(85, 35);
             marketClearButton.TabIndex = 13;
-            marketClearButton.Text = "حذف";
+            marketClearButton.Text = "پاک";
             marketClearButton.UseVisualStyleBackColor = true;
             // 
             // marketApplyButton
@@ -1741,15 +1750,6 @@
             refreshButtonPortfolio.Name = "refreshButtonPortfolio";
             refreshButtonPortfolio.Size = new Size(75, 23);
             refreshButtonPortfolio.TabIndex = 0;
-            // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new Point(103, 31);
-            label14.Name = "label14";
-            label14.Size = new Size(122, 25);
-            label14.TabIndex = 7;
-            label14.Text = "آخرین کندل به ";
             // 
             // MainForm
             // 
