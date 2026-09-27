@@ -4,28 +4,9 @@ namespace Trade.It
 {
     public partial class MainForm
     {
-        private Button? symbolsPrintButton;
         private PrintDocument? symbolsPrintDocument;
         private PrintPreviewDialog? symbolsPrintPreviewDialog;
         private int symbolsPrintRowIndex;
-
-        private void InitializeSymbolsPrintButton()
-        {
-            symbolsPrintButton = new Button
-            {
-                Name = "symbolsPrintButton",
-                Text = "پرینت",
-                Size = new Size(72, 34),
-                Location = new Point(160, 16),
-                Anchor = AnchorStyles.Bottom,
-                RightToLeft = RightToLeft.Yes,
-                UseVisualStyleBackColor = true
-            };
-
-            symbolsPrintButton.Click += SymbolsPrintButton_Click;
-            groupBox2.Controls.Add(symbolsPrintButton);
-            symbolsPrintButton.BringToFront();
-        }
 
         private void SymbolsPrintButton_Click(object? sender, EventArgs e)
         {
