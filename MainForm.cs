@@ -2018,8 +2018,8 @@ namespace Trade.It
         {
             firstField = string.Empty; op = string.Empty; secondField = string.Empty; firstOffset = 0; relativeOffset = 0;
             if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null) return false;
-            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset <= 0) return false;
-            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset <= 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(firstOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out firstOffset) || firstOffset < 0) return false;
+            if (!int.TryParse(NormalizeTradingDigits(secondOffsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out relativeOffset) || relativeOffset < 0) return false;
             firstField = NormalizeComparisonField(firstFieldComboBox.SelectedItem.ToString());
             secondField = NormalizeComparisonField(secondFieldComboBox.SelectedItem.ToString());
             op = operatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
@@ -2051,9 +2051,9 @@ namespace Trade.It
                 foreach (var file in GetSymbolFiles(definition, symbol)) ReadComparisonRows(definition, file, symbol, symbolColumn, firstColumn, secondColumn, rows);
             }
             catch { return false; }
-            var firstIndex = rows.Count - firstOffset;
-            var secondIndex = rows.Count - secondOffset;
-            if (firstOffset <= 0 || secondOffset <= 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
+            var firstIndex = rows.Count - 1 - firstOffset;
+            var secondIndex = rows.Count - 1 - secondOffset;
+            if (firstOffset < 0 || secondOffset < 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
             var first = rows[firstIndex].First; var second = rows[secondIndex].Second;
             if (!first.HasValue || !second.HasValue) return false;
             left = first.Value; right = second.Value;
