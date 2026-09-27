@@ -222,20 +222,23 @@ namespace Trade.It
             updatingMarketAssetChecks = true;
             try
             {
-                if (e.Index == allIndex && e.NewValue == CheckState.Checked)
+                if (e.Index == allIndex)
                 {
+                    // «همه» یعنی تمام موارد واقعاً تیک بخورند.
+                    var checkAll = e.NewValue == CheckState.Checked;
                     for (var i = 0; i < marketAssetCheckedListBox.Items.Count; i++)
-                        if (i != allIndex)
-                            marketAssetCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
+                        marketAssetCheckedListBox.SetItemCheckState(i, checkAll ? CheckState.Checked : CheckState.Unchecked);
                 }
-                else if (e.Index != allIndex && e.NewValue == CheckState.Checked)
+                else if (e.NewValue == CheckState.Checked)
                 {
+                    // با انتخاب یک مورد، «همه» دیگر انتخاب‌شده نیست.
                     marketAssetCheckedListBox.SetItemCheckState(allIndex, CheckState.Unchecked);
                 }
-                else if (e.Index != allIndex && e.NewValue == CheckState.Unchecked)
+                else
                 {
+                    // اگر با برداشتن یک مورد، هیچ مورد دیگری باقی نماند،
+                    // «همه» را دوباره فعال کن.
                     var anotherCategoryChecked = false;
-
                     for (var i = 0; i < marketAssetCheckedListBox.Items.Count; i++)
                     {
                         if (i == allIndex || i == e.Index)
@@ -279,20 +282,21 @@ namespace Trade.It
             updatingMarketOtherChecks = true;
             try
             {
-                if (e.Index == allIndex && e.NewValue == CheckState.Checked)
+                if (e.Index == allIndex)
                 {
+                    // «همه» یعنی تمام موارد واقعاً تیک بخورند.
+                    var checkAll = e.NewValue == CheckState.Checked;
                     for (var i = 0; i < marketOtherCheckedListBox.Items.Count; i++)
-                        if (i != allIndex)
-                            marketOtherCheckedListBox.SetItemCheckState(i, CheckState.Unchecked);
+                        marketOtherCheckedListBox.SetItemCheckState(i, checkAll ? CheckState.Checked : CheckState.Unchecked);
                 }
-                else if (e.Index != allIndex && e.NewValue == CheckState.Checked)
+                else if (e.NewValue == CheckState.Checked)
                 {
+                    // با انتخاب یک مورد، «همه» دیگر انتخاب‌شده نیست.
                     marketOtherCheckedListBox.SetItemCheckState(allIndex, CheckState.Unchecked);
                 }
-                else if (e.Index != allIndex && e.NewValue == CheckState.Unchecked)
+                else
                 {
                     var anotherItemChecked = false;
-
                     for (var i = 0; i < marketOtherCheckedListBox.Items.Count; i++)
                     {
                         if (i == allIndex || i == e.Index)
