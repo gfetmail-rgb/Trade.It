@@ -27,6 +27,7 @@ namespace Trade.It
         private bool comparisonFilterEventsAttached;
         private bool ohlcChangeFilterEventsAttached;
         private int latestTradeDateLoadVersion;
+        private Button filterApplyButton;
         private TextBox textBox1;
 
 
@@ -62,6 +63,9 @@ namespace Trade.It
                     ApplyTradingStatusFilterWithWaitCursor();
                 }
             };
+
+            clearFiltersButton.Click += ClearFiltersButton_Click;
+            filterApplyButton.Click += (_, _) => ApplyTradingStatusFilterWithWaitCursor();
 
             marketClearButton.Click += (_, _) =>
             {
@@ -1327,7 +1331,6 @@ namespace Trade.It
             }
 
             UpdateFilterControlAvailability();
-            ApplyTradingStatusFilterWithWaitCursor();
         }
 
         private static void ResetFilterControls(Control parent)
@@ -1942,8 +1945,8 @@ namespace Trade.It
             statusNegativeRadio.CheckedChanged += ComparisonBaseFilterChanged;
             portfolioComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
             refreshButton.Click += ComparisonBaseFilterChanged;
-            clearFiltersButton.Click += ComparisonBaseFilterChanged;
-            ApplyComparisonFiltersToGridWithWaitCursor();
+            // Filter controls are intentionally not applied while editing.
+            // The user must press the main "تایید" button below the filters.
         }
 
         private static void ReplaceFinalFeeWithFinal(ComboBox comboBox)
@@ -1952,12 +1955,15 @@ namespace Trade.It
                 if (string.Equals(comboBox.Items[i]?.ToString()?.Trim(), "FINAL FEE", StringComparison.OrdinalIgnoreCase)) comboBox.Items[i] = "پایانی";
         }
 
-        private void ComparisonFilterChanged(object? sender, EventArgs e) => ApplyComparisonFiltersToGridWithWaitCursor();
+        private void ComparisonFilterChanged(object? sender, EventArgs e)
+        {
+            if (resettingFilters) return;
+        }
 
         private void ComparisonBaseFilterChanged(object? sender, EventArgs e)
         {
             if (resettingFilters) return;
-            ApplyComparisonFiltersToGridWithWaitCursor();
+            UpdateFilterControlAvailability();
         }
 
         private void ApplyComparisonFiltersToGridWithWaitCursor()
@@ -2108,7 +2114,6 @@ namespace Trade.It
             statusNegativeRadio.CheckedChanged += OhlcBaseFilterChanged;
             portfolioComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
             refreshButton.Click += OhlcBaseFilterChanged;
-            clearFiltersButton.Click += OhlcBaseFilterChanged;
             UpdateOhlcChangeFilterAvailability();
         }
 
@@ -2116,14 +2121,13 @@ namespace Trade.It
         {
             if (resettingFilters) return;
             UpdateOhlcChangeFilterAvailability();
-            ApplyOhlcChangeFilterToGridWithWaitCursor();
         }
 
         private void OhlcBaseFilterChanged(object? sender, EventArgs e)
         {
             if (resettingFilters) return;
             UpdateOhlcChangeFilterAvailability();
-            ApplyOhlcChangeFilterToGridWithWaitCursor();
+            UpdateOhlcChangeFilterAvailability();
         }
 
         private void UpdateOhlcChangeFilterAvailability() => ohlcChangeFilterGroup.Enabled = true;
