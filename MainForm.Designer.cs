@@ -697,7 +697,7 @@
             // 
             // ohlcChangeFilterGroup
             // 
-            ohlcChangeFilterGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            ohlcChangeFilterGroup.Dock = DockStyle.Top;
             ohlcChangeFilterGroup.Controls.Add(label14);
             ohlcChangeFilterGroup.Controls.Add(ohlcChangeFieldLabel);
             ohlcChangeFilterGroup.Controls.Add(ohlcChangeFieldComboBox);
@@ -790,7 +790,7 @@
             // 
             // comparisonGroup8
             // 
-            comparisonGroup8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comparisonGroup8.Dock = DockStyle.Top;
             comparisonGroup8.Controls.Add(label8_8);
             comparisonGroup8.Controls.Add(comparisonSecondTextBox1);
             comparisonGroup8.Controls.Add(label6_8);
@@ -885,7 +885,7 @@
             // 
             // comparisonGroup7
             // 
-            comparisonGroup7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comparisonGroup7.Dock = DockStyle.Top;
             comparisonGroup7.Controls.Add(label1);
             comparisonGroup7.Controls.Add(comparisonSecondTextBox2);
             comparisonGroup7.Controls.Add(label5);
@@ -980,7 +980,7 @@
             // 
             // pastDaysGroup
             // 
-            pastDaysGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pastDaysGroup.Dock = DockStyle.Top;
             pastDaysGroup.Controls.Add(label4);
             pastDaysGroup.Controls.Add(label3);
             pastDaysGroup.Controls.Add(pastDaysTextBox);
@@ -1037,7 +1037,7 @@
             // 
             // volumeRatioGroup
             // 
-            volumeRatioGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            volumeRatioGroup.Dock = DockStyle.Top;
             volumeRatioGroup.Controls.Add(label2);
             volumeRatioGroup.Controls.Add(volumeRatioOperatorComboBox);
             volumeRatioGroup.Controls.Add(textBox1);
@@ -1084,7 +1084,7 @@
             // 
             // nameFilterGroup
             // 
-            nameFilterGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            nameFilterGroup.Dock = DockStyle.Top;
             nameFilterGroup.Controls.Add(nameComboBox);
             nameFilterGroup.Controls.Add(nameTextBox);
             nameFilterGroup.Location = new Point(8, 111);
@@ -1113,7 +1113,7 @@
             // 
             // tradingStatusGroup
             // 
-            tradingStatusGroup.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tradingStatusGroup.Dock = DockStyle.Top;
             tradingStatusGroup.Controls.Add(statusAllRadio);
             tradingStatusGroup.Controls.Add(statusPositiveRadio);
             tradingStatusGroup.Controls.Add(statusNegativeRadio);
