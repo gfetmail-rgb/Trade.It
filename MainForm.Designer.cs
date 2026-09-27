@@ -573,7 +573,7 @@
             // 
             // groupBox3
             // 
-            groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox3.Dock = DockStyle.Top;
             groupBox3.Controls.Add(label7);
             groupBox3.Controls.Add(comparisonSecondTextBox3);
             groupBox3.Controls.Add(label8);
