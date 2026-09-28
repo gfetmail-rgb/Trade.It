@@ -15,7 +15,7 @@ namespace Trade.It
 
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
-        private double lastVolumePanelRatio = 0.22;
+        private double lastVolumePanelRatio = 0.11;
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
