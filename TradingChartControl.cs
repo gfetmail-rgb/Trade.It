@@ -703,11 +703,10 @@ namespace Trade.It
             // باریکِ جداکننده را قابل گرفتن می‌کرد.
             var axisBandTop = Math.Max(plotBottom, Height - 35);
 
-            // Drag معمولی روی محور همیشه Zoom است.
-            // تغییر ارتفاع پنل حجم فقط با Shift + Drag روی جداکننده انجام می‌شود.
+            // جداکننده بین چارت قیمت و حجم باید مستقیماً با ماوس قابل کشیدن باشد.
+            // نیازی به Shift نیست؛ نوار جداکننده از ناحیه زوم افقی مستقل است.
             var onVolumeSeparator = volumePanelVisible &&
-                                    IsVolumePanelSeparator(e.Location.Y) &&
-                                    (ModifierKeys & Keys.Shift) == Keys.Shift;
+                                    IsVolumePanelSeparator(e.Location.Y);
 
             if (onVolumeSeparator)
             {
@@ -866,6 +865,17 @@ namespace Trade.It
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
+
+            // وقتی ماوس روی جداکننده قیمت/حجم است، شکل Splitter را نشان بده.
+            // فقط در حالت Drag، منطق تغییر ارتفاع اجرا می‌شود.
+            if (!Capture && volumePanelVisible && IsVolumePanelSeparator(e.Location.Y))
+            {
+                Cursor = Cursors.SizeNS;
+            }
+            else if (!Capture && !horizontalAxisDrag && !verticalAxisDrag && !panning)
+            {
+                Cursor = Cursors.Default;
+            }
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (volumePanelResizeDrag && Capture)
             {
