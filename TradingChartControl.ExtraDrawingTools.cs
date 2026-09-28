@@ -622,8 +622,10 @@ namespace Trade.It
             var x1 = ScreenToDataX(a.X, plot, visibleCount);
             var x2 = ScreenToDataX(b.X, plot, visibleCount);
             var candleCount = Math.Abs((int)Math.Round(x2) - (int)Math.Round(x1)) + 1;
-            var sign = percent > 0 ? "+" : string.Empty;
-            var text = $"Δ قیمت: {sign}{percent:N2}%   |   تعداد کندل: {candleCount:N0}";
+            var priceDifference = price2 - price1;
+            var priceSign = priceDifference > 0 ? "+" : string.Empty;
+            var percentSign = percent > 0 ? "+" : string.Empty;
+            var text = $"اختلاف قیمت: {priceSign}{priceDifference:N0}   |   تغییر: {percentSign}{percent:N2}%   |   تعداد کندل: {candleCount:N0}";
             using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
             var size = g.MeasureString(text, font);
             var x = Math.Min(b.X + 10f, plot.Right - size.Width - 10f);
