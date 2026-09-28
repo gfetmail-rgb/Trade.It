@@ -808,7 +808,7 @@ namespace Trade.It
                 ? crosshairIndex
                 : visible.Count - 1;
             var currentVolume = visible[Math.Clamp(volumeIndex, 0, visible.Count - 1)].Volume;
-            var volumeText = $"حجم={currentVolume.ToString("0", CultureInfo.InvariantCulture)}";
+            var volumeText = $"حجم={currentVolume.ToString("N0", CultureInfo.InvariantCulture)}";
 
             using var titleBrush = new SolidBrush(Color.FromArgb(90, 90, 90));
             using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
