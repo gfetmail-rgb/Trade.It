@@ -61,7 +61,7 @@ namespace Trade.It
         private int draggingHandle = 0;
         private Point draggingLastPoint;
         private string chartSymbol = string.Empty;
-        private double volumePanelRatio = 0.22;
+        private double volumePanelRatio = 0.11;
         private int volumePanelGap = 8;
         private bool volumePanelResizeDrag;
         private int volumePanelResizeStartY;
@@ -429,7 +429,7 @@ namespace Trade.It
             horizontalPanOffset = document.HorizontalPanOffset;
             chartPanCompensation = document.ChartPanCompensation;
             volumePanelRatio = Math.Clamp(
-                document.VolumePanelRatio > 0 ? document.VolumePanelRatio : 0.22,
+                document.VolumePanelRatio > 0 ? document.VolumePanelRatio : 0.11,
                 0.10,
                 0.45);
 
