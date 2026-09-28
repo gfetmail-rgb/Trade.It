@@ -335,6 +335,8 @@
             mainSplitContainer.Panel2MinSize = 700;
             mainSplitContainer.RightToLeft = RightToLeft.No;
             mainSplitContainer.Size = new Size(1630, 949);
+            mainSplitContainer.SplitterWidth = 6;
+            mainSplitContainer.IsSplitterFixed = false;
             mainSplitContainer.SplitterDistance = 395;
             mainSplitContainer.TabIndex = 1;
             // 
