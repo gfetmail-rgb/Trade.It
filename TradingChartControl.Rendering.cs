@@ -717,8 +717,8 @@ namespace Trade.It
             var totalHeight = Math.Max(120, overallBottom - top);
             var volumeHeight = Math.Clamp(
                 (int)Math.Round(totalHeight * volumePanelRatio),
-                60,
-                Math.Max(60, totalHeight / 2));
+                1,
+                Math.Max(1, totalHeight / 2));
 
             var bottom = Math.Max(
                 top + 80,
