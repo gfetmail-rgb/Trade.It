@@ -1356,10 +1356,11 @@ namespace Trade.It
 
         private void TradingStatusFilterChanged(object? sender, EventArgs e)
         {
-            // انتخاب RadioButton فقط مقدار انتخاب‌شده را تغییر می‌دهد.
-            // اعمال فیلتر و قفل‌کردن کنترل‌ها فقط با دکمه «تأیید» انجام می‌شود.
             if (resettingFilters)
                 return;
+            if (sender is RadioButton radio && !radio.Checked)
+                return;
+            UpdateFilterControlAvailability();
         }
 
         private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
