@@ -1356,11 +1356,10 @@ namespace Trade.It
 
         private void TradingStatusFilterChanged(object? sender, EventArgs e)
         {
+            // تغییر RadioButton فقط انتخاب فیلتر را تغییر می‌دهد.
+            // اعمال فیلتر و قفل شدن کنترل‌ها فقط با «تأیید» انجام می‌شود.
             if (resettingFilters)
                 return;
-            if (sender is RadioButton radio && !radio.Checked)
-                return;
-            UpdateFilterControlAvailability();
         }
 
         private void TradingStatusPortfolioChanged(object? sender, EventArgs e)
@@ -1998,9 +1997,6 @@ namespace Trade.It
             textBox1.TextChanged += ComparisonBaseFilterChanged;
             pastDaysTextBox.TextChanged += ComparisonBaseFilterChanged;
             pastDaysStatusComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
-            statusAllRadio.CheckedChanged += ComparisonBaseFilterChanged;
-            statusPositiveRadio.CheckedChanged += ComparisonBaseFilterChanged;
-            statusNegativeRadio.CheckedChanged += ComparisonBaseFilterChanged;
             portfolioComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
             refreshButton.Click += ComparisonBaseFilterChanged;
             // Filter controls are intentionally not applied while editing.
@@ -2167,9 +2163,6 @@ namespace Trade.It
             textBox1.TextChanged += OhlcBaseFilterChanged;
             pastDaysTextBox.TextChanged += OhlcBaseFilterChanged;
             pastDaysStatusComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
-            statusAllRadio.CheckedChanged += OhlcBaseFilterChanged;
-            statusPositiveRadio.CheckedChanged += OhlcBaseFilterChanged;
-            statusNegativeRadio.CheckedChanged += OhlcBaseFilterChanged;
             portfolioComboBox.SelectedIndexChanged += OhlcBaseFilterChanged;
             refreshButton.Click += OhlcBaseFilterChanged;
             UpdateOhlcChangeFilterAvailability();
