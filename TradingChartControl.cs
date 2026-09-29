@@ -500,6 +500,8 @@ namespace Trade.It
 
             if (enabled)
                 CancelDrawing();
+            else
+                ResetView();
 
             Cursor = Cursors.Default;
             Focus();
