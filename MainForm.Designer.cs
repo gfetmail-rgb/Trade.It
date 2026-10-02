@@ -606,7 +606,7 @@
             comparisonSecondTextBox3.Name = "comparisonSecondTextBox3";
             comparisonSecondTextBox3.Size = new Size(62, 31);
             comparisonSecondTextBox3.TabIndex = 1;
-            comparisonSecondTextBox3.Text = "5";
+            comparisonSecondTextBox3.Text = "";
             comparisonSecondTextBox3.TextAlign = HorizontalAlignment.Center;
             // 
             // label8
@@ -625,7 +625,7 @@
             comparisonFirstTextBox3.Name = "comparisonFirstTextBox3";
             comparisonFirstTextBox3.Size = new Size(62, 31);
             comparisonFirstTextBox3.TabIndex = 4;
-            comparisonFirstTextBox3.Text = "5";
+            comparisonFirstTextBox3.Text = "";
             comparisonFirstTextBox3.TextAlign = HorizontalAlignment.Center;
             // 
             // label9
@@ -758,7 +758,7 @@
             ohlcChangeDaysTextBox.Name = "ohlcChangeDaysTextBox";
             ohlcChangeDaysTextBox.Size = new Size(77, 31);
             ohlcChangeDaysTextBox.TabIndex = 3;
-            ohlcChangeDaysTextBox.Text = "5";
+            ohlcChangeDaysTextBox.Text = "";
             ohlcChangeDaysTextBox.TextAlign = HorizontalAlignment.Center;
             // 
             // ohlcChangePercentLabel
@@ -776,7 +776,7 @@
             ohlcChangePercentTextBox.Name = "ohlcChangePercentTextBox";
             ohlcChangePercentTextBox.Size = new Size(76, 31);
             ohlcChangePercentTextBox.TabIndex = 5;
-            ohlcChangePercentTextBox.Text = "5";
+            ohlcChangePercentTextBox.Text = "";
             ohlcChangePercentTextBox.TextAlign = HorizontalAlignment.Center;
             // 
             // ohlcChangeDirectionComboBox
@@ -823,7 +823,7 @@
             comparisonSecondTextBox1.Name = "comparisonSecondTextBox1";
             comparisonSecondTextBox1.Size = new Size(62, 31);
             comparisonSecondTextBox1.TabIndex = 1;
-            comparisonSecondTextBox1.Text = "5";
+            comparisonSecondTextBox1.Text = "";
             comparisonSecondTextBox1.TextAlign = HorizontalAlignment.Center;
             // 
             // label6_8
@@ -842,7 +842,7 @@
             comparisonFirstTextBox1.Name = "comparisonFirstTextBox1";
             comparisonFirstTextBox1.Size = new Size(62, 31);
             comparisonFirstTextBox1.TabIndex = 4;
-            comparisonFirstTextBox1.Text = "5";
+            comparisonFirstTextBox1.Text = "";
             comparisonFirstTextBox1.TextAlign = HorizontalAlignment.Center;
             // 
             // label5_8
@@ -918,7 +918,7 @@
             comparisonSecondTextBox2.Name = "comparisonSecondTextBox2";
             comparisonSecondTextBox2.Size = new Size(65, 31);
             comparisonSecondTextBox2.TabIndex = 10;
-            comparisonSecondTextBox2.Text = "5";
+            comparisonSecondTextBox2.Text = "";
             comparisonSecondTextBox2.TextAlign = HorizontalAlignment.Center;
             // 
             // label5
@@ -937,7 +937,7 @@
             comparisonFirstTextBox2.Name = "comparisonFirstTextBox2";
             comparisonFirstTextBox2.Size = new Size(65, 31);
             comparisonFirstTextBox2.TabIndex = 12;
-            comparisonFirstTextBox2.Text = "5";
+            comparisonFirstTextBox2.Text = "";
             comparisonFirstTextBox2.TextAlign = HorizontalAlignment.Center;
             // 
             // label6
