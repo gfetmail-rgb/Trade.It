@@ -81,6 +81,15 @@ partial class SymbolDefinitionForm
         symbolTextBox.Size = new Size(201, 29);
         symbolTextBox.TabIndex = 0;
         // 
+        // symbolSearchTextBox
+        // 
+        symbolSearchTextBox.Location = new Point(10, 176);
+        symbolSearchTextBox.Name = "symbolSearchTextBox";
+        symbolSearchTextBox.PlaceholderText = "جستجوی نماد";
+        symbolSearchTextBox.RightToLeft = RightToLeft.Yes;
+        symbolSearchTextBox.Size = new Size(360, 29);
+        symbolSearchTextBox.TabIndex = 15;
+        // 
         // nameTextBox
         // 
         nameTextBox.Location = new Point(493, 19);
@@ -90,6 +99,7 @@ partial class SymbolDefinitionForm
         // 
         // marketTreeView
         // 
+        marketTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         marketTreeView.HideSelection = false;
         marketTreeView.Location = new Point(916, 48);
         marketTreeView.Name = "marketTreeView";
@@ -187,19 +197,10 @@ partial class SymbolDefinitionForm
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
-        // symbolSearchTextBox
-        // 
-        symbolSearchTextBox.Location = new Point(10, 176);
-        symbolSearchTextBox.Name = "symbolSearchTextBox";
-        symbolSearchTextBox.PlaceholderText = "جستجوی نماد";
-        symbolSearchTextBox.RightToLeft = RightToLeft.Yes;
-        symbolSearchTextBox.Size = new Size(360, 29);
-        symbolSearchTextBox.TabIndex = 15;
-        // 
         // countLabel
         // 
         countLabel.AutoSize = true;
-        countLabel.Location = new Point(400, 182);
+        countLabel.Location = new Point(793, 179);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
         countLabel.TabIndex = 16;
@@ -210,7 +211,7 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.AllowUserToAddRows = false;
         symbolsDataGridView.AllowUserToDeleteRows = false;
         symbolsDataGridView.AllowUserToResizeRows = false;
-        symbolsDataGridView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        symbolsDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         symbolsDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
         dataGridViewCellStyle1.BackColor = SystemColors.Control;
@@ -341,6 +342,7 @@ partial class SymbolDefinitionForm
         // 
         // label30
         // 
+        label30.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         label30.Location = new Point(916, 9);
         label30.Name = "label30";
         label30.Size = new Size(100, 30);
