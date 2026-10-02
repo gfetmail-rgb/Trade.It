@@ -23,13 +23,8 @@ public sealed partial class MarketStructureForm : Form
                 ? otherCategoryListBox.SelectedItem?.ToString() ?? ""
                 : "";
 
-        addChildButton.Click += (_, _) =>
-        {
-            if (SelectedNode == null)
-                AddRootNode();
-            else
-                AddChild();
-        };
+        addRootButton.Click += (_, _) => AddRootNode();
+        addChildButton.Click += (_, _) => AddChild();
         renameButton.Click += (_, _) => RenameNode();
         deleteButton.Click += (_, _) => DeleteNode();
         moveUpButton.Click += (_, _) => MoveNode(-1);
@@ -200,7 +195,7 @@ public sealed partial class MarketStructureForm : Form
 
         var node = new MarketStructureNode
         {
-            ParentId = null,
+            ParentId = "",
             Title = title,
             SortOrder = rootCount
         };
