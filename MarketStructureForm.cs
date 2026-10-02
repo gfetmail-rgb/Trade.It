@@ -373,7 +373,10 @@ public sealed partial class MarketStructureForm : Form
             return;
 
         var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(data, options), new System.Text.UTF8Encoding(false));
+        File.WriteAllText(
+            dialog.FileName,
+            JsonSerializer.Serialize(data.Nodes, options),
+            new System.Text.UTF8Encoding(false));
 
         MessageBox.Show(this, "ساختار بازار با موفقیت خروجی گرفته شد.", "خروجی ساختار بازار",
             MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -394,11 +397,14 @@ public sealed partial class MarketStructureForm : Form
 
         try
         {
-            var imported = JsonSerializer.Deserialize<MarketStructureData>(File.ReadAllText(dialog.FileName));
-            if (imported == null)
+            var importedNodes = JsonSerializer.Deserialize<List<MarketStructureNode>>(
+                File.ReadAllText(dialog.FileName));
+
+            if (importedNodes == null)
                 throw new InvalidDataException("فایل JSON معتبر نیست.");
 
-            MarketStructureStore.Save(imported);
+            data.Nodes = importedNodes;
+            MarketStructureStore.Save(data);
             LoadData();
 
             MessageBox.Show(this, "ساختار بازار با موفقیت وارد شد.", "ورود ساختار بازار",
