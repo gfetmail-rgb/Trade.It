@@ -209,10 +209,16 @@ namespace Trade.It
                     // Checking a node means selecting the complete branch below it.
                     SetMarketFilterTreeNodeAndDescendantsChecked(e.Node, true);
 
-                    // If this completes every child of an ancestor, check that
-                    // ancestor again. Parent checkmarks are derived from the
-                    // state of their children.
-                    SyncMarketFilterParentChecks(e.Node);
+                    // Recalculate all ancestors from the changed node upward.
+                    // A parent is checked only when all of its direct children
+                    // are checked. This also restores the parent checkmark when
+                    // the last previously-unchecked child is checked again.
+                    var parent = e.Node.Parent;
+                    while (parent != null)
+                    {
+                        parent.Checked = parent.Nodes.Cast<TreeNode>().All(child => child.Checked);
+                        parent = parent.Parent;
+                    }
                 }
                 else
                 {
