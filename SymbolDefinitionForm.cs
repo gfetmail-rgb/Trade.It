@@ -583,6 +583,19 @@ public sealed partial class SymbolDefinitionForm : Form
         }
     }
 
+    private static void WriteImportErrorLog(string excelPath, int invalidRows, string details)
+    {
+        var logPath = Path.ChangeExtension(excelPath, ".errors.txt");
+        var content =
+            $"فایل Excel: {Path.GetFileName(excelPath)}{Environment.NewLine}" +
+            $"زمان ثبت: {DateTime.Now:yyyy-MM-dd HH:mm:ss}{Environment.NewLine}" +
+            $"تعداد ردیف‌های نامعتبر: {invalidRows:N0}{Environment.NewLine}" +
+            $"{Environment.NewLine}" +
+            details;
+
+        File.WriteAllText(logPath, content, new UTF8Encoding(false));
+    }
+
     private void ImportExcel()
     {
         using var d = new OpenFileDialog
@@ -602,7 +615,11 @@ public sealed partial class SymbolDefinitionForm : Form
                 ComboValues(assetComboBox),
                 ComboValues(otherItemComboBox),
                 out var invalidRows,
-                out var invalidDetails);
+                out var invalidDetails,
+                out var allInvalidDetails);
+
+            if (invalidRows > 0)
+                WriteImportErrorLog(d.FileName, invalidRows, allInvalidDetails);
 
             if (imported.Count == 0)
             {
@@ -931,10 +948,12 @@ public sealed partial class SymbolDefinitionForm : Form
             IReadOnlyCollection<string> assets,
             IReadOnlyCollection<string> otherItems,
             out int invalidRows,
-            out string invalidDetails)
+            out string invalidDetails,
+            out string allInvalidDetails)
         {
             invalidRows = 0;
             invalidDetails = "";
+            allInvalidDetails = "";
             var details = new List<string>();
             using var zip = ZipFile.OpenRead(path);
             XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
@@ -973,7 +992,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 if (string.IsNullOrWhiteSpace(symbol))
                 {
                     invalidRows++;
-                    if (details.Count < 20) details.Add($"ردیف {excelRow}: عنوان نماد خالی است.");
+                    details.Add($"ردیف {excelRow}: عنوان نماد خالی است.");
                     continue;
                 }
 
@@ -998,7 +1017,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 if (errors.Count > 0)
                 {
                     invalidRows++;
-                    if (details.Count < 20) details.Add($"ردیف {excelRow}: {string.Join("، ", errors)}");
+                    details.Add($"ردیف {excelRow}: {string.Join("، ", errors)}");
                     continue;
                 }
 
@@ -1018,7 +1037,13 @@ public sealed partial class SymbolDefinitionForm : Form
                     IndustryGroupOrFundType = ""
                 });
             }
-            invalidDetails = details.Count == 0 ? "" : string.Join(Environment.NewLine, details) + (invalidRows > details.Count ? Environment.NewLine + "..." : "");
+            var allDetailsText = details.Count == 0 ? "" : string.Join(Environment.NewLine, details);
+            allInvalidDetails = allDetailsText;
+            var preview = details.Take(20).ToList();
+            invalidDetails = preview.Count == 0
+                ? ""
+                : string.Join(Environment.NewLine, preview) +
+                  (details.Count > preview.Count ? Environment.NewLine + "..." : "");
             return result;
         }
 
