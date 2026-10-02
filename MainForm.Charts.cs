@@ -41,18 +41,6 @@ namespace Trade.It
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
 
-            // باز کردن خودکار همه تایم‌فریم‌های موجود برای نماد فعال.
-            var multiTimeframeMenuItem = new ToolStripMenuItem("باز کردن همه تایم‌فریم‌ها");
-            multiTimeframeMenuItem.Click += (_, _) =>
-            {
-                var symbol = activeChartSymbol;
-                if (!string.IsNullOrWhiteSpace(symbol))
-                    ShowMultiTimeframeCharts(symbol);
-                else
-                    MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-            };
-            mainMenuStrip.Items.Insert(Math.Min(1, mainMenuStrip.Items.Count), multiTimeframeMenuItem);
             analysisAutoSaveTimer.Interval = 1000;
             analysisAutoSaveTimer.Tick += AnalysisAutoSaveTimer_Tick;
             analysisAutoSaveTimer.Start();
@@ -62,6 +50,16 @@ namespace Trade.It
             SetIndicatorPanelButtonState(GetActiveChart());
             SetToggleButtonState(hideChartButton, false);
             ApplyChartDisplayMode();
+        }
+
+        private void multiTimeframeMenuItem_Click(object? sender, EventArgs e)
+        {
+            var symbol = activeChartSymbol;
+            if (!string.IsNullOrWhiteSpace(symbol))
+                ShowMultiTimeframeCharts(symbol);
+            else
+                MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void TestModeButton_Click(object? sender, EventArgs e)
