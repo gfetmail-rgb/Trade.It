@@ -37,6 +37,7 @@ namespace Trade.It
         private readonly HashSet<string> appliedMarketOtherItems = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private bool updatingMarketFilterTree;
+        private bool handlingMarketFilterMouseCheck;
         private bool updatingMarketAssetChecks;
         private bool updatingMarketOtherChecks;
 
@@ -44,6 +45,8 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            marketFilterTreeView.BeforeCheck += MarketFilterTreeView_BeforeCheck;
+            marketFilterTreeView.NodeMouseClick += MarketFilterTreeView_NodeMouseClick;
             marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
             marketAssetCheckedListBox.ItemCheck += MarketAssetCheckedListBox_ItemCheck;
             marketOtherCheckedListBox.ItemCheck += MarketOtherCheckedListBox_ItemCheck;
@@ -160,6 +163,36 @@ namespace Trade.It
 
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
             SetOtherCheckedItems(marketOtherCheckedListBox, appliedMarketOtherItems);
+        }
+
+        private void MarketFilterTreeView_BeforeCheck(object? sender, TreeViewCancelEventArgs e)
+        {
+            if (updatingMarketFilterTree || handlingMarketFilterMouseCheck)
+                return;
+
+            // The native TreeView checkbox handling is unreliable with the RTL layout
+            // used by this form. We handle the checkbox click explicitly below.
+            e.Cancel = true;
+        }
+
+        private void MarketFilterTreeView_NodeMouseClick(object? sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (updatingMarketFilterTree)
+                return;
+
+            var hit = marketFilterTreeView.HitTest(e.Location);
+            if (hit.Node != e.Node || (hit.Location & TreeViewHitTestLocations.StateIcon) == 0)
+                return;
+
+            handlingMarketFilterMouseCheck = true;
+            try
+            {
+                e.Node.Checked = !e.Node.Checked;
+            }
+            finally
+            {
+                handlingMarketFilterMouseCheck = false;
+            }
         }
 
         private void MarketFilterTreeView_AfterCheck(object? sender, TreeViewEventArgs e)
