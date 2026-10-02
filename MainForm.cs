@@ -1964,8 +1964,6 @@ namespace Trade.It
             };
             foreach (var filter in filters)
             {
-                ReplaceFinalFeeWithFinal(filter.Item1);
-                ReplaceFinalFeeWithFinal(filter.Item3);
                 filter.Item1.DropDownStyle = ComboBoxStyle.DropDownList;
                 filter.Item2.DropDownStyle = ComboBoxStyle.DropDownList;
                 filter.Item3.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -2001,12 +1999,6 @@ namespace Trade.It
             refreshButton.Click += ComparisonBaseFilterChanged;
             // Filter controls are intentionally not applied while editing.
             // The user must press the main "تایید" button below the filters.
-        }
-
-        private static void ReplaceFinalFeeWithFinal(ComboBox comboBox)
-        {
-            for (var i = 0; i < comboBox.Items.Count; i++)
-                if (string.Equals(comboBox.Items[i]?.ToString()?.Trim(), "FINAL FEE", StringComparison.OrdinalIgnoreCase)) comboBox.Items[i] = "آخرین";
         }
 
         private void ComparisonFilterChanged(object? sender, EventArgs e)
@@ -2088,13 +2080,15 @@ namespace Trade.It
 
         private static string NormalizeComparisonField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
         {
-            "O" => "باز",
+            "O" => "اولین",
+            "اولین" => "اولین",
             "H" => "بیشترین",
             "L" => "کمترین",
             "C" => "آخرین",
+            "آخرین" => "آخرین",
             "V" => "حجم",
-            "FINAL FEE" => "آخرین",
-            "پایانی" => "آخرین",
+            "پایانی" => "پایانی",
+            "پایانی" => "پایانی",
             _ => string.Empty
         };
 
@@ -2273,12 +2267,13 @@ namespace Trade.It
 
         private static string NormalizeOhlcChangeField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
         {
-            "O" => "باز",
+            "O" => "اولین",
+            "اولین" => "اولین",
             "H" => "بیشترین",
             "L" => "کمترین",
             "C" => "آخرین",
-            "FINAL FEE" => "آخرین",
-            "پایانی" => "آخرین",
+            "FINAL FEE" => "پایانی",
+            "پایانی" => "پایانی",
             _ => string.Empty
         };
 
