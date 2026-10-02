@@ -23,7 +23,13 @@ public sealed partial class MarketStructureForm : Form
                 ? otherCategoryListBox.SelectedItem?.ToString() ?? ""
                 : "";
 
-        addChildButton.Click += (_, _) =>\n        {\n            if (SelectedNode == null)\n                AddRootNode();\n            else\n                AddChild();\n        };
+        addChildButton.Click += (_, _) =>
+        {
+            if (SelectedNode == null)
+                AddRootNode();
+            else
+                AddChild();
+        };
         renameButton.Click += (_, _) => RenameNode();
         deleteButton.Click += (_, _) => DeleteNode();
         moveUpButton.Click += (_, _) => MoveNode(-1);
