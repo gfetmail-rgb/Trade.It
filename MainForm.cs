@@ -2006,7 +2006,7 @@ namespace Trade.It
         private static void ReplaceFinalFeeWithFinal(ComboBox comboBox)
         {
             for (var i = 0; i < comboBox.Items.Count; i++)
-                if (string.Equals(comboBox.Items[i]?.ToString()?.Trim(), "FINAL FEE", StringComparison.OrdinalIgnoreCase)) comboBox.Items[i] = "پایانی";
+                if (string.Equals(comboBox.Items[i]?.ToString()?.Trim(), "FINAL FEE", StringComparison.OrdinalIgnoreCase)) comboBox.Items[i] = "آخرین";
         }
 
         private void ComparisonFilterChanged(object? sender, EventArgs e)
