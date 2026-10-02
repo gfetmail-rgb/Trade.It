@@ -35,6 +35,7 @@ public sealed partial class SymbolDefinitionForm : Form
             selectedMarketNodeId = e.Node?.Tag as string ?? e.Node?.Name ?? "";
         };
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
+        symbolSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
     }
 
     private void SetComboDefaults()
@@ -267,14 +268,31 @@ public sealed partial class SymbolDefinitionForm : Form
             MessageBoxIcon.Warning);
     }
 
+    private void SymbolSearchTextBox_TextChanged(object? sender, EventArgs e)
+    {
+        if (loading)
+            return;
+        LoadGrid();
+    }
+
     private void LoadGrid(string? selectSymbol = null)
     {
         loading = true;
         try
         {
             symbolsDataGridView.Rows.Clear();
+            var search = SymbolDefinitionRules.NormalizeText(symbolSearchTextBox.Text);
+            var items = SymbolDefinitionStore.Load()
+                .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(search))
+                items = items.Where(x =>
+                    SymbolDefinitionRules.NormalizeText(x.SymbolTitle)
+                        .Contains(search, StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase);
+
             int rowNumber = 1;
-            foreach (var item in SymbolDefinitionStore.Load().OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase))
+            foreach (var item in items)
             {
                 var marketPath = GetMarketPath(item);
 
