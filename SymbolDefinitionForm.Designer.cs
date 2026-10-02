@@ -4,6 +4,7 @@ partial class SymbolDefinitionForm
 {
     private System.ComponentModel.IContainer components = null!;
     private TextBox symbolTextBox = null!;
+    private TextBox symbolSearchTextBox = null!;
     private TextBox nameTextBox = null!;
     private TreeView marketTreeView = null!;
     private ComboBox assetComboBox = null!;
@@ -42,6 +43,7 @@ partial class SymbolDefinitionForm
         DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
         symbolTextBox = new TextBox();
+        symbolSearchTextBox = new TextBox();
         nameTextBox = new TextBox();
         marketTreeView = new TreeView();
         assetComboBox = new ComboBox();
@@ -185,13 +187,22 @@ partial class SymbolDefinitionForm
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
+        // symbolSearchTextBox
+        // 
+        symbolSearchTextBox.Location = new Point(10, 176);
+        symbolSearchTextBox.Name = "symbolSearchTextBox";
+        symbolSearchTextBox.PlaceholderText = "جستجوی نماد";
+        symbolSearchTextBox.RightToLeft = RightToLeft.Yes;
+        symbolSearchTextBox.Size = new Size(360, 29);
+        symbolSearchTextBox.TabIndex = 15;
+        // 
         // countLabel
         // 
         countLabel.AutoSize = true;
         countLabel.Location = new Point(400, 182);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
-        countLabel.TabIndex = 15;
+        countLabel.TabIndex = 16;
         countLabel.Text = "تعداد: 0";
         // 
         // symbolsDataGridView
@@ -379,6 +390,7 @@ partial class SymbolDefinitionForm
         Controls.Add(exportButton);
         Controls.Add(closeButton);
         Controls.Add(countLabel);
+        Controls.Add(symbolSearchTextBox);
         Controls.Add(symbolsDataGridView);
         Controls.Add(label00);
         Controls.Add(label10);
