@@ -349,9 +349,9 @@ namespace Trade.It
             if (ContainsAny(normalized, "open", "باز")) return "باز";
             if (ContainsAny(normalized, "high", "بیشترین")) return "بیشترین";
             if (ContainsAny(normalized, "low", "کمترین")) return "کمترین";
+            if (ContainsAny(normalized, "tseclose")) return "قیمت آخرین بورس";
             if (ContainsAny(normalized, "close", "پایانی", "آخرین")) return "آخرین";
             if (ContainsAny(normalized, "vol", "volume", "حجم")) return "حجم";
-            if (ContainsAny(normalized, "tseclose")) return "قیمت آخرین بورس";
             if (ContainsAny(normalized, "previous")) return "قیمت قبلی";
             if (ContainsAny(normalized, "count")) return "تعداد معاملات";
             if (ContainsAny(normalized, "val")) return "ارزش معاملات";
