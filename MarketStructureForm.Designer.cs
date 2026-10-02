@@ -11,6 +11,8 @@ partial class MarketStructureForm
     private FlowLayoutPanel marketButtons;
     private TextBox marketTitleTextBox;
     private Button addRootButton;
+    private Button importMarketStructureButton;
+    private Button exportMarketStructureButton;
     private Button addChildButton;
     private Button renameButton;
     private Button deleteButton;
@@ -55,6 +57,8 @@ partial class MarketStructureForm
         deleteButton = new Button();
         renameButton = new Button();
         addRootButton = new Button();
+        importMarketStructureButton = new Button();
+        exportMarketStructureButton = new Button();
         addChildButton = new Button();
         categoryPage = new TabPage();
         categoryListBox = new ListBox();
@@ -145,6 +149,8 @@ partial class MarketStructureForm
         marketButtons.Controls.Add(renameButton);
         marketButtons.Controls.Add(addChildButton);
         marketButtons.Controls.Add(addRootButton);
+        marketButtons.Controls.Add(importMarketStructureButton);
+        marketButtons.Controls.Add(exportMarketStructureButton);
         marketButtons.Dock = DockStyle.Bottom;
         marketButtons.FlowDirection = FlowDirection.RightToLeft;
         marketButtons.Location = new Point(11, 985);
