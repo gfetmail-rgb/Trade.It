@@ -13,8 +13,8 @@ namespace Trade.It
 
         private static readonly string[] MappingFields =
         {
-            "نماد", "تاریخ", "زمان", "باز", "بیشترین", "کمترین", "آخرین",
-            "حجم", "قیمت پایانی بورس", "قیمت قبلی", "تعداد معاملات", "ارزش معاملات",
+            "نماد", "تاریخ", "زمان", "اولین", "بیشترین", "کمترین", "آخرین",
+            "حجم", "پایانی", "قیمت قبلی", "تعداد معاملات", "ارزش معاملات",
             "تعداد سهام", "ارزش بازار", "نماد لاتین", "دوره", "تاریخ لاتین", "ساعت لاتین"
         };
 
@@ -346,11 +346,12 @@ namespace Trade.It
             if (ContainsAny(normalized, "date-en", "dateen")) return "تاریخ لاتین";
             if (ContainsAny(normalized, "date-fa", "date", "تاریخ")) return "تاریخ";
             if (ContainsAny(normalized, "time", "زمان")) return "زمان";
-            if (ContainsAny(normalized, "open", "باز")) return "باز";
+            if (ContainsAny(normalized, "open", "اولین", "باز")) return "اولین";
             if (ContainsAny(normalized, "high", "بیشترین")) return "بیشترین";
             if (ContainsAny(normalized, "low", "کمترین")) return "کمترین";
-            if (ContainsAny(normalized, "tseclose")) return "قیمت پایانی بورس";
-            if (ContainsAny(normalized, "close", "پایانی", "آخرین")) return "آخرین";
+            if (ContainsAny(normalized, "tseclose")) return "پایانی";
+            if (ContainsAny(normalized, "پایانی")) return "پایانی";
+            if (ContainsAny(normalized, "close", "آخرین")) return "آخرین";
             if (ContainsAny(normalized, "vol", "volume", "حجم")) return "حجم";
             if (ContainsAny(normalized, "previous")) return "قیمت قبلی";
             if (ContainsAny(normalized, "count")) return "تعداد معاملات";
