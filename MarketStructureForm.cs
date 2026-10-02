@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using System.Text.Json;
 
 namespace Trade.It;
 
@@ -24,6 +25,8 @@ public sealed partial class MarketStructureForm : Form
                 : "";
 
         addRootButton.Click += (_, _) => AddRootNode();
+        importMarketStructureButton.Click += (_, _) => ImportMarketStructure();
+        exportMarketStructureButton.Click += (_, _) => ExportMarketStructure();
         addChildButton.Click += (_, _) => AddChild();
         renameButton.Click += (_, _) => RenameNode();
         deleteButton.Click += (_, _) => DeleteNode();
@@ -352,6 +355,59 @@ public sealed partial class MarketStructureForm : Form
             var order = 0;
             foreach (var node in parentGroup.OrderBy(x => x.SortOrder))
                 node.SortOrder = order++;
+        }
+    }
+
+    private void ExportMarketStructure()
+    {
+        using var dialog = new SaveFileDialog
+        {
+            Filter = "JSON files (*.json)|*.json",
+            Title = "خروجی ساختار بازار به JSON",
+            FileName = "MarketStructure.json",
+            AddExtension = true,
+            OverwritePrompt = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(data, options), new System.Text.UTF8Encoding(false));
+
+        MessageBox.Show(this, "ساختار بازار با موفقیت خروجی گرفته شد.", "خروجی ساختار بازار",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void ImportMarketStructure()
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = "JSON files (*.json)|*.json",
+            Title = "ورود ساختار بازار از JSON",
+            CheckFileExists = true,
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        try
+        {
+            var imported = JsonSerializer.Deserialize<MarketStructureData>(File.ReadAllText(dialog.FileName));
+            if (imported == null)
+                throw new InvalidDataException("فایل JSON معتبر نیست.");
+
+            MarketStructureStore.Save(imported);
+            LoadData();
+
+            MessageBox.Show(this, "ساختار بازار با موفقیت وارد شد.", "ورود ساختار بازار",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"ورود ساختار بازار انجام نشد.{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                "خطا در ورود ساختار بازار", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
