@@ -208,6 +208,11 @@ namespace Trade.It
                 {
                     // Checking a node means selecting the complete branch below it.
                     SetMarketFilterTreeNodeAndDescendantsChecked(e.Node, true);
+
+                    // If this completes every child of an ancestor, check that
+                    // ancestor again. Parent checkmarks are derived from the
+                    // state of their children.
+                    SyncMarketFilterParentChecks(e.Node);
                 }
                 else
                 {
