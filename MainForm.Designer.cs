@@ -5,6 +5,7 @@
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.MenuStrip mainMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem portfolioDefinitionMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem multiTimeframeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portfolioManagementMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsMenuItem;
 
@@ -106,6 +107,7 @@
         {
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
+            multiTimeframeMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
@@ -278,7 +280,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -291,6 +293,13 @@
             portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
             portfolioDefinitionMenuItem.Size = new Size(114, 29);
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
+            // 
+            // multiTimeframeMenuItem
+            // 
+            multiTimeframeMenuItem.Name = "multiTimeframeMenuItem";
+            multiTimeframeMenuItem.Size = new Size(196, 29);
+            multiTimeframeMenuItem.Text = "باز کردن همه تایم‌فریم‌ها";
+            multiTimeframeMenuItem.Click += multiTimeframeMenuItem_Click;
             // 
             // portfolioManagementMenuItem
             // 
