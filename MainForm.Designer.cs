@@ -597,7 +597,7 @@
             label7.Name = "label7";
             label7.Size = new Size(101, 25);
             label7.TabIndex = 0;
-            label7.Text = "کندل گذشته";
+            label7.Text = "شماره کندل";
             // 
             // comparisonSecondTextBox3
             // 
@@ -616,7 +616,7 @@
             label8.Name = "label8";
             label8.Size = new Size(101, 25);
             label8.TabIndex = 3;
-            label8.Text = "کندل گذشته";
+            label8.Text = "شماره کندل";
             // 
             // comparisonFirstTextBox3
             // 
@@ -721,7 +721,7 @@
             label14.Name = "label14";
             label14.Size = new Size(122, 25);
             label14.TabIndex = 7;
-            label14.Text = "آخرین کندل به ";
+            label14.Text = "آخرین کندل نسبت به کندل شماره ";
             // 
             // ohlcChangeFieldLabel
             // 
@@ -750,7 +750,7 @@
             ohlcChangeDaysLabel.Name = "ohlcChangeDaysLabel";
             ohlcChangeDaysLabel.Size = new Size(80, 25);
             ohlcChangeDaysLabel.TabIndex = 2;
-            ohlcChangeDaysLabel.Text = "کندل قبل";
+            ohlcChangeDaysLabel.Text = "شماره کندل";
             // 
             // ohlcChangeDaysTextBox
             // 
@@ -814,7 +814,7 @@
             label8_8.Name = "label8_8";
             label8_8.Size = new Size(101, 25);
             label8_8.TabIndex = 0;
-            label8_8.Text = "کندل گذشته";
+            label8_8.Text = "شماره کندل";
             // 
             // comparisonSecondTextBox1
             // 
@@ -833,7 +833,7 @@
             label6_8.Name = "label6_8";
             label6_8.Size = new Size(101, 25);
             label6_8.TabIndex = 3;
-            label6_8.Text = "کندل گذشته";
+            label6_8.Text = "شماره کندل";
             // 
             // comparisonFirstTextBox1
             // 
@@ -909,7 +909,7 @@
             label1.Name = "label1";
             label1.Size = new Size(101, 25);
             label1.TabIndex = 9;
-            label1.Text = "کندل گذشته";
+            label1.Text = "شماره کندل";
             // 
             // comparisonSecondTextBox2
             // 
@@ -928,7 +928,7 @@
             label5.Name = "label5";
             label5.Size = new Size(101, 25);
             label5.TabIndex = 11;
-            label5.Text = "کندل گذشته";
+            label5.Text = "شماره کندل";
             // 
             // comparisonFirstTextBox2
             // 
@@ -1010,7 +1010,7 @@
             label3.Name = "label3";
             label3.Size = new Size(145, 34);
             label3.TabIndex = 1;
-            label3.Text = "روز گذشته معامله";
+            label3.Text = "محدوده روزها (۰=امروز)";
             // 
             // pastDaysTextBox
             // 
@@ -1057,7 +1057,7 @@
             label2.Name = "label2";
             label2.Size = new Size(69, 31);
             label2.TabIndex = 0;
-            label2.Text = "کندل قبل";
+            label2.Text = "تعداد کندل قبل";
             // 
             // volumeRatioOperatorComboBox
             // 
