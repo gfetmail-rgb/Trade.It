@@ -1755,10 +1755,10 @@ namespace Trade.It
         {
             if (!HasDateColumn(definition)) return symbols;
             var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();
-            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return symbols;
+            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0) return symbols;
             if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null) return symbols;
 
-            var fromDate = DateTime.Today.Date.AddDays(-(n - 1));
+            var fromDate = DateTime.Today.Date.AddDays(-n);
             var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var showTraded = !IsNegativePastDaysOption(op);
             return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date));
