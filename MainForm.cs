@@ -2200,7 +2200,7 @@ namespace Trade.It
             var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
             if (string.IsNullOrEmpty(field)) return;
             if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0) return;
-            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) || percent < 0) return;
+            if (!double.TryParse(NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent)) return;
             var op = GetOhlcChangeOperator();
             if (string.IsNullOrWhiteSpace(op)) return;
             var symbols = (definition.Symbols ?? new List<string>())
