@@ -32,21 +32,17 @@ public static class MarketStructureStore
         try
         {
             if (!File.Exists(FilePath))
-            {
-                var data = CreateDefault();
-                Save(data);
-                return data;
-            }
+                return new MarketStructureData();
 
             var loadedData = JsonSerializer.Deserialize<MarketStructureData>(
-                File.ReadAllText(FilePath)) ?? CreateDefault();
+                File.ReadAllText(FilePath)) ?? new MarketStructureData();
 
             Normalize(loadedData);
             return loadedData;
         }
         catch
         {
-            return CreateDefault();
+            return new MarketStructureData();
         }
     }
 
@@ -109,12 +105,6 @@ public static class MarketStructureStore
 
         RecalculateSortOrders(data);
 
-        if (!data.Nodes.Any(x =>
-            string.IsNullOrEmpty(x.ParentId) &&
-            string.Equals(x.Title, "بورس انرژی ایران", StringComparison.OrdinalIgnoreCase)))
-        {
-            AddNode(data, "", "بورس انرژی ایران");
-        }
 
         data.AssetCategories = data.AssetCategories
             .Where(x => !string.IsNullOrWhiteSpace(x))
