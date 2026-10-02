@@ -181,7 +181,7 @@ namespace Trade.It
                 return;
 
             var hit = marketFilterTreeView.HitTest(e.Location);
-            if (hit.Node != e.Node || (hit.Location & TreeViewHitTestLocations.StateIcon) == 0)
+            if (hit.Node != e.Node || (hit.Location & TreeViewHitTestLocations.StateImage) == 0)
                 return;
 
             handlingMarketFilterMouseCheck = true;
