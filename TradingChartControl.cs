@@ -61,7 +61,7 @@ namespace Trade.It
         private int draggingHandle = 0;
         private Point draggingLastPoint;
         private string chartSymbol = string.Empty;
-        private double volumePanelRatio = 0.11;
+        private double volumePanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool volumePanelResizeDrag;
         private int volumePanelResizeStartY;
@@ -114,6 +114,8 @@ namespace Trade.It
 
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
+            // ارتفاع اولیه پنل حجم هنگام باز شدن هر چارت: ۱۰٪ فضای رسم نمودار.
+            volumePanelRatio = 0.10;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
