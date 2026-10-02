@@ -467,9 +467,12 @@ namespace Trade.It
             if (!Directory.Exists(dataPathTextBox.Text)) { error = "مسیر پوشه داده معتبر نیست."; return false; }
             if (!symbolGrid.Rows.Cast<DataGridViewRow>().Any(r => !r.IsNewRow && Convert.ToBoolean(r.Cells["selectedColumn"].Value ?? false))) { error = "حداقل یک نماد را انتخاب کنید."; return false; }
             var mappings = ReadMappings();
-            if (mappings.FirstOrDefault(x => string.Equals(x.Field, "آخرین", StringComparison.Ordinal))?.Column <= 0)
+            var requiredFields = new[] { "اولین", "بیشترین", "کمترین", "آخرین" };
+            var missingField = requiredFields.FirstOrDefault(field =>
+                mappings.FirstOrDefault(x => string.Equals(x.Field, field, StringComparison.Ordinal))?.Column <= 0);
+            if (missingField != null)
             {
-                error = "Mapping «آخرین» الزامی است. هر فایل باید ستون C (آخرین) داشته باشد.";
+                error = $"Mapping «{missingField}» الزامی است.";
                 return false;
             }
             if (mappings.Any(x => x.Column < 0 || x.Column > MaxColumns)) { error = $"شماره ستون Mapping باید خالی یا بین ۱ تا {MaxColumns} باشد."; return false; }
