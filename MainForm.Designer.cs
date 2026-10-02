@@ -642,7 +642,7 @@
             // 
             comparisonFirstComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonFirstComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonFirstComboBox3.Location = new Point(234, 34);
             comparisonFirstComboBox3.Name = "comparisonFirstComboBox3";
             comparisonFirstComboBox3.Size = new Size(75, 33);
@@ -661,7 +661,7 @@
             // 
             comparisonSecondComboBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox3.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonSecondComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonSecondComboBox3.Location = new Point(234, 73);
             comparisonSecondComboBox3.Name = "comparisonSecondComboBox3";
             comparisonSecondComboBox3.Size = new Size(75, 33);
@@ -737,7 +737,7 @@
             // 
             ohlcChangeFieldComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeFieldComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            ohlcChangeFieldComboBox.Items.AddRange(new object[] { "O", "H", "L", "C", "پایانی" });
+            ohlcChangeFieldComboBox.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "پایانی" });
             ohlcChangeFieldComboBox.Location = new Point(228, 28);
             ohlcChangeFieldComboBox.Name = "ohlcChangeFieldComboBox";
             ohlcChangeFieldComboBox.Size = new Size(79, 33);
@@ -859,7 +859,7 @@
             // 
             comparisonFirstComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonFirstComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonFirstComboBox2.Location = new Point(234, 30);
             comparisonFirstComboBox2.Name = "comparisonFirstComboBox2";
             comparisonFirstComboBox2.Size = new Size(75, 33);
@@ -878,7 +878,7 @@
             // 
             comparisonSecondComboBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox2.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonSecondComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonSecondComboBox2.Location = new Point(234, 69);
             comparisonSecondComboBox2.Name = "comparisonSecondComboBox2";
             comparisonSecondComboBox2.Size = new Size(75, 33);
@@ -954,7 +954,7 @@
             // 
             comparisonFirstComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonFirstComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonFirstComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonFirstComboBox1.Location = new Point(237, 39);
             comparisonFirstComboBox1.Name = "comparisonFirstComboBox1";
             comparisonFirstComboBox1.Size = new Size(75, 33);
@@ -973,7 +973,7 @@
             // 
             comparisonSecondComboBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             comparisonSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonSecondComboBox1.Items.AddRange(new object[] { "O", "H", "L", "C", "V", "FINAL FEE" });
+            comparisonSecondComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین", "حجم", "پایانی" });
             comparisonSecondComboBox1.Location = new Point(237, 78);
             comparisonSecondComboBox1.Name = "comparisonSecondComboBox1";
             comparisonSecondComboBox1.Size = new Size(75, 33);
