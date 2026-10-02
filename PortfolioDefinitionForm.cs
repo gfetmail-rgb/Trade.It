@@ -14,7 +14,7 @@ namespace Trade.It
         private static readonly string[] MappingFields =
         {
             "نماد", "تاریخ", "زمان", "باز", "بیشترین", "کمترین", "آخرین",
-            "حجم", "قیمت آخرین بورس", "قیمت قبلی", "تعداد معاملات", "ارزش معاملات",
+            "حجم", "قیمت پایانی بورس", "قیمت قبلی", "تعداد معاملات", "ارزش معاملات",
             "تعداد سهام", "ارزش بازار", "نماد لاتین", "دوره", "تاریخ لاتین", "ساعت لاتین"
         };
 
@@ -349,7 +349,7 @@ namespace Trade.It
             if (ContainsAny(normalized, "open", "باز")) return "باز";
             if (ContainsAny(normalized, "high", "بیشترین")) return "بیشترین";
             if (ContainsAny(normalized, "low", "کمترین")) return "کمترین";
-            if (ContainsAny(normalized, "tseclose")) return "قیمت آخرین بورس";
+            if (ContainsAny(normalized, "tseclose")) return "قیمت پایانی بورس";
             if (ContainsAny(normalized, "close", "پایانی", "آخرین")) return "آخرین";
             if (ContainsAny(normalized, "vol", "volume", "حجم")) return "حجم";
             if (ContainsAny(normalized, "previous")) return "قیمت قبلی";
