@@ -10,6 +10,7 @@ partial class MarketStructureForm
     private TreeView marketTreeView;
     private FlowLayoutPanel marketButtons;
     private TextBox marketTitleTextBox;
+    private Button addRootButton;
     private Button addChildButton;
     private Button renameButton;
     private Button deleteButton;
@@ -53,6 +54,7 @@ partial class MarketStructureForm
         moveUpButton = new Button();
         deleteButton = new Button();
         renameButton = new Button();
+        addRootButton = new Button();
         addChildButton = new Button();
         categoryPage = new TabPage();
         categoryListBox = new ListBox();
@@ -142,6 +144,7 @@ partial class MarketStructureForm
         marketButtons.Controls.Add(deleteButton);
         marketButtons.Controls.Add(renameButton);
         marketButtons.Controls.Add(addChildButton);
+        marketButtons.Controls.Add(addRootButton);
         marketButtons.Dock = DockStyle.Bottom;
         marketButtons.FlowDirection = FlowDirection.RightToLeft;
         marketButtons.Location = new Point(11, 985);
