@@ -201,34 +201,13 @@ namespace Trade.It
                 string.IsNullOrWhiteSpace(nodeId))
                 return;
 
+            // Every checked node is an independent market-filter selection.
+            // Checking a parent does not implicitly check its children, and
+            // checking a child does not implicitly select or deselect its parent.
             if (e.Node.Checked)
-            {
                 marketFilterExplicitNodeIds.Add(nodeId);
-
-                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
-                {
-                    if (child == e.Node)
-                        continue;
-
-                    var childId = child.Tag as string ?? child.Name;
-                    if (!string.IsNullOrWhiteSpace(childId))
-                        marketFilterExplicitNodeIds.Remove(childId);
-                }
-            }
             else
-            {
                 marketFilterExplicitNodeIds.Remove(nodeId);
-
-                foreach (TreeNode child in GetTreeNodeAndChildren(e.Node))
-                {
-                    if (child == e.Node)
-                        continue;
-
-                    var childId = child.Tag as string ?? child.Name;
-                    if (!string.IsNullOrWhiteSpace(childId))
-                        marketFilterExplicitNodeIds.Remove(childId);
-                }
-            }
 
             RefreshMarketFilterTreeChecks();
         }
@@ -456,29 +435,17 @@ namespace Trade.It
             updatingMarketFilterTree = true;
             try
             {
+                // The visual state is exactly the stored selection state.
+                // There is deliberately no parent/child propagation here:
+                // only nodes that are actually checked participate in the filter.
                 foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
                     node.Checked = false;
 
                 foreach (var nodeId in marketFilterExplicitNodeIds)
                 {
                     var node = FindMarketFilterTreeNode(nodeId);
-                    if (node == null)
-                        continue;
-
-                    node.Checked = true;
-
-                    var parent = node.Parent;
-                    while (parent != null)
-                    {
-                        parent.Checked = true;
-                        parent = parent.Parent;
-                    }
-
-                    foreach (TreeNode child in GetTreeNodeAndChildren(node))
-                    {
-                        if (child != node)
-                            child.Checked = true;
-                    }
+                    if (node != null)
+                        node.Checked = true;
                 }
             }
             finally
