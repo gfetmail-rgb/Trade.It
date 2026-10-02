@@ -201,15 +201,55 @@ namespace Trade.It
                 string.IsNullOrWhiteSpace(nodeId))
                 return;
 
-            // Every checked node is an independent market-filter selection.
-            // Checking a parent does not implicitly check its children, and
-            // checking a child does not implicitly select or deselect its parent.
-            if (e.Node.Checked)
-                marketFilterExplicitNodeIds.Add(nodeId);
-            else
-                marketFilterExplicitNodeIds.Remove(nodeId);
+            updatingMarketFilterTree = true;
+            try
+            {
+                if (e.Node.Checked)
+                {
+                    // Checking a node means selecting the complete branch below it.
+                    SetMarketFilterTreeNodeAndDescendantsChecked(e.Node, true);
+                }
+                else
+                {
+                    // Unchecking a child removes the selection from that child
+                    // and clears its ancestors, while leaving sibling branches alone.
+                    SetMarketFilterTreeNodeAndDescendantsChecked(e.Node, false);
+                    var parent = e.Node.Parent;
+                    while (parent != null)
+                    {
+                        parent.Checked = false;
+                        parent = parent.Parent;
+                    }
+                }
 
-            RefreshMarketFilterTreeChecks();
+                RebuildMarketFilterExplicitNodeIdsFromTree();
+            }
+            finally
+            {
+                updatingMarketFilterTree = false;
+            }
+        }
+
+        private void SetMarketFilterTreeNodeAndDescendantsChecked(TreeNode node, bool isChecked)
+        {
+            node.Checked = isChecked;
+
+            foreach (TreeNode child in node.Nodes)
+                SetMarketFilterTreeNodeAndDescendantsChecked(child, isChecked);
+        }
+
+        private void RebuildMarketFilterExplicitNodeIdsFromTree()
+        {
+            marketFilterExplicitNodeIds.Clear();
+
+            foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+            {
+                if (node.Checked && node.Tag is string nodeId &&
+                    !string.IsNullOrWhiteSpace(nodeId))
+                {
+                    marketFilterExplicitNodeIds.Add(nodeId);
+                }
+            }
         }
 
         private void MarketAssetCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
@@ -435,9 +475,6 @@ namespace Trade.It
             updatingMarketFilterTree = true;
             try
             {
-                // The visual state is exactly the stored selection state.
-                // There is deliberately no parent/child propagation here:
-                // only nodes that are actually checked participate in the filter.
                 foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
                     node.Checked = false;
 
@@ -445,13 +482,40 @@ namespace Trade.It
                 {
                     var node = FindMarketFilterTreeNode(nodeId);
                     if (node != null)
-                        node.Checked = true;
+                        SetMarketFilterTreeNodeAndDescendantsChecked(node, true);
                 }
+
+                // Keep parent checkmarks consistent with their children.
+                // A parent is checked only when all of its direct children are checked.
+                foreach (TreeNode root in marketFilterTreeView.Nodes)
+                    SyncMarketFilterParentChecks(root);
             }
             finally
             {
                 updatingMarketFilterTree = false;
             }
+        }
+
+        private static bool SyncMarketFilterParentChecks(TreeNode node)
+        {
+            foreach (TreeNode child in node.Nodes)
+                SyncMarketFilterParentChecks(child);
+
+            if (node.Nodes.Count == 0)
+                return node.Checked;
+
+            var allChildrenChecked = true;
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (!child.Checked)
+                {
+                    allChildrenChecked = false;
+                    break;
+                }
+            }
+
+            node.Checked = allChildrenChecked;
+            return node.Checked;
         }
 
         private TreeNode? FindMarketFilterTreeNode(string nodeId)
