@@ -242,14 +242,57 @@ namespace Trade.It
         {
             marketFilterExplicitNodeIds.Clear();
 
-            foreach (TreeNode node in GetAllTreeNodes(marketFilterTreeView))
+            foreach (TreeNode root in marketFilterTreeView.Nodes)
+                CollectMarketFilterExplicitSelections(root);
+        }
+
+        private bool CollectMarketFilterExplicitSelections(TreeNode node)
+        {
+            if (!node.Checked)
+                return false;
+
+            if (node.Nodes.Count == 0)
             {
-                if (node.Checked && node.Tag is string nodeId &&
-                    !string.IsNullOrWhiteSpace(nodeId))
-                {
-                    marketFilterExplicitNodeIds.Add(nodeId);
-                }
+                AddMarketFilterExplicitNode(node);
+                return true;
             }
+
+            var allChildrenFullySelected = true;
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                if (!CollectMarketFilterExplicitSelections(child))
+                    allChildrenFullySelected = false;
+            }
+
+            if (allChildrenFullySelected)
+            {
+                // The parent represents the complete selected branch.
+                // Remove its descendants from the explicit set so that a
+                // derived parent checkmark is never mistaken for a separate
+                // filter criterion.
+                foreach (TreeNode descendant in GetTreeNodeAndChildren(node))
+                {
+                    if (descendant == node)
+                        continue;
+
+                    if (descendant.Tag is string descendantId &&
+                        !string.IsNullOrWhiteSpace(descendantId))
+                    {
+                        marketFilterExplicitNodeIds.Remove(descendantId);
+                    }
+                }
+
+                AddMarketFilterExplicitNode(node);
+            }
+
+            return true;
+        }
+
+        private void AddMarketFilterExplicitNode(TreeNode node)
+        {
+            if (node.Tag is string nodeId && !string.IsNullOrWhiteSpace(nodeId))
+                marketFilterExplicitNodeIds.Add(nodeId);
         }
 
         private void MarketAssetCheckedListBox_ItemCheck(object? sender, ItemCheckEventArgs e)
