@@ -776,17 +776,18 @@ namespace Trade.It
                 string.IsNullOrWhiteSpace(symbol))
                 return result;
 
-            var extension = definition.FileType?.Trim().ToUpperInvariant() switch
-            {
-                "CSV" => ".csv",
-                "PRN" => ".prn",
-                _ => ".txt"
-            };
-
+            // تشخیص تایم‌فریم نباید به پسوند انتخاب‌شده در تعریف سبد وابسته باشد.
+            // ممکن است فایل‌های تایم‌فریم با هر یک از فرمت‌های مجاز داده ذخیره شده باشند.
             var baseSymbol = symbol.Trim();
 
-            foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
+            foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly))
             {
+                var extension = Path.GetExtension(filePath);
+                if (!string.Equals(extension, ".txt", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(extension, ".csv", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(extension, ".prn", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
                 var suffix = GetTimeframeSuffix(fileName, baseSymbol);
                 if (suffix == null)
