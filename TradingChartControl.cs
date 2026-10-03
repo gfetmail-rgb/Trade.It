@@ -264,9 +264,61 @@ namespace Trade.It
 
         internal void ApplySyncedDateRange(DateTime start, DateTime end)
         {
+            if (points.Count == 0)
+                return;
+
+            // تغییر firstIndex نباید ابزارهای رسم را جابه‌جا کند. مختصات ابزارها
+            // در حافظه نسبی به firstIndex هستند؛ بنابراین قبل از تغییر View،
+            // تاریخِ نقاط اتصال آنها را نگه می‌داریم و بعد از تغییر View دوباره
+            // X را از روی تاریخ واقعی به اندیس جدید تبدیل می‌کنیم.
+            var drawingDates = drawings.Select(d => (
+                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
+                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)),
+                Date3: GetPointDate(firstIndex + (int)Math.Round(d.X3)))).ToList();
+
+            var advancedDates = advancedDrawings.Select(d => (
+                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
+                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)))).ToList();
+
+            var extraDates = extraDrawings.Select(d => (
+                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
+                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)),
+                Date3: GetPointDate(firstIndex + (int)Math.Round(d.X3)))).ToList();
+
             suppressSyncNotifications = true;
-            try { SetVisibleDateRange(start, end); }
-            finally { suppressSyncNotifications = false; }
+            try
+            {
+                SetVisibleDateRange(start, end);
+
+                for (var i = 0; i < drawings.Count && i < drawingDates.Count; i++)
+                {
+                    var dates = drawingDates[i];
+                    if (dates.Date1.HasValue) drawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
+                    if (dates.Date2.HasValue) drawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
+                    if (dates.Date3.HasValue) drawings[i].X3 = FindNearestPointIndex(dates.Date3.Value) - firstIndex;
+                }
+
+                for (var i = 0; i < advancedDrawings.Count && i < advancedDates.Count; i++)
+                {
+                    var dates = advancedDates[i];
+                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
+                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
+                }
+
+                for (var i = 0; i < extraDrawings.Count && i < extraDates.Count; i++)
+                {
+                    var dates = extraDates[i];
+                    if (dates.Date1.HasValue) extraDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
+                    if (dates.Date2.HasValue) extraDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
+                    if (dates.Date3.HasValue) extraDrawings[i].X3 = FindNearestPointIndex(dates.Date3.Value) - firstIndex;
+                }
+            }
+            finally
+            {
+                suppressSyncNotifications = false;
+            }
+
+            Invalidate();
         }
 
         internal void ApplySyncedCrosshairDate(DateTime date)
