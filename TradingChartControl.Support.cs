@@ -148,9 +148,9 @@ namespace Trade.It
 
         private void DrawPitchforkFixed(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             DrawPitchforkGeometryFixed(g, pen, p1, p2, p3, plot);
             if (selected)
             {
@@ -185,9 +185,9 @@ namespace Trade.It
 
         private void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var a = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var c = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
