@@ -679,6 +679,23 @@ namespace Trade.It
                     return;
                 }
 
+                // قبل از ساخت Workspace، تحلیل فعلی چارت عادی را ذخیره می‌کنیم.
+                // AutoSave در حالت چندتایم‌فریمی عمداً اجرا نمی‌شود؛ بنابراین باید
+                // آخرین ابزارهای رسم‌شده قبل از ساخت پنجره‌های تایم‌فریمی ثبت شوند.
+                var currentChart = GetActiveChart();
+                if (currentChart != null &&
+                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
+                    }
+                    catch
+                    {
+                        // ذخیره تحلیل نباید مانع باز شدن Workspace شود.
+                    }
+                }
+
                 CloseMultiTimeframeWorkspace();
 
                 multiTimeframeWorkspace = new MultiTimeframeWorkspace
