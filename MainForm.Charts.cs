@@ -820,31 +820,41 @@ namespace Trade.It
 
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
-            // نام فایل باید با بخش مشترک نماد شروع شود و تایم‌فریم در انتهای آن قرار داشته باشد.
-            // H1 و H4 به نام داخلی 1H و 4H نگاشت می‌شوند.
+            // نام فایل باید دقیقاً از «نام نماد + تایم‌فریم» تشکیل شده باشد.
+            // هیچ کاراکتری مانند @، _ یا - جداکننده محسوب نمی‌شود؛
+            // هر چیزی قبل از پسوند تایم‌فریم، بخشی از نام نماد است.
+            // تایم‌فریم فقط زمانی معتبر است که دقیقاً در انتهای نام فایل باشد.
             var fileName = fileNameWithoutExtension.Trim();
-            var prefix = symbol.Trim();
+            var expectedSymbol = symbol.Trim();
 
-            if (prefix.Length == 0 ||
-                !fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            if (expectedSymbol.Length == 0)
                 return null;
 
-            var remainder = fileName[prefix.Length..];
-
-            var match = Regex.Match(
-                remainder,
-                @"(?:^|[^A-Za-z0-9])(M15|M30|M1|M5|H1|H4|D|M|Y)$",
-                RegexOptions.IgnoreCase);
-
-            if (!match.Success)
-                return null;
-
-            return match.Groups[1].Value.ToUpperInvariant() switch
+            var suffixes = new[]
             {
-                "H1" => "1H",
-                "H4" => "4H",
-                var value => value
+                ("M30", "M30"),
+                ("M15", "M15"),
+                ("M5", "M5"),
+                ("M1", "M1"),
+                ("H4", "4H"),
+                ("H1", "1H"),
+                ("D", "D"),
+                ("W", "W"),
+                ("Y", "Y"),
+                ("M", "M")
             };
+
+            foreach (var (suffix, normalizedTimeFrame) in suffixes)
+            {
+                if (!fileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var commonPart = fileName[..^suffix.Length];
+                if (string.Equals(commonPart, expectedSymbol, StringComparison.OrdinalIgnoreCase))
+                    return normalizedTimeFrame;
+            }
+
+            return null;
         }
         private string? DetectTimeframeFromFile(PortfolioDefinition definition, string filePath)
         {

@@ -323,7 +323,7 @@
             // 
             // multiTimeframeAnalysisMenuItem
             // 
-            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisMMenuItem, analysisYMenuItem });
+            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem });
             multiTimeframeAnalysisMenuItem.Name = "multiTimeframeAnalysisMenuItem";
             multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
             multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
@@ -384,6 +384,13 @@
             analysisMMenuItem.Size = new Size(180, 22);
             analysisMMenuItem.Text = "M";
             analysisMMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisWMenuItem
+            // 
+            analysisWMenuItem.Name = "analysisWMenuItem";
+            analysisWMenuItem.Size = new Size(180, 22);
+            analysisWMenuItem.Text = "W";
+            analysisWMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisYMenuItem
             // 
