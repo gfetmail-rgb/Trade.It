@@ -19,6 +19,8 @@ namespace Trade.It
             public double X2 { get; set; }
             public double Y2 { get; set; }
             public string? Text { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
         }
 
         private readonly List<AdvancedDrawing> advancedDrawings = new();
@@ -303,7 +305,7 @@ namespace Trade.It
             if (Math.Abs(x2 - x1) < 0.001 || Math.Abs(y2 - y1) < 1e-12)
                 return;
 
-            advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 });
+            advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, Date1 = GetPointDate((int)Math.Round(x1)), Date2 = GetPointDate((int)Math.Round(x2)) });
             selectedAdvancedDrawingIndex = -1;
         }
 
@@ -317,7 +319,8 @@ namespace Trade.It
                 Tool = AdvancedDrawingTool.TextLabel,
                 X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
-                Text = text
+                Text = text,
+                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex))
             });
             selectedAdvancedDrawingIndex = -1;
         }
