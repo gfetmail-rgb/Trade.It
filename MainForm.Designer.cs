@@ -280,7 +280,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, marketStructureMenuItem, symbolDefinitionMenuItem, multiTimeframeMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -297,8 +297,8 @@
             // multiTimeframeMenuItem
             // 
             multiTimeframeMenuItem.Name = "multiTimeframeMenuItem";
-            multiTimeframeMenuItem.Size = new Size(196, 29);
-            multiTimeframeMenuItem.Text = "باز کردن همه تایم‌فریم‌ها";
+            multiTimeframeMenuItem.Size = new Size(140, 29);
+            multiTimeframeMenuItem.Text = "مالتی تایم‌فریم‌";
             multiTimeframeMenuItem.Click += multiTimeframeMenuItem_Click;
             // 
             // portfolioManagementMenuItem
