@@ -134,7 +134,9 @@ namespace Trade.It
                 {
                     Dock = DockStyle.Top,
                     Height = 26,
-                    Text = item.TimeFrame,
+                    Text = string.IsNullOrWhiteSpace(item.Chart.ChartTimeFrame)
+                        ? item.TimeFrame
+                        : item.Chart.ChartTimeFrame,
                     TextAlign = ContentAlignment.MiddleCenter,
                     BackColor = SystemColors.Control,
                     ForeColor = SystemColors.ControlText,
