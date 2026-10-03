@@ -327,6 +327,7 @@
             multiTimeframeAnalysisMenuItem.Name = "multiTimeframeAnalysisMenuItem";
             multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
             multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
+            multiTimeframeAnalysisMenuItem.DropDownOpening += MultiTimeframeAnalysisMenuItem_DropDownOpening;
             // 
             // analysisM1MenuItem
             // 
