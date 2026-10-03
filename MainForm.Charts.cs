@@ -802,6 +802,22 @@ namespace Trade.It
                 .OrderBy(x => TimeframeOrder(x.TimeFrame))
                 .ToList();
         }
+        private (string FilePath, string TimeFrame)? GetSymbolTimeframeFile(
+            PortfolioDefinition definition,
+            string symbol,
+            string timeFrame)
+        {
+            if (string.IsNullOrWhiteSpace(timeFrame))
+                return null;
+
+            var normalizedTimeFrame = timeFrame.Trim();
+            return GetSymbolTimeframeFiles(definition, symbol)
+                .FirstOrDefault(x => string.Equals(
+                    x.TimeFrame.Trim(),
+                    normalizedTimeFrame,
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
             if (!fileNameWithoutExtension.StartsWith(symbol, StringComparison.OrdinalIgnoreCase))
