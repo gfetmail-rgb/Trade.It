@@ -118,6 +118,16 @@
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeMenuItem = new ToolStripMenuItem();
+            multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
+            analysisM1MenuItem = new ToolStripMenuItem();
+            analysisM5MenuItem = new ToolStripMenuItem();
+            analysisM15MenuItem = new ToolStripMenuItem();
+            analysisM30MenuItem = new ToolStripMenuItem();
+            analysis1HMenuItem = new ToolStripMenuItem();
+            analysis4HMenuItem = new ToolStripMenuItem();
+            analysisDMenuItem = new ToolStripMenuItem();
+            analysisMMenuItem = new ToolStripMenuItem();
+            analysisYMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
