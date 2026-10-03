@@ -93,25 +93,6 @@ namespace Trade.It
                 .Select(x => x.TimeFrame.Trim().ToUpperInvariant())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            var fileNames = Directory.Exists(definition.DataPath)
-                ? Directory.EnumerateFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly)
-                    .Select(Path.GetFileName)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .ToArray()
-                : Array.Empty<string>();
-
-            var diagnostic = string.Join(
-                Environment.NewLine,
-                $"Symbol: [{symbol}]",
-                $"Portfolio: [{displayedPortfolioName}]",
-                $"DataPath: [{definition.DataPath}]",
-                $"PathExists: {Directory.Exists(definition.DataPath)}",
-                $"Files: {string.Join(" | ", fileNames)}",
-                $"Detected: {string.Join(", ", available.OrderBy(TimeframeOrder))}");
-
-            MessageBox.Show(this, diagnostic, "تشخیص تایم‌فریم‌ها",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             analysisM1MenuItem.Enabled = available.Contains("M1");
             analysisM5MenuItem.Enabled = available.Contains("M5");
             analysisM15MenuItem.Enabled = available.Contains("M15");
@@ -779,6 +760,22 @@ namespace Trade.It
             // تشخیص تایم‌فریم نباید به پسوند انتخاب‌شده در تعریف سبد وابسته باشد.
             // ممکن است فایل‌های تایم‌فریم با هر یک از فرمت‌های مجاز داده ذخیره شده باشند.
             var baseSymbol = symbol.Trim();
+
+            // activeChartSymbol ممکن است نام کامل فایل جاری باشد؛
+            // در این حالت تایم‌فریم انتهایی را از نام نماد جدا می‌کنیم تا
+            // فایل‌های هم‌خانواده با همان پیشوند مشترک پیدا شوند.
+            foreach (var timeFrame in new[] { "M30", "M15", "M5", "M1", "H4", "H1", "D", "W", "M", "Y" })
+            {
+                if (!baseSymbol.EndsWith(timeFrame, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var prefix = baseSymbol[..^timeFrame.Length];
+                if (prefix.Length == 0)
+                    break;
+
+                baseSymbol = prefix;
+                break;
+            }
 
             foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly))
             {
