@@ -424,11 +424,11 @@ namespace Trade.It
             extraDrawings.Add(new ExtraDrawing
             {
                 Tool = activeExtraDrawingTool,
-                X1 = ScreenToDataX(p1.X, plot, visibleCountForDrawing),
+                X1 = ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(p1.Y, plot, min, max),
-                X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing),
+                X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex,
                 Y2 = ScreenToPrice(p2.Y, plot, min, max),
-                X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing),
+                X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex,
                 Y3 = ScreenToPrice(p3.Y, plot, min, max)
             });
         }
