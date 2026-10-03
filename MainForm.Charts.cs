@@ -95,8 +95,8 @@ namespace Trade.It
             analysisM5MenuItem.Enabled = available.Contains("M5");
             analysisM15MenuItem.Enabled = available.Contains("M15");
             analysisM30MenuItem.Enabled = available.Contains("M30");
-            analysis1HMenuItem.Enabled = available.Contains("1H");
-            analysis4HMenuItem.Enabled = available.Contains("4H");
+            analysis1HMenuItem.Enabled = available.Contains("H1");
+            analysis4HMenuItem.Enabled = available.Contains("H4");
             analysisDMenuItem.Enabled = available.Contains("D");
             analysisMMenuItem.Enabled = available.Contains("M");
             analysisYMenuItem.Enabled = available.Contains("Y");
@@ -928,8 +928,8 @@ namespace Trade.It
             if (median <= 6) return "M5";
             if (median <= 16) return "M15";
             if (median <= 31) return "M30";
-            if (median <= 90) return "1H";
-            if (median <= 300) return "4H";
+            if (median <= 90) return "H1";
+            if (median <= 300) return "H4";
 
             var first = dates[0];
             var second = dates[1];

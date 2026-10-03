@@ -14,6 +14,7 @@
         private System.Windows.Forms.ToolStripMenuItem analysis1HMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysis4HMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisDMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisWMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisMMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisYMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portfolioManagementMenuItem;
@@ -126,6 +127,7 @@
             analysis1HMenuItem = new ToolStripMenuItem();
             analysis4HMenuItem = new ToolStripMenuItem();
             analysisDMenuItem = new ToolStripMenuItem();
+            analysisWMenuItem = new ToolStripMenuItem();
             analysisMMenuItem = new ToolStripMenuItem();
             analysisYMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
@@ -361,14 +363,14 @@
             // 
             analysis1HMenuItem.Name = "analysis1HMenuItem";
             analysis1HMenuItem.Size = new Size(180, 22);
-            analysis1HMenuItem.Text = "1H";
+            analysis1HMenuItem.Text = "H1";
             analysis1HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysis4HMenuItem
             // 
             analysis4HMenuItem.Name = "analysis4HMenuItem";
             analysis4HMenuItem.Size = new Size(180, 22);
-            analysis4HMenuItem.Text = "4H";
+            analysis4HMenuItem.Text = "H4";
             analysis4HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisDMenuItem
