@@ -61,6 +61,7 @@ namespace Trade.It
         private int draggingHandle = 0;
         private Point draggingLastPoint;
         private string chartSymbol = string.Empty;
+        private string chartTimeFrame = string.Empty;
         private double volumePanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool volumePanelResizeDrag;
@@ -99,9 +100,10 @@ namespace Trade.It
             TabStop = true;
         }
 
-        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null)
+        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null)
         {
             chartSymbol = symbol?.Trim() ?? string.Empty;
+            chartTimeFrame = timeFrame?.Trim() ?? string.Empty;
             points.Clear();
             points.AddRange(data.OrderBy(x => x.Date));
 
@@ -135,6 +137,7 @@ namespace Trade.It
         }
 
         public string ChartSymbol => chartSymbol;
+        public string ChartTimeFrame => chartTimeFrame;
         public IReadOnlyList<TradingChartPoint> Points => points;
         public DateTime? CrosshairDate =>
             syncedCrosshairDate ??
