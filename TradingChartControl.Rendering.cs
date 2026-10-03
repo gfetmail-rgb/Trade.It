@@ -631,22 +631,22 @@ namespace Trade.It
                 drawing.Y2 = drawing.Y1; return;
             }
             if (drawing.Tool == ChartDrawingTool.VerticalLine)            {
-                var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount());
+                var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount()) + firstIndex;
                 drawing.X1 = x; drawing.X2 = x; return;
             }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
-                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
-                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); return; }
-                var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, GetDrawingLayoutCount());
+                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
+                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
+                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); return; }
+                var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, GetDrawingLayoutCount()) + firstIndex;
                 var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
                 drawing.X1 += deltaX; drawing.X2 += deltaX; drawing.X3 += deltaX;
                 drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY; return;
             }
             if (drawing.Tool == ChartDrawingTool.Rectangle && handle > 0)
             {
-                var x = ScreenToDataX(location.X, plot, visible.Count);
+                var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
                 var y = ScreenToPrice(location.Y, plot, min, max);
                 switch (handle)
                 {
@@ -657,9 +657,9 @@ namespace Trade.It
                 }
                 return;
             }
-            if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
-            if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
-            var moveX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+            if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
+            if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
+            var moveX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count) + firstIndex;
             var moveY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
             drawing.X1 += moveX; drawing.X2 += moveX;
             drawing.Y1 += moveY; drawing.Y2 += moveY;
