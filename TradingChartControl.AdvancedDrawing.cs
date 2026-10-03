@@ -100,14 +100,14 @@ namespace Trade.It
             var first = count > 0 ? points[0].Date : DateTime.MinValue;
             var last = count > 0 ? points[^1].Date : DateTime.MinValue;
 
-            if (count != advancedDataCount || first != advancedFirstDate || last != advancedLastDate)
-            {
-                advancedDrawings.Clear();
-                selectedAdvancedDrawingIndex = -1;
-                advancedDataCount = count;
-                advancedFirstDate = first;
-                advancedLastDate = last;
-            }
+            if (count == advancedDataCount && first == advancedFirstDate && last == advancedLastDate)
+                return;
+
+            // تغییر تایم‌فریم/داده نباید Drawingهای تکمیل‌شده را پاک کند.
+            // مختصات آنها با Date1/Date2 به تایم‌فریم جدید نگاشت می‌شوند.
+            advancedDataCount = count;
+            advancedFirstDate = first;
+            advancedLastDate = last;
         }
 
         private void AdvancedDrawing_MouseDown(object? sender, MouseEventArgs e)
