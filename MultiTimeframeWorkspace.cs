@@ -26,8 +26,7 @@ namespace Trade.It
         public IReadOnlyList<TradingChartControl> Charts => items.Select(x => x.Chart).ToList();
         public int ChartCount => items.Count;
 
-        public TradingChartControl? ActiveChart =>
-            items.Count > 0 ? items[0].Chart : null;
+        public TradingChartControl? ActiveChart => activeChart;
 
         public void AddChart(TradingChartControl chart, string timeFrame)
         {
@@ -40,15 +39,15 @@ namespace Trade.It
 
             chart.MouseEnter += Chart_MouseEnter;
             chart.MouseDown += Chart_MouseDown;
-            chart.UserInteractionStarted += Chart_UserInteractionStarted;
             chart.ViewChanged += Chart_ViewChanged;
             chart.CrosshairDateChanged += Chart_CrosshairDateChanged;
+            chart.AnalysisChanged += Chart_AnalysisChanged;
 
             items.Add((chart, timeFrame));
             RebuildLayout();
 
             if (activeChart == null)
-                SetPrimaryChart();
+                SetActiveChart(chart);
         }
 
         public void SelectFirstChart()
@@ -56,28 +55,28 @@ namespace Trade.It
             if (items.Count == 0)
                 return;
 
-            SetPrimaryChart();
+            SetActiveChart(items[0].Chart);
             SynchronizeAllToActiveChart();
         }
 
         private void Chart_MouseEnter(object? sender, EventArgs e) { }
 
-        private void Chart_MouseDown(object? sender, MouseEventArgs e) { }
-
-        private void Chart_UserInteractionStarted(object? sender, EventArgs e) { }
-
-        private void SetPrimaryChart()
+        private void Chart_MouseDown(object? sender, MouseEventArgs e)
         {
-            if (items.Count == 0)
+            if (sender is TradingChartControl chart)
+                SetActiveChart(chart);
+        }
+
+        private void SetActiveChart(TradingChartControl chart)
+        {
+            if (!items.Any(x => ReferenceEquals(x.Chart, chart)))
                 return;
 
-            var primary = items[0].Chart;
-
-            if (ReferenceEquals(activeChart, primary))
+            if (ReferenceEquals(activeChart, chart))
                 return;
 
-            activeChart = primary;
-            primary.Focus();
+            activeChart = chart;
+            chart.Focus();
             ActiveChartChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -178,8 +177,7 @@ namespace Trade.It
             if (syncing || sender is not TradingChartControl source)
                 return;
 
-            var primary = ActiveChart;
-            if (primary == null || !ReferenceEquals(source, primary))
+            if (!ReferenceEquals(source, ActiveChart))
                 return;
 
             var range = source.GetVisibleDateRange();
@@ -193,6 +191,37 @@ namespace Trade.It
                 {
                     if (!ReferenceEquals(item.Chart, source))
                         item.Chart.ApplySyncedDateRange(range.Value.Start, range.Value.End);
+                }
+            }
+            finally
+            {
+                syncing = false;
+            }
+        }
+
+        private void Chart_AnalysisChanged(object? sender, EventArgs e)
+        {
+            if (syncing || sender is not TradingChartControl source)
+                return;
+
+            var document = source.CreateAnalysisDocument();
+
+            try
+            {
+                ChartAnalysisStorage.Save(document);
+            }
+            catch
+            {
+                // ذخیره تحلیل نباید تعامل با سایر چارت‌ها را متوقف کند.
+            }
+
+            syncing = true;
+            try
+            {
+                foreach (var item in items)
+                {
+                    if (!ReferenceEquals(item.Chart, source))
+                        item.Chart.ApplySharedAnalysisDrawings(document);
                 }
             }
             finally
@@ -235,7 +264,7 @@ namespace Trade.It
                     item.Chart.CrosshairDateChanged -= Chart_CrosshairDateChanged;
                     item.Chart.MouseEnter -= Chart_MouseEnter;
                     item.Chart.MouseDown -= Chart_MouseDown;
-                    item.Chart.UserInteractionStarted -= Chart_UserInteractionStarted;
+                    item.Chart.AnalysisChanged -= Chart_AnalysisChanged;
                 }
 
                 grid.Dispose();

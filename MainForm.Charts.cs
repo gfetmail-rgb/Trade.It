@@ -752,6 +752,12 @@ namespace Trade.It
                 multiTimeframeWorkspace.ActiveChartChanged += (_, _) => SyncChartToolbarFromActiveChart();
                 multiTimeframeWorkspace.SelectFirstChart();
 
+                // Test Mode در Workspace چندتایم‌فریمی فعال نیست؛
+                // چون هنوز مدل TestDate مشترک بین تایم‌فریم‌ها ندارد.
+                testMode = false;
+                testModeButton.Checked = false;
+                testModeButton.Enabled = false;
+
                 SetToggleButtonState(hideChartButton, false);
                 SetIndicatorPanelButtonState(GetActiveChart());
             }
@@ -783,6 +789,7 @@ namespace Trade.It
 
             chartTabPage.Controls.Clear();
             chartTabPage.Controls.Add(chartInfoPanel);
+            testModeButton.Enabled = true;
             chartTabPage.Controls.Add(chartPlaceholderLabel);
             chartTabPage.Text = string.IsNullOrWhiteSpace(activeChartSymbol) ? "چارت" : activeChartSymbol;
         }

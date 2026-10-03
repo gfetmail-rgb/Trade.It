@@ -401,6 +401,7 @@ namespace Trade.It
             {
                 extraDrawings.RemoveAt(selectedExtraDrawingIndex);
                 selectedExtraDrawingIndex = -1;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 extraDraggingHandle = 0;
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandleActive = false;
@@ -443,6 +444,8 @@ namespace Trade.It
                 Date2 = GetPointDate((int)Math.Round(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex)),
                 Date3 = GetPointDate((int)Math.Round(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex))
             });
+
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private bool TryGetExtraContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)

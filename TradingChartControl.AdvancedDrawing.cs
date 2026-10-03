@@ -244,9 +244,12 @@ namespace Trade.It
         {
             if (e.Button == MouseButtons.Left)
             {
+                var wasDragging = draggingAdvancedDrawingIndex >= 0;
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
                 draggingAdvancedHandle = 0;
+                if (wasDragging)
+                    AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 if (AdvancedDrawingActive || advancedDrawingInProgress)
                     DeferAdvancedMouseState();
             }
@@ -258,6 +261,7 @@ namespace Trade.It
             {
                 advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);
                 selectedAdvancedDrawingIndex = -1;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
                 draggingAdvancedHandle = 0;
@@ -311,6 +315,7 @@ namespace Trade.It
 
             advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, Date1 = GetPointDate((int)Math.Round(x1)), Date2 = GetPointDate((int)Math.Round(x2)) });
             selectedAdvancedDrawingIndex = -1;
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void AddAdvancedText(Point location, string text)
@@ -327,6 +332,7 @@ namespace Trade.It
                 Date1 = GetPointDate((int)Math.Round(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex))
             });
             selectedAdvancedDrawingIndex = -1;
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private bool TryGetAdvancedContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
