@@ -149,7 +149,7 @@ namespace Trade.It
                         analysis.ChartPanCompensation = viewState.ChartPanCompensation;
                         analysis.VolumePanelRatio = viewState.VolumePanelRatio;
                     }
-                    ApplyAnalysisDocument(chart, analysis);
+                    ApplyAnalysisDocument(chart, analysis, multiTimeframeAnalysisStates.ContainsKey(GetMultiTimeframeAnalysisStateKey(symbol, timeFrame)));
                 }
 
                 activeChartSymbol = symbol;
@@ -281,9 +281,9 @@ namespace Trade.It
             }
         }
 
-        private void ApplyAnalysisDocument(TradingChartControl chart, ChartAnalysisDocument document)
+        private void ApplyAnalysisDocument(TradingChartControl chart, ChartAnalysisDocument document, bool restoreView = true)
         {
-            chart.RestoreAnalysisDocument(document);
+            chart.RestoreAnalysisDocument(document, restoreView);
             SetToggleButtonState(gridButton, chart.GridVisible);
             SetToggleButtonState(crossButton, chart.CrosshairVisible);
 
