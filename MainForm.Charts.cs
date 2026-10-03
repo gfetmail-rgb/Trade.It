@@ -823,23 +823,22 @@ namespace Trade.It
 
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
-            if (!fileNameWithoutExtension.StartsWith(symbol, StringComparison.OrdinalIgnoreCase))
+            // فقط بخش پایانی نام فایل ملاک است؛ کاراکترهای قبل از تایم‌فریم مهم نیستند.
+            // H1 و H4 به نام داخلی 1H و 4H نگاشت می‌شوند.
+            var match = Regex.Match(
+                fileNameWithoutExtension.Trim(),
+                @"(?:^|[^A-Za-z0-9])(M15|M30|M1|M5|H1|H4|D|M|Y)$",
+                RegexOptions.IgnoreCase);
+
+            if (!match.Success)
                 return null;
 
-            var remainder = fileNameWithoutExtension.Substring(symbol.Length);
-            if (remainder.Length == 0)
-                return null;
-
-            remainder = remainder.TrimStart('_', '-', '.', ' ', '\\');
-            var candidates = new[] { "M15", "M30", "1H", "4H", "M1", "M5", "D", "M", "Y" };
-
-            foreach (var candidate in candidates)
+            return match.Groups[1].Value.ToUpperInvariant() switch
             {
-                if (string.Equals(remainder, candidate, StringComparison.OrdinalIgnoreCase))
-                    return candidate;
-            }
-
-            return null;
+                "H1" => "1H",
+                "H4" => "4H",
+                var value => value
+            };
         }
         private string? DetectTimeframeFromFile(PortfolioDefinition definition, string filePath)
         {
