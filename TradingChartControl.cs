@@ -87,6 +87,9 @@ namespace Trade.It
             public double Y2 { get; set; }
             public double X3 { get; set; }
             public double Y3 { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
+            public DateTime? Date3 { get; set; }
         }
 
         public TradingChartControl()
@@ -282,19 +285,9 @@ namespace Trade.It
 
             // تاریخ نقاط اتصال را قبل از تغییر firstIndex نگه می‌داریم.
             // سپس بعد از تغییر View، X را از روی همان تاریخ‌ها بازسازی می‌کنیم.
-            var drawingDates = drawings.Select(d => (
-                Date1: GetPointDate((int)Math.Round(d.X1)),
-                Date2: GetPointDate((int)Math.Round(d.X2)),
-                Date3: GetPointDate((int)Math.Round(d.X3)))).ToList();
-
-            var advancedDates = advancedDrawings.Select(d => (
-                Date1: GetPointDate((int)Math.Round(d.X1)),
-                Date2: GetPointDate((int)Math.Round(d.X2)))).ToList();
-
-            var extraDates = extraDrawings.Select(d => (
-                Date1: GetPointDate((int)Math.Round(d.X1)),
-                Date2: GetPointDate((int)Math.Round(d.X2)),
-                Date3: GetPointDate((int)Math.Round(d.X3)))).ToList();
+            var drawingDates = drawings.Select(d => (d.Date1, d.Date2, d.Date3)).ToList();
+            var advancedDates = advancedDrawings.Select(d => (d.Date1, d.Date2)).ToList();
+            var extraDates = extraDrawings.Select(d => (d.Date1, d.Date2, d.Date3)).ToList();
 
             suppressSyncNotifications = true;
             try
@@ -375,9 +368,9 @@ namespace Trade.It
                     Y2 = drawing.Y2,
                     X3 = drawing.X3,
                     Y3 = drawing.Y3,
-                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
-                    Date3 = GetPointDate((int)Math.Round(drawing.X3))
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
@@ -390,8 +383,8 @@ namespace Trade.It
                     Y1 = drawing.Y1,
                     X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
                     Text = drawing.Text
                 });
             }
@@ -414,6 +407,13 @@ namespace Trade.It
             }
 
             return document;
+        }
+
+        private void UpdateDrawingDates(ChartDrawing drawing)
+        {
+            drawing.Date1 = GetPointDate((int)Math.Round(drawing.X1));
+            drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2));
+            drawing.Date3 = GetPointDate((int)Math.Round(drawing.X3));
         }
 
         private DateTime? GetPointDate(int absoluteIndex)
@@ -478,7 +478,10 @@ namespace Trade.It
                     X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
                     X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
-                    Y3 = item.Y3
+                    Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
+                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))),
+                    Date3 = item.Date3 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)))
                 });
             }
 
@@ -495,7 +498,9 @@ namespace Trade.It
                     Y1 = item.Y1,
                     X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    Text = item.Text
+                    Text = item.Text,
+                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
+                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)))
                 });
             }
 
@@ -513,7 +518,10 @@ namespace Trade.It
                     X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
                     X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
-                    Y3 = item.Y3
+                    Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
+                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))),
+                    Date3 = item.Date3 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)))
                 });
             }
 
