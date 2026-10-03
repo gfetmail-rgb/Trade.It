@@ -12,6 +12,7 @@ namespace Trade.It
         private string? activeChartSymbol;
         private bool testMode;
         private MultiTimeframeWorkspace? multiTimeframeWorkspace;
+        private readonly Dictionary<string, ChartAnalysisDocument> multiTimeframeAnalysisStates = new(StringComparer.OrdinalIgnoreCase);
 
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
@@ -77,6 +78,9 @@ namespace Trade.It
             ShowMultiTimeframeAnalysis(symbol, item.Text.Trim());
         }
 
+        private static string GetMultiTimeframeAnalysisStateKey(string symbol, string timeFrame) =>
+            symbol.Trim() + "|" + timeFrame.Trim().ToUpperInvariant();
+
         private void ShowMultiTimeframeAnalysis(string symbol, string timeFrame)
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
@@ -102,7 +106,9 @@ namespace Trade.It
                 {
                     try
                     {
-                        ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
+                        var currentDocument = currentChart.CreateAnalysisDocument();
+                        multiTimeframeAnalysisStates[GetMultiTimeframeAnalysisStateKey(symbol, timeFrame)] = currentDocument;
+                        ChartAnalysisStorage.Save(currentDocument);
                     }
                     catch
                     {
@@ -131,7 +137,20 @@ namespace Trade.It
 
                 var analysis = ChartAnalysisStorage.Load(symbol);
                 if (analysis != null)
+                {
+                    var stateKey = GetMultiTimeframeAnalysisStateKey(symbol, timeFrame);
+                    if (multiTimeframeAnalysisStates.TryGetValue(stateKey, out var viewState))
+                    {
+                        analysis.VisibleCount = viewState.VisibleCount;
+                        analysis.FirstIndex = viewState.FirstIndex;
+                        analysis.VerticalZoom = viewState.VerticalZoom;
+                        analysis.VerticalPanOffset = viewState.VerticalPanOffset;
+                        analysis.HorizontalPanOffset = viewState.HorizontalPanOffset;
+                        analysis.ChartPanCompensation = viewState.ChartPanCompensation;
+                        analysis.VolumePanelRatio = viewState.VolumePanelRatio;
+                    }
                     ApplyAnalysisDocument(chart, analysis);
+                }
 
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
