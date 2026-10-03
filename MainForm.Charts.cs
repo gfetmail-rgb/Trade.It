@@ -820,26 +820,30 @@ namespace Trade.It
 
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
-            // نام فایل باید با بخش مشترک نماد شروع شود و تایم‌فریم در انتهای آن قرار داشته باشد.
+            // بخش مشترک نام فایل باید همان نماد باشد.
+            // بعضی داده‌ها نماد را بدون @ و بعضی با @ ذخیره می‌کنند؛
+            // @ فقط برای تطبیق بخش مشترک نادیده گرفته می‌شود و تایم‌فریم
+            // همچنان باید در انتهای نام فایل قرار داشته باشد.
             // H1 و H4 به نام داخلی 1H و 4H نگاشت می‌شوند.
             var fileName = fileNameWithoutExtension.Trim();
-            var prefix = symbol.Trim();
+            var prefix = symbol.Trim().TrimEnd('@');
 
-            if (prefix.Length == 0 ||
-                !fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            if (prefix.Length == 0)
                 return null;
 
-            var remainder = fileName[prefix.Length..];
-
             var match = Regex.Match(
-                remainder,
-                @"(?:^|[^A-Za-z0-9])(M15|M30|M1|M5|H1|H4|D|M|Y)$",
+                fileName,
+                @"^(?<common>.+?)(?:_)(?<timeframe>M15|M30|M1|M5|H1|H4|D|M|Y)$",
                 RegexOptions.IgnoreCase);
 
             if (!match.Success)
                 return null;
 
-            return match.Groups[1].Value.ToUpperInvariant() switch
+            var commonPart = match.Groups["common"].Value.Trim().TrimEnd('@');
+            if (!string.Equals(commonPart, prefix, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            return match.Groups["timeframe"].Value.ToUpperInvariant() switch
             {
                 "H1" => "1H",
                 "H4" => "4H",
