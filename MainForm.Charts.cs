@@ -267,7 +267,7 @@ namespace Trade.It
 
         private void TestStepForwardButton_Click(object? sender, EventArgs e)
         {
-            var chart = GetActiveChart();            if (chart != null && chart.TestMode)
+            var chart = GetActiveChart(); if (chart != null && chart.TestMode)
                 chart.StepTest(1);
         }
 
@@ -516,7 +516,7 @@ namespace Trade.It
             SetToggleButtonState(drawHorizontalRayButton, false);
             SetToggleButtonState(drawTrendLineArrowButton, false);
             SetToggleButtonState(drawRectangleButton, false);
-            SetToggleButtonState(drawFibonacciButton, false);            SetToggleButtonState(drawTextButton, false);
+            SetToggleButtonState(drawFibonacciButton, false); SetToggleButtonState(drawTextButton, false);
             SetToggleButtonState(drawPitchforkButton, false);
             SetToggleButtonState(drawFibonacciExtensionButton, false);
             SetToggleButtonState(drawMeasureButton, false);
@@ -765,7 +765,7 @@ namespace Trade.It
             if (multiTimeframeWorkspace == null)
                 return;
 
-            var workspace = multiTimeframeWorkspace;            multiTimeframeWorkspace = null;
+            var workspace = multiTimeframeWorkspace; multiTimeframeWorkspace = null;
 
             foreach (var chart in workspace.Charts.ToList())
             {
@@ -1014,3 +1014,5 @@ namespace Trade.It
             chart.ToggleCrosshair();
             SetToggleButtonState(crossButton, chart.CrosshairVisible);
         }
+    }
+}
