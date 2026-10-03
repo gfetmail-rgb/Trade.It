@@ -422,7 +422,7 @@ namespace Trade.It
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
                 return new List<PointF> { start, end, third };
             }
             return new List<PointF> { start, end };
@@ -487,9 +487,9 @@ namespace Trade.It
 
         private void DrawTrendChannel(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var first = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-            var second = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-            var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+            var first = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            var second = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
             DrawScreenTrendChannel(g, pen, plot, first, second, third);
         }
 
@@ -519,11 +519,11 @@ namespace Trade.It
             }
             if (drawing.Tool == ChartDrawingTool.VerticalLine)
             {
-                var x = DataToScreen(drawing.X1, 0, plot, visibleCountForDrawing, min, max).X;
+                var x = DataToScreen(drawing.X1 - firstIndex, 0, plot, visibleCountForDrawing, min, max).X;
                 start = new PointF(x, plot.Top); end = new PointF(x, plot.Bottom); return;
             }
-            start = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-            end = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            start = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            end = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
         }
 
         private int HitTestDrawingHandle(Point location, Rectangle plot, out int handle)
@@ -571,9 +571,9 @@ namespace Trade.It
                         if (DistanceToSegment(location, start, end) <= tolerance) return i;
                         break;
                     case ChartDrawingTool.TrendChannel:
-                        var first = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-                        var second = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-                        var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                        var first = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+                        var second = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+                        var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
                         if (IsPointNearChannel(location, plot, first, second, third, tolerance)) return i;
                         break;
                     case ChartDrawingTool.HorizontalRay:
