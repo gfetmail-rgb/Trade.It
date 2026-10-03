@@ -990,6 +990,30 @@ namespace Trade.It
             _ => 99
         };
 
+        private void CloseAllChartTabs()
+        {
+            CloseMultiTimeframeWorkspace();
+            foreach (var chart in chartControls.Values.ToList())
+                chart.Parent = null;
+
+            chartControls.Clear();
+            activeChartSymbol = null;
+            chartTabPage.Controls.Clear();
+            chartTabPage.Controls.Add(chartInfoPanel);
+            chartTabPage.Controls.Add(chartPlaceholderLabel);
+            chartTabPage.Text = "چارت";
+            chartTabControl.SelectedTab = chartTabPage;
+
+            while (chartTabControl.TabPages.Count > 1)
+                chartTabControl.TabPages.RemoveAt(chartTabControl.TabPages.Count - 1);
+
+            chartInfoLabel.Text = "هنوز سهمی برای نمایش انتخاب نشده است.";
+            chartPlaceholderLabel.Visible = true;
+            SetToggleButtonState(gridButton, false);
+            SetToggleButtonState(crossButton, false);
+            SetToggleButtonState(hideChartButton, false);
+        }
+
         private void Chart_VolumeSettingsChanged(object? sender, EventArgs e)
         {
             if (sender is not TradingChartControl chart)
