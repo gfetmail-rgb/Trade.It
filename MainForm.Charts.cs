@@ -61,6 +61,105 @@ namespace Trade.It
                 MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+\n        private void MultiTimeframeAnalysisMenuItem_Click(object? sender, EventArgs e)
+        {
+            if (sender is not ToolStripMenuItem item || string.IsNullOrWhiteSpace(item.Text))
+                return;
+
+            var symbol = activeChartSymbol;
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تحلیل چند تایم‌فریمی",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            ShowMultiTimeframeAnalysis(symbol, item.Text.Trim());
+        }
+
+        private void ShowMultiTimeframeAnalysis(string symbol, string timeFrame)
+        {
+            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                return;
+
+            try
+            {
+                var file = GetSymbolTimeframeFile(definition, symbol, timeFrame);
+                if (file == null)
+                {
+                    MessageBox.Show(this,
+                        $"فایل تایم‌فریم «{timeFrame}» برای «{symbol}» در پوشه داده پیدا نشد.",
+                        "تحلیل چند تایم‌فریمی",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                var currentChart = GetActiveChart();
+                if (currentChart != null &&
+                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
+                    }
+                    catch
+                    {
+                        // ذخیره تحلیل نباید مانع تعویض تایم‌فریم شود.
+                    }
+                }
+
+                CloseMultiTimeframeWorkspace();
+
+                var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
+                if (points.Count == 0)
+                {
+                    MessageBox.Show(this,
+                        $"برای «{symbol}» در فایل تایم‌فریم «{timeFrame}» داده قابل رسم پیدا نشد.",
+                        "تحلیل چند تایم‌فریمی",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
+
+                var chart = GetOrCreateChart(symbol);
+                chart.SetData(points, symbol);
+                chart.SetChartType(GetSelectedChartType());
+                chart.SetVolumePanelVisible(lastVolumePanelVisible);
+                chart.VolumePanelRatio = lastVolumePanelRatio;
+
+                var analysis = ChartAnalysisStorage.Load(symbol);
+                if (analysis != null)
+                    ApplyAnalysisDocument(chart, analysis);
+
+                activeChartSymbol = symbol;
+                chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
+                chartPlaceholderLabel.Visible = false;
+                chart.Visible = true;
+                AttachChartToTab(chart, symbol);
+                chartTabPage.Text = symbol + " | " + timeFrame;
+                chartTabControl.SelectedTab = chartTabPage;
+                chartTabControl.Visible = true;
+
+                testMode = chart.TestMode;
+                testModeButton.Text = "تست";
+                SetToggleButtonState(testModeButton, testMode);
+                SetToggleButtonState(hideChartButton, false);
+                SetToggleButtonState(crossButton, chart.CrosshairVisible);
+                SetIndicatorPanelButtonState(chart);
+                SyncChartToolbarFromActiveChart();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this,
+                    $"تعویض تایم‌فریم انجام نشد:\n{ex.Message}",
+                    "تحلیل چند تایم‌فریمی",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
 
         private void TestModeButton_Click(object? sender, EventArgs e)
         {
@@ -601,11 +700,10 @@ namespace Trade.It
         }
 
         private List<(string FilePath, string TimeFrame)> GetSymbolTimeframeFiles(
-      PortfolioDefinition definition,
-      string symbol)
+            PortfolioDefinition definition,
+            string symbol)
         {
             var result = new List<(string FilePath, string TimeFrame)>();
-
             if (definition == null ||
                 string.IsNullOrWhiteSpace(definition.DataPath) ||
                 !Directory.Exists(definition.DataPath) ||
@@ -619,70 +717,21 @@ namespace Trade.It
                 _ => ".txt"
             };
 
-            if (definition.SymbolSource != SymbolSource.FileName)
-                return result;
-
-            // نماد پایه را از نماد فعال استخراج می‌کنیم.
-            // مثال:
-            // EURUSD@H1  -> EURUSD
-            // EURUSD@M15 -> EURUSD
-            var baseSymbol = symbol;
+            var baseSymbol = symbol.Trim();
             var atIndex = baseSymbol.IndexOf('@');
             if (atIndex > 0)
                 baseSymbol = baseSymbol[..atIndex];
 
-            foreach (var basketSymbol in definition.Symbols ?? new List<string>())
+            foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
             {
-                if (string.IsNullOrWhiteSpace(basketSymbol))
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                var suffix = GetTimeframeSuffix(fileName, baseSymbol);
+                if (suffix == null)
                     continue;
 
-                var memberName = basketSymbol.Trim();
-
-                if (Path.HasExtension(memberName))
-                    memberName = Path.GetFileNameWithoutExtension(memberName);
-
-                // فقط اعضای همین سبد که متعلق به نماد پایه فعلی هستند.
-                if (!memberName.StartsWith(baseSymbol, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                var remainder = memberName.Substring(baseSymbol.Length);
-
-                if (string.IsNullOrWhiteSpace(remainder))
-                    continue;
-
-                remainder = remainder.TrimStart('@', '_', '-', '.', ' ', '\\');
-
-                var timeframe = remainder.ToUpperInvariant() switch
-                {
-                    "M1" => "M1",
-                    "M5" => "M5",
-                    "M15" => "M15",
-                    "M30" => "M30",
-                    "H1" => "1H",
-                    "H4" => "4H",
-                    "1H" => "1H",
-                    "4H" => "4H",
-                    "D" => "D",
-                    "M" => "M",
-                    "Y" => "Y",
-                    _ => null
-                };
-
-                if (timeframe == null)
-                    continue;
-
-                var filePath = Path.Combine(
-                    definition.DataPath,
-                    memberName + extension);
-
-                if (!File.Exists(filePath))
-                    continue;
-
-                // تشخیص از روی داده داخل فایل نیز انجام می‌شود.
                 var detected = DetectTimeframeFromFile(definition, filePath);
-                var finalTimeframe = detected ?? timeframe;
-
-                result.Add((filePath, finalTimeframe));
+                var finalTimeFrame = detected ?? suffix;
+                result.Add((filePath, finalTimeFrame));
             }
 
             return result
