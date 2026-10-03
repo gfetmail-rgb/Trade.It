@@ -181,7 +181,7 @@ namespace Trade.It
 
                 var savedAnalysis = ChartAnalysisStorage.Load(symbol);
                 if (savedAnalysis != null)
-                    ApplyAnalysisDocument(chart, savedAnalysis);
+                    ApplyAnalysisDocument(chart, savedAnalysis, restoreView: false);
 
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
