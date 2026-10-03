@@ -479,9 +479,9 @@ namespace Trade.It
                     Y2 = item.Y2,
                     X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
                     Y3 = item.Y3,
-                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
-                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))),
-                    Date3 = item.Date3 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)))
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
                 });
             }
 
@@ -499,8 +499,8 @@ namespace Trade.It
                     X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
                     Text = item.Text,
-                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
-                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)))
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))
                 });
             }
 
@@ -519,9 +519,9 @@ namespace Trade.It
                     Y2 = item.Y2,
                     X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
                     Y3 = item.Y3,
-                    Date1 = item.Date1 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex))),
-                    Date2 = item.Date2 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))),
-                    Date3 = item.Date3 ?? GetPointDate((int)Math.Round(ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)))
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
                 });
             }
 
