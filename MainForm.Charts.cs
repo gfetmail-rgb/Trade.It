@@ -150,7 +150,9 @@ namespace Trade.It
                     try
                     {
                         var currentDocument = currentChart.CreateAnalysisDocument();
-                        multiTimeframeAnalysisStates[GetMultiTimeframeAnalysisStateKey(symbol, timeFrame)] = currentDocument;
+                        multiTimeframeAnalysisStates[GetMultiTimeframeAnalysisStateKey(symbol, currentChart.ChartTimeFrame)] = currentDocument;
+                        // تحلیل‌های رسم‌شده متعلق به خود نماد هستند و باید در همه
+                        // تایم‌فریم‌های همان نماد قابل مشاهده باشند.
                         ChartAnalysisStorage.Save(currentDocument);
                     }
                     catch
@@ -174,8 +176,12 @@ namespace Trade.It
                 // می‌تواند باعث شود تعویض فایل تایم‌فریم در ظاهر دیده نشود.
                 var chartKey = symbol.Trim() + "|" + timeFrame.Trim().ToUpperInvariant();
                 var chart = GetOrCreateChart(chartKey);
-                chart.SetData(points, symbol);
+                chart.SetData(points, symbol, timeFrame);
                 chart.SetChartType(GetSelectedChartType());
+
+                var savedAnalysis = ChartAnalysisStorage.Load(symbol);
+                if (savedAnalysis != null)
+                    ApplyAnalysisDocument(chart, savedAnalysis);
 
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
