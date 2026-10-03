@@ -183,9 +183,9 @@ namespace Trade.It
             {
                 if (TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 {
-                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing);
+                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing) + firstIndex;
                     var previousY = ScreenToPrice(draggingAdvancedLastPoint.Y, plot, min, max);
-                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing);
+                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing) + firstIndex;
                     var currentY = ScreenToPrice(e.Location.Y, plot, min, max);
                     var dx = currentX - previousX;
                     var dy = currentY - previousY;
@@ -296,8 +296,8 @@ namespace Trade.It
             if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
 
-            var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing);
-            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing);
+            var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing) + firstIndex;
+            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing) + firstIndex;
             var y2 = ScreenToPrice(end.Y, plot, min, max);
 
             if (Math.Abs(x2 - x1) < 0.001 || Math.Abs(y2 - y1) < 1e-12)
@@ -390,8 +390,8 @@ namespace Trade.It
 
         private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max, bool selected)
         {
-            var start = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-            var end = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+            var start = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+            var end = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
             DrawFibonacciLevels(g, pen, labelBrush, start, end);
             if (selected)
             {
@@ -402,7 +402,7 @@ namespace Trade.It
 
         private void DrawAdvancedText(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var point = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+            var point = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
             using var font = new Font(Font.FontFamily, Math.Max(8f, Font.Size), FontStyle.Regular);
             var text = d.Text ?? string.Empty;
             var size = g.MeasureString(text, font);
@@ -462,7 +462,7 @@ namespace Trade.It
             for (var i = advancedDrawings.Count - 1; i >= 0; i--)
             {
                 var d = advancedDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f)
                 {
                     handle = d.Tool == AdvancedDrawingTool.FibonacciRetracement ? 1 : 0;
@@ -471,7 +471,7 @@ namespace Trade.It
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
-                    var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                    var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
                     if (DistanceToPoint(location, p2) <= 10f)
                     {
                         handle = 2;
