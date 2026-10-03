@@ -288,6 +288,12 @@ namespace Trade.It
                 CrosshairVisible = showCrosshair,
                 VisibleCount = visibleCount,
                 FirstIndex = firstIndex,
+                VisibleStartDate = points.Count > 0 && firstIndex >= 0 && firstIndex < points.Count
+                    ? points[firstIndex].Date
+                    : null,
+                VisibleEndDate = points.Count > 0
+                    ? points[Math.Clamp(firstIndex + Math.Max(1, visibleCount) - 1, 0, points.Count - 1)].Date
+                    : null,
                 VerticalZoom = verticalZoom,
                 VerticalPanOffset = verticalPanOffset,
                 HorizontalPanOffset = horizontalPanOffset,
@@ -462,6 +468,9 @@ namespace Trade.It
                 0.10,
                 0.45);
             }
+
+            if (!restoreView && document.VisibleStartDate.HasValue && document.VisibleEndDate.HasValue)
+                SetVisibleDateRange(document.VisibleStartDate.Value, document.VisibleEndDate.Value);
 
             if (Enum.TryParse<TradingChartType>(document.ChartType, true, out var restoredChartType))
                 chartType = restoredChartType;
