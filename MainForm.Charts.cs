@@ -1214,9 +1214,19 @@ namespace Trade.It
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                lastChartDataLoadError = $"خطا هنگام خواندن داده: {ex.Message}";
                 return new List<TradingChartPoint>();
+            }
+
+            if (result.Count == 0)
+            {
+                var diagnosticFiles = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
+                lastChartDataLoadError =
+                    $"Files={diagnosticFiles.Count} [{string.Join(" | ", diagnosticFiles.Select(Path.GetFileName))}]; " +
+                    $"Mappings: Date={dateColumn}, Time={timeColumn}, Open={openColumn}, High={highColumn}, Low={lowColumn}, Close={closeColumn}, Volume={volumeColumn}, Symbol={symbolColumn}; " +
+                    $"Separator=[{definition.Separator}]; HasHeader={definition.HasHeader}; SymbolSource={definition.SymbolSource}; Calendar={definition.Calendar}; NoDateTime={definition.NoDateTime}";
             }
 
             return result
