@@ -63,7 +63,7 @@ namespace Trade.It
                 MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-\n        private void MultiTimeframeAnalysisMenuItem_DropDownOpening(object? sender, EventArgs e)
+        private void MultiTimeframeAnalysisMenuItem_DropDownOpening(object? sender, EventArgs e)
         {
             var items = new[]
             {
