@@ -169,7 +169,11 @@ namespace Trade.It
                     return;
                 }
 
-                var chart = GetOrCreateChart(symbol);
+                // هر تایم‌فریم باید چارت مستقل خودش را داشته باشد؛
+                // در غیر این صورت با نگه‌داشتن یک کنترل مشترک، وضعیت داخلی چارت
+                // می‌تواند باعث شود تعویض فایل تایم‌فریم در ظاهر دیده نشود.
+                var chartKey = symbol.Trim() + "|" + timeFrame.Trim().ToUpperInvariant();
+                var chart = GetOrCreateChart(chartKey);
                 chart.SetData(points, symbol);
                 chart.SetChartType(GetSelectedChartType());
 
