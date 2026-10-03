@@ -137,9 +137,13 @@ namespace Trade.It
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
                 chart.Visible = true;
-                AttachChartToTab(chart, symbol);
-                chartTabPage.Text = symbol + " | " + timeFrame;
-                chartTabControl.SelectedTab = chartTabPage;
+                var targetPage = chart.Parent as TabPage ?? chartTabPage;
+                if (chart.Parent != null && !ReferenceEquals(chart.Parent, targetPage))
+                    chart.Parent.Controls.Remove(chart);
+                targetPage.Controls.Clear();
+                targetPage.Controls.Add(chart);
+                targetPage.Text = symbol + " | " + timeFrame;
+                chartTabControl.SelectedTab = targetPage;
                 chartTabControl.Visible = true;
 
                 testMode = chart.TestMode;
