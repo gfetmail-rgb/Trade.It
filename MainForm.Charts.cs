@@ -840,41 +840,39 @@ namespace Trade.It
 
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
-            // نام فایل باید دقیقاً از «نام نماد + تایم‌فریم» تشکیل شده باشد.
-            // هیچ کاراکتری مانند @، _ یا - جداکننده محسوب نمی‌شود؛
-            // هر چیزی قبل از پسوند تایم‌فریم، بخشی از نام نماد است.
-            // تایم‌فریم فقط زمانی معتبر است که دقیقاً در انتهای نام فایل باشد.
+            // نماد پایه باید ابتدای نام فایل باشد.
+            // هر چیزی بین نماد پایه و تایم‌فریم (مثل @، _، -، فاصله و ...)
+            // بخشی از نام مشترک فایل است و نباید به‌عنوان جداکننده معنایی تفسیر شود.
+            // فقط بخش انتهایی نام فایل، تایم‌فریم را تعیین می‌کند.
             var fileName = fileNameWithoutExtension.Trim();
             var expectedSymbol = symbol.Trim();
 
-            if (expectedSymbol.Length == 0)
+            if (expectedSymbol.Length == 0 ||
+                !fileName.StartsWith(expectedSymbol, StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            var suffixes = new[]
+            var remainder = fileName.Substring(expectedSymbol.Length);
+            if (remainder.Length == 0)
+                return null;
+
+            remainder = remainder.TrimStart('@', '_', '-', '.', ' ', '\\');
+
+            return remainder.ToUpperInvariant() switch
             {
-                ("M30", "M30"),
-                ("M15", "M15"),
-                ("M5", "M5"),
-                ("M1", "M1"),
-                ("H4", "H4"),
-                ("H1", "H1"),
-                ("D", "D"),
-                ("W", "W"),
-                ("Y", "Y"),
-                ("M", "M")
+                "M1" => "M1",
+                "M5" => "M5",
+                "M15" => "M15",
+                "M30" => "M30",
+                "H1" => "H1",
+                "H4" => "H4",
+                "1H" => "H1",
+                "4H" => "H4",
+                "D" => "D",
+                "W" => "W",
+                "M" => "M",
+                "Y" => "Y",
+                _ => null
             };
-
-            foreach (var (suffix, normalizedTimeFrame) in suffixes)
-            {
-                if (!fileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                var commonPart = fileName[..^suffix.Length];
-                if (string.Equals(commonPart, expectedSymbol, StringComparison.OrdinalIgnoreCase))
-                    return normalizedTimeFrame;
-            }
-
-            return null;
         }
         private string? DetectTimeframeFromFile(PortfolioDefinition definition, string filePath)
         {
@@ -985,8 +983,9 @@ namespace Trade.It
             "H1" => 5,
             "H4" => 6,
             "D" => 7,
-            "M" => 8,
-            "Y" => 9,
+            "W" => 8,
+            "M" => 9,
+            "Y" => 10,
             _ => 99
         };
 
