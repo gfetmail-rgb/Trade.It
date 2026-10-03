@@ -794,9 +794,9 @@ namespace Trade.It
                 if (suffix == null)
                     continue;
 
-                var detected = DetectTimeframeFromFile(definition, filePath);
-                var finalTimeFrame = detected ?? suffix;
-                result.Add((filePath, finalTimeFrame));
+                // وقتی نام فایل صراحتاً تایم‌فریم را مشخص کرده است،
+                // همان پسوند معتبر است و تشخیص فاصله زمانی نباید آن را override کند.
+                result.Add((filePath, suffix));
             }
 
             return result
