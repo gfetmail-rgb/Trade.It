@@ -17,6 +17,7 @@ namespace Trade.It
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
         private double lastVolumePanelRatio = 0.11;
+        private string? lastChartDataLoadError;
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
@@ -556,7 +557,9 @@ namespace Trade.It
                 var points = LoadChartData(definition, symbol);
                 if (points.Count == 0)
                 {
-                    chartInfoLabel.Text = $"داده قابل رسم برای «{symbol}» پیدا نشد.";
+                    chartInfoLabel.Text = string.IsNullOrWhiteSpace(lastChartDataLoadError)
+                        ? $"داده قابل رسم برای «{symbol}» پیدا نشد."
+                        : $"داده قابل رسم برای «{symbol}» پیدا نشد: {lastChartDataLoadError}";
                     chartPlaceholderLabel.Visible = true;
                     return;
                 }
@@ -1072,10 +1075,14 @@ namespace Trade.It
         private List<TradingChartPoint> LoadChartData(PortfolioDefinition definition, string symbol, IEnumerable<string>? specificFiles = null)
         {
             var result = new List<TradingChartPoint>();
+            lastChartDataLoadError = null;
 
             if (definition == null || string.IsNullOrWhiteSpace(symbol) ||
                 string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+            {
+                lastChartDataLoadError = "مسیر پوشه داده سبد معتبر نیست.";
                 return result;
+            }
 
             var dateColumn = GetMappingColumn(definition, "تاریخ");
             if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
@@ -1091,7 +1098,15 @@ namespace Trade.It
             if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
 
             if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
+            {
+                var missing = new List<string>();
+                if (openColumn <= 0) missing.Add("باز");
+                if (highColumn <= 0) missing.Add("بیشترین");
+                if (lowColumn <= 0) missing.Add("کمترین");
+                if (closeColumn <= 0) missing.Add("آخرین");
+                lastChartDataLoadError = "Mapping این ستون‌ها در سبد پیدا نشد: " + string.Join("، ", missing);
                 return result;
+            }
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var syntheticIndex = 0L;
@@ -1166,10 +1181,14 @@ namespace Trade.It
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                lastChartDataLoadError = $"خطا هنگام خواندن فایل داده: {ex.Message}";
                 return new List<TradingChartPoint>();
             }
+
+            if (result.Count == 0)
+                lastChartDataLoadError = "فایل خوانده شد، اما هیچ رکوردی با تاریخ و مقادیر OHLC قابل‌خواندن پیدا نشد.";
 
             return result
                 .OrderBy(x => x.Date)
