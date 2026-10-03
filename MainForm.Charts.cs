@@ -88,9 +88,29 @@ namespace Trade.It
                 !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 return;
 
-            var available = GetSymbolTimeframeFiles(definition, symbol)
+            var files = GetSymbolTimeframeFiles(definition, symbol);
+            var available = files
                 .Select(x => x.TimeFrame.Trim().ToUpperInvariant())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var fileNames = Directory.Exists(definition.DataPath)
+                ? Directory.EnumerateFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly)
+                    .Select(Path.GetFileName)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToArray()
+                : Array.Empty<string>();
+
+            var diagnostic = string.Join(
+                Environment.NewLine,
+                $"Symbol: [{symbol}]",
+                $"Portfolio: [{displayedPortfolioName}]",
+                $"DataPath: [{definition.DataPath}]",
+                $"PathExists: {Directory.Exists(definition.DataPath)}",
+                $"Files: {string.Join(" | ", fileNames)}",
+                $"Detected: {string.Join(", ", available.OrderBy(TimeframeOrder))}");
+
+            MessageBox.Show(this, diagnostic, "تشخیص تایم‌فریم‌ها",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             analysisM1MenuItem.Enabled = available.Contains("M1");
             analysisM5MenuItem.Enabled = available.Contains("M5");
@@ -247,8 +267,7 @@ namespace Trade.It
 
         private void TestStepForwardButton_Click(object? sender, EventArgs e)
         {
-            var chart = GetActiveChart();
-            if (chart != null && chart.TestMode)
+            var chart = GetActiveChart();            if (chart != null && chart.TestMode)
                 chart.StepTest(1);
         }
 
@@ -497,8 +516,7 @@ namespace Trade.It
             SetToggleButtonState(drawHorizontalRayButton, false);
             SetToggleButtonState(drawTrendLineArrowButton, false);
             SetToggleButtonState(drawRectangleButton, false);
-            SetToggleButtonState(drawFibonacciButton, false);
-            SetToggleButtonState(drawTextButton, false);
+            SetToggleButtonState(drawFibonacciButton, false);            SetToggleButtonState(drawTextButton, false);
             SetToggleButtonState(drawPitchforkButton, false);
             SetToggleButtonState(drawFibonacciExtensionButton, false);
             SetToggleButtonState(drawMeasureButton, false);
@@ -747,8 +765,7 @@ namespace Trade.It
             if (multiTimeframeWorkspace == null)
                 return;
 
-            var workspace = multiTimeframeWorkspace;
-            multiTimeframeWorkspace = null;
+            var workspace = multiTimeframeWorkspace;            multiTimeframeWorkspace = null;
 
             foreach (var chart in workspace.Charts.ToList())
             {
@@ -997,292 +1014,3 @@ namespace Trade.It
             chart.ToggleCrosshair();
             SetToggleButtonState(crossButton, chart.CrosshairVisible);
         }
-
-        private void HideChartButton_Click(object? sender, EventArgs e)
-        {
-            var chart = GetActiveChart();
-            if (chart == null) return;
-            chart.Visible = !chart.Visible;
-            SetToggleButtonState(hideChartButton, !chart.Visible);
-        }
-
-        private static void SetToggleButtonState(Button button, bool active)
-        {
-            if (active)
-            {
-                // فقط در حالت فعال، دکمه به حالت آبی تغییر می‌کند.
-                button.UseVisualStyleBackColor = false;
-                button.FlatStyle = FlatStyle.Flat;
-                button.FlatAppearance.BorderSize = 1;
-                button.BackColor = SystemColors.Highlight;
-                button.ForeColor = SystemColors.HighlightText;
-                button.FlatAppearance.BorderColor = SystemColors.Highlight;
-                button.FlatAppearance.MouseOverBackColor = SystemColors.Highlight;
-                button.FlatAppearance.MouseDownBackColor = SystemColors.Highlight;
-            }
-            else
-            {
-                // در حالت عادی هیچ رنگی به‌صورت دستی تحمیل نمی‌شود.
-                // با فعال بودن VisualStyle، ظاهر دقیقاً از Theme/Designer ویندوز گرفته می‌شود.
-                button.UseVisualStyleBackColor = true;
-                button.FlatStyle = FlatStyle.Standard;
-                button.ForeColor = SystemColors.ControlText;
-                button.FlatAppearance.BorderSize = 1;
-            }
-
-            button.Invalidate();
-        }
-
-        private void PrintChartButton_Click(object? sender, EventArgs e)
-        {
-            var chart = GetActiveChart();
-            if (chart == null || chart.Width <= 0 || chart.Height <= 0) return;
-            using var bitmap = new Bitmap(chart.Width, chart.Height);
-            chart.DrawToBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
-            using var document = new PrintDocument { DocumentName = string.IsNullOrWhiteSpace(activeChartSymbol) ? "Trade.It Chart" : activeChartSymbol };
-            document.PrintPage += (_, args) =>
-            {
-                var bounds = args.MarginBounds;
-                var scale = Math.Min(bounds.Width / (float)bitmap.Width, bounds.Height / (float)bitmap.Height);
-                var width = (int)(bitmap.Width * scale);
-                var height = (int)(bitmap.Height * scale);
-                args.Graphics.DrawImage(bitmap, new Rectangle(bounds.Left + (bounds.Width - width) / 2, bounds.Top + (bounds.Height - height) / 2, width, height));
-            };
-            using var dialog = new PrintDialog { Document = document, UseEXDialog = true };
-            if (dialog.ShowDialog(this) == DialogResult.OK) document.Print();
-        }
-
-        private void SnapshotChartButton_Click(object? sender, EventArgs e)
-        {
-            var chart = GetActiveChart();
-            if (chart == null || chart.Width <= 0 || chart.Height <= 0) return;
-            using var dialog = new SaveFileDialog
-            {
-                Filter = "PNG Image|*.png|JPEG Image|*.jpg;*.jpeg|Bitmap Image|*.bmp",
-                DefaultExt = "png",
-                AddExtension = true,
-                FileName = string.IsNullOrWhiteSpace(activeChartSymbol) ? "chart.png" : activeChartSymbol + ".png"
-            };
-            if (dialog.ShowDialog(this) != DialogResult.OK) return;
-            using var bitmap = new Bitmap(chart.Width, chart.Height);
-            chart.DrawToBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
-            var extension = Path.GetExtension(dialog.FileName).ToLowerInvariant();
-            var format = extension switch { ".jpg" or ".jpeg" => System.Drawing.Imaging.ImageFormat.Jpeg, ".bmp" => System.Drawing.Imaging.ImageFormat.Bmp, _ => System.Drawing.Imaging.ImageFormat.Png };
-            bitmap.Save(dialog.FileName, format);
-        }
-
-        private void CloseAllChartTabs()
-        {
-            CloseMultiTimeframeWorkspace();
-            foreach (var chart in chartControls.Values.ToList()) chart.Parent = null;
-            chartControls.Clear();
-            activeChartSymbol = null;
-            chartTabPage.Controls.Clear();
-            chartTabPage.Controls.Add(chartInfoPanel);
-            chartTabPage.Controls.Add(chartPlaceholderLabel);
-            chartTabPage.Text = "چارت";
-            chartTabControl.SelectedTab = chartTabPage;
-            while (chartTabControl.TabPages.Count > 1) chartTabControl.TabPages.RemoveAt(chartTabControl.TabPages.Count - 1);
-            chartInfoLabel.Text = "هنوز سهمی برای نمایش انتخاب نشده است.";
-            chartPlaceholderLabel.Visible = true;
-            SetToggleButtonState(gridButton, false);
-            SetToggleButtonState(crossButton, false);
-            SetToggleButtonState(hideChartButton, false);
-        }
-
-        private List<TradingChartPoint> LoadChartData(PortfolioDefinition definition, string symbol, IEnumerable<string>? specificFiles = null)
-        {
-            var result = new List<TradingChartPoint>();
-            lastChartDataLoadError = null;
-
-            if (definition == null || string.IsNullOrWhiteSpace(symbol) ||
-                string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
-            {
-                lastChartDataLoadError = "مسیر پوشه داده سبد معتبر نیست.";
-                return result;
-            }
-
-            var dateColumn = GetMappingColumn(definition, "تاریخ");
-            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-
-            var timeColumn = GetMappingColumn(definition, "زمان");
-            if (timeColumn <= 0) timeColumn = GetMappingColumn(definition, "ساعت لاتین");
-
-            var openColumn = GetMappingColumn(definition, "اولین");
-            var highColumn = GetMappingColumn(definition, "بیشترین");
-            var lowColumn = GetMappingColumn(definition, "کمترین");
-            var closeColumn = GetMappingColumn(definition, "آخرین");
-            var volumeColumn = GetMappingColumn(definition, "حجم");
-            if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
-
-            if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
-            {
-                var missing = new List<string>();
-                if (openColumn <= 0) missing.Add("اولین");
-                if (highColumn <= 0) missing.Add("بیشترین");
-                if (lowColumn <= 0) missing.Add("کمترین");
-                if (closeColumn <= 0) missing.Add("آخرین");
-                lastChartDataLoadError = "Mapping این ستون‌ها در سبد پیدا نشد: " + string.Join("، ", missing);
-                return result;
-            }
-
-            var symbolColumn = GetMappingColumn(definition, "نماد");
-            var syntheticIndex = 0L;
-
-            try
-            {
-                foreach (var filePath in specificFiles ?? GetSymbolFiles(definition, symbol))
-                {
-                    var firstLine = true;
-                    foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
-                    {
-                        if (string.IsNullOrWhiteSpace(line))
-                            continue;
-
-                        var row = SplitTradingDataLine(line, definition.Separator);
-                        if (firstLine && definition.HasHeader)
-                        {
-                            firstLine = false;
-                            continue;
-                        }
-                        firstLine = false;
-
-                        if (definition.SymbolSource == SymbolSource.InsideFile &&
-                            (symbolColumn <= 0 || symbolColumn > row.Length ||
-                             !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
-                            continue;
-
-                        var requiredMaxColumn = Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn));
-                        if (requiredMaxColumn > row.Length)
-                            continue;
-
-                        DateTime date;
-                        if (!definition.NoDateTime)
-                        {
-                            if (dateColumn <= 0 || dateColumn > row.Length ||
-                                !TryParseChartDate(row[dateColumn - 1], definition, out date))
-                                continue;
-
-                            if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
-                                date = date.Date.Add(time);
-                        }
-                        else
-                        {
-                            date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
-                        }
-
-                        if (!TryParseTradingNumber(row[openColumn - 1], out var open) ||
-                            !TryParseTradingNumber(row[highColumn - 1], out var high) ||
-                            !TryParseTradingNumber(row[lowColumn - 1], out var low) ||
-                            !TryParseTradingNumber(row[closeColumn - 1], out var close))
-                            continue;
-
-                        var volume = 0d;
-                        if (volumeColumn > 0 && volumeColumn <= row.Length)
-                            TryParseTradingNumber(row[volumeColumn - 1], out volume);
-
-                        if (double.IsNaN(open) || double.IsInfinity(open) ||
-                            double.IsNaN(high) || double.IsInfinity(high) ||
-                            double.IsNaN(low) || double.IsInfinity(low) ||
-                            double.IsNaN(close) || double.IsInfinity(close))
-                            continue;
-
-                        result.Add(new TradingChartPoint
-                        {
-                            Date = date,
-                            Open = open,
-                            High = high,
-                            Low = low,
-                            Close = close,
-                            Volume = double.IsNaN(volume) || double.IsInfinity(volume) ? 0d : volume
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                lastChartDataLoadError = $"خطا هنگام خواندن فایل داده: {ex.Message}";
-                return new List<TradingChartPoint>();
-            }
-
-            if (result.Count == 0)
-                lastChartDataLoadError = "فایل خوانده شد، اما هیچ رکوردی با تاریخ و مقادیر OHLC قابل‌خواندن پیدا نشد.";
-
-            return result
-                .OrderBy(x => x.Date)
-                .ToList();
-        }
-
-        private static bool TryParseChartDate(string value, PortfolioDefinition definition, out DateTime date)
-        {
-            date = default;
-            var normalized = NormalizeTradingDigits(value).Trim();
-            if (string.IsNullOrWhiteSpace(normalized))
-                return false;
-
-            var parts = normalized.Split(new[] { '/', '-', '.', '\\', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            int year;
-            int month;
-            int day;
-
-            if (parts.Length >= 3 &&
-                int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) &&
-                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out month) &&
-                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
-            {
-            }
-            else
-            {
-                var digits = new string(normalized.Where(char.IsDigit).ToArray());
-                if (digits.Length < 8)
-                    return false;
-
-                if (!int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) ||
-                    !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) ||
-                    !int.TryParse(digits.Substring(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
-                    return false;
-            }
-
-            try
-            {
-                date = definition.Calendar == InputCalendar.Gregorian
-                    ? new DateTime(year, month, day)
-                    : new PersianCalendar().ToDateTime(year, month, day, 0, 0, 0, 0);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryParseChartTime(string value, out TimeSpan time)
-        {
-            time = TimeSpan.Zero;
-            var normalized = NormalizeTradingDigits(value).Trim();
-            if (string.IsNullOrWhiteSpace(normalized))
-                return false;
-
-            if (TimeSpan.TryParse(normalized, CultureInfo.InvariantCulture, out time))
-                return time >= TimeSpan.Zero && time < TimeSpan.FromDays(1);
-
-            var digits = new string(normalized.Where(char.IsDigit).ToArray());
-            if (digits.Length < 4)
-                return false;
-
-            if (!int.TryParse(digits[..2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hour) ||
-                !int.TryParse(digits.Substring(2, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out var minute))
-                return false;
-
-            var second = 0;
-            if (digits.Length >= 6 && !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out second))
-                return false;
-
-            if (hour is < 0 or > 23 || minute is < 0 or > 59 || second is < 0 or > 59)
-                return false;
-
-            time = new TimeSpan(hour, minute, second);
-            return true;
-        }
-    }
-}
