@@ -1122,7 +1122,10 @@ namespace Trade.It
 
             if (definition == null || string.IsNullOrWhiteSpace(symbol) ||
                 string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+            {
+                lastChartDataLoadError = $"مسیر داده نامعتبر است: [{definition?.DataPath}]";
                 return result;
+            }
 
             var dateColumn = GetMappingColumn(definition, "تاریخ");
             if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
@@ -1139,7 +1142,11 @@ namespace Trade.It
             if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
 
             if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
+            {
+                lastChartDataLoadError =
+                    $"نگاشت OHLC ناقص است: Open={openColumn}, High={highColumn}, Low={lowColumn}, Close={closeColumn}.";
                 return result;
+            }
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var syntheticIndex = 0L;
