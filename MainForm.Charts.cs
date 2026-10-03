@@ -151,9 +151,14 @@ namespace Trade.It
                     {
                         var currentDocument = currentChart.CreateAnalysisDocument();
                         multiTimeframeAnalysisStates[GetMultiTimeframeAnalysisStateKey(symbol, currentChart.ChartTimeFrame)] = currentDocument;
-                        // تحلیل‌های رسم‌شده متعلق به خود نماد هستند و باید در همه
-                        // تایم‌فریم‌های همان نماد قابل مشاهده باشند.
-                        ChartAnalysisStorage.Save(currentDocument);
+                        // فقط تحلیل چارت اصلی منبع مرجع ذخیره‌سازی است.
+                        // چارت‌هایی که از منوی تایم‌فریم باز شده‌اند مختصات X را
+                        // متناسب با کندل‌های خودشان نگه می‌دارند؛ ذخیره کردن آن‌ها
+                        // روی فایل مشترک باعث می‌شود هنگام برگشت به تایم اصلی،
+                        // تاریخ نقاط رسم‌شده به نزدیک‌ترین کندل تایم جدید تبدیل
+                        // شده و ابزارها جابه‌جا شوند.
+                        if (string.IsNullOrWhiteSpace(currentChart.ChartTimeFrame))
+                            ChartAnalysisStorage.Save(currentDocument);
                     }
                     catch
                     {
