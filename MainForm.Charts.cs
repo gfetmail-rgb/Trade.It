@@ -694,13 +694,17 @@ namespace Trade.It
                         continue;
 
                     var chart = GetOrCreateChart(symbol + "|" + item.TimeFrame);
-                    chart.SetData(points, symbol);
+                    chart.SetData(points, symbol, item.TimeFrame);
                     chart.SetChartType(GetSelectedChartType());
                     chart.SetVolumePanelVisible(lastVolumePanelVisible);
                     chart.VolumePanelRatio = lastVolumePanelRatio;
 
-                    // تحلیل‌های ذخیره‌شده فقط برای چارت عادی نماد بازیابی می‌شوند؛
-                    // در Workspace چندتایم‌فریمی هر پنجره نمایشی مستقل است.
+                    // تحلیل رسم‌شده متعلق به خود نماد است و باید روی همه تایم‌فریم‌ها
+                    // با تبدیل مختصات بر اساس تاریخ نقاط بازسازی شود.
+                    var savedAnalysis = ChartAnalysisStorage.Load(symbol);
+                    if (savedAnalysis != null)
+                        ApplyAnalysisDocument(chart, savedAnalysis, restoreView: false);
+
                     multiTimeframeWorkspace.AddChart(chart, item.TimeFrame);
                 }
 
