@@ -337,7 +337,10 @@ namespace Trade.It
                     X2 = firstIndex + drawing.X2,
                     Y2 = drawing.Y2,
                     X3 = firstIndex + drawing.X3,
-                    Y3 = drawing.Y3
+                    Y3 = drawing.Y3,
+                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
+                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
+                    Date3 = GetPointDate(firstIndex + (int)Math.Round(drawing.X3))
                 });
             }
 
@@ -394,11 +397,11 @@ namespace Trade.It
                 drawings.Add(new ChartDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - document.FirstIndex,
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - firstIndex,
                     Y3 = item.Y3
                 });
             }
@@ -412,9 +415,9 @@ namespace Trade.It
                 advancedDrawings.Add(new AdvancedDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
                     Y2 = item.Y2,
                     Text = item.Text
                 });
@@ -429,11 +432,11 @@ namespace Trade.It
                 extraDrawings.Add(new ExtraDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - document.FirstIndex,
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - firstIndex,
                     Y3 = item.Y3
                 });
             }
