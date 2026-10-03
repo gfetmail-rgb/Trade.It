@@ -183,37 +183,10 @@ namespace Trade.It
                 var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
                 if (points.Count == 0)
                 {
-                    MessageBox.Show(this,
-                        $"برای «{symbol}» در فایل تایم‌فریم «{timeFrame}» داده قابل رسم پیدا نشد.",
-                        "تحلیل چند تایم‌فریمی",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    chartInfoLabel.Text = $"داده قابل رسم برای «{symbol}» پیدا نشد.";
+                    chartPlaceholderLabel.Visible = true;
                     return;
                 }
-
-                var chart = GetOrCreateChart(symbol);
-                chart.SetData(points, symbol);
-                chart.SetChartType(GetSelectedChartType());
-                chart.SetVolumePanelVisible(lastVolumePanelVisible);
-                chart.VolumePanelRatio = lastVolumePanelRatio;
-
-                var analysis = ChartAnalysisStorage.Load(symbol);
-                if (analysis != null)
-                {
-                    var stateKey = GetMultiTimeframeAnalysisStateKey(symbol, timeFrame);
-                    if (multiTimeframeAnalysisStates.TryGetValue(stateKey, out var viewState))
-                    {
-                        analysis.VisibleCount = viewState.VisibleCount;
-                        analysis.FirstIndex = viewState.FirstIndex;
-                        analysis.VerticalZoom = viewState.VerticalZoom;
-                        analysis.VerticalPanOffset = viewState.VerticalPanOffset;
-                        analysis.HorizontalPanOffset = viewState.HorizontalPanOffset;
-                        analysis.ChartPanCompensation = viewState.ChartPanCompensation;
-                        analysis.VolumePanelRatio = viewState.VolumePanelRatio;
-                    }
-                    ApplyAnalysisDocument(chart, analysis, multiTimeframeAnalysisStates.ContainsKey(GetMultiTimeframeAnalysisStateKey(symbol, timeFrame)));
-                }
-
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
