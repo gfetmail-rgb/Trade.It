@@ -99,6 +99,7 @@ namespace Trade.It
             analysis1HMenuItem.Enabled = available.Contains("H1");
             analysis4HMenuItem.Enabled = available.Contains("H4");
             analysisDMenuItem.Enabled = available.Contains("D");
+            analysisWMenuItem.Enabled = available.Contains("W");
             analysisMMenuItem.Enabled = available.Contains("M");
             analysisYMenuItem.Enabled = available.Contains("Y");
         }
