@@ -577,9 +577,18 @@ namespace Trade.It
                 var points = LoadChartData(definition, symbol);
                 if (points.Count == 0)
                 {
-                    chartInfoLabel.Text = string.IsNullOrWhiteSpace(lastChartDataLoadError)
-                        ? $"داده قابل رسم برای «{symbol}» پیدا نشد."
-                        : $"داده قابل رسم برای «{symbol}» پیدا نشد: {lastChartDataLoadError}";
+                    var diagnostic = string.IsNullOrWhiteSpace(lastChartDataLoadError)
+                        ? "lastChartDataLoadError خالی است."
+                        : lastChartDataLoadError;
+
+                    MessageBox.Show(
+                        this,
+                        $"نماد: {symbol}{Environment.NewLine}{diagnostic}",
+                        "تشخیص بارگذاری چارت",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    chartInfoLabel.Text = $"داده قابل رسم برای «{symbol}» پیدا نشد.";
                     chartPlaceholderLabel.Visible = true;
                     return;
                 }
