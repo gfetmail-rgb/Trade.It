@@ -382,6 +382,13 @@ namespace Trade.It
             CancelAdvancedDrawing();
             CancelExtraDrawing();
 
+            // در حالت چندتایم‌فریمی ابتدا پنجره زمانی چارت مقصد را تعیین می‌کنیم.
+            // سپس X ابزارها نسبت به firstIndex نهایی محاسبه می‌شود. اگر این ترتیب
+            // برعکس باشد، SetVisibleDateRange بعداً firstIndex را تغییر می‌دهد و
+            // مستطیل، خط عمودی و فلش‌دار در جای اشتباه ظاهر می‌شوند یا از دید خارج می‌شوند.
+            if (!restoreView && document.VisibleStartDate.HasValue && document.VisibleEndDate.HasValue)
+                SetVisibleDateRange(document.VisibleStartDate.Value, document.VisibleEndDate.Value);
+
             drawings.Clear();
             advancedDrawings.Clear();
             extraDrawings.Clear();
@@ -468,9 +475,6 @@ namespace Trade.It
                 0.10,
                 0.45);
             }
-
-            if (!restoreView && document.VisibleStartDate.HasValue && document.VisibleEndDate.HasValue)
-                SetVisibleDateRange(document.VisibleStartDate.Value, document.VisibleEndDate.Value);
 
             if (Enum.TryParse<TradingChartType>(document.ChartType, true, out var restoredChartType))
                 chartType = restoredChartType;
