@@ -159,8 +159,6 @@ namespace Trade.It
                     }
                 }
 
-                var chart = currentChart ?? throw new InvalidOperationException("چارت فعال پیدا نشد.");
-
                 CloseMultiTimeframeWorkspace();
 
                 var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
@@ -170,6 +168,11 @@ namespace Trade.It
                     chartPlaceholderLabel.Visible = true;
                     return;
                 }
+
+                var chart = GetOrCreateChart(symbol);
+                chart.SetData(points, symbol);
+                chart.SetChartType(GetSelectedChartType());
+
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
