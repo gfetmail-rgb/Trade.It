@@ -355,7 +355,7 @@ namespace Trade.It
             return (int)Math.Round(legacyIndex);
         }
 
-        public void RestoreAnalysisDocument(ChartAnalysisDocument document)
+        public void RestoreAnalysisDocument(ChartAnalysisDocument document, bool restoreView = true)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -435,18 +435,20 @@ namespace Trade.It
                 });
             }
 
-            visibleCount = Math.Clamp(
-                document.VisibleCount > 0 ? document.VisibleCount : Math.Min(200, Math.Max(1, points.Count)),
-                1,
-                Math.Max(1, points.Count));
+            if (restoreView)
+            {
+                visibleCount = Math.Clamp(
+                    document.VisibleCount > 0 ? document.VisibleCount : Math.Min(200, Math.Max(1, points.Count)),
+                    1,
+                    Math.Max(1, points.Count));
 
-            firstIndex = Math.Clamp(
-                document.FirstIndex,
-                0,
-                Math.Max(0, points.Count - visibleCount));
+                firstIndex = Math.Clamp(
+                    document.FirstIndex,
+                    0,
+                    Math.Max(0, points.Count - visibleCount));
 
-            verticalZoom = document.VerticalZoom > 0 ? document.VerticalZoom : 1.0;
-            verticalPanOffset = document.VerticalPanOffset;
+                verticalZoom = document.VerticalZoom > 0 ? document.VerticalZoom : 1.0;
+                verticalPanOffset = document.VerticalPanOffset;
             horizontalPanOffset = document.HorizontalPanOffset;
             chartPanCompensation = document.ChartPanCompensation;
             volumePanelRatio = Math.Clamp(
