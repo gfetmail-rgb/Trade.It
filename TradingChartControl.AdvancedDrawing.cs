@@ -214,6 +214,10 @@ namespace Trade.It
                         }
                     }
 
+                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
+                        d.Date2 = GetPointDate((int)Math.Round(d.X2));
+
                     draggingAdvancedLastPoint = e.Location;
                     Invalidate();
                     DeferAdvancedMouseState();
