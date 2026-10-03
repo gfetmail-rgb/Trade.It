@@ -783,9 +783,6 @@ namespace Trade.It
             };
 
             var baseSymbol = symbol.Trim();
-            var atIndex = baseSymbol.IndexOf('@');
-            if (atIndex > 0)
-                baseSymbol = baseSymbol[..atIndex];
 
             foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
             {
@@ -823,10 +820,19 @@ namespace Trade.It
 
         private static string? GetTimeframeSuffix(string fileNameWithoutExtension, string symbol)
         {
-            // فقط بخش پایانی نام فایل ملاک است؛ کاراکترهای قبل از تایم‌فریم مهم نیستند.
+            // نام فایل باید با بخش مشترک نماد شروع شود و تایم‌فریم در انتهای آن قرار داشته باشد.
             // H1 و H4 به نام داخلی 1H و 4H نگاشت می‌شوند.
+            var fileName = fileNameWithoutExtension.Trim();
+            var prefix = symbol.Trim();
+
+            if (prefix.Length == 0 ||
+                !fileName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var remainder = fileName[prefix.Length..];
+
             var match = Regex.Match(
-                fileNameWithoutExtension.Trim(),
+                remainder,
                 @"(?:^|[^A-Za-z0-9])(M15|M30|M1|M5|H1|H4|D|M|Y)$",
                 RegexOptions.IgnoreCase);
 
