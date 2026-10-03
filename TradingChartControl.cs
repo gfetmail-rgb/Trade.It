@@ -455,6 +455,7 @@ namespace Trade.It
                 document.VolumePanelRatio > 0 ? document.VolumePanelRatio : 0.11,
                 0.10,
                 0.45);
+            }
 
             if (Enum.TryParse<TradingChartType>(document.ChartType, true, out var restoredChartType))
                 chartType = restoredChartType;
