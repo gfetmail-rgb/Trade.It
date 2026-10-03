@@ -121,7 +121,6 @@ namespace Trade.It
         private void RenderExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             DetachLegacyExtraDrawingPaint();
-            RenderConfiguredAdvancedOverlay(g);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             for (var i = 0; i < extraDrawings.Count; i++)
             {
