@@ -159,6 +159,8 @@ namespace Trade.It
                     }
                 }
 
+                var chart = currentChart ?? throw new InvalidOperationException("چارت فعال پیدا نشد.");
+
                 CloseMultiTimeframeWorkspace();
 
                 var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
