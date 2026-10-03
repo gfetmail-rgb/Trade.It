@@ -438,7 +438,10 @@ namespace Trade.It
                 X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex,
                 Y2 = ScreenToPrice(p2.Y, plot, min, max),
                 X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex,
-                Y3 = ScreenToPrice(p3.Y, plot, min, max)
+                Y3 = ScreenToPrice(p3.Y, plot, min, max),
+                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex)),
+                Date2 = GetPointDate((int)Math.Round(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex)),
+                Date3 = GetPointDate((int)Math.Round(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex))
             });
         }
 
