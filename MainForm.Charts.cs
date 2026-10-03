@@ -62,7 +62,46 @@ namespace Trade.It
                 MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-\n        private void MultiTimeframeAnalysisMenuItem_Click(object? sender, EventArgs e)
+\n        private void MultiTimeframeAnalysisMenuItem_DropDownOpening(object? sender, EventArgs e)
+        {
+            var items = new[]
+            {
+                analysisM1MenuItem,
+                analysisM5MenuItem,
+                analysisM15MenuItem,
+                analysisM30MenuItem,
+                analysis1HMenuItem,
+                analysis4HMenuItem,
+                analysisDMenuItem,
+                analysisMMenuItem,
+                analysisYMenuItem
+            };
+
+            foreach (var item in items)
+                item.Enabled = false;
+
+            var symbol = activeChartSymbol;
+            if (string.IsNullOrWhiteSpace(symbol) ||
+                string.IsNullOrWhiteSpace(displayedPortfolioName) ||
+                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
+                return;
+
+            var available = GetSymbolTimeframeFiles(definition, symbol)
+                .Select(x => x.TimeFrame.Trim().ToUpperInvariant())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            analysisM1MenuItem.Enabled = available.Contains("M1");
+            analysisM5MenuItem.Enabled = available.Contains("M5");
+            analysisM15MenuItem.Enabled = available.Contains("M15");
+            analysisM30MenuItem.Enabled = available.Contains("M30");
+            analysis1HMenuItem.Enabled = available.Contains("1H");
+            analysis4HMenuItem.Enabled = available.Contains("4H");
+            analysisDMenuItem.Enabled = available.Contains("D");
+            analysisMMenuItem.Enabled = available.Contains("M");
+            analysisYMenuItem.Enabled = available.Contains("Y");
+        }
+
+        private void MultiTimeframeAnalysisMenuItem_Click(object? sender, EventArgs e)
         {
             if (sender is not ToolStripMenuItem item || string.IsNullOrWhiteSpace(item.Text))
                 return;
