@@ -1090,7 +1090,7 @@ namespace Trade.It
             var timeColumn = GetMappingColumn(definition, "زمان");
             if (timeColumn <= 0) timeColumn = GetMappingColumn(definition, "ساعت لاتین");
 
-            var openColumn = GetMappingColumn(definition, "باز");
+            var openColumn = GetMappingColumn(definition, "اولین");
             var highColumn = GetMappingColumn(definition, "بیشترین");
             var lowColumn = GetMappingColumn(definition, "کمترین");
             var closeColumn = GetMappingColumn(definition, "آخرین");
@@ -1100,7 +1100,7 @@ namespace Trade.It
             if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
             {
                 var missing = new List<string>();
-                if (openColumn <= 0) missing.Add("باز");
+                if (openColumn <= 0) missing.Add("اولین");
                 if (highColumn <= 0) missing.Add("بیشترین");
                 if (lowColumn <= 0) missing.Add("کمترین");
                 if (closeColumn <= 0) missing.Add("آخرین");
