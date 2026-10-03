@@ -26,8 +26,6 @@ namespace Trade.It
         public IReadOnlyList<TradingChartControl> Charts => items.Select(x => x.Chart).ToList();
         public int ChartCount => items.Count;
 
-        // در حالت چندتایم‌فریمی، فقط اولین چارت «چارت اصلی» است.
-        // تمام ابزارهای رسم و فرمان‌های تولبار MainForm باید فقط روی همین چارت اعمال شوند.
         public TradingChartControl? ActiveChart =>
             items.Count > 0 ? items[0].Chart : null;
 
@@ -40,8 +38,6 @@ namespace Trade.It
             chart.Margin = new Padding(2);
             chart.Tag = timeFrame;
 
-            // رویدادهای انتخاب چارت عمداً نگه داشته شده‌اند تا ورودی ماوس چارت‌های
-            // فرعی باعث تغییر ActiveChart نشود؛ ActiveChart همیشه چارت اول است.
             chart.MouseEnter += Chart_MouseEnter;
             chart.MouseDown += Chart_MouseDown;
             chart.UserInteractionStarted += Chart_UserInteractionStarted;
@@ -64,20 +60,11 @@ namespace Trade.It
             SynchronizeAllToActiveChart();
         }
 
-        private void Chart_MouseEnter(object? sender, EventArgs e)
-        {
-            // عمداً خالی است: در Workspace چندتایم‌فریمی فقط چارت اول Active است.
-        }
+        private void Chart_MouseEnter(object? sender, EventArgs e) { }
 
-        private void Chart_MouseDown(object? sender, MouseEventArgs e)
-        {
-            // عمداً خالی است: در Workspace چندتایم‌فریمی فقط چارت اول Active است.
-        }
+        private void Chart_MouseDown(object? sender, MouseEventArgs e) { }
 
-        private void Chart_UserInteractionStarted(object? sender, EventArgs e)
-        {
-            // عمداً خالی است: کلیک روی چارت‌های فرعی هرگز ActiveChart را تغییر نمی‌دهد.
-        }
+        private void Chart_UserInteractionStarted(object? sender, EventArgs e) { }
 
         private void SetPrimaryChart()
         {
@@ -87,9 +74,7 @@ namespace Trade.It
             var primary = items[0].Chart;
 
             if (ReferenceEquals(activeChart, primary))
-            {
                 return;
-            }
 
             activeChart = primary;
             primary.Focus();
@@ -98,55 +83,68 @@ namespace Trade.It
 
         private void RebuildLayout()
         {
-            grid.Controls.Clear();
-            grid.ColumnStyles.Clear();
-            grid.RowStyles.Clear();
-
-            var count = items.Count;
-            if (count == 0)
-                return;
-
-            var columns = count <= 2 ? count : count <= 4 ? 2 : 3;
-            var rows = (int)Math.Ceiling(count / (double)columns);
-
-            grid.ColumnCount = columns;
-            grid.RowCount = rows;
-
-            for (var c = 0; c < columns; c++)
-                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columns));
-
-            for (var r = 0; r < rows; r++)
-                grid.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rows));
-
-            for (var i = 0; i < count; i++)
+            grid.SuspendLayout();
+            try
             {
-                var item = items[i];
-                var host = new Panel
-                {
-                    Dock = DockStyle.Fill,
-                    Margin = new Padding(2),
-                    Padding = new Padding(0),
-                    BorderStyle = BorderStyle.FixedSingle,
-                    BackColor = SystemColors.Window
-                };
+                grid.Controls.Clear();
+                grid.ColumnStyles.Clear();
+                grid.RowStyles.Clear();
 
-                var title = new Label
-                {
-                    Dock = DockStyle.Top,
-                    Height = 26,
-                    Text = item.TimeFrame,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    BackColor = SystemColors.Control,
-                    ForeColor = SystemColors.ControlText,
-                    Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
-                    Cursor = Cursors.Default
-                };
+                var count = items.Count;
+                if (count == 0)
+                    return;
 
-                item.Chart.Dock = DockStyle.Fill;
-                item.Chart.Margin = new Padding(0);
-                host.Controls.Add(item.Chart);
-                host.Controls.Add(title);
-                grid.Controls.Add(host, i % columns, i / columns);
+                var columns = count <= 2 ? count : count <= 4 ? 2 : 3;
+                var rows = (int)Math.Ceiling(count / (double)columns);
+
+                grid.ColumnCount = columns;
+                grid.RowCount = rows;
+
+                for (var c = 0; c < columns; c++)
+                    grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columns));
+
+                for (var r = 0; r < rows; r++)
+                    grid.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rows));
+
+                for (var i = 0; i < count; i++)
+                {
+                    var item = items[i];
+                    var host = new Panel
+                    {
+                        Dock = DockStyle.Fill,
+                        Margin = new Padding(2),
+                        Padding = new Padding(0),
+                        BorderStyle = BorderStyle.FixedSingle,
+                        BackColor = SystemColors.Window
+                    };
+
+                    var title = new Label
+                    {
+                        Dock = DockStyle.Top,
+                        Height = 26,
+                        Text = item.TimeFrame,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        BackColor = SystemColors.Control,
+                        ForeColor = SystemColors.ControlText,
+                        Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                        Cursor = Cursors.Default
+                    };
+
+                    // ابتدا چارت را اضافه می‌کنیم و سپس عنوان را در بالاترین Z-Order
+                    // قرار می‌دهیم تا Dock=Fill چارت هرگز عنوان تایم‌فریم را نپوشاند.
+                    host.Controls.Add(item.Chart);
+                    host.Controls.Add(title);
+                    title.BringToFront();
+
+                    item.Chart.Dock = DockStyle.Fill;
+                    item.Chart.Margin = new Padding(0);
+
+                    grid.Controls.Add(host, i % columns, i / columns);
+                }
+            }
+            finally
+            {
+                grid.ResumeLayout(true);
             }
         }
 
@@ -181,11 +179,7 @@ namespace Trade.It
                 return;
 
             var primary = ActiveChart;
-            if (primary == null)
-                return;
-
-            // فقط چارت اصلی منبع تغییر View است. چارت‌های فرعی صرفاً نمایش همگام‌شده‌اند.
-            if (!ReferenceEquals(source, primary))
+            if (primary == null || !ReferenceEquals(source, primary))
                 return;
 
             var range = source.GetVisibleDateRange();
@@ -212,8 +206,6 @@ namespace Trade.It
             if (syncing || sender is not TradingChartControl source)
                 return;
 
-            // کراس می‌تواند از هر کدام از پنجره‌ها شروع شود؛
-            // اما تاریخ واقعی آن بین همه‌ی تایم‌فریم‌ها همگام می‌شود.
             var date = source.CrosshairDate;
             if (!date.HasValue)
                 return;
