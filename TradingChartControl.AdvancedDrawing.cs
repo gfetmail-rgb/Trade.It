@@ -315,7 +315,7 @@ namespace Trade.It
             advancedDrawings.Add(new AdvancedDrawing
             {
                 Tool = AdvancedDrawingTool.TextLabel,
-                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing),
+                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
                 Text = text
             });
