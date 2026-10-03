@@ -400,9 +400,9 @@ namespace Trade.It
                     Y2 = drawing.Y2,
                     X3 = drawing.X3,
                     Y3 = drawing.Y3,
-                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
-                    Date3 = GetPointDate((int)Math.Round(drawing.X3))
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
