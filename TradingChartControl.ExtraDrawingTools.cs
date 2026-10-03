@@ -339,6 +339,7 @@ namespace Trade.It
             {
                 extraInputHandled = true;
                 extraDraggingHandleActive = false;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandle = 0;
                 extraDraggingLastPoint = Point.Empty;

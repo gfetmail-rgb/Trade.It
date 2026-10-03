@@ -755,7 +755,7 @@ namespace Trade.It
                 // Test Mode در Workspace چندتایم‌فریمی فعال نیست؛
                 // چون هنوز مدل TestDate مشترک بین تایم‌فریم‌ها ندارد.
                 testMode = false;
-                testModeButton.Checked = false;
+                SetToggleButtonState(testModeButton, false);
                 testModeButton.Enabled = false;
 
                 SetToggleButtonState(hideChartButton, false);
