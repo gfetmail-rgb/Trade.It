@@ -6,6 +6,16 @@
         private System.Windows.Forms.MenuStrip mainMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem portfolioDefinitionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiTimeframeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem multiTimeframeAnalysisMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisM15MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisM30MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysis1HMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysis4HMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisDMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisMMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisYMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portfolioManagementMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsMenuItem;
 
@@ -108,6 +118,16 @@
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeMenuItem = new ToolStripMenuItem();
+            multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
+            analysisM1MenuItem = new ToolStripMenuItem();
+            analysisM5MenuItem = new ToolStripMenuItem();
+            analysisM15MenuItem = new ToolStripMenuItem();
+            analysisM30MenuItem = new ToolStripMenuItem();
+            analysis1HMenuItem = new ToolStripMenuItem();
+            analysis4HMenuItem = new ToolStripMenuItem();
+            analysisDMenuItem = new ToolStripMenuItem();
+            analysisMMenuItem = new ToolStripMenuItem();
+            analysisYMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
@@ -280,7 +300,11 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
+<<<<<<< HEAD
             mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, portfolioManagementMenuItem, marketStructureMenuItem, symbolDefinitionMenuItem, multiTimeframeMenuItem, settingsMenuItem });
+=======
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeMenuItem, multiTimeframeAnalysisMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
+>>>>>>> 2d0f55fb129e571fd669222d8d646a255571b3c2
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -300,6 +324,77 @@
             multiTimeframeMenuItem.Size = new Size(140, 29);
             multiTimeframeMenuItem.Text = "مالتی تایم‌فریم‌";
             multiTimeframeMenuItem.Click += multiTimeframeMenuItem_Click;
+            // 
+            // multiTimeframeAnalysisMenuItem
+            // 
+            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisMMenuItem, analysisYMenuItem });
+            multiTimeframeAnalysisMenuItem.Name = "multiTimeframeAnalysisMenuItem";
+            multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
+            multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
+            multiTimeframeAnalysisMenuItem.DropDownOpening += MultiTimeframeAnalysisMenuItem_DropDownOpening;
+            // 
+            // analysisM1MenuItem
+            // 
+            analysisM1MenuItem.Name = "analysisM1MenuItem";
+            analysisM1MenuItem.Size = new Size(180, 22);
+            analysisM1MenuItem.Text = "M1";
+            analysisM1MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisM5MenuItem
+            // 
+            analysisM5MenuItem.Name = "analysisM5MenuItem";
+            analysisM5MenuItem.Size = new Size(180, 22);
+            analysisM5MenuItem.Text = "M5";
+            analysisM5MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisM15MenuItem
+            // 
+            analysisM15MenuItem.Name = "analysisM15MenuItem";
+            analysisM15MenuItem.Size = new Size(180, 22);
+            analysisM15MenuItem.Text = "M15";
+            analysisM15MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisM30MenuItem
+            // 
+            analysisM30MenuItem.Name = "analysisM30MenuItem";
+            analysisM30MenuItem.Size = new Size(180, 22);
+            analysisM30MenuItem.Text = "M30";
+            analysisM30MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysis1HMenuItem
+            // 
+            analysis1HMenuItem.Name = "analysis1HMenuItem";
+            analysis1HMenuItem.Size = new Size(180, 22);
+            analysis1HMenuItem.Text = "1H";
+            analysis1HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysis4HMenuItem
+            // 
+            analysis4HMenuItem.Name = "analysis4HMenuItem";
+            analysis4HMenuItem.Size = new Size(180, 22);
+            analysis4HMenuItem.Text = "4H";
+            analysis4HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisDMenuItem
+            // 
+            analysisDMenuItem.Name = "analysisDMenuItem";
+            analysisDMenuItem.Size = new Size(180, 22);
+            analysisDMenuItem.Text = "D";
+            analysisDMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisMMenuItem
+            // 
+            analysisMMenuItem.Name = "analysisMMenuItem";
+            analysisMMenuItem.Size = new Size(180, 22);
+            analysisMMenuItem.Text = "M";
+            analysisMMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisYMenuItem
+            // 
+            analysisYMenuItem.Name = "analysisYMenuItem";
+            analysisYMenuItem.Size = new Size(180, 22);
+            analysisYMenuItem.Text = "Y";
+            analysisYMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // portfolioManagementMenuItem
             // 
