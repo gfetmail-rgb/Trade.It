@@ -21,6 +21,9 @@ namespace Trade.It
             public double Y2 { get; set; }
             public double X3 { get; set; }
             public double Y3 { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
+            public DateTime? Date3 { get; set; }
         }
 
         private readonly List<ExtraDrawing> extraDrawings = new();
@@ -296,6 +299,9 @@ namespace Trade.It
                     d.X1 += dx; d.Y1 += dy;
                     d.X2 += dx; d.Y2 += dy;
                     d.X3 += dx; d.Y3 += dy;
+                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    d.Date2 = GetPointDate((int)Math.Round(d.X2));
+                    d.Date3 = GetPointDate((int)Math.Round(d.X3));
                 }
                 else                {
                     var x = ScreenToDataX(e.X, plot, visibleCountForDrawing) + firstIndex;
@@ -303,6 +309,9 @@ namespace Trade.It
                     if (extraDraggingHandle == 1) { d.X1 = x; d.Y1 = y; }
                     else if (extraDraggingHandle == 2) { d.X2 = x; d.Y2 = y; }
                     else if (extraDraggingHandle == 3) { d.X3 = x; d.Y3 = y; }
+                    if (extraDraggingHandle == 1) d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    else if (extraDraggingHandle == 2) d.Date2 = GetPointDate((int)Math.Round(d.X2));
+                    else if (extraDraggingHandle == 3) d.Date3 = GetPointDate((int)Math.Round(d.X3));
                 }
 
                 extraDraggingLastPoint = e.Location;
