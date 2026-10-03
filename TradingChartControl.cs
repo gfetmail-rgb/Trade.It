@@ -283,18 +283,18 @@ namespace Trade.It
             // تاریخ نقاط اتصال را قبل از تغییر firstIndex نگه می‌داریم.
             // سپس بعد از تغییر View، X را از روی همان تاریخ‌ها بازسازی می‌کنیم.
             var drawingDates = drawings.Select(d => (
-                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
-                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)),
-                Date3: GetPointDate(firstIndex + (int)Math.Round(d.X3)))).ToList();
+                Date1: GetPointDate((int)Math.Round(d.X1)),
+                Date2: GetPointDate((int)Math.Round(d.X2)),
+                Date3: GetPointDate((int)Math.Round(d.X3)))).ToList();
 
             var advancedDates = advancedDrawings.Select(d => (
-                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
-                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)))).ToList();
+                Date1: GetPointDate((int)Math.Round(d.X1)),
+                Date2: GetPointDate((int)Math.Round(d.X2)))).ToList();
 
             var extraDates = extraDrawings.Select(d => (
-                Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
-                Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)),
-                Date3: GetPointDate(firstIndex + (int)Math.Round(d.X3)))).ToList();
+                Date1: GetPointDate((int)Math.Round(d.X1)),
+                Date2: GetPointDate((int)Math.Round(d.X2)),
+                Date3: GetPointDate((int)Math.Round(d.X3)))).ToList();
 
             suppressSyncNotifications = true;
             try
@@ -304,24 +304,24 @@ namespace Trade.It
                 for (var i = 0; i < drawings.Count && i < drawingDates.Count; i++)
                 {
                     var dates = drawingDates[i];
-                    if (dates.Date1.HasValue) drawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
-                    if (dates.Date2.HasValue) drawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
-                    if (dates.Date3.HasValue) drawings[i].X3 = FindNearestPointIndex(dates.Date3.Value) - firstIndex;
+                    if (dates.Date1.HasValue) drawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) drawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                    if (dates.Date3.HasValue) drawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
                 }
 
                 for (var i = 0; i < advancedDrawings.Count && i < advancedDates.Count; i++)
                 {
                     var dates = advancedDates[i];
-                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
-                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
+                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
                 }
 
                 for (var i = 0; i < extraDrawings.Count && i < extraDates.Count; i++)
                 {
                     var dates = extraDates[i];
-                    if (dates.Date1.HasValue) extraDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value) - firstIndex;
-                    if (dates.Date2.HasValue) extraDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value) - firstIndex;
-                    if (dates.Date3.HasValue) extraDrawings[i].X3 = FindNearestPointIndex(dates.Date3.Value) - firstIndex;
+                    if (dates.Date1.HasValue) extraDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) extraDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                    if (dates.Date3.HasValue) extraDrawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
                 }
             }
             finally
@@ -369,15 +369,15 @@ namespace Trade.It
                 document.Drawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    X3 = firstIndex + drawing.X3,
+                    X3 = drawing.X3,
                     Y3 = drawing.Y3,
-                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
-                    Date3 = GetPointDate(firstIndex + (int)Math.Round(drawing.X3))
+                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
@@ -386,12 +386,12 @@ namespace Trade.It
                 document.AdvancedDrawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
+                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
                     Text = drawing.Text
                 });
             }
@@ -401,15 +401,15 @@ namespace Trade.It
                 document.ExtraDrawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    X3 = firstIndex + drawing.X3,
+                    X3 = drawing.X3,
                     Y3 = drawing.Y3,
-                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
-                    Date3 = GetPointDate(firstIndex + (int)Math.Round(drawing.X3))
+                    Date1 = GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
@@ -473,11 +473,11 @@ namespace Trade.It
                 drawings.Add(new ChartDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - firstIndex,
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
                     Y3 = item.Y3
                 });
             }
@@ -491,9 +491,9 @@ namespace Trade.It
                 advancedDrawings.Add(new AdvancedDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
                     Text = item.Text
                 });
@@ -508,11 +508,11 @@ namespace Trade.It
                 extraDrawings.Add(new ExtraDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - firstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - firstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - firstIndex,
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
                     Y3 = item.Y3
                 });
             }
@@ -946,9 +946,9 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var layoutCount = GetDrawingLayoutCount();
-            var x1 = ScreenToDataX(start.X, plot, layoutCount);
+            var x1 = ScreenToDataX(start.X, plot, layoutCount) + firstIndex;
             var y1 = ScreenToPrice(start.Y, plot, min, max);
-            var x2 = ScreenToDataX(end.X, plot, layoutCount);
+            var x2 = ScreenToDataX(end.X, plot, layoutCount) + firstIndex;
             var y2 = ScreenToPrice(end.Y, plot, min, max);
             switch (activeDrawingTool)
             {
@@ -958,7 +958,7 @@ namespace Trade.It
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 }); break;
                 case ChartDrawingTool.TrendChannel:
                     if (third == Point.Empty) return;
-                    var x3 = ScreenToDataX(third.X, plot, layoutCount);
+                    var x3 = ScreenToDataX(third.X, plot, layoutCount) + firstIndex;
                     var y3 = ScreenToPrice(third.Y, plot, min, max);
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 }); break;
                 case ChartDrawingTool.HorizontalLine:
