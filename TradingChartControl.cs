@@ -267,10 +267,21 @@ namespace Trade.It
             if (points.Count == 0)
                 return;
 
-            // تغییر firstIndex نباید ابزارهای رسم را جابه‌جا کند. مختصات ابزارها
-            // در حافظه نسبی به firstIndex هستند؛ بنابراین قبل از تغییر View،
-            // تاریخِ نقاط اتصال آنها را نگه می‌داریم و بعد از تغییر View دوباره
-            // X را از روی تاریخ واقعی به اندیس جدید تبدیل می‌کنیم.
+            if (end < start)
+                (start, end) = (end, start);
+
+            // اگر چارت از قبل دقیقاً همین بازه را دارد، هیچ کاری نکن.
+            // این حالت هنگام ساخت Workspace مهم است: RestoreAnalysisDocument
+            // قبلاً بازه را تنظیم کرده و اجرای دوباره‌ی Sync نباید مختصات ابزارها
+            // را یک بار دیگر تبدیل و دچار رانش کند.
+            var currentRange = GetVisibleDateRange();
+            if (currentRange.HasValue &&
+                currentRange.Value.Start == start &&
+                currentRange.Value.End == end)
+                return;
+
+            // تاریخ نقاط اتصال را قبل از تغییر firstIndex نگه می‌داریم.
+            // سپس بعد از تغییر View، X را از روی همان تاریخ‌ها بازسازی می‌کنیم.
             var drawingDates = drawings.Select(d => (
                 Date1: GetPointDate(firstIndex + (int)Math.Round(d.X1)),
                 Date2: GetPointDate(firstIndex + (int)Math.Round(d.X2)),
