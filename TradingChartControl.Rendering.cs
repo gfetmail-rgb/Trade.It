@@ -920,31 +920,6 @@ namespace Trade.It
             return DataToScreen(absoluteX - firstIndex, y, plot, visibleCountForDrawing, min, max);
         }
 
-        private DateTime? DataXToDate(double absoluteX)
-        {
-            if (points.Count == 0 || !double.IsFinite(absoluteX))
-                return null;
-
-            if (absoluteX <= 0)
-                return points[0].Date;
-            if (absoluteX >= points.Count - 1)
-                return points[^1].Date;
-
-            var leftIndex = Math.Clamp((int)Math.Floor(absoluteX), 0, points.Count - 1);
-            var rightIndex = Math.Clamp(leftIndex + 1, 0, points.Count - 1);
-            if (leftIndex == rightIndex)
-                return points[leftIndex].Date;
-
-            var fraction = Math.Clamp(absoluteX - leftIndex, 0.0, 1.0);
-            var leftDate = points[leftIndex].Date;
-            var rightDate = points[rightIndex].Date;
-            var span = (rightDate - leftDate).Ticks;
-            if (span <= 0)
-                return leftDate;
-
-            return leftDate + TimeSpan.FromTicks((long)Math.Round(span * fraction));
-        }
-
         private double ScreenToDataX(float screenX, Rectangle plot, int visibleCountForDrawing)
         {
             var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
