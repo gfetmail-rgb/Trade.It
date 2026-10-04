@@ -920,11 +920,15 @@ namespace Trade.It
             // فقط نوار باریکِ وسط جداکننده برای تغییر ارتفاع پنل حجم محفوظ می‌ماند.
             var volumePlot = GetVolumePlotRectangle();
 
-            // محور افقی در پایین‌ترین نوار کنترل چارت قرار دارد؛ وقتی پنل حجم
-            // فعال است، این نوار بعد از پنل حجم است. قبلاً محدوده زوم را بین
-            // plot قیمت و volumePlot.Top گذاشته بودیم که عملاً فقط همان فاصله
-            // باریکِ جداکننده را قابل گرفتن می‌کرد.
-            var axisBandTop = Math.Max(plotBottom, Height - 35);
+            // محور زمان واقعاً در پایین پنل حجم قرار دارد، نه در یک مختصات
+            // ثابت نسبت به Height. بنابراین کل ناحیه محور زمان (خط محور و
+            // برچسب‌های زیر آن) باید با کلیک چپ قابل Drag باشد.
+            // این کار به‌خصوص بعد از تغییر ارتفاع پنل حجم ضروری است.
+            var volumePlotForAxis = GetVolumePlotRectangle();
+            var timeAxisBottom = volumePlotForAxis == Rectangle.Empty
+                ? plotBottom
+                : volumePlotForAxis.Bottom;
+            var axisBandTop = Math.Max(0, timeAxisBottom);
 
             // جداکننده بین چارت قیمت و حجم باید مستقیماً با ماوس قابل کشیدن باشد.
             // نیازی به Shift نیست؛ نوار جداکننده از ناحیه زوم افقی مستقل است.
