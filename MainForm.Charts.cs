@@ -507,6 +507,9 @@ namespace Trade.It
         private void ChartDrawingTabChanged(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
+            if (chart != null && !string.IsNullOrWhiteSpace(chart.ChartSymbol))
+                activeChartSymbol = chart.ChartSymbol;
+
             chart?.CancelDrawing();
             chart?.CancelAdvancedDrawing();
             chart?.CancelExtraDrawing();
