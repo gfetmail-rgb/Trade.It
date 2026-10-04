@@ -206,9 +206,9 @@ namespace Trade.It
             for (var i = extraDrawings.Count - 1; i >= 0; i--)
             {
                 var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCountForDrawing, min, max);
+                var p1 = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DateToScreen(d.Date2, d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DateToScreen(d.Date3, d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
 
                 var handle = HitTestHandle(e.Location, p1, p2, p3);
                 if (handle != 0)
@@ -299,9 +299,9 @@ namespace Trade.It
                     d.X1 += dx; d.Y1 += dy;
                     d.X2 += dx; d.Y2 += dy;
                     d.X3 += dx; d.Y3 += dy;
-                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
-                    d.Date2 = GetPointDate((int)Math.Round(d.X2));
-                    d.Date3 = GetPointDate((int)Math.Round(d.X3));
+                    d.Date1 = DataXToDate(d.X1);
+                    d.Date2 = DataXToDate(d.X2);
+                    d.Date3 = DataXToDate(d.X3);
                 }
                 else                {
                     var x = ScreenToDataX(e.X, plot, visibleCountForDrawing) + firstIndex;
@@ -309,9 +309,9 @@ namespace Trade.It
                     if (extraDraggingHandle == 1) { d.X1 = x; d.Y1 = y; }
                     else if (extraDraggingHandle == 2) { d.X2 = x; d.Y2 = y; }
                     else if (extraDraggingHandle == 3) { d.X3 = x; d.Y3 = y; }
-                    if (extraDraggingHandle == 1) d.Date1 = GetPointDate((int)Math.Round(d.X1));
-                    else if (extraDraggingHandle == 2) d.Date2 = GetPointDate((int)Math.Round(d.X2));
-                    else if (extraDraggingHandle == 3) d.Date3 = GetPointDate((int)Math.Round(d.X3));
+                    if (extraDraggingHandle == 1) d.Date1 = DataXToDate(d.X1);
+                    else if (extraDraggingHandle == 2) d.Date2 = DataXToDate(d.X2);
+                    else if (extraDraggingHandle == 3) d.Date3 = DataXToDate(d.X3);
                 }
 
                 extraDraggingLastPoint = e.Location;
@@ -441,9 +441,9 @@ namespace Trade.It
                 Y2 = ScreenToPrice(p2.Y, plot, min, max),
                 X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex,
                 Y3 = ScreenToPrice(p3.Y, plot, min, max),
-                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex)),
-                Date2 = GetPointDate((int)Math.Round(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex)),
-                Date3 = GetPointDate((int)Math.Round(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex))
+                Date1 = DataXToDate(ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex),
+                Date2 = DataXToDate(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex),
+                Date3 = DataXToDate(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex)
             });
 
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -567,7 +567,7 @@ namespace Trade.It
         {
             var a = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCount, min, max);
             var b = DateToScreen(d.Date2, d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
+            var c = DateToScreen(d.Date3, d.X3, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
