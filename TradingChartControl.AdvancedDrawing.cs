@@ -403,8 +403,8 @@ namespace Trade.It
 
         private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max, bool selected)
         {
-            var start = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
-            var end = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+            var start = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+            var end = DateToScreen(d.Date2, d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
             DrawFibonacciLevels(g, pen, labelBrush, start, end);
             if (selected)
             {
@@ -415,7 +415,7 @@ namespace Trade.It
 
         private void DrawAdvancedText(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var point = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+            var point = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
             using var font = new Font(Font.FontFamily, Math.Max(8f, Font.Size), FontStyle.Regular);
             var text = d.Text ?? string.Empty;
             var size = g.MeasureString(text, font);
