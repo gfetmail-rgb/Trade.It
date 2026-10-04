@@ -1177,9 +1177,7 @@ namespace Trade.It
             var highColumn = GetMappingColumn(definition, "بیشترین");
             var lowColumn = GetMappingColumn(definition, "کمترین");
             var closeColumn = GetMappingColumn(definition, "آخرین");
-            if (closeColumn <= 0) closeColumn = GetMappingColumn(definition, "قیمت پایانی بورس");
             var volumeColumn = GetMappingColumn(definition, "حجم");
-            if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
 
             if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
             {
