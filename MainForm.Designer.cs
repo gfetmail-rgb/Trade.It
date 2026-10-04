@@ -5,7 +5,6 @@
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.MenuStrip mainMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem portfolioDefinitionMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem multiTimeframeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiTimeframeAnalysisMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
@@ -118,7 +117,6 @@
         {
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
-            multiTimeframeMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
@@ -302,7 +300,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeMenuItem, multiTimeframeAnalysisMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeAnalysisMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
