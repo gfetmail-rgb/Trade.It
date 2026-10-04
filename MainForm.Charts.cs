@@ -94,6 +94,26 @@ namespace Trade.It
             analysisYMenuItem.Enabled = available.Contains("Y");
         }
 
+        private static string NormalizeTimeframe(string value)
+        {
+            return value.Trim().ToUpperInvariant() switch
+            {
+                "H1" => "1H",
+                "H4" => "4H",
+                "1H" => "1H",
+                "4H" => "4H",
+                "M1" => "M1",
+                "M5" => "M5",
+                "M15" => "M15",
+                "M30" => "M30",
+                "D" => "D",
+                "W" => "W",
+                "M" => "M",
+                "Y" => "Y",
+                _ => value.Trim().ToUpperInvariant()
+            };
+        }
+
         private void MultiTimeframeAnalysisMenuItem_Click(object? sender, EventArgs e)
         {
             if (sender is not ToolStripMenuItem item || string.IsNullOrWhiteSpace(item.Text))
