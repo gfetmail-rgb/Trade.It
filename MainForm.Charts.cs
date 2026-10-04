@@ -177,13 +177,21 @@ namespace Trade.It
                 // در غیر این صورت با نگه‌داشتن یک کنترل مشترک، وضعیت داخلی چارت
                 // می‌تواند باعث شود تعویض فایل تایم‌فریم در ظاهر دیده نشود.
                 var chartKey = symbol.Trim() + "|" + timeFrame.Trim().ToUpperInvariant();
+                var isNewTimeframeChart = !chartControls.ContainsKey(chartKey);
                 var chart = GetOrCreateChart(chartKey);
-                chart.SetData(points, symbol, timeFrame);
+
+                // هر تایم‌فریم یک View مستقل دارد. چارت موجود دوباره SetData نمی‌شود،
+                // تا زوم، پن و وضعیت تست خودش را از دست ندهد.
+                if (isNewTimeframeChart)
+                    chart.SetData(points, symbol, timeFrame);
+
                 chart.SetChartType(GetSelectedChartType());
 
+                // فقط Drawingهای مشترک از تحلیل نماد به View تایم‌فریم منتقل می‌شوند.
+                // وضعیت View چارت اصلی یا تایم‌فریم دیگر نباید روی این View اعمال شود.
                 var savedAnalysis = ChartAnalysisStorage.Load(symbol);
                 if (savedAnalysis != null)
-                    ApplyAnalysisDocument(chart, savedAnalysis, restoreView: false);
+                    chart.ApplySharedAnalysisDrawings(savedAnalysis);
 
                 activeChartSymbol = symbol;
                 chartInfoLabel.Text = $"{symbol}   |   {timeFrame}   |   {points.Count:N0} رکورد";
