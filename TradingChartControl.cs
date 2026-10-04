@@ -298,24 +298,24 @@ namespace Trade.It
                 for (var i = 0; i < drawings.Count && i < drawingDates.Count; i++)
                 {
                     var dates = drawingDates[i];
-                    if (dates.Date1.HasValue) drawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
-                    if (dates.Date2.HasValue) drawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
-                    if (dates.Date3.HasValue) drawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
+                    if (dates.Date1.HasValue) drawings[i].X1 = DateToDataX(dates.Date1.Value, drawings[i].X1);
+                    if (dates.Date2.HasValue) drawings[i].X2 = DateToDataX(dates.Date2.Value, drawings[i].X2);
+                    if (dates.Date3.HasValue) drawings[i].X3 = DateToDataX(dates.Date3.Value, drawings[i].X3);
                 }
 
                 for (var i = 0; i < advancedDrawings.Count && i < advancedDates.Count; i++)
                 {
                     var dates = advancedDates[i];
-                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
-                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = DateToDataX(dates.Date1.Value, advancedDrawings[i].X1);
+                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = DateToDataX(dates.Date2.Value, advancedDrawings[i].X2);
                 }
 
                 for (var i = 0; i < extraDrawings.Count && i < extraDates.Count; i++)
                 {
                     var dates = extraDates[i];
-                    if (dates.Date1.HasValue) extraDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
-                    if (dates.Date2.HasValue) extraDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
-                    if (dates.Date3.HasValue) extraDrawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
+                    if (dates.Date1.HasValue) extraDrawings[i].X1 = DateToDataX(dates.Date1.Value, extraDrawings[i].X1);
+                    if (dates.Date2.HasValue) extraDrawings[i].X2 = DateToDataX(dates.Date2.Value, extraDrawings[i].X2);
+                    if (dates.Date3.HasValue) extraDrawings[i].X3 = DateToDataX(dates.Date3.Value, extraDrawings[i].X3);
                 }
             }
             finally
