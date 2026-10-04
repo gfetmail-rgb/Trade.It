@@ -884,6 +884,58 @@ namespace Trade.It
             return new PointF((float)screenX, PriceToScreen(y, plot, min, max));
         }
 
+        private double DateToDataX(DateTime? date, double fallbackAbsoluteIndex)
+        {
+            if (!date.HasValue || points.Count == 0)
+                return fallbackAbsoluteIndex;
+
+            var target = date.Value;
+            if (target <= points[0].Date)
+                return 0;
+
+            if (target >= points[^1].Date)
+                return points.Count - 1;
+
+            var lo = 0;
+            var hi = points.Count - 1;
+            while (lo + 1 < hi)
+            {
+                var mid = lo + (hi - lo) / 2;
+                if (points[mid].Date <= target)
+                    lo = mid;
+                else
+                    hi = mid;
+            }
+
+            var leftDate = points[lo].Date;
+            var rightDate = points[hi].Date;
+            var span = (rightDate - leftDate).TotalSeconds;
+            if (span <= 0)
+                return lo;
+
+            var fraction = (target - leftDate).TotalSeconds / span;
+            return lo + Math.Clamp(fraction, 0.0, 1.0);
+        }
+
+        private PointF DateToScreen(
+            DateTime? date,
+            double fallbackAbsoluteIndex,
+            double y,
+            Rectangle plot,
+            int visibleCountForDrawing,
+            double min,
+            double max)
+        {
+            var absoluteX = DateToDataX(date, fallbackAbsoluteIndex);
+            return DataToScreen(
+                absoluteX - firstIndex,
+                y,
+                plot,
+                visibleCountForDrawing,
+                min,
+                max);
+        }
+
         private double ScreenToDataX(float screenX, Rectangle plot, int visibleCountForDrawing)
         {
             var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
