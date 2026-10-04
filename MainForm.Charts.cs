@@ -869,7 +869,6 @@ namespace Trade.It
 
         private void CloseAllChartTabs()
         {
-            CloseMultiTimeframeWorkspace();
             foreach (var chart in chartControls.Values.ToList())
                 chart.Parent = null;
 
