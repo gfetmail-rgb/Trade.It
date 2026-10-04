@@ -1648,7 +1648,7 @@ namespace Trade.It
         {
             if (definition == null)
                 return false;
-            return GetMappingColumn(definition, "حجم") > 0 || GetMappingColumn(definition, "حجم معاملات") > 0;
+            return GetMappingColumn(definition, "حجم") > 0;
         }
 
         private void ApplyTradingStatusFilterWithWaitCursor()
@@ -1802,7 +1802,6 @@ namespace Trade.It
         {
             ratio = 0;
             var volumeColumn = GetMappingColumn(definition, "حجم");
-            if (volumeColumn <= 0) volumeColumn = GetMappingColumn(definition, "حجم معاملات");
             if (volumeColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
             var volumes = new List<double>();
             try
@@ -2220,8 +2219,7 @@ namespace Trade.It
             "L" => "کمترین",
             "C" => "آخرین",
             "آخرین" => "آخرین",
-            "پایانی" => "پایانی",
-            _ => string.Empty
+                    _ => string.Empty
         };
 
         private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, out double left, out double right)
