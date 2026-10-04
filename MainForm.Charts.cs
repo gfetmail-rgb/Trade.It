@@ -135,21 +135,6 @@ namespace Trade.It
             };
         }
 
-        private (string FilePath, string TimeFrame)? GetSymbolTimeframeFile(
-            PortfolioDefinition definition,
-            string symbol,
-            string timeFrame)
-        {
-            var wanted = NormalizeTimeframe(timeFrame);
-            foreach (var file in GetSymbolTimeframeFiles(definition, symbol))
-            {
-                if (string.Equals(NormalizeTimeframe(file.TimeFrame), wanted, StringComparison.OrdinalIgnoreCase))
-                    return file;
-            }
-
-            return null;
-        }
-
         private void ShowMultiTimeframeAnalysis(string symbol, string timeFrame)
         {
             timeFrame = NormalizeTimeframe(timeFrame);
@@ -885,10 +870,10 @@ namespace Trade.It
             if (string.IsNullOrWhiteSpace(timeFrame))
                 return null;
 
-            var normalizedTimeFrame = timeFrame.Trim();
+            var normalizedTimeFrame = NormalizeTimeframe(timeFrame);
             return GetSymbolTimeframeFiles(definition, symbol)
                 .FirstOrDefault(x => string.Equals(
-                    x.TimeFrame.Trim(),
+                    NormalizeTimeframe(x.TimeFrame),
                     normalizedTimeFrame,
                     StringComparison.OrdinalIgnoreCase));
         }
