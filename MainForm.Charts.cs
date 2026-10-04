@@ -97,8 +97,8 @@ namespace Trade.It
             analysisM5MenuItem.Enabled = available.Contains("M5");
             analysisM15MenuItem.Enabled = available.Contains("M15");
             analysisM30MenuItem.Enabled = available.Contains("M30");
-            analysis1HMenuItem.Enabled = available.Contains("H1");
-            analysis4HMenuItem.Enabled = available.Contains("H4");
+            analysis1HMenuItem.Enabled = available.Contains("1H");
+            analysis4HMenuItem.Enabled = available.Contains("4H");
             analysisDMenuItem.Enabled = available.Contains("D");
             analysisWMenuItem.Enabled = available.Contains("W");
             analysisMMenuItem.Enabled = available.Contains("M");
@@ -122,10 +122,38 @@ namespace Trade.It
         }
 
         private static string GetMultiTimeframeAnalysisStateKey(string symbol, string timeFrame) =>
-            symbol.Trim() + "|" + timeFrame.Trim().ToUpperInvariant();
+            symbol.Trim() + "|" + NormalizeTimeframe(timeFrame);
+
+        private static string NormalizeTimeframe(string timeFrame)
+        {
+            var value = timeFrame.Trim().ToUpperInvariant();
+            return value switch
+            {
+                "H1" => "1H",
+                "H4" => "4H",
+                _ => value
+            };
+        }
+
+        private (string FilePath, string TimeFrame)? GetSymbolTimeframeFile(
+            PortfolioDefinition definition,
+            string symbol,
+            string timeFrame)
+        {
+            var wanted = NormalizeTimeframe(timeFrame);
+            foreach (var file in GetSymbolTimeframeFiles(definition, symbol))
+            {
+                if (string.Equals(NormalizeTimeframe(file.TimeFrame), wanted, StringComparison.OrdinalIgnoreCase))
+                    return file;
+            }
+
+            return null;
+        }
 
         private void ShowMultiTimeframeAnalysis(string symbol, string timeFrame)
         {
+            timeFrame = NormalizeTimeframe(timeFrame);
+
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
                 !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 return;
