@@ -79,7 +79,7 @@ namespace Trade.It
 
             var files = GetSymbolTimeframeFiles(definition, symbol);
             var available = files
-                .Select(x => x.TimeFrame.Trim().ToUpperInvariant())
+                .Select(x => NormalizeTimeframe(x.TimeFrame))
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             analysisM1MenuItem.Enabled = available.Contains("M1");
