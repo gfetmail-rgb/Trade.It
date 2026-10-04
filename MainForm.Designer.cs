@@ -300,7 +300,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { portfolioDefinitionMenuItem, multiTimeframeAnalysisMenuItem, portfolioManagementMenuItem, settingsMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { multiTimeframeAnalysisMenuItem, portfolioDefinitionMenuItem, portfolioManagementMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
