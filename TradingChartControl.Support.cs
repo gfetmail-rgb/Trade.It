@@ -69,54 +69,10 @@ namespace Trade.It
             }
         }
 
-        private int drawingSyncFirstIndex;
-        private bool drawingSyncInitialized;
-        private bool drawingSyncPaintInitialized;
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-            if (!drawingSyncPaintInitialized)
-            {
-                drawingSyncPaintInitialized = true;
-                Paint += DrawingSync_Paint;
-            }
-            drawingSyncFirstIndex = firstIndex;
-            drawingSyncInitialized = true;
-        }
-
-        private void DrawingSync_Paint(object? sender, PaintEventArgs e) => SyncDrawingCoordinatesToView();
-
-        private void SyncDrawingCoordinatesToView()
-        {
-            if (!drawingSyncInitialized)
-            {
-                drawingSyncFirstIndex = firstIndex;
-                drawingSyncInitialized = true;
-                return;
-            }
-            var delta = drawingSyncFirstIndex - firstIndex;
-            if (delta == 0)
-                return;
-            foreach (var drawing in drawings)
-            {
-                drawing.X1 += delta;
-                drawing.X2 += delta;
-                drawing.X3 += delta;
-            }
-            foreach (var drawing in advancedDrawings)
-            {
-                drawing.X1 += delta;
-                drawing.X2 += delta;
-            }
-            foreach (var drawing in extraDrawings)
-            {
-                drawing.X1 += delta;
-                drawing.X2 += delta;
-                drawing.X3 += delta;
-            }
-            drawingSyncFirstIndex = firstIndex;
-        }
+        // مختصات X تمام ابزارهای رسم، اندیس مطلق داده هستند و نباید با تغییر
+        // firstIndex جابه‌جا شوند. موقع رندر، firstIndex فقط در تبدیل به مختصات
+        // صفحه کم می‌شود. بنابراین هیچ همگام‌سازی Paintمحوری نباید X ابزارها را
+        // تغییر دهد.
 
         private bool extraDrawingSafetyInitialized;
         private bool extraSafetyWasActive;
@@ -165,7 +121,6 @@ namespace Trade.It
         private void RenderExtraDrawings(Graphics g, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             DetachLegacyExtraDrawingPaint();
-            RenderConfiguredAdvancedOverlay(g);
             using var labelBrush = new SolidBrush(Color.FromArgb(35, 35, 35));
             for (var i = 0; i < extraDrawings.Count; i++)
             {
@@ -193,9 +148,9 @@ namespace Trade.It
 
         private void DrawPitchforkFixed(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             DrawPitchforkGeometryFixed(g, pen, p1, p2, p3, plot);
             if (selected)
             {
@@ -230,9 +185,9 @@ namespace Trade.It
 
         private void DrawThreePointFibonacci(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var a = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var c = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);

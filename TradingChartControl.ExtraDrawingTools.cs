@@ -21,6 +21,9 @@ namespace Trade.It
             public double Y2 { get; set; }
             public double X3 { get; set; }
             public double Y3 { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
+            public DateTime? Date3 { get; set; }
         }
 
         private readonly List<ExtraDrawing> extraDrawings = new();
@@ -203,9 +206,9 @@ namespace Trade.It
             for (var i = extraDrawings.Count - 1; i >= 0; i--)
             {
                 var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCountForDrawing, min, max);
 
                 var handle = HitTestHandle(e.Location, p1, p2, p3);
                 if (handle != 0)
@@ -251,9 +254,9 @@ namespace Trade.It
 
         private bool IsExtraDrawingBodyHit(Point location, ExtraDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+            var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+            var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+            var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCountForDrawing, min, max);
 
             if (d.Tool == ExtraDrawingTool.FibonacciExtension)
                 return HitTestFibonacciLevel(location, d, plot, visibleCountForDrawing, min, max);
@@ -287,22 +290,28 @@ namespace Trade.It
 
                 if (extraDraggingHandle == 0)
                 {
-                    var oldX = ScreenToDataX(extraDraggingLastPoint.X, plot, visibleCountForDrawing);
+                    var oldX = ScreenToDataX(extraDraggingLastPoint.X, plot, visibleCountForDrawing) + firstIndex;
                     var oldY = ScreenToPrice(extraDraggingLastPoint.Y, plot, min, max);
-                    var newX = ScreenToDataX(e.X, plot, visibleCountForDrawing);
+                    var newX = ScreenToDataX(e.X, plot, visibleCountForDrawing) + firstIndex;
                     var newY = ScreenToPrice(e.Y, plot, min, max);
                     var dx = newX - oldX;
                     var dy = newY - oldY;
                     d.X1 += dx; d.Y1 += dy;
                     d.X2 += dx; d.Y2 += dy;
                     d.X3 += dx; d.Y3 += dy;
+                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    d.Date2 = GetPointDate((int)Math.Round(d.X2));
+                    d.Date3 = GetPointDate((int)Math.Round(d.X3));
                 }
                 else                {
-                    var x = ScreenToDataX(e.X, plot, visibleCountForDrawing);
+                    var x = ScreenToDataX(e.X, plot, visibleCountForDrawing) + firstIndex;
                     var y = ScreenToPrice(e.Y, plot, min, max);
                     if (extraDraggingHandle == 1) { d.X1 = x; d.Y1 = y; }
                     else if (extraDraggingHandle == 2) { d.X2 = x; d.Y2 = y; }
                     else if (extraDraggingHandle == 3) { d.X3 = x; d.Y3 = y; }
+                    if (extraDraggingHandle == 1) d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    else if (extraDraggingHandle == 2) d.Date2 = GetPointDate((int)Math.Round(d.X2));
+                    else if (extraDraggingHandle == 3) d.Date3 = GetPointDate((int)Math.Round(d.X3));
                 }
 
                 extraDraggingLastPoint = e.Location;
@@ -330,6 +339,7 @@ namespace Trade.It
             {
                 extraInputHandled = true;
                 extraDraggingHandleActive = false;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandle = 0;
                 extraDraggingLastPoint = Point.Empty;
@@ -349,9 +359,9 @@ namespace Trade.It
 
         private bool HitTestFibonacciLevel(Point location, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var a = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var c = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
@@ -392,6 +402,7 @@ namespace Trade.It
             {
                 extraDrawings.RemoveAt(selectedExtraDrawingIndex);
                 selectedExtraDrawingIndex = -1;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 extraDraggingHandle = 0;
                 extraDraggingDrawingIndex = -1;
                 extraDraggingHandleActive = false;
@@ -424,13 +435,18 @@ namespace Trade.It
             extraDrawings.Add(new ExtraDrawing
             {
                 Tool = activeExtraDrawingTool,
-                X1 = ScreenToDataX(p1.X, plot, visibleCountForDrawing),
+                X1 = ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(p1.Y, plot, min, max),
-                X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing),
+                X2 = ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex,
                 Y2 = ScreenToPrice(p2.Y, plot, min, max),
-                X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing),
-                Y3 = ScreenToPrice(p3.Y, plot, min, max)
+                X3 = ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex,
+                Y3 = ScreenToPrice(p3.Y, plot, min, max),
+                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex)),
+                Date2 = GetPointDate((int)Math.Round(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex)),
+                Date3 = GetPointDate((int)Math.Round(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex))
             });
+
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private bool TryGetExtraContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
@@ -483,9 +499,9 @@ namespace Trade.It
 
         private void DrawPitchfork(Graphics g, Pen pen, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             DrawPitchforkGeometry(g, pen, p1, p2, p3, plot);
             if (selected)
             {
@@ -549,9 +565,9 @@ namespace Trade.It
 
         private void DrawFibonacciExtension(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
-            var c = DataToScreen(d.X3, d.Y3, plot, visibleCount, min, max);
+            var a = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
+            var c = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCount, min, max);
             var dy = b.Y - a.Y;
             var leftX = Math.Min(a.X, c.X);
             var rightX = Math.Max(a.X, c.X);
@@ -603,8 +619,8 @@ namespace Trade.It
 
         private void DrawMeasure(Graphics g, Pen pen, Brush labelBrush, ExtraDrawing d, Rectangle plot, int visibleCount, double min, double max, bool selected)
         {
-            var a = DataToScreen(d.X1, d.Y1, plot, visibleCount, min, max);
-            var b = DataToScreen(d.X2, d.Y2, plot, visibleCount, min, max);
+            var a = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCount, min, max);
+            var b = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCount, min, max);
             g.DrawLine(pen, a, b);
             if (selected)
             {
@@ -619,8 +635,8 @@ namespace Trade.It
             var price1 = ScreenToPrice(a.Y, plot, min, max);
             var price2 = ScreenToPrice(b.Y, plot, min, max);
             var percent = Math.Abs(price1) > double.Epsilon ? ((price2 - price1) / price1) * 100.0 : 0.0;
-            var x1 = ScreenToDataX(a.X, plot, visibleCount);
-            var x2 = ScreenToDataX(b.X, plot, visibleCount);
+            var x1 = ScreenToDataX(a.X, plot, visibleCount) + firstIndex;
+            var x2 = ScreenToDataX(b.X, plot, visibleCount) + firstIndex;
             var candleCount = Math.Abs((int)Math.Round(x2) - (int)Math.Round(x1)) + 1;
             var priceDifference = price2 - price1;
             var priceSign = priceDifference > 0 ? "+" : string.Empty;
@@ -654,9 +670,9 @@ namespace Trade.It
             for (var i = extraDrawings.Count - 1; i >= 0; i--)
             {
                 var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCountForDrawing, min, max);
 
                 var handle = HitTestHandle(location, p1, p2, p3);
                 if (handle != 0)

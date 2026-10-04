@@ -61,6 +61,7 @@ namespace Trade.It
         private int draggingHandle = 0;
         private Point draggingLastPoint;
         private string chartSymbol = string.Empty;
+        private string chartTimeFrame = string.Empty;
         private double volumePanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool volumePanelResizeDrag;
@@ -76,6 +77,7 @@ namespace Trade.It
 
         public event EventHandler? ViewChanged;
         public event EventHandler? CrosshairDateChanged;
+        public event EventHandler? AnalysisChanged;
 
         private sealed class ChartDrawing
         {
@@ -86,6 +88,9 @@ namespace Trade.It
             public double Y2 { get; set; }
             public double X3 { get; set; }
             public double Y3 { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
+            public DateTime? Date3 { get; set; }
         }
 
         public TradingChartControl()
@@ -99,9 +104,10 @@ namespace Trade.It
             TabStop = true;
         }
 
-        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null)
+        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null)
         {
             chartSymbol = symbol?.Trim() ?? string.Empty;
+            chartTimeFrame = timeFrame?.Trim() ?? string.Empty;
             points.Clear();
             points.AddRange(data.OrderBy(x => x.Date));
 
@@ -135,6 +141,7 @@ namespace Trade.It
         }
 
         public string ChartSymbol => chartSymbol;
+        public string ChartTimeFrame => chartTimeFrame;
         public IReadOnlyList<TradingChartPoint> Points => points;
         public DateTime? CrosshairDate =>
             syncedCrosshairDate ??
@@ -261,9 +268,62 @@ namespace Trade.It
 
         internal void ApplySyncedDateRange(DateTime start, DateTime end)
         {
+            if (points.Count == 0)
+                return;
+
+            if (end < start)
+                (start, end) = (end, start);
+
+            // اگر چارت از قبل دقیقاً همین بازه را دارد، هیچ کاری نکن.
+            // این حالت هنگام ساخت Workspace مهم است: RestoreAnalysisDocument
+            // قبلاً بازه را تنظیم کرده و اجرای دوباره‌ی Sync نباید مختصات ابزارها
+            // را یک بار دیگر تبدیل و دچار رانش کند.
+            var currentRange = GetVisibleDateRange();
+            if (currentRange.HasValue &&
+                currentRange.Value.Start == start &&
+                currentRange.Value.End == end)
+                return;
+
+            // تاریخ نقاط اتصال را قبل از تغییر firstIndex نگه می‌داریم.
+            // سپس بعد از تغییر View، X را از روی همان تاریخ‌ها بازسازی می‌کنیم.
+            var drawingDates = drawings.Select(d => (d.Date1, d.Date2, d.Date3)).ToList();
+            var advancedDates = advancedDrawings.Select(d => (d.Date1, d.Date2)).ToList();
+            var extraDates = extraDrawings.Select(d => (d.Date1, d.Date2, d.Date3)).ToList();
+
             suppressSyncNotifications = true;
-            try { SetVisibleDateRange(start, end); }
-            finally { suppressSyncNotifications = false; }
+            try
+            {
+                SetVisibleDateRange(start, end);
+
+                for (var i = 0; i < drawings.Count && i < drawingDates.Count; i++)
+                {
+                    var dates = drawingDates[i];
+                    if (dates.Date1.HasValue) drawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) drawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                    if (dates.Date3.HasValue) drawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
+                }
+
+                for (var i = 0; i < advancedDrawings.Count && i < advancedDates.Count; i++)
+                {
+                    var dates = advancedDates[i];
+                    if (dates.Date1.HasValue) advancedDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) advancedDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                }
+
+                for (var i = 0; i < extraDrawings.Count && i < extraDates.Count; i++)
+                {
+                    var dates = extraDates[i];
+                    if (dates.Date1.HasValue) extraDrawings[i].X1 = FindNearestPointIndex(dates.Date1.Value);
+                    if (dates.Date2.HasValue) extraDrawings[i].X2 = FindNearestPointIndex(dates.Date2.Value);
+                    if (dates.Date3.HasValue) extraDrawings[i].X3 = FindNearestPointIndex(dates.Date3.Value);
+                }
+            }
+            finally
+            {
+                suppressSyncNotifications = false;
+            }
+
+            Invalidate();
         }
 
         internal void ApplySyncedCrosshairDate(DateTime date)
@@ -285,6 +345,12 @@ namespace Trade.It
                 CrosshairVisible = showCrosshair,
                 VisibleCount = visibleCount,
                 FirstIndex = firstIndex,
+                VisibleStartDate = points.Count > 0 && firstIndex >= 0 && firstIndex < points.Count
+                    ? points[firstIndex].Date
+                    : null,
+                VisibleEndDate = points.Count > 0
+                    ? points[Math.Clamp(firstIndex + Math.Max(1, visibleCount) - 1, 0, points.Count - 1)].Date
+                    : null,
                 VerticalZoom = verticalZoom,
                 VerticalPanOffset = verticalPanOffset,
                 HorizontalPanOffset = horizontalPanOffset,
@@ -297,15 +363,15 @@ namespace Trade.It
                 document.Drawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    X3 = firstIndex + drawing.X3,
+                    X3 = drawing.X3,
                     Y3 = drawing.Y3,
-                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
-                    Date3 = GetPointDate(firstIndex + (int)Math.Round(drawing.X3))
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
@@ -314,12 +380,12 @@ namespace Trade.It
                 document.AdvancedDrawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    Date1 = GetPointDate(firstIndex + (int)Math.Round(drawing.X1)),
-                    Date2 = GetPointDate(firstIndex + (int)Math.Round(drawing.X2)),
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
                     Text = drawing.Text
                 });
             }
@@ -329,16 +395,26 @@ namespace Trade.It
                 document.ExtraDrawings.Add(new ChartAnalysisDrawing
                 {
                     Tool = drawing.Tool.ToString(),
-                    X1 = firstIndex + drawing.X1,
+                    X1 = drawing.X1,
                     Y1 = drawing.Y1,
-                    X2 = firstIndex + drawing.X2,
+                    X2 = drawing.X2,
                     Y2 = drawing.Y2,
-                    X3 = firstIndex + drawing.X3,
-                    Y3 = drawing.Y3
+                    X3 = drawing.X3,
+                    Y3 = drawing.Y3,
+                    Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
+                    Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
                 });
             }
 
             return document;
+        }
+
+        private void UpdateDrawingDates(ChartDrawing drawing)
+        {
+            drawing.Date1 = GetPointDate((int)Math.Round(drawing.X1));
+            drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2));
+            drawing.Date3 = GetPointDate((int)Math.Round(drawing.X3));
         }
 
         private DateTime? GetPointDate(int absoluteIndex)
@@ -355,6 +431,111 @@ namespace Trade.It
             return (int)Math.Round(legacyIndex);
         }
 
+        public void ApplySharedAnalysisDrawings(ChartAnalysisDocument document)
+        {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
+            if (!string.IsNullOrWhiteSpace(document.Symbol) &&
+                !string.Equals(document.Symbol.Trim(), chartSymbol.Trim(), StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("این تحلیل مربوط به نماد دیگری است.");
+
+            CancelDrawing();
+            CancelAdvancedDrawing();
+            CancelExtraDrawing();
+
+            drawings.Clear();
+            advancedDrawings.Clear();
+            extraDrawings.Clear();
+
+            foreach (var item in document.Drawings ?? new List<ChartAnalysisDrawing>())
+            {
+                var toolName = item.Tool switch
+                {
+                    "HorizontalDoubleArrow" => "HorizontalLine",
+                    "VerticalDoubleArrow" => "VerticalLine",
+                    _ => item.Tool
+                };
+
+                if (!Enum.TryParse<ChartDrawingTool>(toolName, true, out var tool) ||
+                    tool == ChartDrawingTool.None)
+                    continue;
+
+                var x1 = ResolveDrawingIndex(item.Date1, item.X1, 0);
+                var x2 = ResolveDrawingIndex(item.Date2, item.X2, 0);
+                var x3 = ResolveDrawingIndex(item.Date3, item.X3, 0);
+
+                drawings.Add(new ChartDrawing
+                {
+                    Tool = tool,
+                    X1 = x1, Y1 = item.Y1,
+                    X2 = x2, Y2 = item.Y2,
+                    X3 = x3, Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate(x1),
+                    Date2 = item.Date2 ?? GetPointDate(x2),
+                    Date3 = item.Date3 ?? GetPointDate(x3)
+                });
+            }
+
+            foreach (var item in document.AdvancedDrawings ?? new List<ChartAnalysisDrawing>())
+            {
+                if (!Enum.TryParse<AdvancedDrawingTool>(item.Tool, true, out var tool) ||
+                    tool == AdvancedDrawingTool.None)
+                    continue;
+
+                var x1 = ResolveDrawingIndex(item.Date1, item.X1, 0);
+                var x2 = ResolveDrawingIndex(item.Date2, item.X2, 0);
+
+                advancedDrawings.Add(new AdvancedDrawing
+                {
+                    Tool = tool,
+                    X1 = x1, Y1 = item.Y1,
+                    X2 = x2, Y2 = item.Y2,
+                    Text = item.Text,
+                    Date1 = item.Date1 ?? GetPointDate(x1),
+                    Date2 = item.Date2 ?? GetPointDate(x2)
+                });
+            }
+
+            foreach (var item in document.ExtraDrawings ?? new List<ChartAnalysisDrawing>())
+            {
+                if (!Enum.TryParse<ExtraDrawingTool>(item.Tool, true, out var tool) ||
+                    tool == ExtraDrawingTool.None)
+                    continue;
+
+                var x1 = ResolveDrawingIndex(item.Date1, item.X1, 0);
+                var x2 = ResolveDrawingIndex(item.Date2, item.X2, 0);
+                var x3 = ResolveDrawingIndex(item.Date3, item.X3, 0);
+
+                extraDrawings.Add(new ExtraDrawing
+                {
+                    Tool = tool,
+                    X1 = x1, Y1 = item.Y1,
+                    X2 = x2, Y2 = item.Y2,
+                    X3 = x3, Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate(x1),
+                    Date2 = item.Date2 ?? GetPointDate(x2),
+                    Date3 = item.Date3 ?? GetPointDate(x3)
+                });
+            }
+
+            advancedDataCount = points.Count;
+            advancedFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
+            advancedLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
+            extraDataCount = points.Count;
+            extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
+            extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
+
+            selectedDrawingIndex = -1;
+            draggingDrawingIndex = -1;
+            selectedAdvancedDrawingIndex = -1;
+            draggingAdvancedDrawingIndex = -1;
+            selectedExtraDrawingIndex = -1;
+            extraDraggingDrawingIndex = -1;
+
+            Invalidate();
+        }
+
         public void RestoreAnalysisDocument(ChartAnalysisDocument document, bool restoreView = true)
         {
             if (document == null)
@@ -369,6 +550,13 @@ namespace Trade.It
             CancelDrawing();
             CancelAdvancedDrawing();
             CancelExtraDrawing();
+
+            // در حالت چندتایم‌فریمی ابتدا پنجره زمانی چارت مقصد را تعیین می‌کنیم.
+            // سپس X ابزارها نسبت به firstIndex نهایی محاسبه می‌شود. اگر این ترتیب
+            // برعکس باشد، SetVisibleDateRange بعداً firstIndex را تغییر می‌دهد و
+            // مستطیل، خط عمودی و فلش‌دار در جای اشتباه ظاهر می‌شوند یا از دید خارج می‌شوند.
+            if (!restoreView && document.VisibleStartDate.HasValue && document.VisibleEndDate.HasValue)
+                SetVisibleDateRange(document.VisibleStartDate.Value, document.VisibleEndDate.Value);
 
             drawings.Clear();
             advancedDrawings.Clear();
@@ -391,12 +579,15 @@ namespace Trade.It
                 drawings.Add(new ChartDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - document.FirstIndex,
-                    Y3 = item.Y3
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
+                    Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
                 });
             }
 
@@ -409,11 +600,13 @@ namespace Trade.It
                 advancedDrawings.Add(new AdvancedDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    Text = item.Text
+                    Text = item.Text,
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))
                 });
             }
 
@@ -426,12 +619,15 @@ namespace Trade.It
                 extraDrawings.Add(new ExtraDrawing
                 {
                     Tool = tool,
-                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex) - document.FirstIndex,
+                    X1 = ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex),
                     Y1 = item.Y1,
-                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex) - document.FirstIndex,
+                    X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
-                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex) - document.FirstIndex,
-                    Y3 = item.Y3
+                    X3 = ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex),
+                    Y3 = item.Y3,
+                    Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
                 });
             }
 
@@ -656,6 +852,7 @@ namespace Trade.It
             {
                 drawings.RemoveAt(selectedDrawingIndex);
                 selectedDrawingIndex = -1;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 draggingDrawingIndex = -1;
                 draggingHandle = 0;
                 Invalidate();
@@ -864,9 +1061,9 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var layoutCount = GetDrawingLayoutCount();
-            var x1 = ScreenToDataX(start.X, plot, layoutCount);
+            var x1 = ScreenToDataX(start.X, plot, layoutCount) + firstIndex;
             var y1 = ScreenToPrice(start.Y, plot, min, max);
-            var x2 = ScreenToDataX(end.X, plot, layoutCount);
+            var x2 = ScreenToDataX(end.X, plot, layoutCount) + firstIndex;
             var y2 = ScreenToPrice(end.Y, plot, min, max);
             switch (activeDrawingTool)
             {
@@ -876,7 +1073,7 @@ namespace Trade.It
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 }); break;
                 case ChartDrawingTool.TrendChannel:
                     if (third == Point.Empty) return;
-                    var x3 = ScreenToDataX(third.X, plot, layoutCount);
+                    var x3 = ScreenToDataX(third.X, plot, layoutCount) + firstIndex;
                     var y3 = ScreenToPrice(third.Y, plot, min, max);
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, X3 = x3, Y3 = y3 }); break;
                 case ChartDrawingTool.HorizontalLine:
@@ -886,6 +1083,8 @@ namespace Trade.It
                 case ChartDrawingTool.HorizontalRay:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
             }
+
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -1031,7 +1230,9 @@ namespace Trade.It
 
                 if (draggingDrawingIndex >= 0)
                 {
-                    draggingDrawingIndex = -1; draggingHandle = 0; Capture = false; Cursor = Cursors.Default; Invalidate(); return;
+                    draggingDrawingIndex = -1; draggingHandle = 0; Capture = false; Cursor = Cursors.Default; Invalidate();
+                    AnalysisChanged?.Invoke(this, EventArgs.Empty);
+                    return;
                 }
                 if (horizontalAxisDrag || verticalAxisDrag || panning)
                 {

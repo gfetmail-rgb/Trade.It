@@ -19,6 +19,8 @@ namespace Trade.It
             public double X2 { get; set; }
             public double Y2 { get; set; }
             public string? Text { get; set; }
+            public DateTime? Date1 { get; set; }
+            public DateTime? Date2 { get; set; }
         }
 
         private readonly List<AdvancedDrawing> advancedDrawings = new();
@@ -98,14 +100,14 @@ namespace Trade.It
             var first = count > 0 ? points[0].Date : DateTime.MinValue;
             var last = count > 0 ? points[^1].Date : DateTime.MinValue;
 
-            if (count != advancedDataCount || first != advancedFirstDate || last != advancedLastDate)
-            {
-                advancedDrawings.Clear();
-                selectedAdvancedDrawingIndex = -1;
-                advancedDataCount = count;
-                advancedFirstDate = first;
-                advancedLastDate = last;
-            }
+            if (count == advancedDataCount && first == advancedFirstDate && last == advancedLastDate)
+                return;
+
+            // تغییر تایم‌فریم/داده نباید Drawingهای تکمیل‌شده را پاک کند.
+            // مختصات آنها با Date1/Date2 به تایم‌فریم جدید نگاشت می‌شوند.
+            advancedDataCount = count;
+            advancedFirstDate = first;
+            advancedLastDate = last;
         }
 
         private void AdvancedDrawing_MouseDown(object? sender, MouseEventArgs e)
@@ -183,9 +185,9 @@ namespace Trade.It
             {
                 if (TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 {
-                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing);
+                    var previousX = ScreenToDataX(draggingAdvancedLastPoint.X, plot, visibleCountForDrawing) + firstIndex;
                     var previousY = ScreenToPrice(draggingAdvancedLastPoint.Y, plot, min, max);
-                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing);
+                    var currentX = ScreenToDataX(e.Location.X, plot, visibleCountForDrawing) + firstIndex;
                     var currentY = ScreenToPrice(e.Location.Y, plot, min, max);
                     var dx = currentX - previousX;
                     var dy = currentY - previousY;
@@ -211,6 +213,10 @@ namespace Trade.It
                             d.Y2 += dy;
                         }
                     }
+
+                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
+                        d.Date2 = GetPointDate((int)Math.Round(d.X2));
 
                     draggingAdvancedLastPoint = e.Location;
                     Invalidate();
@@ -238,9 +244,12 @@ namespace Trade.It
         {
             if (e.Button == MouseButtons.Left)
             {
+                var wasDragging = draggingAdvancedDrawingIndex >= 0;
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
                 draggingAdvancedHandle = 0;
+                if (wasDragging)
+                    AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 if (AdvancedDrawingActive || advancedDrawingInProgress)
                     DeferAdvancedMouseState();
             }
@@ -252,6 +261,7 @@ namespace Trade.It
             {
                 advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);
                 selectedAdvancedDrawingIndex = -1;
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 draggingAdvancedDrawingIndex = -1;
                 draggingAdvancedLastPoint = Point.Empty;
                 draggingAdvancedHandle = 0;
@@ -296,15 +306,16 @@ namespace Trade.It
             if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
                 return;
 
-            var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing);
-            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing);
+            var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing) + firstIndex;
+            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing) + firstIndex;
             var y2 = ScreenToPrice(end.Y, plot, min, max);
 
             if (Math.Abs(x2 - x1) < 0.001 || Math.Abs(y2 - y1) < 1e-12)
                 return;
 
-            advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2 });
+            advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, Date1 = GetPointDate((int)Math.Round(x1)), Date2 = GetPointDate((int)Math.Round(x2)) });
             selectedAdvancedDrawingIndex = -1;
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void AddAdvancedText(Point location, string text)
@@ -315,11 +326,13 @@ namespace Trade.It
             advancedDrawings.Add(new AdvancedDrawing
             {
                 Tool = AdvancedDrawingTool.TextLabel,
-                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing),
+                X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
-                Text = text
+                Text = text,
+                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex))
             });
             selectedAdvancedDrawingIndex = -1;
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private bool TryGetAdvancedContext(out Rectangle plot, out int visibleCountForDrawing, out double min, out double max)
@@ -390,8 +403,8 @@ namespace Trade.It
 
         private void DrawAdvancedFibonacci(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max, bool selected)
         {
-            var start = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-            var end = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+            var start = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+            var end = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
             DrawFibonacciLevels(g, pen, labelBrush, start, end);
             if (selected)
             {
@@ -402,7 +415,7 @@ namespace Trade.It
 
         private void DrawAdvancedText(Graphics g, Pen pen, Brush labelBrush, Brush labelBack, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var point = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+            var point = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
             using var font = new Font(Font.FontFamily, Math.Max(8f, Font.Size), FontStyle.Regular);
             var text = d.Text ?? string.Empty;
             var size = g.MeasureString(text, font);
@@ -462,7 +475,7 @@ namespace Trade.It
             for (var i = advancedDrawings.Count - 1; i >= 0; i--)
             {
                 var d = advancedDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f)
                 {
                     handle = d.Tool == AdvancedDrawingTool.FibonacciRetracement ? 1 : 0;
@@ -471,7 +484,7 @@ namespace Trade.It
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
-                    var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
+                    var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
                     if (DistanceToPoint(location, p2) <= 10f)
                     {
                         handle = 2;

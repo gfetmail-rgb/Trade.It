@@ -124,9 +124,9 @@ namespace Trade.It
             for (var i = extraDrawings.Count - 1; i >= 0; i--)
             {
                 var d = extraDrawings[i];
-                var p1 = DataToScreen(d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
-                var p2 = DataToScreen(d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
-                var p3 = DataToScreen(d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
+                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+                var p3 = DataToScreen(d.X3 - firstIndex, d.Y3, plot, visibleCountForDrawing, min, max);
 
                 if (DistanceToPoint(location, p1) <= 10f ||
                     DistanceToPoint(location, p2) <= 10f ||

@@ -245,8 +245,8 @@ namespace Trade.It
                 return;
             var headerPoint = visible[Math.Clamp(headerIndex, 0, displayedCount - 1)];
             var headerText = string.IsNullOrWhiteSpace(chartSymbol)
-                ? $"O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
-                : $"{chartSymbol}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
+                ? $"{chartTimeFrame}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
+                : $"{chartSymbol}   {chartTimeFrame}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
             using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
@@ -422,7 +422,7 @@ namespace Trade.It
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
                 return new List<PointF> { start, end, third };
             }
             return new List<PointF> { start, end };
@@ -487,9 +487,9 @@ namespace Trade.It
 
         private void DrawTrendChannel(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
-            var first = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-            var second = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-            var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+            var first = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            var second = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
             DrawScreenTrendChannel(g, pen, plot, first, second, third);
         }
 
@@ -519,11 +519,11 @@ namespace Trade.It
             }
             if (drawing.Tool == ChartDrawingTool.VerticalLine)
             {
-                var x = DataToScreen(drawing.X1, 0, plot, visibleCountForDrawing, min, max).X;
+                var x = DataToScreen(drawing.X1 - firstIndex, 0, plot, visibleCountForDrawing, min, max).X;
                 start = new PointF(x, plot.Top); end = new PointF(x, plot.Bottom); return;
             }
-            start = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-            end = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            start = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            end = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
         }
 
         private int HitTestDrawingHandle(Point location, Rectangle plot, out int handle)
@@ -571,9 +571,9 @@ namespace Trade.It
                         if (DistanceToSegment(location, start, end) <= tolerance) return i;
                         break;
                     case ChartDrawingTool.TrendChannel:
-                        var first = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
-                        var second = DataToScreen(drawing.X2, drawing.Y2, plot, visibleCountForDrawing, min, max);
-                        var third = DataToScreen(drawing.X3, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                        var first = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+                        var second = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+                        var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
                         if (IsPointNearChannel(location, plot, first, second, third, tolerance)) return i;
                         break;
                     case ChartDrawingTool.HorizontalRay:
@@ -631,22 +631,27 @@ namespace Trade.It
                 drawing.Y2 = drawing.Y1; return;
             }
             if (drawing.Tool == ChartDrawingTool.VerticalLine)            {
-                var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount());
-                drawing.X1 = x; drawing.X2 = x; return;
+                var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount()) + firstIndex;
+                drawing.X1 = x; drawing.X2 = x;
+                drawing.Date1 = GetPointDate((int)Math.Round(x));
+                drawing.Date2 = drawing.Date1;
+                return;
             }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
-                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
-                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); return; }
+                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); drawing.Date1 = GetPointDate((int)Math.Round(drawing.X1)); return; }
+                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2)); return; }
+                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); drawing.Date3 = GetPointDate((int)Math.Round(drawing.X3)); return; }
                 var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, GetDrawingLayoutCount());
                 var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
                 drawing.X1 += deltaX; drawing.X2 += deltaX; drawing.X3 += deltaX;
-                drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY; return;
+                drawing.Y1 += deltaY; drawing.Y2 += deltaY; drawing.Y3 += deltaY;
+                UpdateDrawingDates(drawing);
+                return;
             }
             if (drawing.Tool == ChartDrawingTool.Rectangle && handle > 0)
             {
-                var x = ScreenToDataX(location.X, plot, visible.Count);
+                var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
                 var y = ScreenToPrice(location.Y, plot, min, max);
                 switch (handle)
                 {
@@ -655,14 +660,16 @@ namespace Trade.It
                     case 3: drawing.X2 = x; drawing.Y2 = y; break;
                     case 4: drawing.X1 = x; drawing.Y2 = y; break;
                 }
+                UpdateDrawingDates(drawing);
                 return;
             }
-            if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); return; }
-            if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count); drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); return; }
+            if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); drawing.Date1 = GetPointDate((int)Math.Round(drawing.X1)); return; }
+            if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2)); return; }
             var moveX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
             var moveY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
             drawing.X1 += moveX; drawing.X2 += moveX;
             drawing.Y1 += moveY; drawing.Y2 += moveY;
+            UpdateDrawingDates(drawing);
         }
 
         private static double DistanceToPoint(PointF point, PointF target)

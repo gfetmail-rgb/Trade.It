@@ -12,6 +12,8 @@ namespace Trade.It
         public bool CrosshairVisible { get; set; }
         public int VisibleCount { get; set; }
         public int FirstIndex { get; set; }
+        public DateTime? VisibleStartDate { get; set; }
+        public DateTime? VisibleEndDate { get; set; }
         public double VerticalZoom { get; set; } = 1.0;
         public double VerticalPanOffset { get; set; }
         public double HorizontalPanOffset { get; set; }
