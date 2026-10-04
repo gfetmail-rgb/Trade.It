@@ -339,7 +339,7 @@ namespace Trade.It
                 X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
                 Text = text,
-                Date1 = GetPointDate((int)Math.Round(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex))
+                Date1 = DataXToDate(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex)
             });
             selectedAdvancedDrawingIndex = -1;
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
