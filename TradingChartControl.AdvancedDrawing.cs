@@ -214,9 +214,9 @@ namespace Trade.It
                         }
                     }
 
-                    d.Date1 = GetPointDate((int)Math.Round(d.X1));
+                    d.Date1 = DataXToDate(d.X1);
                     if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
-                        d.Date2 = GetPointDate((int)Math.Round(d.X2));
+                        d.Date2 = DataXToDate(d.X2);
 
                     draggingAdvancedLastPoint = e.Location;
                     Invalidate();
@@ -307,13 +307,23 @@ namespace Trade.It
                 return;
 
             var x1 = ScreenToDataX(start.X, plot, visibleCountForDrawing) + firstIndex;
-            var y1 = ScreenToPrice(start.Y, plot, min, max);            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing) + firstIndex;
+            var y1 = ScreenToPrice(start.Y, plot, min, max);
+            var x2 = ScreenToDataX(end.X, plot, visibleCountForDrawing) + firstIndex;
             var y2 = ScreenToPrice(end.Y, plot, min, max);
 
             if (Math.Abs(x2 - x1) < 0.001 || Math.Abs(y2 - y1) < 1e-12)
                 return;
 
-            advancedDrawings.Add(new AdvancedDrawing { Tool = AdvancedDrawingTool.FibonacciRetracement, X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, Date1 = GetPointDate((int)Math.Round(x1)), Date2 = GetPointDate((int)Math.Round(x2)) });
+            advancedDrawings.Add(new AdvancedDrawing
+            {
+                Tool = AdvancedDrawingTool.FibonacciRetracement,
+                X1 = x1,
+                Y1 = y1,
+                X2 = x2,
+                Y2 = y2,
+                Date1 = DataXToDate(x1),
+                Date2 = DataXToDate(x2)
+            });
             selectedAdvancedDrawingIndex = -1;
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -475,7 +485,7 @@ namespace Trade.It
             for (var i = advancedDrawings.Count - 1; i >= 0; i--)
             {
                 var d = advancedDrawings[i];
-                var p1 = DataToScreen(d.X1 - firstIndex, d.Y1, plot, visibleCountForDrawing, min, max);
+                var p1 = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
                 if (DistanceToPoint(location, p1) <= 10f)
                 {
                     handle = d.Tool == AdvancedDrawingTool.FibonacciRetracement ? 1 : 0;
@@ -484,7 +494,7 @@ namespace Trade.It
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
-                    var p2 = DataToScreen(d.X2 - firstIndex, d.Y2, plot, visibleCountForDrawing, min, max);
+                    var p2 = DateToScreen(d.Date2, d.X2, d.Y2, plot, visibleCountForDrawing, min, max);
                     if (DistanceToPoint(location, p2) <= 10f)
                     {
                         handle = 2;
@@ -505,6 +515,26 @@ namespace Trade.It
                 }
             }
             return -1;
+        }
+
+        private DateTime? DataXToDate(double absoluteX)
+        {
+            if (points.Count == 0)
+                return null;
+
+            var x = Math.Clamp(absoluteX, 0.0, points.Count - 1);
+            var leftIndex = (int)Math.Floor(x);
+            if (leftIndex >= points.Count - 1)
+                return points[^1].Date;
+
+            var fraction = x - leftIndex;
+            var left = points[leftIndex].Date;
+            var right = points[leftIndex + 1].Date;
+            var spanTicks = right.Ticks - left.Ticks;
+            if (spanTicks <= 0)
+                return left;
+
+            return new DateTime(left.Ticks + (long)Math.Round(spanTicks * fraction), left.Kind);
         }
 
         private static SizeF MeasureText(string text, Font font)
