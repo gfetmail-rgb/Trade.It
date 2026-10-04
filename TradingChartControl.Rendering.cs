@@ -625,15 +625,15 @@ namespace Trade.It
             if (drawing.Tool == ChartDrawingTool.VerticalLine)            {
                 var x = ScreenToDataX(location.X, plot, GetDrawingLayoutCount()) + firstIndex;
                 drawing.X1 = x; drawing.X2 = x;
-                drawing.Date1 = GetPointDate((int)Math.Round(x));
+                drawing.Date1 = DataXToDate(x);
                 drawing.Date2 = drawing.Date1;
                 return;
             }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
-                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); drawing.Date1 = GetPointDate((int)Math.Round(drawing.X1)); return; }
-                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2)); return; }
-                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); drawing.Date3 = GetPointDate((int)Math.Round(drawing.X3)); return; }
+                if (handle == 1) { drawing.X1 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y1 = ScreenToPrice(location.Y, plot, min, max); drawing.Date1 = DataXToDate(drawing.X1); return; }
+                if (handle == 2) { drawing.X2 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y2 = ScreenToPrice(location.Y, plot, min, max); drawing.Date2 = DataXToDate(drawing.X2); return; }
+                if (handle == 3) { drawing.X3 = ScreenToDataX(location.X, plot, visible.Count) + firstIndex; drawing.Y3 = ScreenToPrice(location.Y, plot, min, max); drawing.Date3 = DataXToDate(drawing.X3); return; }
                 var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, GetDrawingLayoutCount());
                 var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
                 drawing.X1 += deltaX; drawing.X2 += deltaX; drawing.X3 += deltaX;
@@ -918,6 +918,31 @@ namespace Trade.It
         {
             var absoluteX = DateToDataX(date, fallbackAbsoluteIndex);
             return DataToScreen(absoluteX - firstIndex, y, plot, visibleCountForDrawing, min, max);
+        }
+
+        private DateTime? DataXToDate(double absoluteX)
+        {
+            if (points.Count == 0 || !double.IsFinite(absoluteX))
+                return null;
+
+            if (absoluteX <= 0)
+                return points[0].Date;
+            if (absoluteX >= points.Count - 1)
+                return points[^1].Date;
+
+            var leftIndex = Math.Clamp((int)Math.Floor(absoluteX), 0, points.Count - 1);
+            var rightIndex = Math.Clamp(leftIndex + 1, 0, points.Count - 1);
+            if (leftIndex == rightIndex)
+                return points[leftIndex].Date;
+
+            var fraction = Math.Clamp(absoluteX - leftIndex, 0.0, 1.0);
+            var leftDate = points[leftIndex].Date;
+            var rightDate = points[rightIndex].Date;
+            var span = (rightDate - leftDate).Ticks;
+            if (span <= 0)
+                return leftDate;
+
+            return leftDate + TimeSpan.FromTicks((long)Math.Round(span * fraction));
         }
 
         private double ScreenToDataX(float screenX, Rectangle plot, int visibleCountForDrawing)
