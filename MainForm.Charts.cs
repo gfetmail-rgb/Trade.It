@@ -11,8 +11,6 @@ namespace Trade.It
         private bool chartRuntimeInitialized;
         private string? activeChartSymbol;
         private bool testMode;
-        private MultiTimeframeWorkspace? multiTimeframeWorkspace;
-        private readonly Dictionary<string, ChartAnalysisDocument> multiTimeframeAnalysisStates = new(StringComparer.OrdinalIgnoreCase);
 
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
@@ -54,15 +52,6 @@ namespace Trade.It
             ApplyChartDisplayMode();
         }
 
-        private void multiTimeframeMenuItem_Click(object? sender, EventArgs e)
-        {
-            var symbol = activeChartSymbol;
-            if (!string.IsNullOrWhiteSpace(symbol))
-                ShowMultiTimeframeCharts(symbol);
-            else
-                MessageBox.Show(this, "ابتدا یک نماد را باز کنید.", "تایم‌فریم‌ها",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
         private void MultiTimeframeAnalysisMenuItem_DropDownOpening(object? sender, EventArgs e)
         {
             var items = new[]
@@ -121,20 +110,6 @@ namespace Trade.It
             ShowMultiTimeframeAnalysis(symbol, item.Text.Trim());
         }
 
-        private static string GetMultiTimeframeAnalysisStateKey(string symbol, string timeFrame) =>
-            symbol.Trim() + "|" + NormalizeTimeframe(timeFrame);
-
-        private static string NormalizeTimeframe(string timeFrame)
-        {
-            var value = timeFrame.Trim().ToUpperInvariant();
-            return value switch
-            {
-                "H1" => "1H",
-                "H4" => "4H",
-                _ => value
-            };
-        }
-
         private void ShowMultiTimeframeAnalysis(string symbol, string timeFrame)
         {
             timeFrame = NormalizeTimeframe(timeFrame);
@@ -163,7 +138,6 @@ namespace Trade.It
                     try
                     {
                         var currentDocument = currentChart.CreateAnalysisDocument();
-                        multiTimeframeAnalysisStates[GetMultiTimeframeAnalysisStateKey(symbol, currentChart.ChartTimeFrame)] = currentDocument;
                         // فقط تحلیل چارت اصلی منبع مرجع ذخیره‌سازی است.
                         // چارت‌هایی که از منوی تایم‌فریم باز شده‌اند مختصات X را
                         // متناسب با کندل‌های خودشان نگه می‌دارند؛ ذخیره کردن آن‌ها
@@ -178,8 +152,6 @@ namespace Trade.It
                         // ذخیره تحلیل نباید مانع تعویض تایم‌فریم شود.
                     }
                 }
-
-                CloseMultiTimeframeWorkspace();
 
                 var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
                 if (points.Count == 0)
@@ -284,7 +256,7 @@ namespace Trade.It
         private void SaveAnalysisButton_Click(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (multiTimeframeWorkspace != null || chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
             {
                 MessageBox.Show(this, "ابتدا یک چارت فعال انتخاب کنید.", "ذخیره تحلیل", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -316,7 +288,7 @@ namespace Trade.It
         private void AnalysisAutoSaveTimer_Tick(object? sender, EventArgs e)
         {
             var chart = GetActiveChart();
-            if (multiTimeframeWorkspace != null || chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
+            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
                 return;
 
             try
@@ -544,7 +516,6 @@ namespace Trade.It
 
         private void ShowSymbolChart(string symbol)
         {
-            CloseMultiTimeframeWorkspace();
             var currentChart = GetActiveChart();
             if (currentChart != null && !string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
             {
@@ -668,143 +639,10 @@ namespace Trade.It
 
         private TradingChartControl? GetActiveChart()
         {
-            if (multiTimeframeWorkspace != null)
-                return multiTimeframeWorkspace.ActiveChart;
-
             if (chartDisplayMode == ChartDisplayMode.SingleTab)
                 return chartTabPage.Controls.OfType<TradingChartControl>().FirstOrDefault();
 
             return chartTabControl.SelectedTab?.Controls.OfType<TradingChartControl>().FirstOrDefault();
-        }
-
-        private void ShowMultiTimeframeCharts(string symbol)
-        {
-            if (string.IsNullOrWhiteSpace(displayedPortfolioName) ||
-                !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
-                return;
-
-            try
-            {
-                var files = GetSymbolTimeframeFiles(definition, symbol);
-                if (files.Count == 0)
-                {
-                    MessageBox.Show(
-                        this,
-                        $"برای «{symbol}» فایل تایم‌فریم استانداردی پیدا نشد.",
-                        "تایم‌فریم‌ها",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                    return;
-                }
-
-                // قبل از ساخت Workspace، تحلیل فعلی چارت عادی را ذخیره می‌کنیم.
-                // AutoSave در حالت چندتایم‌فریمی عمداً اجرا نمی‌شود؛ بنابراین باید
-                // آخرین ابزارهای رسم‌شده قبل از ساخت پنجره‌های تایم‌فریمی ثبت شوند.
-                var currentChart = GetActiveChart();
-                if (currentChart != null &&
-                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
-                {
-                    try
-                    {
-                        ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
-                    }
-                    catch
-                    {
-                        // ذخیره تحلیل نباید مانع باز شدن Workspace شود.
-                    }
-                }
-
-                CloseMultiTimeframeWorkspace();
-
-                multiTimeframeWorkspace = new MultiTimeframeWorkspace
-                {
-                    Dock = DockStyle.Fill,
-                    RightToLeft = RightToLeft.No
-                };
-
-                foreach (var item in files)
-                {
-                    var points = LoadChartData(definition, symbol, new[] { item.FilePath });
-                    if (points.Count == 0)
-                        continue;
-
-                    var chart = GetOrCreateChart(symbol + "|" + item.TimeFrame);
-                    chart.SetData(points, symbol, item.TimeFrame);
-                    chart.SetChartType(GetSelectedChartType());
-                    chart.SetVolumePanelVisible(lastVolumePanelVisible);
-                    chart.VolumePanelRatio = lastVolumePanelRatio;
-
-                    // تحلیل رسم‌شده متعلق به خود نماد است و باید روی همه تایم‌فریم‌ها
-                    // با تبدیل مختصات بر اساس تاریخ نقاط بازسازی شود.
-                    var savedAnalysis = ChartAnalysisStorage.Load(symbol);
-                    if (savedAnalysis != null)
-                        ApplyAnalysisDocument(chart, savedAnalysis, restoreView: false);
-
-                    multiTimeframeWorkspace.AddChart(chart, item.TimeFrame);
-                }
-
-                if (multiTimeframeWorkspace.ChartCount == 0)
-                {
-                    multiTimeframeWorkspace.Dispose();
-                    multiTimeframeWorkspace = null;
-                    MessageBox.Show(this, $"هیچ داده قابل رسم برای «{symbol}» پیدا نشد.",
-                        "تایم‌فریم‌ها", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                activeChartSymbol = symbol;
-                chartInfoLabel.Text = $"{symbol}   |   {multiTimeframeWorkspace.ChartCount:N0} تایم‌فریم";
-                chartPlaceholderLabel.Visible = false;
-
-                chartTabPage.Controls.Clear();
-                chartTabPage.Controls.Add(multiTimeframeWorkspace);
-                chartTabPage.Text = symbol + " | چندتایم‌فریم";
-                chartTabControl.SelectedTab = chartTabPage;
-                chartTabControl.Visible = true;
-
-                multiTimeframeWorkspace.ActiveChartChanged += (_, _) => SyncChartToolbarFromActiveChart();
-                multiTimeframeWorkspace.SelectFirstChart();
-
-                // Test Mode در Workspace چندتایم‌فریمی فعال نیست؛
-                // چون هنوز مدل TestDate مشترک بین تایم‌فریم‌ها ندارد.
-                testMode = false;
-                SetToggleButtonState(testModeButton, false);
-                testModeButton.Enabled = false;
-
-                SetToggleButtonState(hideChartButton, false);
-                SetIndicatorPanelButtonState(GetActiveChart());
-            }
-            catch (Exception ex)
-            {
-                CloseMultiTimeframeWorkspace();
-                MessageBox.Show(this,
-                    $"باز کردن تایم‌فریم‌ها انجام نشد:\n{ex.Message}",
-                    "تایم‌فریم‌ها", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void CloseMultiTimeframeWorkspace()
-        {
-            if (multiTimeframeWorkspace == null)
-                return;
-
-            var workspace = multiTimeframeWorkspace; multiTimeframeWorkspace = null;
-
-            foreach (var chart in workspace.Charts.ToList())
-            {
-                foreach (var item in chartControls.Where(x => ReferenceEquals(x.Value, chart)).ToList())
-                    chartControls.Remove(item.Key);
-
-                chart.Dispose();
-            }
-
-            workspace.Dispose();
-
-            chartTabPage.Controls.Clear();
-            chartTabPage.Controls.Add(chartInfoPanel);
-            testModeButton.Enabled = true;
-            chartTabPage.Controls.Add(chartPlaceholderLabel);
-            chartTabPage.Text = string.IsNullOrWhiteSpace(activeChartSymbol) ? "چارت" : activeChartSymbol;
         }
 
         private List<(string FilePath, string TimeFrame)> GetSymbolTimeframeFiles(
