@@ -1092,7 +1092,11 @@ namespace Trade.It
                         Date1 = DataXToDate(x1), Date2 = DataXToDate(x2)
                     }); break;
                 case ChartDrawingTool.VerticalLine:
-                    drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x1, Y2 = y2 }); break;
+                    drawings.Add(new ChartDrawing
+                    {
+                        Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x1, Y2 = y2,
+                        Date1 = DataXToDate(x1), Date2 = DataXToDate(x1)
+                    }); break;
                 case ChartDrawingTool.HorizontalRay:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
             }
