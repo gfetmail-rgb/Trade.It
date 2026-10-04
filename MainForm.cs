@@ -2052,7 +2052,23 @@ namespace Trade.It
 
         private static int GetMappingColumn(PortfolioDefinition definition, string field)
         {
-            var mapping = definition.Mappings?.FirstOrDefault(m => string.Equals(m.Field?.Trim(), field, StringComparison.OrdinalIgnoreCase));
+            if (definition.Mappings == null)
+                return 0;
+
+            var aliases = field switch
+            {
+                "اولین" => new[] { "اولین", "باز" },
+                "آخرین" => new[] { "آخرین", "پایانی", "قیمت پایانی بورس" },
+                "حجم" => new[] { "حجم", "حجم معاملات" },
+                _ => new[] { field }
+            };
+
+            var mapping = definition.Mappings.FirstOrDefault(m =>
+                aliases.Any(alias => string.Equals(
+                    m.Field?.Trim(),
+                    alias,
+                    StringComparison.OrdinalIgnoreCase)));
+
             return mapping?.Column ?? 0;
         }
 
