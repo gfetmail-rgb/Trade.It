@@ -314,13 +314,6 @@
             portfolioDefinitionMenuItem.Size = new Size(114, 29);
             portfolioDefinitionMenuItem.Text = "تعریف سبد";
             // 
-            // multiTimeframeMenuItem
-            // 
-            multiTimeframeMenuItem.Name = "multiTimeframeMenuItem";
-            multiTimeframeMenuItem.Size = new Size(140, 29);
-            multiTimeframeMenuItem.Text = "مالتی تایم‌فریم‌";
-            multiTimeframeMenuItem.Click += multiTimeframeMenuItem_Click;
-            // 
             // multiTimeframeAnalysisMenuItem
             // 
             multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem });
