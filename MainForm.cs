@@ -2056,9 +2056,9 @@ namespace Trade.It
 
             var aliases = field switch
             {
-                "اولین" => new[] { "اولین", "باز" },
-                "آخرین" => new[] { "آخرین", "پایانی", "قیمت پایانی بورس" },
-                "حجم" => new[] { "حجم", "حجم معاملات" },
+                "اولین" => new[] { "اولین" },
+                "آخرین" => new[] { "آخرین" },
+                "حجم" => new[] { "حجم" },
                 _ => new[] { field }
             };
 
@@ -2402,8 +2402,7 @@ namespace Trade.It
             "H" => "بیشترین",
             "L" => "کمترین",
             "C" => "آخرین",
-            "پایانی" => "پایانی",
-            _ => string.Empty
+                        _ => string.Empty
         };
 
         private void hideChartButton_Click(object sender, EventArgs e)
