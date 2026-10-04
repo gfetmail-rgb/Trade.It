@@ -158,14 +158,12 @@ namespace Trade.It
                     volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom);
             }
 
+            var priceDecimalPlaces = GetPriceDecimalPlaces(visible);
             for (var i = 0; i <= 5; i++)
             {
                 var value = max - (max - min) * i / 5.0;
                 var y = PriceToScreen(value, plot, min, max);
-                // داده‌های بورس ایران در این چارت به‌صورت قیمت صحیح هستند.
-                // مقدارهای میانی محور ممکن است در اثر تقسیم بازه اعشاری شوند؛
-                // برای نمایش، آنها را به نزدیک‌ترین قیمت صحیح تبدیل می‌کنیم.
-                var text = Math.Round(value, MidpointRounding.AwayFromZero).ToString("0", CultureInfo.InvariantCulture);
+                var text = FormatPrice(value, priceDecimalPlaces);
                 var size = e.Graphics.MeasureString(text, priceAxisTextFont);
 
                 // برچسب قیمت باید کاملاً در ناحیه اختصاص‌یافته به محور قیمت
@@ -201,13 +199,7 @@ namespace Trade.It
                 var crosshairPrice = max - ((crosshairY - plot.Top) / (double)Math.Max(1, plot.Height)) * (max - min);
                 crosshairPrice = Math.Clamp(crosshairPrice, min, max);
 
-                // قیمت کراس برای این چارت باید صحیح نمایش داده شود.
-                // مختصات ماوس فقط موقعیت عمودی را تعیین می‌کند و نباید باعث
-                // تولید اعشار یا قالب‌بندی مصنوعی قیمت شود.
-                var priceText = Math.Round(
-                    crosshairPrice,
-                    MidpointRounding.AwayFromZero)
-                    .ToString("0", CultureInfo.InvariantCulture);
+                var priceText = FormatPrice(crosshairPrice, priceDecimalPlaces);
                 var priceSize = e.Graphics.MeasureString(priceText, axisTextFont);
                 var priceRect = new RectangleF(
                     Math.Max(1f, plot.Left - priceSize.Width - 9f),
@@ -706,6 +698,39 @@ namespace Trade.It
             var right = new PointF(tip.X - ux * size - px * size * 0.45f, tip.Y - uy * size - py * size * 0.45f);
             g.DrawLine(basePen, tip, left);
             g.DrawLine(basePen, tip, right);
+        }
+
+        private static string FormatPrice(double value, int decimalPlaces)
+        {
+            decimalPlaces = Math.Clamp(decimalPlaces, 0, 10);
+            return value.ToString("F" + decimalPlaces, CultureInfo.InvariantCulture);
+        }
+
+        private static int GetPriceDecimalPlaces(IEnumerable<TradingChartPoint> data)
+        {
+            var maxDecimals = 0;
+
+            foreach (var point in data)
+            {
+                maxDecimals = Math.Max(maxDecimals, CountDecimalPlaces(point.Open));
+                maxDecimals = Math.Max(maxDecimals, CountDecimalPlaces(point.High));
+                maxDecimals = Math.Max(maxDecimals, CountDecimalPlaces(point.Low));
+                maxDecimals = Math.Max(maxDecimals, CountDecimalPlaces(point.Close));
+                if (maxDecimals >= 10)
+                    return 10;
+            }
+
+            return maxDecimals;
+        }
+
+        private static int CountDecimalPlaces(double value)
+        {
+            if (!double.IsFinite(value))
+                return 0;
+
+            var text = value.ToString("0.##################", CultureInfo.InvariantCulture);
+            var separator = text.IndexOf('.');
+            return separator < 0 ? 0 : text.Length - separator - 1;
         }
 
         private Rectangle GetPlotRectangle()
