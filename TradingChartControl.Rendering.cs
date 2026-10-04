@@ -711,8 +711,17 @@ namespace Trade.It
         private Rectangle GetPlotRectangle()
         {
             var left = 70;
-            var top = 15;
             var right = Math.Max(left + 1, Width - 15);
+
+            // حاشیه بالای چارت باید از تنظیم ChartTopEmptyPercent محاسبه شود.
+            // مقدار قبلی 15 پیکسل ثابت بود و باعث می‌شد تغییر این تنظیم در
+            // SettingsForm هیچ اثری روی محل شروع نمودار نداشته باشد.
+            var topMargin = Math.Max(0, Height * ChartTopEmptyPercent / 100.0);
+            var top = Math.Clamp(
+                (int)Math.Round(topMargin),
+                0,
+                Math.Max(0, Height - 120));
+
             var overallBottom = Math.Max(top + 1, Height - 35);
 
             // وقتی پنل اندیکاتور/حجم مخفی است، چارت قیمت باید تمام فضای
