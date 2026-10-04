@@ -157,15 +157,7 @@ namespace Trade.It
                 {
                     try
                     {
-                        var currentDocument = currentChart.CreateAnalysisDocument();
-                        // فقط تحلیل چارت اصلی منبع مرجع ذخیره‌سازی است.
-                        // چارت‌هایی که از منوی تایم‌فریم باز شده‌اند مختصات X را
-                        // متناسب با کندل‌های خودشان نگه می‌دارند؛ ذخیره کردن آن‌ها
-                        // روی فایل مشترک باعث می‌شود هنگام برگشت به تایم اصلی،
-                        // تاریخ نقاط رسم‌شده به نزدیک‌ترین کندل تایم جدید تبدیل
-                        // شده و ابزارها جابه‌جا شوند.
-                        if (string.IsNullOrWhiteSpace(currentChart.ChartTimeFrame))
-                            ChartAnalysisStorage.Save(currentDocument);
+                        SaveAnalysisForChart(currentChart);
                     }
                     catch
                     {
@@ -284,12 +276,11 @@ namespace Trade.It
 
             try
             {
-                var document = chart.CreateAnalysisDocument();
-                ChartAnalysisStorage.Save(document);
+                SaveAnalysisForChart(chart);
 
                 MessageBox.Show(
                     this,
-                    $"تحلیل نماد «{document.Symbol}» ذخیره شد.",
+                    $"تحلیل نماد «{chart.ChartSymbol}» ذخیره شد.",
                     "ذخیره تحلیل",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -313,12 +304,47 @@ namespace Trade.It
 
             try
             {
-                ChartAnalysisStorage.Save(chart.CreateAnalysisDocument());
+                SaveAnalysisForChart(chart);
             }
             catch
             {
                 // ذخیره خودکار نباید مزاحم کاربر شود.
             }
+        }
+
+        private static bool IsPrimaryChart(TradingChartControl chart) =>
+            string.IsNullOrWhiteSpace(chart.ChartTimeFrame);
+
+        private static void CopySharedDrawings(
+            ChartAnalysisDocument target,
+            ChartAnalysisDocument source)
+        {
+            target.Drawings = source.Drawings ?? new List<ChartAnalysisDrawing>();
+            target.AdvancedDrawings = source.AdvancedDrawings ?? new List<ChartAnalysisDrawing>();
+            target.ExtraDrawings = source.ExtraDrawings ?? new List<ChartAnalysisDrawing>();
+            target.SavedAt = DateTime.Now;
+        }
+
+        private static void SaveAnalysisForChart(TradingChartControl chart)
+        {
+            var current = chart.CreateAnalysisDocument();
+
+            // چارت اصلی مالک وضعیت کامل تحلیل است؛ بنابراین رفتار تک‌چارتی
+            // بدون تغییر باقی می‌ماند و View نیز ذخیره می‌شود.
+            if (IsPrimaryChart(chart))
+            {
+                ChartAnalysisStorage.Save(current);
+                return;
+            }
+
+            // چارت‌های بازشده از «تحلیل چندتایم‌فریمی» فقط یک View از تحلیل
+            // مشترک نماد هستند. وضعیت View تایم‌فریم (زوم، پن، تعداد کندل و ...)
+            // نباید جای وضعیت چارت اصلی را در فایل مشترک بگیرد.
+            var shared = ChartAnalysisStorage.Load(chart.ChartSymbol)
+                         ?? new ChartAnalysisDocument { Symbol = chart.ChartSymbol };
+
+            CopySharedDrawings(shared, current);
+            ChartAnalysisStorage.Save(shared);
         }
 
         private void ApplyAnalysisDocument(TradingChartControl chart, ChartAnalysisDocument document, bool restoreView = true)
@@ -541,7 +567,7 @@ namespace Trade.It
             {
                 try
                 {
-                    ChartAnalysisStorage.Save(currentChart.CreateAnalysisDocument());
+                    SaveAnalysisForChart(currentChart);
                 }
                 catch
                 {
