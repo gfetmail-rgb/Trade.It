@@ -14,6 +14,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorMacdMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorStochasticMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorStochasticRsiMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorAtrMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -145,6 +146,7 @@
             indicatorMacdMenuItem = new ToolStripMenuItem();
             indicatorStochasticMenuItem = new ToolStripMenuItem();
             indicatorStochasticRsiMenuItem = new ToolStripMenuItem();
+            indicatorAtrMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -362,7 +364,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorAtrMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -404,6 +406,11 @@
             indicatorMacdMenuItem.Size = new Size(180, 34);
             indicatorMacdMenuItem.Text = "MACD";
             // 
+            // indicatorAtrMenuItem
+            //
+            indicatorAtrMenuItem.Name = "indicatorAtrMenuItem";
+            indicatorAtrMenuItem.Size = new Size(180, 34);
+            indicatorAtrMenuItem.Text = "ATR";
             // indicatorClearMenuItem
             // 
             indicatorClearMenuItem.Name = "indicatorClearMenuItem";

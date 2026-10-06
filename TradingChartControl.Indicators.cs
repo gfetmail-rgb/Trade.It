@@ -8,7 +8,8 @@ namespace Trade.It
         RelativeStrengthIndex,
         MovingAverageConvergenceDivergence,
         Stochastic,
-        StochasticRelativeStrengthIndex
+        StochasticRelativeStrengthIndex,
+        AverageTrueRange
     }
 
     internal sealed class ChartIndicator
@@ -98,12 +99,14 @@ namespace Trade.It
         private double[]? stochasticDCache;
         private double[]? stochasticRsiKCache;
         private double[]? stochasticRsiDCache;
+        private double[]? atrCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
         internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
         internal bool HasStochasticRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
+        internal bool HasAtrIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageTrueRange);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -172,6 +175,21 @@ namespace Trade.It
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        public void AddAverageTrueRange(int period = 14)
+        {
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.AverageTrueRange,
+                Period = period,
+                LineColor = Color.FromArgb(30, 100, 220),
+                BackgroundColor = BackColor
+            });
+            atrCache = null;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void AddStochastic()
@@ -416,6 +434,13 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var atrPlot = GetAtrPlotRectangle();
+            if (atrPlot != Rectangle.Empty && atrPlot.Contains(location))
+            {
+                selectedIndicatorIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.AverageTrueRange);
+                return selectedIndicatorIndex;
+            }
+
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty && stochasticRsiPlot.Contains(location))
             {
@@ -466,7 +491,8 @@ namespace Trade.It
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex ||
                     indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence ||
                     indicator.Type == ChartIndicatorType.Stochastic ||
-                    indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
+                    indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex ||
+                    indicator.Type == ChartIndicatorType.AverageTrueRange)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
@@ -1194,6 +1220,15 @@ namespace Trade.It
             stochasticRsiDCache = null;
         }
 
+        private void EnsureAtrCache(ChartIndicator indicator)
+        {
+            if (atrCache != null && atrCache.Length == points.Count)
+                return;
+            atrCache = CalculateAverageTrueRange(indicator.Period);
+        }
+
+        internal void InvalidateAtrCache() => atrCache = null;
+
         private void EnsureMacdCache(ChartIndicator indicator)
         {
             if (macdLineCache != null && macdSignalCache != null && macdHistogramCache != null &&
@@ -1275,6 +1310,36 @@ namespace Trade.It
                 return plot.Top + plot.Height / 2.0;
 
             return plot.Bottom - ((value + maxAbs) / (2.0 * maxAbs)) * plot.Height;
+        }
+
+        private double[] CalculateAverageTrueRange(int period)
+        {
+            var result = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            if (period <= 0 || points.Count < period + 1)
+                return result;
+
+            var trueRanges = new double[points.Count];
+            trueRanges[0] = points[0].High - points[0].Low;
+            for (var i = 1; i < points.Count; i++)
+            {
+                var high = points[i].High;
+                var low = points[i].Low;
+                var previousClose = points[i - 1].Close;
+                trueRanges[i] = Math.Max(high - low,
+                    Math.Max(Math.Abs(high - previousClose), Math.Abs(low - previousClose)));
+            }
+
+            var sum = 0.0;
+            for (var i = 1; i < points.Count; i++)
+            {
+                sum += trueRanges[i];
+                if (i - period >= 1)
+                    sum -= trueRanges[i - period];
+                if (i >= period)
+                    result[i] = sum / period;
+            }
+
+            return result;
         }
 
         private double[] CalculateMovingAverage(int period)

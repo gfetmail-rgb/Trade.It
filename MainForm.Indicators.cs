@@ -13,6 +13,7 @@ namespace Trade.It
             indicatorMacdMenuItem.Click += (_, _) => AddMacdToActiveChart();
             indicatorStochasticMenuItem.Click += (_, _) => AddStochasticToActiveChart();
             indicatorStochasticRsiMenuItem.Click += (_, _) => AddStochasticRsiToActiveChart();
+            indicatorAtrMenuItem.Click += (_, _) => AddAtrToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -86,6 +87,19 @@ namespace Trade.It
                 return;
             }
             chart.AddStochasticRelativeStrengthIndex();
+        }
+
+        private void AddAtrToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddAverageTrueRange(14);
         }
 
         private void AddMacdToActiveChart()

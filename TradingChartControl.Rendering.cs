@@ -158,6 +158,10 @@ namespace Trade.It
             if (stochasticPlot != Rectangle.Empty && HasStochasticIndicator)
                 RenderClippedPanel(e.Graphics, stochasticPlot, g => RenderStochasticPanel(g, stochasticPlot, panelVisible, step, initialOffset));
 
+            var atrPlot = GetAtrPlotRectangle();
+            if (atrPlot != Rectangle.Empty && HasAtrIndicator)
+                RenderClippedPanel(e.Graphics, atrPlot, g => RenderAtrPanel(g, atrPlot, panelVisible, step, initialOffset));
+
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty && HasStochasticRsiIndicator)
                 RenderClippedPanel(e.Graphics, stochasticRsiPlot, g => RenderStochasticRsiPanel(g, stochasticRsiPlot, panelVisible, step, initialOffset));
@@ -171,6 +175,9 @@ namespace Trade.It
             {
                 if (rsiPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, rsiPlot.Top - 1, plot.Right, rsiPlot.Top - 1);
+
+                if (atrPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, atrPlot.Top - 1, plot.Right, atrPlot.Top - 1);
 
                 if (volumePlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, volumePlot.Top - 1, plot.Right, volumePlot.Top - 1);
@@ -297,6 +304,10 @@ namespace Trade.It
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty)
                 return stochasticRsiPlot;
+
+            var atrPlot = GetAtrPlotRectangle();
+            if (atrPlot != Rectangle.Empty)
+                return atrPlot;
 
             var stochasticPlot = GetStochasticPlotRectangle();
             if (stochasticPlot != Rectangle.Empty)
@@ -806,6 +817,7 @@ namespace Trade.It
             public Rectangle Macd { get; init; }
             public Rectangle Stochastic { get; init; }
             public Rectangle StochasticRsi { get; init; }
+            public Rectangle Atr { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -841,6 +853,7 @@ namespace Trade.It
 
             var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var stochasticRsiHeight = HasStochasticRsiIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticRsiPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
+            var atrHeight = HasAtrIndicator ? Math.Clamp((int)Math.Round(totalHeight * atrPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
 
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
@@ -853,6 +866,7 @@ namespace Trade.It
                            (macdHeight > 0 ? macdHeight + gap : 0) +
                            (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                            (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
+                           (atrHeight > 0 ? atrHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
@@ -866,6 +880,7 @@ namespace Trade.It
                                  (macdHeight > 0 ? macdHeight + gap : 0) +
                                  (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                                  (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
+                           (atrHeight > 0 ? atrHeight + gap : 0) +
                                  (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             if (lowerRequested > availableLower && lowerRequested > 0)
@@ -875,6 +890,7 @@ namespace Trade.It
                 macdHeight = (int)Math.Floor(macdHeight * scale);
                 stochasticHeight = (int)Math.Floor(stochasticHeight * scale);
                 stochasticRsiHeight = (int)Math.Floor(stochasticRsiHeight * scale);
+                 atrHeight = (int)Math.Floor(atrHeight * scale);
                 volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
@@ -917,6 +933,15 @@ namespace Trade.It
                 cursor = stochasticRsi.Bottom;
             }
 
+            Rectangle atr = Rectangle.Empty;
+            if (atrHeight > 0)
+            {
+                var atrTop = Math.Min(overallBottom - 1, cursor + gap);
+                var atrBottom = Math.Min(overallBottom - 1, atrTop + atrHeight);
+                atr = Rectangle.FromLTRB(left, atrTop, right, Math.Max(atrTop + 1, atrBottom));
+                cursor = atr.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -931,6 +956,7 @@ namespace Trade.It
                 Macd = macd,
                 Stochastic = stochastic,
                 StochasticRsi = stochasticRsi,
+                Atr = atr,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
@@ -945,6 +971,8 @@ namespace Trade.It
         private Rectangle GetStochasticPlotRectangle() => GetLowerPanelLayout().Stochastic;
 
         private Rectangle GetStochasticRsiPlotRectangle() => GetLowerPanelLayout().StochasticRsi;
+
+        private Rectangle GetAtrPlotRectangle() => GetLowerPanelLayout().Atr;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
@@ -1168,6 +1196,61 @@ namespace Trade.It
 
                 previous = current;
             }
+        }
+
+        private void RenderAtrPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasAtrIndicator)
+                return;
+
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.AverageTrueRange);
+            EnsureAtrCache(indicator);
+            var maxValue = GetAtrScaleMax(atrCache!, firstIndex, visible.Count);
+
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+
+            using var linePen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+            for (var i = 0; i < visible.Count; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= atrCache!.Length || double.IsNaN(atrCache[absoluteIndex]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var current = new PointF(
+                    (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                    (float)AtrValueToScreen(atrCache[absoluteIndex], plot, maxValue));
+
+                if (previous.HasValue)
+                    g.DrawLine(linePen, previous.Value, current);
+                previous = current;
+            }
+
+            DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})", titleFont, indicator.LineColor);
+        }
+
+        private static double GetAtrScaleMax(double[] values, int firstIndex, int displayedCount)
+        {
+            var max = 0.0;
+            var end = Math.Min(values.Length, firstIndex + displayedCount);
+            for (var i = Math.Max(0, firstIndex); i < end; i++)
+                if (!double.IsNaN(values[i]) && !double.IsInfinity(values[i]))
+                    max = Math.Max(max, values[i]);
+            return Math.Max(max * 1.15, 1e-9);
+        }
+
+        private static double AtrValueToScreen(double value, Rectangle plot, double maxValue)
+        {
+            if (maxValue <= 1e-12)
+                return plot.Bottom - plot.Height / 2.0;
+            return plot.Bottom - (value / maxValue) * plot.Height;
         }
 
         private void RenderStochasticPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
