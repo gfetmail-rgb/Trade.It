@@ -7,7 +7,7 @@ namespace Trade.It
         private NumericUpDown tenkanPeriodNumeric, kijunPeriodNumeric, spanBPeriodNumeric, displacementNumeric;
         private CheckBox tenkanCheckBox, kijunCheckBox, spanACheckBox, spanBCheckBox, chikouCheckBox, bullishCloudCheckBox, bearishCloudCheckBox;
         private Button tenkanColorButton, kijunColorButton, spanAColorButton, spanBColorButton, chikouColorButton, bullishCloudColorButton, bearishCloudColorButton;
-        private Button okButton, cancelButton;
+        private Button defaultButton, okButton, cancelButton;
 
         protected override void Dispose(bool disposing) { if (disposing && components != null) components.Dispose(); base.Dispose(disposing); }
 
@@ -17,7 +17,7 @@ namespace Trade.It
             tenkanPeriodNumeric = new NumericUpDown(); kijunPeriodNumeric = new NumericUpDown(); spanBPeriodNumeric = new NumericUpDown(); displacementNumeric = new NumericUpDown();
             tenkanCheckBox = new CheckBox(); kijunCheckBox = new CheckBox(); spanACheckBox = new CheckBox(); spanBCheckBox = new CheckBox(); chikouCheckBox = new CheckBox(); bullishCloudCheckBox = new CheckBox(); bearishCloudCheckBox = new CheckBox();
             tenkanColorButton = new Button(); kijunColorButton = new Button(); spanAColorButton = new Button(); spanBColorButton = new Button(); chikouColorButton = new Button(); bullishCloudColorButton = new Button(); bearishCloudColorButton = new Button();
-            okButton = new Button(); cancelButton = new Button();
+            defaultButton = new Button(); okButton = new Button(); cancelButton = new Button();
             ((System.ComponentModel.ISupportInitialize)tenkanPeriodNumeric).BeginInit();
             ((System.ComponentModel.ISupportInitialize)kijunPeriodNumeric).BeginInit();
             ((System.ComponentModel.ISupportInitialize)spanBPeriodNumeric).BeginInit(); ((System.ComponentModel.ISupportInitialize)displacementNumeric).BeginInit();
@@ -36,15 +36,16 @@ namespace Trade.It
             ConfigureRow(bullishCloudCheckBox, bullishCloudColorButton, "ابر صعودی", 390);
             ConfigureRow(bearishCloudCheckBox, bearishCloudColorButton, "ابر نزولی", 430);
 
-            okButton.Text = "تأیید"; okButton.DialogResult = DialogResult.OK; okButton.Location = new Point(190, 480); okButton.Size = new Size(100, 34);
-            cancelButton.Text = "انصراف"; cancelButton.DialogResult = DialogResult.Cancel; cancelButton.Location = new Point(80, 480); cancelButton.Size = new Size(100, 34);
+            defaultButton.Text = "پیش‌فرض"; defaultButton.Location = new Point(80, 480); defaultButton.Size = new Size(100, 34);
+            okButton.Text = "تأیید"; okButton.DialogResult = DialogResult.OK; okButton.Location = new Point(300, 480); okButton.Size = new Size(100, 34);
+            cancelButton.Text = "انصراف"; cancelButton.DialogResult = DialogResult.Cancel; cancelButton.Location = new Point(190, 480); cancelButton.Size = new Size(100, 34);
             AcceptButton = okButton; CancelButton = cancelButton;
 
             Controls.AddRange(new Control[] {
                 tenkanPeriodLabel, tenkanPeriodNumeric, kijunPeriodLabel, kijunPeriodNumeric, spanBPeriodLabel, spanBPeriodNumeric, displacementLabel, displacementNumeric,
                 tenkanCheckBox, tenkanColorButton, kijunCheckBox, kijunColorButton, spanACheckBox, spanAColorButton,
                 spanBCheckBox, spanBColorButton, chikouCheckBox, chikouColorButton, bullishCloudCheckBox, bullishCloudColorButton,
-                bearishCloudCheckBox, bearishCloudColorButton, okButton, cancelButton
+                bearishCloudCheckBox, bearishCloudColorButton, defaultButton, okButton, cancelButton
             });
 
             AutoScaleDimensions = new SizeF(7F,15F); AutoScaleMode = AutoScaleMode.Font;
