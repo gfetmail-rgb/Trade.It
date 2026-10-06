@@ -38,6 +38,7 @@ namespace Trade.It
         private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private bool updatingMarketFilterTree;
         private bool handlingMarketFilterMouseCheck;
+        private bool marketFiltersEnabled;
         private bool updatingMarketAssetChecks;
         private bool updatingMarketOtherChecks;
 
@@ -53,6 +54,16 @@ namespace Trade.It
 
             marketApplyButton.Click += (_, _) =>
             {
+                if (marketFiltersEnabled)
+                {
+                    marketFiltersEnabled = false;
+                    marketApplyButton.Text = "تایید";
+                    SetMarketFiltersLocked(false);
+                    ClearAppliedMarketFiltersOnly();
+                    ApplyTradingStatusFilterWithWaitCursor();
+                    return;
+                }
+
                 appliedMarketNodeIds.Clear();
                 foreach (var nodeId in marketFilterExplicitNodeIds)
                     appliedMarketNodeIds.Add(nodeId);
@@ -60,12 +71,18 @@ namespace Trade.It
                 CopyCheckedItems(appliedMarketAssets, marketAssetCheckedListBox);
                 CopyCheckedItems(appliedMarketOtherItems, marketOtherCheckedListBox);
 
+                marketFiltersEnabled = true;
+                marketApplyButton.Text = "خاموش";
+                SetMarketFiltersLocked(true);
+
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 {
                     ApplyTradingStatusFilterWithWaitCursor();
                 }
             };
+
+            SetMarketFiltersLocked(false);
 
             clearFiltersButton.Click += ClearFiltersButton_Click;
             filterApplyButton.Click += FilterApplyButton_Click;
@@ -141,6 +158,21 @@ namespace Trade.It
             RefreshMarketFilterTreeChecks();
             SetCheckedItems(marketAssetCheckedListBox, appliedMarketAssets);
             SetOtherCheckedItems(marketOtherCheckedListBox, appliedMarketOtherItems);
+        }
+
+        private void SetMarketFiltersLocked(bool locked)
+        {
+            marketFilterTreeView.Enabled = !locked;
+            marketAssetCheckedListBox.Enabled = !locked;
+            marketOtherCheckedListBox.Enabled = !locked;
+            marketClearButton.Enabled = !locked;
+        }
+
+        private void ClearAppliedMarketFiltersOnly()
+        {
+            appliedMarketNodeIds.Clear();
+            appliedMarketAssets.Clear();
+            appliedMarketOtherItems.Clear();
         }
 
         private void ClearMarketSelections()
@@ -992,10 +1024,10 @@ namespace Trade.It
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToList();
 
-            var hasMarketFilter =
-                appliedMarketNodeIds.Count > 0 ||
-                appliedMarketAssets.Count > 0 ||
-                appliedMarketOtherItems.Count > 0;
+            var hasMarketFilter = marketFiltersEnabled &&
+                (appliedMarketNodeIds.Count > 0 ||
+                 appliedMarketAssets.Count > 0 ||
+                 appliedMarketOtherItems.Count > 0);
 
             if (!hasMarketFilter)
                 return portfolioSymbols;
