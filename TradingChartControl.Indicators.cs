@@ -34,6 +34,7 @@ namespace Trade.It
         public int IchimokuTenkanPeriod { get; set; } = 9;
         public int IchimokuKijunPeriod { get; set; } = 26;
         public int IchimokuSpanBPeriod { get; set; } = 52;
+        public int IchimokuDisplacement { get; set; } = 26;
         public bool ShowRsiLine { get; set; } = true;
         public bool ShowRsi30 { get; set; } = true;
         public bool ShowRsi70 { get; set; } = true;
@@ -346,6 +347,7 @@ namespace Trade.It
             int tenkanPeriod,
             int kijunPeriod,
             int spanBPeriod,
+            int displacement,
             bool showTenkan,
             bool showKijun,
             bool showSpanA,
@@ -369,6 +371,7 @@ namespace Trade.It
             indicator.IchimokuTenkanPeriod = Math.Clamp(tenkanPeriod, 2, Math.Max(2, points.Count));
             indicator.IchimokuKijunPeriod = Math.Clamp(kijunPeriod, 2, Math.Max(2, points.Count));
             indicator.IchimokuSpanBPeriod = Math.Clamp(spanBPeriod, 2, Math.Max(2, points.Count));
+            indicator.IchimokuDisplacement = Math.Clamp(displacement, 1, Math.Max(1, points.Count));
             indicator.ShowTenkan = showTenkan;
             indicator.ShowKijun = showKijun;
             indicator.ShowSpanA = showSpanA;
