@@ -28,7 +28,8 @@ namespace Trade.It
             indicators.Add(new ChartIndicator
             {
                 Type = ChartIndicatorType.MovingAverage,
-                Period = period
+                Period = period,
+                BackgroundColor = BackColor
             });
             Invalidate();
         }
