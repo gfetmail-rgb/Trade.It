@@ -12,7 +12,8 @@ namespace Trade.It
         AverageTrueRange,
         AverageDirectionalIndex,
         BollingerBands,
-        OnBalanceVolume
+        OnBalanceVolume,
+        VolumeWeightedAveragePrice
     }
 
     internal sealed class ChartIndicator
@@ -88,6 +89,7 @@ namespace Trade.It
         public bool ShowObvLine { get; set; } = true;
         public bool ShowObvZero { get; set; } = true;
         public Color ObvZeroColor { get; set; } = Color.FromArgb(150, 150, 150);
+        public Color VwapLineColor { get; set; } = Color.FromArgb(180, 90, 30);
         public bool ShowAdxLine { get; set; } = true;
         public bool ShowAdxPlusDi { get; set; } = true;
         public bool ShowAdxMinusDi { get; set; } = true;
@@ -130,6 +132,7 @@ namespace Trade.It
         private double[]? bollingerUpperCache;
         private double[]? bollingerLowerCache;
         private double[]? obvCache;
+        private double[]? vwapCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
@@ -140,6 +143,7 @@ namespace Trade.It
         internal bool HasAdxIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageDirectionalIndex);
         internal bool HasObvIndicator => indicators.Any(x => x.Type == ChartIndicatorType.OnBalanceVolume);
         internal bool HasBollingerIndicator => indicators.Any(x => x.Type == ChartIndicatorType.BollingerBands);
+        internal bool HasVwapIndicator => indicators.Any(x => x.Type == ChartIndicatorType.VolumeWeightedAveragePrice);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -248,6 +252,18 @@ namespace Trade.It
         {
             indicators.Add(new ChartIndicator { Type = ChartIndicatorType.OnBalanceVolume });
             InvalidateObvCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void AddVolumeWeightedAveragePrice()
+        {
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.VolumeWeightedAveragePrice,
+                VwapLineColor = Color.FromArgb(180, 90, 30)
+            });
+            InvalidateVwapCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1720,6 +1736,44 @@ namespace Trade.It
             }
         }
         internal void InvalidateObvCache() => obvCache = null;
+        private void EnsureVwapCache()
+        {
+            if (vwapCache != null && vwapCache.Length == points.Count)
+                return;
+
+            vwapCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            if (points.Count == 0)
+                return;
+
+            var cumulativePriceVolume = 0.0;
+            var cumulativeVolume = 0.0;
+            DateTime currentSessionDate = points[0].Date.Date;
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                var point = points[i];
+                if (point.Date.Date != currentSessionDate)
+                {
+                    cumulativePriceVolume = 0.0;
+                    cumulativeVolume = 0.0;
+                    currentSessionDate = point.Date.Date;
+                }
+
+                if (!double.IsFinite(point.Volume) || point.Volume <= 0)
+                    continue;
+
+                var typicalPrice = (point.High + point.Low + point.Close) / 3.0;
+                if (!double.IsFinite(typicalPrice))
+                    continue;
+
+                cumulativePriceVolume += typicalPrice * point.Volume;
+                cumulativeVolume += point.Volume;
+                if (cumulativeVolume > 0)
+                    vwapCache[i] = cumulativePriceVolume / cumulativeVolume;
+            }
+        }
+
+        internal void InvalidateVwapCache() => vwapCache = null;
 
         private double[] CalculateMovingAverage(int period)
         {
