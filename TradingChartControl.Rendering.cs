@@ -156,6 +156,10 @@ namespace Trade.It
             if (stochasticPlot != Rectangle.Empty && HasStochasticIndicator)
                 RenderStochasticPanel(e.Graphics, stochasticPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
+            var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
+            if (stochasticRsiPlot != Rectangle.Empty && HasStochasticRsiIndicator)
+                RenderStochasticRsiPanel(e.Graphics, stochasticRsiPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
@@ -170,6 +174,9 @@ namespace Trade.It
 
                 if (macdPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, macdPlot.Top - 1, plot.Right, macdPlot.Top - 1);
+
+                if (stochasticRsiPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, stochasticRsiPlot.Top - 1, plot.Right, stochasticRsiPlot.Top - 1);
             }
 
             // محور زمان: بر اساس تاریخ واقعی کندل‌ها، با تعداد Tick متناسب با فضای موجود.
@@ -1155,6 +1162,72 @@ namespace Trade.It
             var innerHeight = plot.Height * (1.0 - 2.0 * padding);
             var clamped = Math.Clamp(value, 0.0, 100.0);
             return plot.Bottom - plot.Height * padding - (clamped / 100.0 * innerHeight);
+        }
+
+        private void RenderStochasticRsiPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasStochasticRsiIndicator)
+                return;
+
+            EnsureStochasticRsiCache();
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
+
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+
+            if (indicator.ShowStochasticRsi20)
+            {
+                using var p = new Pen(indicator.StochasticRsi20Color);
+                var y = (float)IndicatorPercentToScreen(20, plot);
+                g.DrawLine(p, plot.Left, y, plot.Right, y);
+            }
+
+            if (indicator.ShowStochasticRsi80)
+            {
+                using var p = new Pen(indicator.StochasticRsi80Color);
+                var y = (float)IndicatorPercentToScreen(80, plot);
+                g.DrawLine(p, plot.Left, y, plot.Right, y);
+            }
+
+            DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiKCache!, indicator.ShowStochasticRsiK, indicator.StochasticRsiKColor);
+            DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiDCache!, indicator.ShowStochasticRsiD, indicator.StochasticRsiDColor);
+
+            var idx = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var ai = firstIndex + idx;
+            if (ai >= 0 && ai < stochasticRsiKCache!.Length && !double.IsNaN(stochasticRsiKCache[ai]))
+            {
+                var dText = double.IsNaN(stochasticRsiDCache![ai]) ? "n/a" : stochasticRsiDCache[ai].ToString("0.00");
+                using var valueBrush = new SolidBrush(indicator.StochasticRsiKColor);
+                g.DrawString($"Stoch RSI %K={stochasticRsiKCache[ai]:0.00}  %D={dText}", font, valueBrush, plot.Left + 4, plot.Top + 1);
+            }
+        }
+
+        private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
+        {
+            if (!show)
+                return;
+
+            using var pen = new Pen(color, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+
+            for (var i = 0; i < count; i++)
+            {
+                var ai = firstIndex + i;
+                if (ai < 0 || ai >= values.Length || double.IsNaN(values[ai]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var current = new PointF(
+                    (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                    (float)IndicatorPercentToScreen(values[ai], plot));
+
+                if (previous.HasValue)
+                    g.DrawLine(pen, previous.Value, current);
+                previous = current;
+            }
         }
 
         private void RenderVolumePanel(
