@@ -170,6 +170,10 @@ namespace Trade.It
             if (stochasticRsiPlot != Rectangle.Empty && HasStochasticRsiIndicator)
                 RenderClippedPanel(e.Graphics, stochasticRsiPlot, g => RenderStochasticRsiPanel(g, stochasticRsiPlot, panelVisible, step, initialOffset));
 
+            var obvPlot = GetObvPlotRectangle();
+            if (obvPlot != Rectangle.Empty && HasObvIndicator)
+                RenderClippedPanel(e.Graphics, obvPlot, g => RenderObvPanel(g, obvPlot, panelVisible, step, initialOffset));
+
             var volumePlot = GetVolumePlotRectangle();
             if (volumePlot != Rectangle.Empty)
                 RenderClippedPanel(e.Graphics, volumePlot, g => RenderVolumePanel(g, volumePlot, panelVisible, step, initialOffset));
@@ -182,6 +186,9 @@ namespace Trade.It
 
                 if (atrPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, atrPlot.Top - 1, plot.Right, atrPlot.Top - 1);
+
+                if (obvPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, obvPlot.Top - 1, plot.Right, obvPlot.Top - 1);
 
                 if (volumePlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, volumePlot.Top - 1, plot.Right, volumePlot.Top - 1);
@@ -826,6 +833,7 @@ namespace Trade.It
             public Rectangle StochasticRsi { get; init; }
             public Rectangle Atr { get; init; }
             public Rectangle Adx { get; init; }
+            public Rectangle Obv { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -863,6 +871,7 @@ namespace Trade.It
             var stochasticRsiHeight = HasStochasticRsiIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticRsiPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var atrHeight = HasAtrIndicator ? Math.Clamp((int)Math.Round(totalHeight * atrPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var adxHeight = HasAdxIndicator ? Math.Clamp((int)Math.Round(totalHeight * adxPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
+            var obvHeight = HasObvIndicator ? Math.Clamp((int)Math.Round(totalHeight * obvPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
 
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
@@ -877,6 +886,7 @@ namespace Trade.It
                            (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
                            (adxHeight > 0 ? adxHeight + gap : 0) +
+                           (obvHeight > 0 ? obvHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
@@ -892,6 +902,7 @@ namespace Trade.It
                                  (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
                            (adxHeight > 0 ? adxHeight + gap : 0) +
+                                 (obvHeight > 0 ? obvHeight + gap : 0) +
                                  (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             if (lowerRequested > availableLower && lowerRequested > 0)
@@ -903,6 +914,7 @@ namespace Trade.It
                 stochasticRsiHeight = (int)Math.Floor(stochasticRsiHeight * scale);
                  atrHeight = (int)Math.Floor(atrHeight * scale);
                 adxHeight = (int)Math.Floor(adxHeight * scale);
+                obvHeight = (int)Math.Floor(obvHeight * scale);
                 volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
@@ -963,6 +975,15 @@ namespace Trade.It
                 cursor = adx.Bottom;
             }
 
+            Rectangle obv = Rectangle.Empty;
+            if (obvHeight > 0)
+            {
+                var obvTop = Math.Min(overallBottom - 1, cursor + gap);
+                var obvBottom = Math.Min(overallBottom - 1, obvTop + obvHeight);
+                obv = Rectangle.FromLTRB(left, obvTop, right, Math.Max(obvTop + 1, obvBottom));
+                cursor = obv.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -979,6 +1000,7 @@ namespace Trade.It
                 StochasticRsi = stochasticRsi,
                 Atr = atr,
                 Adx = adx,
+                Obv = obv,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
@@ -996,6 +1018,7 @@ namespace Trade.It
 
         private Rectangle GetAtrPlotRectangle() => GetLowerPanelLayout().Atr;
         private Rectangle GetAdxPlotRectangle() => GetLowerPanelLayout().Adx;
+        private Rectangle GetObvPlotRectangle() => GetLowerPanelLayout().Obv;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
@@ -1461,6 +1484,33 @@ namespace Trade.It
             var x = plot.Right - size.Width - 4f;
             var y = plot.Top + 1f;
             g.DrawString(title, boldFont, brush, x, y);
+        }
+
+        private void RenderObvPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasObvIndicator) return;
+            EnsureObvCache();
+            using var axisPen = new Pen(Color.FromArgb(150,150,150),1f);
+            using var textBrush = new SolidBrush(Color.FromArgb(85,85,85));
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+            var start = Math.Max(0, firstIndex);
+            var end = Math.Min(obvCache!.Length, firstIndex + visible.Count);
+            var min = double.MaxValue; var max = double.MinValue;
+            for (var i=start;i<end;i++) if(double.IsFinite(obvCache[i])) { min=Math.Min(min,obvCache[i]); max=Math.Max(max,obvCache[i]); }
+            if (min == double.MaxValue) return;
+            var range=Math.Max(1e-12,max-min); var pad=range*0.08; min-=pad; max+=pad;
+            double Y(double v)=>plot.Bottom-((v-min)/(max-min))*plot.Height;
+            foreach(var indicator in indicators.Where(x=>x.Type==ChartIndicatorType.OnBalanceVolume))
+            {
+                if(indicator.ShowObvZero && min<=0 && max>=0){using var zp=new Pen(indicator.ObvZeroColor,1f);var zy=(float)Y(0);g.DrawLine(zp,plot.Left,zy,plot.Right,zy);}
+                if(!indicator.ShowObvLine) continue;
+                using var pen=new Pen(indicator.ObvLineColor,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth));
+                PointF? prev=null;
+                for(var i=0;i<visible.Count;i++){var ai=firstIndex+i;if(ai<0||ai>=obvCache.Length||!double.IsFinite(obvCache[ai])){prev=null;continue;}var pt=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)Y(obvCache[ai]));if(prev.HasValue)g.DrawLine(pen,prev.Value,pt);prev=pt;}
+                DrawIndicatorPanelTitle(g,plot,"OBV",titleFont,indicator.ObvLineColor);
+            }
         }
 
         private void RenderVolumePanel(
