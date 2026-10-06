@@ -327,33 +327,31 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
+                if (indicator.Type == ChartIndicatorType.Ichimoku)
+                {
+                    DrawIchimoku(g, plot, min, max, displayedCount, step, initialOffset, indicator);
+                    continue;
+                }
+
                 var values = indicator.Type == ChartIndicatorType.MovingAverage
                     ? CalculateMovingAverage(indicator.Period)
                     : CalculateExponentialMovingAverage(indicator.Period);
 
-                using var pen = new Pen(
-                    indicator.LineColor,
-                    Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
-
+                using var pen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
                 var linePoints = new List<PointF>();
                 for (var i = 0; i < displayedCount; i++)
                 {
                     var absoluteIndex = firstIndex + i;
                     if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
                         continue;
-
                     var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
-                    var y = PriceToScreen(values[absoluteIndex], plot, min, max);
-                    linePoints.Add(new PointF(x, y));
+                    linePoints.Add(new PointF(x, PriceToScreen(values[absoluteIndex], plot, min, max)));
                 }
 
                 if (linePoints.Count > 1)
                     g.DrawLines(pen, linePoints.ToArray());
 
-                var label = indicator.Type == ChartIndicatorType.MovingAverage
-                    ? $"MA({indicator.Period})"
-                    : $"EMA({indicator.Period})";
-
+                var label = indicator.Type == ChartIndicatorType.MovingAverage ? $"MA({indicator.Period})" : $"EMA({indicator.Period})";
                 if (linePoints.Count > 0)
                 {
                     using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
@@ -361,6 +359,123 @@ namespace Trade.It
                     var p = linePoints[^1];
                     g.DrawString(label, labelFont, labelBrush, p.X + 4f, Math.Clamp(p.Y - 10f, plot.Top, plot.Bottom - 14f));
                 }
+            }
+        }
+
+        private void DrawIchimoku(
+            Graphics g,
+            Rectangle plot,
+            double min,
+            double max,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            ChartIndicator indicator)
+        {
+            var tenkan = CalculateIchimokuTenkan();
+            var kijun = CalculateIchimokuKijun();
+            var spanA = CalculateIchimokuSpanA(tenkan, kijun);
+            var spanB = CalculateIchimokuSpanB();
+            var chikou = points.Select(p => p.Close).ToArray();
+
+            DrawIchimokuCloud(g, plot, min, max, displayedCount, step, initialOffset,
+                spanA, spanB, indicator.ShowBullishCloud, indicator.ShowBearishCloud,
+                indicator.BullishCloudColor, indicator.BearishCloudColor);
+
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, tenkan, 0, indicator.ShowTenkan, indicator.TenkanColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, kijun, 0, indicator.ShowKijun, indicator.KijunColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanA, 26, indicator.ShowSpanA, indicator.SpanAColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanB, 26, indicator.ShowSpanB, indicator.SpanBColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, chikou, -26, indicator.ShowChikou, indicator.ChikouColor);
+        }
+
+        private void DrawIchimokuLine(
+            Graphics g,
+            Rectangle plot,
+            double min,
+            double max,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            double[] values,
+            int shift,
+            bool show,
+            Color color)
+        {
+            if (!show) return;
+
+            using var pen = new Pen(color, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+
+            for (var sourceIndex = 0; sourceIndex < values.Length; sourceIndex++)
+            {
+                if (double.IsNaN(values[sourceIndex]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var screenIndex = sourceIndex - firstIndex + shift;
+                if (screenIndex < -1 || screenIndex > displayedCount)
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var point = new PointF(
+                    (float)(plot.Left + step * (screenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                    PriceToScreen(values[sourceIndex], plot, min, max));
+
+                if (previous.HasValue)
+                    g.DrawLine(pen, previous.Value, point);
+
+                previous = point;
+            }
+        }
+
+        private void DrawIchimokuCloud(
+            Graphics g,
+            Rectangle plot,
+            double min,
+            double max,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            double[] spanA,
+            double[] spanB,
+            bool showBullish,
+            bool showBearish,
+            Color bullishColor,
+            Color bearishColor)
+        {
+            for (var sourceIndex = 0; sourceIndex < points.Count - 1; sourceIndex++)
+            {
+                if (double.IsNaN(spanA[sourceIndex]) || double.IsNaN(spanB[sourceIndex]) ||
+                    double.IsNaN(spanA[sourceIndex + 1]) || double.IsNaN(spanB[sourceIndex + 1]))
+                    continue;
+
+                var screenIndex = sourceIndex - firstIndex + 26;
+                var nextScreenIndex = screenIndex + 1;
+                if (nextScreenIndex < 0 || screenIndex > displayedCount)
+                    continue;
+
+                var bullish = spanA[sourceIndex] >= spanB[sourceIndex];
+                if ((bullish && !showBullish) || (!bullish && !showBearish))
+                    continue;
+
+                var x1 = (float)(plot.Left + step * (screenIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var x2 = (float)(plot.Left + step * (nextScreenIndex + 0.5) + initialOffset + horizontalPanOffset);
+                var yA1 = PriceToScreen(spanA[sourceIndex], plot, min, max);
+                var yB1 = PriceToScreen(spanB[sourceIndex], plot, min, max);
+                var yA2 = PriceToScreen(spanA[sourceIndex + 1], plot, min, max);
+                var yB2 = PriceToScreen(spanB[sourceIndex + 1], plot, min, max);
+
+                using var brush = new SolidBrush(Color.FromArgb(45, bullish ? bullishColor : bearishColor));
+                g.FillPolygon(brush, new[]
+                {
+                    new PointF(x1, yA1), new PointF(x2, yA2),
+                    new PointF(x2, yB2), new PointF(x1, yB1)
+                });
             }
         }
 
