@@ -5,6 +5,7 @@ namespace Trade.It
         public int TenkanPeriod => (int)tenkanPeriodNumeric.Value;
         public int KijunPeriod => (int)kijunPeriodNumeric.Value;
         public int SpanBPeriod => (int)spanBPeriodNumeric.Value;
+        public int Displacement => (int)displacementNumeric.Value;
         public bool ShowTenkan => tenkanCheckBox.Checked;
         public bool ShowKijun => kijunCheckBox.Checked;
         public bool ShowSpanA => spanACheckBox.Checked;
@@ -35,10 +36,13 @@ namespace Trade.It
             kijunPeriodNumeric.Maximum = max;
             spanBPeriodNumeric.Minimum = 2;
             spanBPeriodNumeric.Maximum = max;
+            displacementNumeric.Minimum = 1;
+            displacementNumeric.Maximum = max;
 
             tenkanPeriodNumeric.Value = Math.Clamp(indicator.IchimokuTenkanPeriod, 2, max);
             kijunPeriodNumeric.Value = Math.Clamp(indicator.IchimokuKijunPeriod, 2, max);
             spanBPeriodNumeric.Value = Math.Clamp(indicator.IchimokuSpanBPeriod, 2, max);
+            displacementNumeric.Value = Math.Clamp(indicator.IchimokuDisplacement, 1, max);
 
             tenkanCheckBox.Checked = indicator.ShowTenkan;
             kijunCheckBox.Checked = indicator.ShowKijun;
