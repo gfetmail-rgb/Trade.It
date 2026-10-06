@@ -9,14 +9,16 @@ namespace Trade.It
     internal sealed class ChartIndicator
     {
         public ChartIndicatorType Type { get; init; }
-        public int Period { get; init; }
+        public int Period { get; set; }
     }
 
     internal sealed partial class TradingChartControl
     {
         private readonly List<ChartIndicator> indicators = new();
+        private int selectedIndicatorIndex = -1;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
+        public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
         {
@@ -40,25 +42,114 @@ namespace Trade.It
             Invalidate();
         }
 
-        public bool RemoveOneIndicator(ChartIndicatorType type)
+        public bool RemoveIndicatorAt(int index)
         {
-            for (var i = indicators.Count - 1; i >= 0; i--)
-            {
-                if (indicators[i].Type != type)
-                    continue;
+            if (index < 0 || index >= indicators.Count)
+                return false;
 
-                indicators.RemoveAt(i);
-                Invalidate();
-                return true;
-            }
+            indicators.RemoveAt(index);
+            selectedIndicatorIndex = -1;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
 
-            return false;
+        public bool SetIndicatorPeriod(int index, int period)
+        {
+            if (index < 0 || index >= indicators.Count || points.Count < 2)
+                return false;
+
+            period = Math.Clamp(period, 2, points.Count);
+            indicators[index].Period = period;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public void RemoveAllIndicators()
         {
             indicators.Clear();
+            selectedIndicatorIndex = -1;
             Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal int HitTestIndicator(Point location)
+        {
+            if (indicators.Count == 0 || points.Count == 0 || !GetPlotRectangle().Contains(location))
+                return -1;
+
+            var plot = GetPlotRectangle();
+            var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
+            var displayedCount = endIndex - firstIndex;
+            if (displayedCount <= 0)
+                return -1;
+
+            var visible = points.Skip(firstIndex).Take(displayedCount).ToList();
+            if (visible.Count == 0)
+                return -1;
+
+            GetVerticalRange(visible, out var min, out var max);
+            var step = plot.Width / (double)Math.Max(1, visibleCount);
+            var initialOffset = -plot.Width * 0.25;
+            const double tolerance = 8.0;
+
+            var bestIndex = -1;
+            var bestDistance = double.MaxValue;
+
+            for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
+            {
+                var indicator = indicators[indicatorIndex];
+                var values = indicator.Type == ChartIndicatorType.MovingAverage
+                    ? CalculateMovingAverage(indicator.Period)
+                    : CalculateExponentialMovingAverage(indicator.Period);
+
+                PointF? previous = null;
+                for (var i = 0; i < displayedCount; i++)
+                {
+                    var absoluteIndex = firstIndex + i;
+                    if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
+                    {
+                        previous = null;
+                        continue;
+                    }
+
+                    var current = new PointF(
+                        (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                        (float)PriceToScreen(values[absoluteIndex], plot, min, max));
+
+                    if (previous.HasValue)
+                    {
+                        var distance = DistanceToSegment(location, previous.Value, current);
+                        if (distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+
+                    previous = current;
+                }
+            }
+
+            selectedIndicatorIndex = bestDistance <= tolerance ? bestIndex : -1;
+            return selectedIndicatorIndex;
+        }
+
+        private static double DistanceToSegment(Point p, PointF a, PointF b)
+        {
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+            if (dx == 0 && dy == 0)
+                return Math.Sqrt(Math.Pow(p.X - a.X, 2) + Math.Pow(p.Y - a.Y, 2));
+
+            var t = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / (dx * dx + dy * dy);
+            t = Math.Clamp(t, 0.0, 1.0);
+
+            var x = a.X + t * dx;
+            var y = a.Y + t * dy;
+            return Math.Sqrt(Math.Pow(p.X - x, 2) + Math.Pow(p.Y - y, 2));
         }
 
         private void DrawIndicators(
