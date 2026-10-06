@@ -1353,7 +1353,7 @@ namespace Trade.It
             DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})={valueText}", titleFont, indicator.AdxLineColor);
         }
 
-        private static void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
+        private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
         {
             if (!show) return;
 
