@@ -302,7 +302,7 @@ namespace Trade.It
                 return;
 
             var axisBottom = volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom;
-            var axisY = axisBottom + 1f;
+            var axisY = axisBottom - 1f;
             g.DrawLine(axisPen, plot.Left, axisBottom, plot.Right, axisBottom);
 
             var sample = visible.Take(displayedCount).ToList();
@@ -368,7 +368,7 @@ namespace Trade.It
                     labelFont,
                     textBrush,
                     labelX,
-                    axisY + 4f);
+                    axisBottom + 4f);
             }
         }
 
@@ -793,7 +793,7 @@ namespace Trade.It
                 0,
                 Math.Max(0, Height - 120));
 
-            var overallBottom = Math.Max(top + 1, Height - 35);
+            var overallBottom = Math.Max(top + 1, Height - 55);
             var totalHeight = Math.Max(1, overallBottom - top);
             var gap = Math.Clamp(volumePanelGap, 2, 30);
 
