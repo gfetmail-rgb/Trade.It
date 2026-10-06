@@ -40,6 +40,21 @@ namespace Trade.It
             Invalidate();
         }
 
+        public bool RemoveOneIndicator(ChartIndicatorType type)
+        {
+            for (var i = indicators.Count - 1; i >= 0; i--)
+            {
+                if (indicators[i].Type != type)
+                    continue;
+
+                indicators.RemoveAt(i);
+                Invalidate();
+                return true;
+            }
+
+            return false;
+        }
+
         public void RemoveAllIndicators()
         {
             indicators.Clear();
