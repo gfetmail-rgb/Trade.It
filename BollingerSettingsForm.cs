@@ -24,7 +24,7 @@ namespace Trade.It
             middleColorButton.Click+=(_,_)=>Pick(middleColorButton); upperColorButton.Click+=(_,_)=>Pick(upperColorButton); lowerColorButton.Click+=(_,_)=>Pick(lowerColorButton);
             defaultButton.Click+=(_,_)=>ApplyDefaults(); okButton.Click+=(_,_)=>DialogResult=DialogResult.OK; cancelButton.Click+=(_,_)=>DialogResult=DialogResult.Cancel;
         }
-        private void ApplyDefaults(){periodNumeric.Value=Math.Min(20,periodNumeric.Maximum);stdNumeric.Value=2;middleCheckBox.Checked=upperCheckBox.Checked=lowerCheckBox.Checked=true;SetColor(middleColorButton,Color.FromArgb(30,100,220));SetColor(upperColorButton,Color.FromArgb(50,160,80));SetColor(lowerColorButton,Color.FromArgb(220,80,80));}
+        private void ApplyDefaults(){periodNumeric.Value=Math.Min(20m,periodNumeric.Maximum);stdNumeric.Value=2;middleCheckBox.Checked=upperCheckBox.Checked=lowerCheckBox.Checked=true;SetColor(middleColorButton,Color.FromArgb(30,100,220));SetColor(upperColorButton,Color.FromArgb(50,160,80));SetColor(lowerColorButton,Color.FromArgb(220,80,80));}
         private static void SetColor(Button b,Color c){b.BackColor=c;b.ForeColor=Color.White;}
         private static void Pick(Button b){using var d=new ColorDialog{Color=b.BackColor};if(d.ShowDialog()==DialogResult.OK)SetColor(b,d.Color);}
     }
