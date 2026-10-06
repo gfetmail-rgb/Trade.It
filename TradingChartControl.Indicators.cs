@@ -191,9 +191,7 @@ namespace Trade.It
                     : CalculateExponentialMovingAverage(indicator.Period);
 
                 using var pen = new Pen(
-                    indicator.Type == ChartIndicatorType.MovingAverage
-                        ? Color.FromArgb(30, 100, 220)
-                        : Color.FromArgb(210, 80, 30),
+                    indicator.LineColor,
                     Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
 
                 var linePoints = new List<PointF>();
