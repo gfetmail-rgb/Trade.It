@@ -1032,8 +1032,8 @@ namespace Trade.It
             if (visible.Count == 0 || macdPlot.Width <= 0 || macdPlot.Height <= 0 || !HasMacdIndicator)
                 return;
 
-            var indicator = indicators.First(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
-            EnsureMacdCache(indicator);
+            var macdIndicator = indicators.First(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
+            EnsureMacdCache(macdIndicator);
             var maxAbs = GetMacdScaleMax(macdLineCache!, macdSignalCache!, macdHistogramCache!, firstIndex, visible.Count);
 
             using var separatorPen = new Pen(Color.FromArgb(170, 170, 170), 1f);
