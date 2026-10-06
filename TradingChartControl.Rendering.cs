@@ -1513,6 +1513,10 @@ namespace Trade.It
         private void RenderObvPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
         {
             if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasObvIndicator) return;
+            // اگر دادهٔ حجم در کل سری وجود نداشته باشد، OBV قابل محاسبه نیست و پنل باید بدون خطا خالی بماند.
+            if (!points.Any(x => x.Volume > 0))
+                return;
+
             EnsureObvCache();
             using var axisPen = new Pen(Color.FromArgb(150,150,150),1f);
             using var textBrush = new SolidBrush(Color.FromArgb(85,85,85));
@@ -1550,6 +1554,10 @@ namespace Trade.It
             double initialOffset)
         {
             if (visible.Count == 0 || volumePlot.Width <= 0 || volumePlot.Height <= 0)
+                return;
+
+            // نبودن ستون حجم یا صفر بودن کل مقادیر حجم نباید خطا ایجاد کند؛ در این حالت پنل حجم خالی می‌ماند.
+            if (!visible.Any(x => x.Volume > 0))
                 return;
 
             using var separatorPen = new Pen(Color.FromArgb(170, 170, 170), 1f);
