@@ -1339,17 +1339,6 @@ namespace Trade.It
 
             var minText = minVolume.ToString("N0");
             g.DrawString(minText, labelFont, textBrush, volumePlot.Left + 4f, volumePlot.Bottom - labelFont.GetHeight(g) - 1f);
-
-            // مقدار حجم باید مربوط به کندل زیر کراس باشد، نه بیشترین حجم پنل.
-            var volumeIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
-                ? crosshairIndex
-                : visible.Count - 1;
-            var currentVolume = visible[Math.Clamp(volumeIndex, 0, visible.Count - 1)].Volume;
-            var volumeText = $"حجم={currentVolume.ToString("N0", CultureInfo.InvariantCulture)}";
-
-            using var titleBrush = new SolidBrush(Color.FromArgb(90, 90, 90));
-            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            g.DrawString(volumeText, titleFont, titleBrush, volumePlot.Left + 4f, volumePlot.Top + 1f);
         }
 
         private void GetVerticalRange(List<TradingChartPoint> visible, out double min, out double max)
