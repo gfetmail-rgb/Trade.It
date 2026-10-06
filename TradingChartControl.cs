@@ -87,7 +87,10 @@ namespace Trade.It
             PriceStochastic,
             RsiStochastic,
             MacdStochastic,
-            StochasticRsi,
+            PriceStochasticRsi,
+            RsiStochasticRsi,
+            MacdStochasticRsi,
+            StochasticStochasticRsi,
             StochasticRsiVolume,
             StochasticVolume
         }
@@ -933,10 +936,10 @@ namespace Trade.It
             if (HasStochasticRsiIndicator && !layout.StochasticRsi.IsEmpty &&
                 Math.Abs(y - layout.StochasticRsi.Top) <= tolerance)
             {
-                if (HasStochasticIndicator) return LowerPanelSplitter.StochasticRsi;
-                if (HasMacdIndicator) return LowerPanelSplitter.MacdStochastic;
-                if (HasRsiIndicator) return LowerPanelSplitter.RsiStochastic;
-                return LowerPanelSplitter.PriceStochastic;
+                if (HasStochasticIndicator) return LowerPanelSplitter.StochasticStochasticRsi;
+                if (HasMacdIndicator) return LowerPanelSplitter.MacdStochasticRsi;
+                if (HasRsiIndicator) return LowerPanelSplitter.RsiStochasticRsi;
+                return LowerPanelSplitter.PriceStochasticRsi;
             }
 
             if (HasStochasticIndicator && !layout.Stochastic.IsEmpty &&
@@ -946,6 +949,10 @@ namespace Trade.It
                 if (HasRsiIndicator) return LowerPanelSplitter.RsiStochastic;
                 return LowerPanelSplitter.PriceStochastic;
             }
+
+            if (HasStochasticRsiIndicator && volumePanelVisible && !layout.Volume.IsEmpty &&
+                Math.Abs(y - layout.Volume.Top) <= tolerance)
+                return LowerPanelSplitter.StochasticRsiVolume;
 
             if (HasStochasticIndicator && volumePanelVisible && !layout.Volume.IsEmpty &&
                 Math.Abs(y - layout.Volume.Top) <= tolerance)
@@ -1057,6 +1064,55 @@ namespace Trade.It
                     var scale = sum / (first + second); first *= scale; second *= scale;
                     if (activeLowerPanelSplitter == LowerPanelSplitter.RsiStochastic) { rsiPanelRatio = first; stochasticPanelRatio = second; }
                     else { macdPanelRatio = first; stochasticPanelRatio = second; }
+                    break;
+                }
+
+                case LowerPanelSplitter.PriceStochasticRsi when HasStochasticRsiIndicator && !HasRsiIndicator && !HasMacdIndicator && !HasStochasticIndicator:
+                    stochasticRsiPanelRatio = Math.Clamp(lowerPanelResizeStartStochasticRsiRatio - deltaRatio, 0.06, Math.Max(0.06, 1.0 - minPriceRatio - gapRatio - (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
+
+                case LowerPanelSplitter.RsiStochasticRsi when HasRsiIndicator && HasStochasticRsiIndicator && !HasMacdIndicator && !HasStochasticIndicator:
+                case LowerPanelSplitter.MacdStochasticRsi when HasMacdIndicator && HasStochasticRsiIndicator && !HasRsiIndicator && !HasStochasticIndicator:
+                case LowerPanelSplitter.StochasticStochasticRsi when HasStochasticIndicator && HasStochasticRsiIndicator:
+                {
+                    var firstStart = HasStochasticIndicator ? lowerPanelResizeStartStochasticRatio :
+                                     HasMacdIndicator ? lowerPanelResizeStartMacdRatio :
+                                     lowerPanelResizeStartRsiRatio;
+                    var sum = firstStart + lowerPanelResizeStartStochasticRsiRatio;
+                    var first = firstStart + deltaRatio;
+                    var second = sum - first;
+                    first = Math.Max(0.06, first);
+                    second = Math.Max(0.06, second);
+                    var scale = sum / Math.Max(0.0001, first + second);
+                    first *= scale;
+                    second *= scale;
+
+                    if (HasStochasticIndicator)
+                    {
+                        stochasticPanelRatio = first;
+                        stochasticRsiPanelRatio = second;
+                    }
+                    else if (HasMacdIndicator)
+                    {
+                        macdPanelRatio = first;
+                        stochasticRsiPanelRatio = second;
+                    }
+                    else
+                    {
+                        rsiPanelRatio = first;
+                        stochasticRsiPanelRatio = second;
+                    }
+                    break;
+                }
+
+                case LowerPanelSplitter.StochasticRsiVolume when HasStochasticRsiIndicator && volumePanelVisible:
+                {
+                    var sum = lowerPanelResizeStartStochasticRsiRatio + lowerPanelResizeStartVolumeRatio;
+                    var stochasticRsi = Math.Max(0.06, lowerPanelResizeStartStochasticRsiRatio + deltaRatio);
+                    var volume = Math.Max(minVolumeRatio, sum - stochasticRsi);
+                    stochasticRsi = sum - volume;
+                    stochasticRsiPanelRatio = stochasticRsi;
+                    volumePanelRatio = volume;
                     break;
                 }
 
