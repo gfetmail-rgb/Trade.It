@@ -148,6 +148,10 @@ namespace Trade.It
             if (rsiPlot != Rectangle.Empty)
                 RenderRsiPanel(e.Graphics, rsiPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
+            var macdPlot = GetMacdPlotRectangle();
+            if (macdPlot != Rectangle.Empty)
+                RenderMacdPanel(e.Graphics, macdPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
@@ -159,6 +163,9 @@ namespace Trade.It
 
                 if (volumePlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, volumePlot.Top - 1, plot.Right, volumePlot.Top - 1);
+
+                if (macdPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, macdPlot.Top - 1, plot.Right, macdPlot.Top - 1);
             }
 
             // محور زمان: بر اساس تاریخ واقعی کندل‌ها، با تعداد Tick متناسب با فضای موجود.
@@ -757,6 +764,7 @@ namespace Trade.It
         {
             public Rectangle Price { get; init; }
             public Rectangle Rsi { get; init; }
+            public Rectangle Macd { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -783,6 +791,13 @@ namespace Trade.It
                     Math.Max(60, totalHeight / 2))
                 : 0;
 
+            var macdHeight = HasMacdIndicator
+                ? Math.Clamp(
+                    (int)Math.Round(totalHeight * macdPanelRatio),
+                    60,
+                    Math.Max(60, totalHeight / 2))
+                : 0;
+
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
                     (int)Math.Round(totalHeight * volumePanelRatio),
@@ -791,6 +806,7 @@ namespace Trade.It
                 : 0;
 
             var reserved = (rsiHeight > 0 ? rsiHeight + gap : 0) +
+                           (macdHeight > 0 ? macdHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
@@ -801,12 +817,14 @@ namespace Trade.It
             // پنل‌های پایین تا حد ممکن کوچک می‌شوند اما هیچ‌گاه روی هم نمی‌افتند.
             var availableLower = Math.Max(0, overallBottom - priceBottom);
             var lowerRequested = (rsiHeight > 0 ? rsiHeight + gap : 0) +
+                                 (macdHeight > 0 ? macdHeight + gap : 0) +
                                  (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             if (lowerRequested > availableLower && lowerRequested > 0)
             {
                 var scale = availableLower / (double)lowerRequested;
                 rsiHeight = (int)Math.Floor(rsiHeight * scale);
+                macdHeight = (int)Math.Floor(macdHeight * scale);
                 volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
@@ -822,6 +840,15 @@ namespace Trade.It
                 cursor = rsi.Bottom;
             }
 
+            Rectangle macd = Rectangle.Empty;
+            if (macdHeight > 0)
+            {
+                var macdTop = Math.Min(overallBottom - 1, cursor + gap);
+                var macdBottom = Math.Min(overallBottom - 1, macdTop + macdHeight);
+                macd = Rectangle.FromLTRB(left, macdTop, right, Math.Max(macdTop + 1, macdBottom));
+                cursor = macd.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -833,6 +860,7 @@ namespace Trade.It
             {
                 Price = price,
                 Rsi = rsi,
+                Macd = macd,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
@@ -841,6 +869,8 @@ namespace Trade.It
         private Rectangle GetPlotRectangle() => GetLowerPanelLayout().Price;
 
         private Rectangle GetRsiPlotRectangle() => GetLowerPanelLayout().Rsi;
+
+        private Rectangle GetMacdPlotRectangle() => GetLowerPanelLayout().Macd;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
@@ -934,6 +964,133 @@ namespace Trade.It
                     using var valueBrush = new SolidBrush(indicator.RsiLineColor);
                     g.DrawString(valueText, titleFont, valueBrush, rsiPlot.Left + 4f, rsiPlot.Top + 1f);
                 }
+            }
+        }
+
+        private void RenderMacdPanel(
+            Graphics g,
+            Rectangle macdPlot,
+            List<TradingChartPoint> visible,
+            double step,
+            double initialOffset)
+        {
+            if (visible.Count == 0 || macdPlot.Width <= 0 || macdPlot.Height <= 0 || !HasMacdIndicator)
+                return;
+
+            EnsureMacdCache();
+            var maxAbs = GetMacdScaleMax(macdLineCache!, macdSignalCache!, macdHistogramCache!, firstIndex, visible.Count);
+
+            using var separatorPen = new Pen(Color.FromArgb(170, 170, 170), 1f);
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var textBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+
+            g.DrawLine(separatorPen, macdPlot.Left, macdPlot.Top, macdPlot.Right, macdPlot.Top);
+            g.DrawLine(axisPen, macdPlot.Left, macdPlot.Bottom, macdPlot.Right, macdPlot.Bottom);
+            g.DrawLine(axisPen, macdPlot.Left, macdPlot.Top, macdPlot.Left, macdPlot.Bottom);
+
+            var indicatorsToDraw = indicators
+                .Where(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+                .ToList();
+
+            foreach (var indicator in indicatorsToDraw)
+            {
+                if (indicator.ShowMacdZero)
+                {
+                    using var zeroPen = new Pen(indicator.MacdZeroColor, Math.Max(1f, LineAppearanceSettings.ChartLineWidth));
+                    var zeroY = (float)MacdValueToScreen(0, macdPlot, maxAbs);
+                    g.DrawLine(zeroPen, macdPlot.Left, zeroY, macdPlot.Right, zeroY);
+                    g.DrawString("0", titleFont, textBrush, macdPlot.Left + 4f, zeroY - titleFont.GetHeight(g));
+                }
+
+                if (indicator.ShowMacdHistogram)
+                {
+                    var zeroY = (float)MacdValueToScreen(0, macdPlot, maxAbs);
+                    var barWidth = Math.Max(2f, (float)(step * 0.65));
+                    for (var i = 0; i < visible.Count; i++)
+                    {
+                        var absoluteIndex = firstIndex + i;
+                        if (absoluteIndex < 0 || absoluteIndex >= macdHistogramCache!.Length ||
+                            double.IsNaN(macdHistogramCache[absoluteIndex]))
+                            continue;
+
+                        var value = macdHistogramCache[absoluteIndex];
+                        var y = (float)MacdValueToScreen(value, macdPlot, maxAbs);
+                        var top = Math.Min(zeroY, y);
+                        var bottom = Math.Max(zeroY, y);
+                        var x = (float)(macdPlot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                        var rect = RectangleF.FromLTRB(
+                            x - barWidth / 2f,
+                            top,
+                            x + barWidth / 2f,
+                            Math.Max(top + 1f, bottom));
+
+                        var histogramColor = value >= 0
+                            ? indicator.MacdBullishHistogramColor
+                            : indicator.MacdBearishHistogramColor;
+                        using var brush = new SolidBrush(histogramColor);
+                        using var pen = new Pen(histogramColor, 1f);
+                        g.FillRectangle(brush, rect);
+                        g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    }
+                }
+
+                DrawMacdLine(g, macdPlot, macdLineCache!, visible.Count, step, initialOffset,
+                    maxAbs, indicator.ShowMacdLine, indicator.MacdLineColor);
+                DrawMacdLine(g, macdPlot, macdSignalCache!, visible.Count, step, initialOffset,
+                    maxAbs, indicator.ShowMacdSignal, indicator.MacdSignalColor);
+
+                var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
+                    ? crosshairIndex
+                    : visible.Count - 1;
+                if (crossIndex >= 0)
+                {
+                    var absoluteIndex = firstIndex + crossIndex;
+                    if (absoluteIndex >= 0 && absoluteIndex < macdHistogramCache!.Length &&
+                        !double.IsNaN(macdHistogramCache[absoluteIndex]))
+                    {
+                        var valueText = $"MACD={macdLineCache![absoluteIndex]:0.#####}  Signal={macdSignalCache![absoluteIndex]:0.#####}";
+                        using var valueBrush = new SolidBrush(indicator.MacdLineColor);
+                        g.DrawString(valueText, titleFont, valueBrush, macdPlot.Left + 4f, macdPlot.Top + 1f);
+                    }
+                }
+            }
+        }
+
+        private void DrawMacdLine(
+            Graphics g,
+            Rectangle plot,
+            double[] values,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            double maxAbs,
+            bool show,
+            Color color)
+        {
+            if (!show)
+                return;
+
+            using var pen = new Pen(color, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var current = new PointF(
+                    (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                    (float)MacdValueToScreen(values[absoluteIndex], plot, maxAbs));
+
+                if (previous.HasValue)
+                    g.DrawLine(pen, previous.Value, current);
+
+                previous = current;
             }
         }
 
