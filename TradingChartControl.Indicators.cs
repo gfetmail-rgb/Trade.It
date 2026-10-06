@@ -9,7 +9,8 @@ namespace Trade.It
         MovingAverageConvergenceDivergence,
         Stochastic,
         StochasticRelativeStrengthIndex,
-        AverageTrueRange
+        AverageTrueRange,
+        AverageDirectionalIndex
     }
 
     internal sealed class ChartIndicator
@@ -73,6 +74,14 @@ namespace Trade.It
         public Color StochasticRsiDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color StochasticRsi20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color StochasticRsi80Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public bool ShowAdxLine { get; set; } = true;
+        public bool ShowAdxPlusDi { get; set; } = true;
+        public bool ShowAdxMinusDi { get; set; } = true;
+        public bool ShowAdx25 { get; set; } = true;
+        public Color AdxLineColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color AdxPlusDiColor { get; set; } = Color.FromArgb(50, 160, 80);
+        public Color AdxMinusDiColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color Adx25Color { get; set; } = Color.FromArgb(150, 150, 150);
         public int StochasticRsiRsiPeriod { get; set; } = 14;
         public int StochasticRsiPeriod { get; set; } = 14;
         public int StochasticRsiKPeriod { get; set; } = 3;
@@ -100,6 +109,9 @@ namespace Trade.It
         private double[]? stochasticRsiKCache;
         private double[]? stochasticRsiDCache;
         private double[]? atrCache;
+        private double[]? adxCache;
+        private double[]? adxPlusDiCache;
+        private double[]? adxMinusDiCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
@@ -107,6 +119,7 @@ namespace Trade.It
         internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
         internal bool HasStochasticRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
         internal bool HasAtrIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageTrueRange);
+        internal bool HasAdxIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageDirectionalIndex);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -190,6 +203,57 @@ namespace Trade.It
             atrCache = null;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void AddAverageDirectionalIndex(int period = 14)
+        {
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.AverageDirectionalIndex,
+                Period = period,
+                AdxLineColor = Color.FromArgb(30, 100, 220),
+                AdxPlusDiColor = Color.FromArgb(50, 160, 80),
+                AdxMinusDiColor = Color.FromArgb(220, 80, 80),
+                Adx25Color = Color.FromArgb(150, 150, 150)
+            });
+            InvalidateAdxCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyAdxSettings(
+            int index,
+            int period,
+            bool showAdxLine,
+            bool showAdxPlusDi,
+            bool showAdxMinusDi,
+            bool showAdx25,
+            Color adxLineColor,
+            Color adxPlusDiColor,
+            Color adxMinusDiColor,
+            Color adx25Color)
+        {
+            if (index < 0 || index >= indicators.Count ||
+                indicators[index].Type != ChartIndicatorType.AverageDirectionalIndex ||
+                points.Count < 2)
+                return false;
+
+            var indicator = indicators[index];
+            indicator.Period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
+            indicator.ShowAdxLine = showAdxLine;
+            indicator.ShowAdxPlusDi = showAdxPlusDi;
+            indicator.ShowAdxMinusDi = showAdxMinusDi;
+            indicator.ShowAdx25 = showAdx25;
+            indicator.AdxLineColor = adxLineColor;
+            indicator.AdxPlusDiColor = adxPlusDiColor;
+            indicator.AdxMinusDiColor = adxMinusDiColor;
+            indicator.Adx25Color = adx25Color;
+            selectedIndicatorIndex = index;
+            InvalidateAdxCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public void AddStochastic()
@@ -330,6 +394,8 @@ namespace Trade.It
             indicators[index].Period = period;
             if (indicators[index].Type == ChartIndicatorType.AverageTrueRange)
                 InvalidateAtrCache();
+            if (indicators[index].Type == ChartIndicatorType.AverageDirectionalIndex)
+                InvalidateAdxCache();
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -357,6 +423,8 @@ namespace Trade.It
             indicator.BackgroundColor = backgroundColor;
             if (indicator.Type == ChartIndicatorType.AverageTrueRange)
                 InvalidateAtrCache();
+            if (indicator.Type == ChartIndicatorType.AverageDirectionalIndex)
+                InvalidateAdxCache();
             BackColor = backgroundColor;
             selectedIndicatorIndex = index;
             Invalidate();
@@ -438,6 +506,13 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var adxPlot = GetAdxPlotRectangle();
+            if (adxPlot != Rectangle.Empty && adxPlot.Contains(location))
+            {
+                selectedIndicatorIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.AverageDirectionalIndex);
+                return selectedIndicatorIndex;
+            }
+
             var atrPlot = GetAtrPlotRectangle();
             if (atrPlot != Rectangle.Empty && atrPlot.Contains(location))
             {
@@ -496,7 +571,8 @@ namespace Trade.It
                     indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence ||
                     indicator.Type == ChartIndicatorType.Stochastic ||
                     indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex ||
-                    indicator.Type == ChartIndicatorType.AverageTrueRange)
+                    indicator.Type == ChartIndicatorType.AverageTrueRange ||
+                    indicator.Type == ChartIndicatorType.AverageDirectionalIndex)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
@@ -1235,6 +1311,27 @@ namespace Trade.It
 
         internal void InvalidateAtrCache() => atrCache = null;
 
+        private void EnsureAdxCache(ChartIndicator indicator)
+        {
+            if (adxCache != null && adxPlusDiCache != null && adxMinusDiCache != null &&
+                adxCache.Length == points.Count && adxPlusDiCache.Length == points.Count &&
+                adxMinusDiCache.Length == points.Count)
+                return;
+
+            CalculateAverageDirectionalIndex(
+                indicator.Period,
+                out adxCache,
+                out adxPlusDiCache,
+                out adxMinusDiCache);
+        }
+
+        internal void InvalidateAdxCache()
+        {
+            adxCache = null;
+            adxPlusDiCache = null;
+            adxMinusDiCache = null;
+        }
+
         private void EnsureMacdCache(ChartIndicator indicator)
         {
             if (macdLineCache != null && macdSignalCache != null && macdHistogramCache != null &&
@@ -1345,6 +1442,94 @@ namespace Trade.It
                 result[i] = ((result[i - 1] * (period - 1)) + trueRanges[i]) / period;
 
             return result;
+        }
+
+        private void CalculateAverageDirectionalIndex(
+            int period,
+            out double[] adx,
+            out double[] plusDi,
+            out double[] minusDi)
+        {
+            adx = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            plusDi = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            minusDi = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+
+            if (period <= 0 || points.Count < (period * 2))
+                return;
+
+            var tr = new double[points.Count];
+            var plusDm = new double[points.Count];
+            var minusDm = new double[points.Count];
+
+            for (var i = 1; i < points.Count; i++)
+            {
+                var high = points[i].High;
+                var low = points[i].Low;
+                var previousHigh = points[i - 1].High;
+                var previousLow = points[i - 1].Low;
+                var previousClose = points[i - 1].Close;
+
+                tr[i] = Math.Max(
+                    high - low,
+                    Math.Max(Math.Abs(high - previousClose), Math.Abs(low - previousClose)));
+
+                var upMove = high - previousHigh;
+                var downMove = previousLow - low;
+                plusDm[i] = upMove > downMove && upMove > 0 ? upMove : 0;
+                minusDm[i] = downMove > upMove && downMove > 0 ? downMove : 0;
+            }
+
+            var smoothedTr = 0.0;
+            var smoothedPlusDm = 0.0;
+            var smoothedMinusDm = 0.0;
+
+            for (var i = 1; i <= period; i++)
+            {
+                smoothedTr += tr[i];
+                smoothedPlusDm += plusDm[i];
+                smoothedMinusDm += minusDm[i];
+            }
+
+            var dx = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+
+            for (var i = period; i < points.Count; i++)
+            {
+                if (i > period)
+                {
+                    smoothedTr = smoothedTr - (smoothedTr / period) + tr[i];
+                    smoothedPlusDm = smoothedPlusDm - (smoothedPlusDm / period) + plusDm[i];
+                    smoothedMinusDm = smoothedMinusDm - (smoothedMinusDm / period) + minusDm[i];
+                }
+
+                if (smoothedTr <= 1e-12)
+                {
+                    plusDi[i] = 0;
+                    minusDi[i] = 0;
+                    dx[i] = 0;
+                    continue;
+                }
+
+                plusDi[i] = 100.0 * smoothedPlusDm / smoothedTr;
+                minusDi[i] = 100.0 * smoothedMinusDm / smoothedTr;
+
+                var denominator = plusDi[i] + minusDi[i];
+                dx[i] = denominator <= 1e-12
+                    ? 0
+                    : 100.0 * Math.Abs(plusDi[i] - minusDi[i]) / denominator;
+            }
+
+            var firstAdx = (period * 2) - 1;
+            if (firstAdx >= points.Count)
+                return;
+
+            var dxSum = 0.0;
+            for (var i = period; i < firstAdx + 1; i++)
+                dxSum += double.IsNaN(dx[i]) ? 0 : dx[i];
+
+            adx[firstAdx] = dxSum / period;
+
+            for (var i = firstAdx + 1; i < points.Count; i++)
+                adx[i] = ((adx[i - 1] * (period - 1)) + dx[i]) / period;
         }
 
         private double[] CalculateMovingAverage(int period)
