@@ -1,3 +1,4 @@
+using System.Globalization;
 namespace Trade.It
 {
     internal enum ChartIndicatorType
