@@ -78,6 +78,9 @@ namespace Trade.It
         private double lowerPanelResizeStartMacdRatio;
         private double lowerPanelResizeStartStochasticRatio;
         private double lowerPanelResizeStartStochasticRsiRatio;
+        private double lowerPanelResizeStartAtrRatio;
+        private double lowerPanelResizeStartAdxRatio;
+        private double lowerPanelResizeStartObvRatio;
         private enum LowerPanelSplitter
         {
             None,
@@ -91,6 +94,9 @@ namespace Trade.It
             RsiStochastic,
             MacdStochastic,
             PriceStochasticRsi,
+            PriceAtr,
+            AtrAdx,
+            AdxObv,
             RsiStochasticRsi,
             MacdStochasticRsi,
             StochasticStochasticRsi,
@@ -939,6 +945,18 @@ namespace Trade.It
                 Math.Abs(y - layout.Volume.Top) <= tolerance)
                 return LowerPanelSplitter.RsiVolume;
 
+            if (HasAtrIndicator && !layout.Atr.IsEmpty &&
+                Math.Abs(y - layout.Atr.Top) <= tolerance)
+                return LowerPanelSplitter.PriceAtr;
+
+            if (HasAdxIndicator && !layout.Adx.IsEmpty &&
+                Math.Abs(y - layout.Adx.Top) <= tolerance)
+                return LowerPanelSplitter.AtrAdx;
+
+            if (HasObvIndicator && !layout.Obv.IsEmpty &&
+                Math.Abs(y - layout.Obv.Top) <= tolerance)
+                return LowerPanelSplitter.AdxObv;
+
             if (HasStochasticRsiIndicator && !layout.StochasticRsi.IsEmpty &&
                 Math.Abs(y - layout.StochasticRsi.Top) <= tolerance)
             {
@@ -985,6 +1003,11 @@ namespace Trade.It
             const int minimumVolumeHeight = 45;
             var gapCount = (HasRsiIndicator ? 1 : 0) +
                            (HasMacdIndicator ? 1 : 0) +
+                           (HasStochasticIndicator ? 1 : 0) +
+                           (HasStochasticRsiIndicator ? 1 : 0) +
+                           (HasAtrIndicator ? 1 : 0) +
+                           (HasAdxIndicator ? 1 : 0) +
+                           (HasObvIndicator ? 1 : 0) +
                            (volumePanelVisible ? 1 : 0);
             var minPriceRatio = minimumPriceHeight / (double)totalHeight;
             var minRsiRatio = minimumRsiHeight / (double)totalHeight;
@@ -994,6 +1017,42 @@ namespace Trade.It
 
             switch (activeLowerPanelSplitter)
             {
+                case LowerPanelSplitter.PriceAtr when HasAtrIndicator:
+                    atrPanelRatio = Math.Clamp(lowerPanelResizeStartAtrRatio - deltaRatio, minRsiRatio,
+                        Math.Max(minRsiRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasRsiIndicator ? rsiPanelRatio : 0) -
+                            (HasMacdIndicator ? macdPanelRatio : 0) -
+                            (HasStochasticIndicator ? stochasticPanelRatio : 0) -
+                            (HasStochasticRsiIndicator ? stochasticRsiPanelRatio : 0) -
+                            (HasAdxIndicator ? adxPanelRatio : 0) -
+                            (HasObvIndicator ? obvPanelRatio : 0) -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
+
+                case LowerPanelSplitter.AtrAdx when HasAdxIndicator:
+                    adxPanelRatio = Math.Clamp(lowerPanelResizeStartAdxRatio - deltaRatio, minRsiRatio,
+                        Math.Max(minRsiRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasRsiIndicator ? rsiPanelRatio : 0) -
+                            (HasMacdIndicator ? macdPanelRatio : 0) -
+                            (HasStochasticIndicator ? stochasticPanelRatio : 0) -
+                            (HasStochasticRsiIndicator ? stochasticRsiPanelRatio : 0) -
+                            (HasAtrIndicator ? atrPanelRatio : 0) -
+                            (HasObvIndicator ? obvPanelRatio : 0) -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
+
+                case LowerPanelSplitter.AdxObv when HasObvIndicator:
+                    obvPanelRatio = Math.Clamp(lowerPanelResizeStartObvRatio - deltaRatio, minRsiRatio,
+                        Math.Max(minRsiRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasRsiIndicator ? rsiPanelRatio : 0) -
+                            (HasMacdIndicator ? macdPanelRatio : 0) -
+                            (HasStochasticIndicator ? stochasticPanelRatio : 0) -
+                            (HasStochasticRsiIndicator ? stochasticRsiPanelRatio : 0) -
+                            (HasAtrIndicator ? atrPanelRatio : 0) -
+                            (HasAdxIndicator ? adxPanelRatio : 0) -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
+
                 case LowerPanelSplitter.PriceRsi when HasRsiIndicator:
                     rsiPanelRatio = Math.Clamp(
                         lowerPanelResizeStartRsiRatio - deltaRatio,
@@ -1240,6 +1299,9 @@ namespace Trade.It
                 lowerPanelResizeStartMacdRatio = macdPanelRatio;
                 lowerPanelResizeStartStochasticRatio = stochasticPanelRatio;
                 lowerPanelResizeStartStochasticRsiRatio = stochasticRsiPanelRatio;
+                lowerPanelResizeStartAtrRatio = atrPanelRatio;
+                lowerPanelResizeStartAdxRatio = adxPanelRatio;
+                lowerPanelResizeStartObvRatio = obvPanelRatio;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
