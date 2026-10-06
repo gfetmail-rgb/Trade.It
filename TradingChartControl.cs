@@ -936,8 +936,8 @@ namespace Trade.It
 
             if (activeLowerPanelSplitter == LowerPanelSplitter.RsiVolume)
             {
-                var rsiRatio = lowerPanelResizeStartRsiRatio - deltaRatio;
-                var volumeRatio = lowerPanelResizeStartVolumeRatio + deltaRatio;
+                var rsiRatio = lowerPanelResizeStartRsiRatio + deltaRatio;
+                var volumeRatio = lowerPanelResizeStartVolumeRatio - deltaRatio;
                 var minRsiRatio = minimumRsiHeight / (double)totalHeight;
                 var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
                 rsiPanelRatio = Math.Clamp(rsiRatio, minRsiRatio, Math.Max(minRsiRatio, 1.0 - minVolumeRatio));
