@@ -5,6 +5,7 @@ namespace Trade.It
         public int Period => (int)periodNumeric.Value;
         public Color LineColor => lineColorButton.BackColor;
         public Color BackgroundColor => backgroundColorButton.BackColor;
+        private readonly int defaultPeriod;
 
         internal IndicatorSettingsForm(ChartIndicator indicator, int maxPeriod)
         {
@@ -14,7 +15,11 @@ namespace Trade.It
 
             Text = indicator.Type == ChartIndicatorType.MovingAverage
                 ? "تنظیمات MA"
-                : "تنظیمات EMA";
+                : indicator.Type == ChartIndicatorType.AverageTrueRange
+                    ? "تنظیمات ATR"
+                    : "تنظیمات EMA";
+
+            defaultPeriod = indicator.Type == ChartIndicatorType.AverageTrueRange ? 14 : 20;
 
             periodNumeric.Minimum = 2;
             periodNumeric.Maximum = Math.Max(2, maxPeriod);
@@ -32,12 +37,11 @@ namespace Trade.It
 
         private void ApplyDefaults()
         {
-            periodNumeric.Value = indicatorDefaultPeriod;
+            periodNumeric.Value = Math.Min(defaultPeriod, periodNumeric.Maximum);
             SetColorButton(lineColorButton, Color.FromArgb(30, 100, 220));
             SetColorButton(backgroundColorButton, Color.White);
         }
 
-        private const int indicatorDefaultPeriod = 20;
 
         private static void SetColorButton(Button button, Color color)
         {
