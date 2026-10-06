@@ -64,16 +64,22 @@ namespace Trade.It
         private string chartTimeFrame = string.Empty;
         private double volumePanelRatio = 0.10;
         private double rsiPanelRatio = 0.10;
+        private double macdPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
         private int lowerPanelResizeStartY;
         private double lowerPanelResizeStartRsiRatio;
         private double lowerPanelResizeStartVolumeRatio;
+        private double lowerPanelResizeStartMacdRatio;
         private enum LowerPanelSplitter
         {
             None,
             PriceRsi,
-            RsiVolume
+            PriceMacd,
+            PriceVolume,
+            RsiMacd,
+            RsiVolume,
+            MacdVolume
         }
         private LowerPanelSplitter activeLowerPanelSplitter;
         private bool volumePanelVisible = true;
@@ -133,6 +139,7 @@ namespace Trade.It
             // نسبت اولیه پنل‌ها هنگام باز شدن هر چارت.
             volumePanelRatio = 0.10;
             rsiPanelRatio = 0.10;
+            macdPanelRatio = 0.10;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
@@ -888,16 +895,33 @@ namespace Trade.It
             var layout = GetLowerPanelLayout();
             const int tolerance = 5;
 
-            if (!layout.Rsi.IsEmpty &&
+            if (HasRsiIndicator && !layout.Rsi.IsEmpty &&
                 Math.Abs(y - layout.Rsi.Top) <= tolerance)
                 return LowerPanelSplitter.PriceRsi;
 
-            if (volumePanelVisible &&
+            if (!HasRsiIndicator && HasMacdIndicator && !layout.Macd.IsEmpty &&
+                Math.Abs(y - layout.Macd.Top) <= tolerance)
+                return LowerPanelSplitter.PriceMacd;
+
+            if (!HasRsiIndicator && !HasMacdIndicator && volumePanelVisible &&
                 !layout.Volume.IsEmpty &&
                 Math.Abs(y - layout.Volume.Top) <= tolerance)
-                return HasRsiIndicator
-                    ? LowerPanelSplitter.RsiVolume
-                    : LowerPanelSplitter.PriceRsi;
+                return LowerPanelSplitter.PriceVolume;
+
+            if (HasRsiIndicator && HasMacdIndicator &&
+                !layout.Macd.IsEmpty &&
+                Math.Abs(y - layout.Macd.Top) <= tolerance)
+                return LowerPanelSplitter.RsiMacd;
+
+            if (HasRsiIndicator && !HasMacdIndicator && volumePanelVisible &&
+                !layout.Volume.IsEmpty &&
+                Math.Abs(y - layout.Volume.Top) <= tolerance)
+                return LowerPanelSplitter.RsiVolume;
+
+            if (!HasRsiIndicator && HasMacdIndicator && volumePanelVisible &&
+                !layout.Volume.IsEmpty &&
+                Math.Abs(y - layout.Volume.Top) <= tolerance)
+                return LowerPanelSplitter.MacdVolume;
 
             return LowerPanelSplitter.None;
         }
@@ -911,38 +935,99 @@ namespace Trade.It
 
             const int minimumPriceHeight = 80;
             const int minimumRsiHeight = 60;
+            const int minimumMacdHeight = 60;
             const int minimumVolumeHeight = 45;
+            var gapCount = (HasRsiIndicator ? 1 : 0) +
+                           (HasMacdIndicator ? 1 : 0) +
+                           (volumePanelVisible ? 1 : 0);
+            var minPriceRatio = minimumPriceHeight / (double)totalHeight;
+            var minRsiRatio = minimumRsiHeight / (double)totalHeight;
+            var minMacdRatio = minimumMacdHeight / (double)totalHeight;
+            var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
+            var gapRatio = Math.Clamp(volumePanelGap, 2, 30) * Math.Max(0, gapCount) / (double)totalHeight;
 
-            if (activeLowerPanelSplitter == LowerPanelSplitter.PriceRsi && HasRsiIndicator)
+            switch (activeLowerPanelSplitter)
             {
-                var rsiRatio = lowerPanelResizeStartRsiRatio - deltaRatio;
-                var volumeRatio = lowerPanelResizeStartVolumeRatio;
-                var minRsiRatio = minimumRsiHeight / (double)totalHeight;
-                var maxRsiRatio = 1.0 - volumeRatio -
-                                  minimumPriceHeight / (double)totalHeight -
-                                  (2.0 * Math.Clamp(volumePanelGap, 2, 30) / totalHeight);
+                case LowerPanelSplitter.PriceRsi when HasRsiIndicator:
+                    rsiPanelRatio = Math.Clamp(
+                        lowerPanelResizeStartRsiRatio - deltaRatio,
+                        minRsiRatio,
+                        Math.Max(minRsiRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasMacdIndicator ? macdPanelRatio : 0) -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
 
-                rsiPanelRatio = Math.Clamp(rsiRatio, minRsiRatio, Math.Max(minRsiRatio, maxRsiRatio));
-                return;
-            }
+                case LowerPanelSplitter.PriceMacd when HasMacdIndicator && !HasRsiIndicator:
+                    macdPanelRatio = Math.Clamp(
+                        lowerPanelResizeStartMacdRatio - deltaRatio,
+                        minMacdRatio,
+                        Math.Max(minMacdRatio, 1.0 - minPriceRatio - gapRatio -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
 
-            if (activeLowerPanelSplitter == LowerPanelSplitter.PriceRsi && !HasRsiIndicator)
-            {
-                var volumeRatio = lowerPanelResizeStartVolumeRatio - deltaRatio;
-                var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
-                var maxVolumeRatio = 0.45;
-                volumePanelRatio = Math.Clamp(volumeRatio, minVolumeRatio, maxVolumeRatio);
-                return;
-            }
+                case LowerPanelSplitter.PriceVolume when volumePanelVisible:
+                    volumePanelRatio = Math.Clamp(
+                        lowerPanelResizeStartVolumeRatio - deltaRatio,
+                        minVolumeRatio,
+                        Math.Max(minVolumeRatio, 0.45));
+                    break;
 
-            if (activeLowerPanelSplitter == LowerPanelSplitter.RsiVolume)
-            {
-                var rsiRatio = lowerPanelResizeStartRsiRatio + deltaRatio;
-                var volumeRatio = lowerPanelResizeStartVolumeRatio - deltaRatio;
-                var minRsiRatio = minimumRsiHeight / (double)totalHeight;
-                var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
-                rsiPanelRatio = Math.Clamp(rsiRatio, minRsiRatio, Math.Max(minRsiRatio, 1.0 - minVolumeRatio));
-                volumePanelRatio = Math.Clamp(volumeRatio, minVolumeRatio, 0.45);
+                case LowerPanelSplitter.RsiMacd when HasRsiIndicator && HasMacdIndicator:
+                {
+                    var sum = lowerPanelResizeStartRsiRatio + lowerPanelResizeStartMacdRatio;
+                    var rsi = lowerPanelResizeStartRsiRatio + deltaRatio;
+                    var macd = sum - rsi;
+                    var maxSum = 1.0 - minPriceRatio - gapRatio -
+                                 (volumePanelVisible ? volumePanelRatio : 0);
+                    rsi = Math.Clamp(rsi, minRsiRatio, Math.Max(minRsiRatio, maxSum - minMacdRatio));
+                    macd = sum - rsi;
+                    if (macd < minMacdRatio)
+                    {
+                        macd = minMacdRatio;
+                        rsi = sum - macd;
+                    }
+                    rsiPanelRatio = rsi;
+                    macdPanelRatio = macd;
+                    break;
+                }
+
+                case LowerPanelSplitter.RsiVolume when HasRsiIndicator && volumePanelVisible:
+                {
+                    var sum = lowerPanelResizeStartRsiRatio + lowerPanelResizeStartVolumeRatio;
+                    var rsi = lowerPanelResizeStartRsiRatio + deltaRatio;
+                    var volume = sum - rsi;
+                    var maxSum = 1.0 - minPriceRatio - gapRatio -
+                                 (HasMacdIndicator ? macdPanelRatio : 0);
+                    rsi = Math.Clamp(rsi, minRsiRatio, Math.Max(minRsiRatio, maxSum - minVolumeRatio));
+                    volume = sum - rsi;
+                    if (volume < minVolumeRatio)
+                    {
+                        volume = minVolumeRatio;
+                        rsi = sum - volume;
+                    }
+                    rsiPanelRatio = rsi;
+                    volumePanelRatio = volume;
+                    break;
+                }
+
+                case LowerPanelSplitter.MacdVolume when HasMacdIndicator && volumePanelVisible:
+                {
+                    var sum = lowerPanelResizeStartMacdRatio + lowerPanelResizeStartVolumeRatio;
+                    var macd = lowerPanelResizeStartMacdRatio + deltaRatio;
+                    var volume = sum - macd;
+                    var maxSum = 1.0 - minPriceRatio - gapRatio -
+                                 (HasRsiIndicator ? rsiPanelRatio : 0);
+                    macd = Math.Clamp(macd, minMacdRatio, Math.Max(minMacdRatio, maxSum - minVolumeRatio));
+                    volume = sum - macd;
+                    if (volume < minVolumeRatio)
+                    {
+                        volume = minVolumeRatio;
+                        macd = sum - volume;
+                    }
+                    macdPanelRatio = macd;
+                    volumePanelRatio = volume;
+                    break;
+                }
             }
         }
 
@@ -1020,9 +1105,7 @@ namespace Trade.It
                 : volumePlotForAxis.Bottom;
             var axisBandTop = Math.Max(0, timeAxisBottom);
 
-            // همه‌ی پنل‌های پایین با Splitter قابل تغییر اندازه هستند:
-            // قیمت/RSI و RSI/حجم. اگر RSI وجود نداشته باشد، جداکننده قیمت/حجم
-            // همان رفتار قبلی را حفظ می‌کند.
+            // همه‌ی پنل‌های پایین با Splitter قابل تغییر اندازه هستند.
             var splitter = GetLowerPanelSplitterAt(e.Location.Y);
             if (splitter != LowerPanelSplitter.None)
             {
@@ -1031,6 +1114,7 @@ namespace Trade.It
                 lowerPanelResizeStartY = e.Location.Y;
                 lowerPanelResizeStartRsiRatio = rsiPanelRatio;
                 lowerPanelResizeStartVolumeRatio = volumePanelRatio;
+                lowerPanelResizeStartMacdRatio = macdPanelRatio;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
