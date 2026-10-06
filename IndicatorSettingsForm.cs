@@ -27,6 +27,7 @@ namespace Trade.It
             backgroundColorButton.Click += (_, _) => PickColor(backgroundColorButton);
             okButton.Click += (_, _) => DialogResult = DialogResult.OK;
             cancelButton.Click += (_, _) => DialogResult = DialogResult.Cancel;
+            defaultButton.Click += (_, _) => ApplyDefaults();
         }
 
         private static void SetColorButton(Button button, Color color)
