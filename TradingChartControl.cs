@@ -143,6 +143,8 @@ namespace Trade.It
             points.Clear();
             points.AddRange(data.OrderBy(x => x.Date));
             InvalidateIchimokuCache();
+            InvalidateBollingerCache();
+            InvalidateObvCache();
 
             // همگام‌سازی وضعیت داده‌های ابزارهای Extra با داده‌ی جدید.
             // این کار مانع می‌شود یک Paint/Refresh موقت (مثلاً هنگام باز شدن پنجره متن)
