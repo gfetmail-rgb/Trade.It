@@ -9,6 +9,7 @@ namespace Trade.It
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
             indicatorIchimokuMenuItem.Click += (_, _) => AddIchimokuToActiveChart();
+            indicatorRsiMenuItem.Click += (_, _) => AddRsiToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -19,6 +20,7 @@ namespace Trade.It
             indicatorPeriod21MenuItem.Click += (_, _) => SetContextIndicatorPeriod(21);
             indicatorPeriod34MenuItem.Click += (_, _) => SetContextIndicatorPeriod(34);
             indicatorPeriod55MenuItem.Click += (_, _) => SetContextIndicatorPeriod(55);
+            indicatorPeriod89MenuItem.Click += (_, _) => SetContextIndicatorPeriod(89);
             indicatorPeriod200MenuItem.Click += (_, _) => SetContextIndicatorPeriod(200);
         }
 
@@ -48,6 +50,19 @@ namespace Trade.It
             chart.AddIchimoku();
         }
 
+        private void AddRsiToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddRelativeStrengthIndex(14);
+        }
+
         private void AddExponentialMovingAverageToActiveChart()
         {
             var chart = GetActiveChart();
@@ -73,13 +88,15 @@ namespace Trade.It
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
             var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
+            var isRsi = indicator.Type == ChartIndicatorType.RelativeStrengthIndex;
 
-            indicatorPeriod9MenuItem.Visible = !isIchimoku;
-            indicatorPeriod13MenuItem.Visible = !isIchimoku;
-            indicatorPeriod21MenuItem.Visible = !isIchimoku;
-            indicatorPeriod34MenuItem.Visible = !isIchimoku;
-            indicatorPeriod55MenuItem.Visible = !isIchimoku;
-            indicatorPeriod200MenuItem.Visible = !isIchimoku;
+            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi;
 
             if (!isIchimoku)
             {
@@ -123,6 +140,22 @@ namespace Trade.It
                         dialog.ChikouColor,
                         dialog.BullishCloudColor,
                         dialog.BearishCloudColor);
+                }
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.RelativeStrengthIndex)
+            {
+                using var dialog = new RsiSettingsForm(chart.Indicators[index], chart.Points.Count);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    chart.ApplyRsiSettings(
+                        index,
+                        dialog.Period,
+                        dialog.ShowRsiLine,
+                        dialog.ShowRsi30,
+                        dialog.ShowRsi70,
+                        dialog.RsiLineColor,
+                        dialog.Rsi30Color,
+                        dialog.Rsi70Color);
                 }
             }
             else
