@@ -6,7 +6,7 @@ namespace Trade.It
         public Color LineColor => lineColorButton.BackColor;
         public Color BackgroundColor => backgroundColorButton.BackColor;
 
-        public IndicatorSettingsForm(ChartIndicator indicator, int maxPeriod)
+        internal IndicatorSettingsForm(ChartIndicator indicator, int maxPeriod)
         {
             InitializeComponent();
             RightToLeft = RightToLeft.Yes;
