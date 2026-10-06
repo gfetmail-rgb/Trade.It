@@ -6,6 +6,8 @@ namespace Trade.It
         {
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
+            indicatorRemoveMaMenuItem.Click += (_, _) => RemoveOneIndicatorFromActiveChart(ChartIndicatorType.MovingAverage);
+            indicatorRemoveEmaMenuItem.Click += (_, _) => RemoveOneIndicatorFromActiveChart(ChartIndicatorType.ExponentialMovingAverage);
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
         }
 
@@ -35,13 +37,36 @@ namespace Trade.It
             chart.AddExponentialMovingAverage(20);
         }
 
-        private void ClearIndicatorsFromActiveChart()
+        private void RemoveOneIndicatorFromActiveChart(ChartIndicatorType type)
         {
             var chart = GetActiveChart();
             if (chart == null)
                 return;
 
-            chart.RemoveAllIndicators();
+            if (!chart.RemoveOneIndicator(type))
+            {
+                var name = type == ChartIndicatorType.MovingAverage ? "MA" : "EMA";
+                MessageBox.Show(this, $"هیچ اندیکاتور {name} فعالی وجود ندارد.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ClearIndicatorsFromActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Indicators.Count == 0)
+                return;
+
+            var result = MessageBox.Show(
+                this,
+                "همه اندیکاتورهای چارت فعال حذف شوند؟",
+                "حذف همه اندیکاتورها",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (result == DialogResult.Yes)
+                chart.RemoveAllIndicators();
         }
     }
 }
