@@ -34,6 +34,15 @@ namespace Trade.It
         private readonly List<ChartIndicator> indicators = new();
         private int selectedIndicatorIndex = -1;
 
+        // Ichimoku values are independent of the current viewport. Cache them so
+        // panning/zooming only redraws the existing values instead of recalculating
+        // all 9/26/52-period windows on every Paint.
+        private double[]? ichimokuTenkanCache;
+        private double[]? ichimokuKijunCache;
+        private double[]? ichimokuSpanACache;
+        private double[]? ichimokuSpanBCache;
+        private double[]? ichimokuChikouCache;
+
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
@@ -262,11 +271,12 @@ namespace Trade.It
             out double bestDistance)
         {
             var localBestDistance = double.MaxValue;
-            var tenkan = CalculateIchimokuTenkan();
-            var kijun = CalculateIchimokuKijun();
-            var spanA = CalculateIchimokuSpanA(tenkan, kijun);
-            var spanB = CalculateIchimokuSpanB();
-            var chikou = points.Select(p => p.Close).ToArray();
+            EnsureIchimokuCache();
+            var tenkan = ichimokuTenkanCache!;
+            var kijun = ichimokuKijunCache!;
+            var spanA = ichimokuSpanACache!;
+            var spanB = ichimokuSpanBCache!;
+            var chikou = ichimokuChikouCache!;
 
             for (var i = 0; i < displayedCount; i++)
             {
@@ -430,11 +440,12 @@ namespace Trade.It
             double initialOffset,
             ChartIndicator indicator)
         {
-            var tenkan = CalculateIchimokuTenkan();
-            var kijun = CalculateIchimokuKijun();
-            var spanA = CalculateIchimokuSpanA(tenkan, kijun);
-            var spanB = CalculateIchimokuSpanB();
-            var chikou = points.Select(p => p.Close).ToArray();
+            EnsureIchimokuCache();
+            var tenkan = ichimokuTenkanCache!;
+            var kijun = ichimokuKijunCache!;
+            var spanA = ichimokuSpanACache!;
+            var spanB = ichimokuSpanBCache!;
+            var chikou = ichimokuChikouCache!;
 
             DrawIchimokuCloud(g, plot, min, max, displayedCount, step, initialOffset,
                 spanA, spanB, indicator.ShowBullishCloud, indicator.ShowBearishCloud,
@@ -535,6 +546,38 @@ namespace Trade.It
                     new PointF(x2, yB2), new PointF(x1, yB1)
                 });
             }
+        }
+
+        private void EnsureIchimokuCache()
+        {
+            if (ichimokuTenkanCache != null &&
+                ichimokuKijunCache != null &&
+                ichimokuSpanACache != null &&
+                ichimokuSpanBCache != null &&
+                ichimokuChikouCache != null &&
+                ichimokuTenkanCache.Length == points.Count &&
+                ichimokuKijunCache.Length == points.Count &&
+                ichimokuSpanACache.Length == points.Count &&
+                ichimokuSpanBCache.Length == points.Count &&
+                ichimokuChikouCache.Length == points.Count)
+            {
+                return;
+            }
+
+            ichimokuTenkanCache = CalculateIchimokuMidpoint(9);
+            ichimokuKijunCache = CalculateIchimokuMidpoint(26);
+            ichimokuSpanACache = CalculateIchimokuSpanA(ichimokuTenkanCache, ichimokuKijunCache);
+            ichimokuSpanBCache = CalculateIchimokuMidpoint(52);
+            ichimokuChikouCache = points.Select(p => p.Close).ToArray();
+        }
+
+        internal void InvalidateIchimokuCache()
+        {
+            ichimokuTenkanCache = null;
+            ichimokuKijunCache = null;
+            ichimokuSpanACache = null;
+            ichimokuSpanBCache = null;
+            ichimokuChikouCache = null;
         }
 
         private double[] CalculateIchimokuTenkan()
