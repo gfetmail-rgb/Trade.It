@@ -65,12 +65,15 @@ namespace Trade.It
         private double volumePanelRatio = 0.10;
         private double rsiPanelRatio = 0.10;
         private double macdPanelRatio = 0.10;
+            stochasticPanelRatio = 0.10;
+        private double stochasticPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
         private int lowerPanelResizeStartY;
         private double lowerPanelResizeStartRsiRatio;
         private double lowerPanelResizeStartVolumeRatio;
         private double lowerPanelResizeStartMacdRatio;
+        private double lowerPanelResizeStartStochasticRatio;
         private enum LowerPanelSplitter
         {
             None,
@@ -79,7 +82,11 @@ namespace Trade.It
             PriceVolume,
             RsiMacd,
             RsiVolume,
-            MacdVolume
+            MacdVolume,
+            PriceStochastic,
+            RsiStochastic,
+            MacdStochastic,
+            StochasticVolume
         }
         private LowerPanelSplitter activeLowerPanelSplitter;
         private bool volumePanelVisible = true;
@@ -1115,6 +1122,7 @@ namespace Trade.It
                 lowerPanelResizeStartRsiRatio = rsiPanelRatio;
                 lowerPanelResizeStartVolumeRatio = volumePanelRatio;
                 lowerPanelResizeStartMacdRatio = macdPanelRatio;
+                lowerPanelResizeStartStochasticRatio = stochasticPanelRatio;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
