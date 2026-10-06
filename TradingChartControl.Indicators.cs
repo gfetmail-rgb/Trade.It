@@ -80,7 +80,7 @@ namespace Trade.It
 
         public void AddRelativeStrengthIndex(int period = 14)
         {
-            period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
             indicators.Add(new ChartIndicator
             {
                 Type = ChartIndicatorType.RelativeStrengthIndex,
@@ -109,7 +109,7 @@ namespace Trade.It
                 return false;
 
             var indicator = indicators[index];
-            indicator.Period = Math.Clamp(period, 2, points.Count);
+            indicator.Period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
             indicator.ShowRsiLine = showRsiLine;
             indicator.ShowRsi30 = showRsi30;
             indicator.ShowRsi70 = showRsi70;
