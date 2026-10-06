@@ -65,7 +65,6 @@ namespace Trade.It
         private double volumePanelRatio = 0.10;
         private double rsiPanelRatio = 0.10;
         private double macdPanelRatio = 0.10;
-            stochasticPanelRatio = 0.10;
         private double stochasticPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
@@ -147,6 +146,7 @@ namespace Trade.It
             volumePanelRatio = 0.10;
             rsiPanelRatio = 0.10;
             macdPanelRatio = 0.10;
+            stochasticPanelRatio = 0.10;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
