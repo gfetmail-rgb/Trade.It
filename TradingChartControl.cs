@@ -135,6 +135,7 @@ namespace Trade.It
             syncedCrosshairDate = null;
             CancelDrawing();
             selectedDrawingIndex = -1;
+            selectedIndicatorIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
             Invalidate();
