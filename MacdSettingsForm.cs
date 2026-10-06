@@ -43,9 +43,9 @@ namespace Trade.It
 
         private void ApplyDefaults()
         {
-            fastPeriodNumeric.Value = 12;
-            slowPeriodNumeric.Value = 26;
-            signalPeriodNumeric.Value = 9;
+            fastPeriodNumeric.Value = Math.Min(12, fastPeriodNumeric.Maximum);
+            slowPeriodNumeric.Value = Math.Min(26, slowPeriodNumeric.Maximum);
+            signalPeriodNumeric.Value = Math.Min(9, signalPeriodNumeric.Maximum);
             macdLineCheckBox.Checked = true;
             macdSignalCheckBox.Checked = true;
             macdHistogramCheckBox.Checked = true;
