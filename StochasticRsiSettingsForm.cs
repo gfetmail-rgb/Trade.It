@@ -19,24 +19,7 @@ namespace Trade.It
             SetColor(kColorButton,indicator.StochasticRsiKColor);SetColor(dColorButton,indicator.StochasticRsiDColor);SetColor(c20ColorButton,indicator.StochasticRsi20Color);SetColor(c80ColorButton,indicator.StochasticRsi80Color);
             kColorButton.Click+=(_,_)=>ChooseColor(kColorButton);dColorButton.Click+=(_,_)=>ChooseColor(dColorButton);c20ColorButton.Click+=(_,_)=>ChooseColor(c20ColorButton);c80ColorButton.Click+=(_,_)=>ChooseColor(c80ColorButton);
             defaultButton.Click+=(_,_)=>ApplyDefaults();
-            defaultButton.Click+=(_,_)=>ApplyDefaults();
         }
-        private void ApplyDefaults()
-        {
-            rsiPeriodNumeric.Value = 14;
-            stochasticPeriodNumeric.Value = 14;
-            kPeriodNumeric.Value = 3;
-            dPeriodNumeric.Value = 3;
-            showKCheckBox.Checked = true;
-            showDCheckBox.Checked = true;
-            show20CheckBox.Checked = true;
-            show80CheckBox.Checked = true;
-            SetColor(kColorButton, Color.FromArgb(30, 100, 220));
-            SetColor(dColorButton, Color.FromArgb(220, 80, 80));
-            SetColor(c20ColorButton, Color.FromArgb(150, 150, 150));
-            SetColor(c80ColorButton, Color.FromArgb(150, 150, 150));
-        }
-
         private void ApplyDefaults()
         {
             rsiPeriodNumeric.Value = Math.Min(14, rsiPeriodNumeric.Maximum);
