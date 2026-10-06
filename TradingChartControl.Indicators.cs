@@ -145,7 +145,7 @@ namespace Trade.It
                 return Math.Sqrt(Math.Pow(p.X - a.X, 2) + Math.Pow(p.Y - a.Y, 2));
 
             var t = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / (dx * dx + dy * dy);
-            t = Math.Clamp(t, 0.0, 1.0);
+            t = Math.Clamp(t, 0.0f, 1.0f);
 
             var x = a.X + t * dx;
             var y = a.Y + t * dy;
