@@ -990,21 +990,21 @@ namespace Trade.It
             return Math.Sqrt(Math.Pow(p.X - x, 2) + Math.Pow(p.Y - y, 2));
         }
 
-        private void DrawBollinger(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
+        private void DrawBollinger(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
         {
             var arrays = new[] { bollingerMiddleCache, bollingerUpperCache, bollingerLowerCache };
             using var middlePen = new Pen(indicator.BollingerMiddleColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             using var upperPen = new Pen(indicator.BollingerUpperColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             using var lowerPen = new Pen(indicator.BollingerLowerColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
-            DrawSeries(g, plot, displayedCount, step, initialOffset, arrays[0]!, middlePen, indicator.ShowBollingerMiddle);
-            DrawSeries(g, plot, displayedCount, step, initialOffset, arrays[1]!, upperPen, indicator.ShowBollingerUpper);
-            DrawSeries(g, plot, displayedCount, step, initialOffset, arrays[2]!, lowerPen, indicator.ShowBollingerLower);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[0]!, middlePen, indicator.ShowBollingerMiddle);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[1]!, upperPen, indicator.ShowBollingerUpper);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[2]!, lowerPen, indicator.ShowBollingerLower);
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
             using var brush = new SolidBrush(indicator.BollingerMiddleColor);
             g.DrawString($"BB({indicator.Period},{indicator.BollingerStdDev:0.##})", font, brush, plot.Left + 4f, plot.Top + 4f);
         }
 
-        private void DrawSeries(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, Pen pen, bool show)
+        private void DrawSeries(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, double[] values, Pen pen, bool show)
         {
             if (!show) return;
             PointF? prev=null;
@@ -1012,20 +1012,9 @@ namespace Trade.It
             {
                 var ai=firstIndex+i;
                 if(ai<0||ai>=values.Length||double.IsNaN(values[ai])||double.IsInfinity(values[ai])){prev=null;continue;}
-                var pt=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)PriceToScreen(values[ai],plot,GetCurrentVisibleMin(),GetCurrentVisibleMax()));
+                var pt=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)PriceToScreen(values[ai],plot,min,max));
                 if(prev.HasValue)g.DrawLine(pen,prev.Value,pt); prev=pt;
             }
-        }
-
-        private double GetCurrentVisibleMin()
-        {
-            var end=Math.Min(points.Count,firstIndex+Math.Max(1,visibleCount)); if(end<=firstIndex)return 0;
-            var min=double.MaxValue; for(var i=firstIndex;i<end;i++)min=Math.Min(min,points[i].Low); return min==double.MaxValue?0:min;
-        }
-        private double GetCurrentVisibleMax()
-        {
-            var end=Math.Min(points.Count,firstIndex+Math.Max(1,visibleCount)); if(end<=firstIndex)return 1;
-            var max=double.MinValue; for(var i=firstIndex;i<end;i++)max=Math.Max(max,points[i].High); return max==double.MinValue?1:max;
         }
 
         private void DrawIndicators(
@@ -1049,7 +1038,7 @@ namespace Trade.It
                 if (indicator.Type == ChartIndicatorType.BollingerBands)
                 {
                     EnsureBollingerCache(indicator);
-                    DrawBollinger(g, plot, displayedCount, step, initialOffset, indicator);
+                    DrawBollinger(g, plot, min, max, displayedCount, step, initialOffset, indicator);
                     continue;
                 }
 
