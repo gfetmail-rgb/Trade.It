@@ -144,24 +144,27 @@ namespace Trade.It
 
             e.Graphics.Restore(chartState);
 
+            var panelVisible = visible.Take(displayedCount).ToList();
+
             var rsiPlot = GetRsiPlotRectangle();
             if (rsiPlot != Rectangle.Empty)
-                RenderRsiPanel(e.Graphics, rsiPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+                RenderClippedPanel(e.Graphics, rsiPlot, g => RenderRsiPanel(g, rsiPlot, panelVisible, step, initialOffset));
 
             var macdPlot = GetMacdPlotRectangle();
             if (macdPlot != Rectangle.Empty)
-                RenderMacdPanel(e.Graphics, macdPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+                RenderClippedPanel(e.Graphics, macdPlot, g => RenderMacdPanel(g, macdPlot, panelVisible, step, initialOffset));
 
             var stochasticPlot = GetStochasticPlotRectangle();
             if (stochasticPlot != Rectangle.Empty && HasStochasticIndicator)
-                RenderStochasticPanel(e.Graphics, stochasticPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+                RenderClippedPanel(e.Graphics, stochasticPlot, g => RenderStochasticPanel(g, stochasticPlot, panelVisible, step, initialOffset));
 
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty && HasStochasticRsiIndicator)
-                RenderStochasticRsiPanel(e.Graphics, stochasticRsiPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+                RenderClippedPanel(e.Graphics, stochasticRsiPlot, g => RenderStochasticRsiPanel(g, stochasticRsiPlot, panelVisible, step, initialOffset));
 
             var volumePlot = GetVolumePlotRectangle();
-            RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+            if (volumePlot != Rectangle.Empty)
+                RenderClippedPanel(e.Graphics, volumePlot, g => RenderVolumePanel(g, volumePlot, panelVisible, step, initialOffset));
 
             // خطوط جداکننده پنل‌ها نقش Splitter را نیز به‌صورت بصری مشخص می‌کنند.
             using (var splitterPen = new Pen(Color.FromArgb(145, 145, 145), 1f))
@@ -919,6 +922,14 @@ namespace Trade.It
         private Rectangle GetStochasticRsiPlotRectangle() => GetLowerPanelLayout().StochasticRsi;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
+
+        private static void RenderClippedPanel(Graphics g, Rectangle plot, Action<Graphics> renderer)
+        {
+            var state = g.Save();
+            g.SetClip(plot);
+            try { renderer(g); }
+            finally { g.Restore(state); }
+        }
 
         private void RenderRsiPanel(
             Graphics g,
