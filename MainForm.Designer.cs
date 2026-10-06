@@ -13,6 +13,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorRsiMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorMacdMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorStochasticMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorStochasticRsiMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -143,6 +144,7 @@
             indicatorRsiMenuItem = new ToolStripMenuItem();
             indicatorMacdMenuItem = new ToolStripMenuItem();
             indicatorStochasticMenuItem = new ToolStripMenuItem();
+            indicatorStochasticRsiMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -360,7 +362,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -392,6 +394,10 @@
             indicatorStochasticMenuItem.Name = "indicatorStochasticMenuItem";
             indicatorStochasticMenuItem.Size = new Size(180, 34);
             indicatorStochasticMenuItem.Text = "Stochastic";
+            // indicatorStochasticRsiMenuItem
+            indicatorStochasticRsiMenuItem.Name = "indicatorStochasticRsiMenuItem";
+            indicatorStochasticRsiMenuItem.Size = new Size(180, 34);
+            indicatorStochasticRsiMenuItem.Text = "Stochastic RSI";
             // indicatorMacdMenuItem
             // 
             indicatorMacdMenuItem.Name = "indicatorMacdMenuItem";
