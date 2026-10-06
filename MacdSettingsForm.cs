@@ -38,6 +38,23 @@ namespace Trade.It
             macdBullishHistogramColorButton.Click += (_, _) => PickColor(macdBullishHistogramColorButton);
             macdBearishHistogramColorButton.Click += (_, _) => PickColor(macdBearishHistogramColorButton);
             macdZeroColorButton.Click += (_, _) => PickColor(macdZeroColorButton);
+            defaultButton.Click += (_, _) => ApplyDefaults();
+        }
+
+        private void ApplyDefaults()
+        {
+            fastPeriodNumeric.Value = 12;
+            slowPeriodNumeric.Value = 26;
+            signalPeriodNumeric.Value = 9;
+            macdLineCheckBox.Checked = true;
+            macdSignalCheckBox.Checked = true;
+            macdHistogramCheckBox.Checked = true;
+            macdZeroCheckBox.Checked = true;
+            SetColorButton(macdLineColorButton, Color.FromArgb(30, 100, 220));
+            SetColorButton(macdSignalColorButton, Color.FromArgb(220, 80, 80));
+            SetColorButton(macdBullishHistogramColorButton, Color.FromArgb(80, 170, 100));
+            SetColorButton(macdBearishHistogramColorButton, Color.FromArgb(210, 100, 100));
+            SetColorButton(macdZeroColorButton, Color.FromArgb(150, 150, 150));
         }
 
         private static void SetColorButton(Button button, Color color) { button.BackColor = color; button.ForeColor = color.GetBrightness() < 0.5f ? Color.White : Color.Black; }
