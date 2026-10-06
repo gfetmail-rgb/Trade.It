@@ -142,6 +142,7 @@ namespace Trade.It
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
 
+            RenderPriceIndicatorTitles(e.Graphics, plot, min, max, visible.Count, step, initialOffset);
             e.Graphics.Restore(chartState);
 
             var panelVisible = visible.Take(displayedCount).ToList();
@@ -1473,6 +1474,29 @@ namespace Trade.It
                 if (previous.HasValue)
                     g.DrawLine(pen, previous.Value, current);
                 previous = current;
+            }
+        }
+
+        private void RenderPriceIndicatorTitles(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset)
+        {
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            var xRight = plot.Right;
+            var y = plot.Top + 1f;
+            foreach (var indicator in indicators)
+            {
+                string? title = null;
+                Color color = indicator.LineColor;
+                if (indicator.Type == ChartIndicatorType.MovingAverage)
+                    title = $"MA({indicator.Period})";
+                else if (indicator.Type == ChartIndicatorType.ExponentialMovingAverage)
+                    title = $"EMA({indicator.Period})";
+                else if (indicator.Type == ChartIndicatorType.Ichimoku)
+                    title = $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})";
+                if (title == null) continue;
+                var size = g.MeasureString(title, titleFont);
+                xRight -= size.Width + 4f;
+                using var brush = new SolidBrush(color);
+                g.DrawString(title, titleFont, brush, xRight, y);
             }
         }
 
