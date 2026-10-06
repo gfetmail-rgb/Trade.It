@@ -9,9 +9,16 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indicatorRemoveMaMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indicatorRemoveEmaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
+        private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod5MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod10MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod20MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod50MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod100MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod200MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorDeleteMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM15MenuItem;
@@ -127,9 +134,16 @@
             indicatorsMenuItem = new ToolStripMenuItem();
             indicatorMaMenuItem = new ToolStripMenuItem();
             indicatorEmaMenuItem = new ToolStripMenuItem();
-            indicatorRemoveMaMenuItem = new ToolStripMenuItem();
-            indicatorRemoveEmaMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
+            indicatorContextMenuStrip = new ContextMenuStrip();
+            indicatorSettingsMenuItem = new ToolStripMenuItem();
+            indicatorPeriod5MenuItem = new ToolStripMenuItem();
+            indicatorPeriod10MenuItem = new ToolStripMenuItem();
+            indicatorPeriod20MenuItem = new ToolStripMenuItem();
+            indicatorPeriod50MenuItem = new ToolStripMenuItem();
+            indicatorPeriod100MenuItem = new ToolStripMenuItem();
+            indicatorPeriod200MenuItem = new ToolStripMenuItem();
+            indicatorDeleteMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
             analysisM15MenuItem = new ToolStripMenuItem();
@@ -336,7 +350,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorRemoveMaMenuItem, indicatorRemoveEmaMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -353,23 +367,66 @@
             indicatorEmaMenuItem.Size = new Size(190, 22);
             indicatorEmaMenuItem.Text = "EMA (20)";
             // 
-            // indicatorRemoveMaMenuItem
-            // 
-            indicatorRemoveMaMenuItem.Name = "indicatorRemoveMaMenuItem";
-            indicatorRemoveMaMenuItem.Size = new Size(190, 22);
-            indicatorRemoveMaMenuItem.Text = "حذف یک MA";
-            // 
-            // indicatorRemoveEmaMenuItem
-            // 
-            indicatorRemoveEmaMenuItem.Name = "indicatorRemoveEmaMenuItem";
-            indicatorRemoveEmaMenuItem.Size = new Size(190, 22);
-            indicatorRemoveEmaMenuItem.Text = "حذف یک EMA";
-            // 
             // indicatorClearMenuItem
             // 
             indicatorClearMenuItem.Name = "indicatorClearMenuItem";
             indicatorClearMenuItem.Size = new Size(190, 22);
             indicatorClearMenuItem.Text = "حذف همه اندیکاتورها";
+            // 
+            // indicatorContextMenuStrip
+            // 
+            indicatorContextMenuStrip.Items.AddRange(new ToolStripItem[] { indicatorSettingsMenuItem, indicatorDeleteMenuItem });
+            indicatorContextMenuStrip.Name = "indicatorContextMenuStrip";
+            indicatorContextMenuStrip.Size = new Size(180, 48);
+            // 
+            // indicatorSettingsMenuItem
+            // 
+            indicatorSettingsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorPeriod5MenuItem, indicatorPeriod10MenuItem, indicatorPeriod20MenuItem, indicatorPeriod50MenuItem, indicatorPeriod100MenuItem, indicatorPeriod200MenuItem });
+            indicatorSettingsMenuItem.Name = "indicatorSettingsMenuItem";
+            indicatorSettingsMenuItem.Size = new Size(179, 22);
+            indicatorSettingsMenuItem.Text = "تنظیمات";
+            // 
+            // indicatorPeriod5MenuItem
+            // 
+            indicatorPeriod5MenuItem.Name = "indicatorPeriod5MenuItem";
+            indicatorPeriod5MenuItem.Size = new Size(180, 22);
+            indicatorPeriod5MenuItem.Text = "دوره 5";
+            // 
+            // indicatorPeriod10MenuItem
+            // 
+            indicatorPeriod10MenuItem.Name = "indicatorPeriod10MenuItem";
+            indicatorPeriod10MenuItem.Size = new Size(180, 22);
+            indicatorPeriod10MenuItem.Text = "دوره 10";
+            // 
+            // indicatorPeriod20MenuItem
+            // 
+            indicatorPeriod20MenuItem.Name = "indicatorPeriod20MenuItem";
+            indicatorPeriod20MenuItem.Size = new Size(180, 22);
+            indicatorPeriod20MenuItem.Text = "دوره 20";
+            // 
+            // indicatorPeriod50MenuItem
+            // 
+            indicatorPeriod50MenuItem.Name = "indicatorPeriod50MenuItem";
+            indicatorPeriod50MenuItem.Size = new Size(180, 22);
+            indicatorPeriod50MenuItem.Text = "دوره 50";
+            // 
+            // indicatorPeriod100MenuItem
+            // 
+            indicatorPeriod100MenuItem.Name = "indicatorPeriod100MenuItem";
+            indicatorPeriod100MenuItem.Size = new Size(180, 22);
+            indicatorPeriod100MenuItem.Text = "دوره 100";
+            // 
+            // indicatorPeriod200MenuItem
+            // 
+            indicatorPeriod200MenuItem.Name = "indicatorPeriod200MenuItem";
+            indicatorPeriod200MenuItem.Size = new Size(180, 22);
+            indicatorPeriod200MenuItem.Text = "دوره 200";
+            // 
+            // indicatorDeleteMenuItem
+            // 
+            indicatorDeleteMenuItem.Name = "indicatorDeleteMenuItem";
+            indicatorDeleteMenuItem.Size = new Size(179, 22);
+            indicatorDeleteMenuItem.Text = "حذف";
             // 
             // analysisM1MenuItem
             // 
