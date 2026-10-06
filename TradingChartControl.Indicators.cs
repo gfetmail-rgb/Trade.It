@@ -339,7 +339,9 @@ namespace Trade.It
         private static bool PointInPolygon(Point point, IReadOnlyList<PointF> polygon)
         {
             var inside = false;
-            for (var i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
+            for (var i = 0; i < polygon.Count; i++)
+            {
+                var j = i == 0 ? polygon.Count - 1 : i - 1;
             {
                 var pi = polygon[i];
                 var pj = polygon[j];
