@@ -770,6 +770,7 @@ namespace Trade.It
             public Rectangle Rsi { get; init; }
             public Rectangle Macd { get; init; }
             public Rectangle Stochastic { get; init; }
+            public Rectangle StochasticRsi { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -804,6 +805,7 @@ namespace Trade.It
                 : 0;
 
             var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
+            var stochasticRsiHeight = HasStochasticRsiIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticRsiPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
 
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
@@ -815,6 +817,7 @@ namespace Trade.It
             var reserved = (rsiHeight > 0 ? rsiHeight + gap : 0) +
                            (macdHeight > 0 ? macdHeight + gap : 0) +
                            (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
+                           (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
@@ -866,6 +869,15 @@ namespace Trade.It
                 cursor = stochastic.Bottom;
             }
 
+            Rectangle stochasticRsi = Rectangle.Empty;
+            if (stochasticRsiHeight > 0)
+            {
+                var stochasticRsiTop = Math.Min(overallBottom - 1, cursor + gap);
+                var stochasticRsiBottom = Math.Min(overallBottom - 1, stochasticRsiTop + stochasticRsiHeight);
+                stochasticRsi = Rectangle.FromLTRB(left, stochasticRsiTop, right, Math.Max(stochasticRsiTop + 1, stochasticRsiBottom));
+                cursor = stochasticRsi.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -879,6 +891,7 @@ namespace Trade.It
                 Rsi = rsi,
                 Macd = macd,
                 Stochastic = stochastic,
+                StochasticRsi = stochasticRsi,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
