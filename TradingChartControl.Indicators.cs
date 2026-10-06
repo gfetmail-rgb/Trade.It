@@ -261,7 +261,7 @@ namespace Trade.It
             double tolerance,
             out double bestDistance)
         {
-            bestDistance = double.MaxValue;
+            var localBestDistance = double.MaxValue;
             var tenkan = CalculateIchimokuTenkan();
             var kijun = CalculateIchimokuKijun();
             var spanA = CalculateIchimokuSpanA(tenkan, kijun);
@@ -280,7 +280,8 @@ namespace Trade.It
                 Check(chikou, absoluteIndex, -26, indicator.ShowChikou, indicator.ChikouColor);
             }
 
-            return bestDistance < double.MaxValue;
+            bestDistance = localBestDistance;
+            return localBestDistance < double.MaxValue;
 
             void Check(double[] values, int sourceIndex, int shift, bool show, Color color)
             {
@@ -293,7 +294,7 @@ namespace Trade.It
                 if (screenIndex < 0 || screenIndex > displayedCount) return;
 
                 var distance = DistanceToIndicatorSegment(location, current, current);
-                if (distance < bestDistance) bestDistance = distance;
+                if (distance < localBestDistance) localBestDistance = distance;
             }
         }
 
@@ -477,6 +478,49 @@ namespace Trade.It
                     new PointF(x2, yB2), new PointF(x1, yB1)
                 });
             }
+        }
+
+        private double[] CalculateIchimokuTenkan()
+        {
+            return CalculateIchimokuMidpoint(9);
+        }
+
+        private double[] CalculateIchimokuKijun()
+        {
+            return CalculateIchimokuMidpoint(26);
+        }
+
+        private double[] CalculateIchimokuSpanB()
+        {
+            return CalculateIchimokuMidpoint(52);
+        }
+
+        private double[] CalculateIchimokuMidpoint(int period)
+        {
+            var result = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            for (var i = period - 1; i < points.Count; i++)
+            {
+                var highest = double.MinValue;
+                var lowest = double.MaxValue;
+                for (var j = i - period + 1; j <= i; j++)
+                {
+                    highest = Math.Max(highest, points[j].High);
+                    lowest = Math.Min(lowest, points[j].Low);
+                }
+                result[i] = (highest + lowest) / 2.0;
+            }
+            return result;
+        }
+
+        private static double[] CalculateIchimokuSpanA(double[] tenkan, double[] kijun)
+        {
+            var result = Enumerable.Repeat(double.NaN, tenkan.Length).ToArray();
+            for (var i = 0; i < result.Length; i++)
+            {
+                if (!double.IsNaN(tenkan[i]) && !double.IsNaN(kijun[i]))
+                    result[i] = (tenkan[i] + kijun[i]) / 2.0;
+            }
+            return result;
         }
 
         private double[] CalculateMovingAverage(int period)
