@@ -9,6 +9,8 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorRemoveMaMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorRemoveEmaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
@@ -125,6 +127,8 @@
             indicatorsMenuItem = new ToolStripMenuItem();
             indicatorMaMenuItem = new ToolStripMenuItem();
             indicatorEmaMenuItem = new ToolStripMenuItem();
+            indicatorRemoveMaMenuItem = new ToolStripMenuItem();
+            indicatorRemoveEmaMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
@@ -332,7 +336,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorRemoveMaMenuItem, indicatorRemoveEmaMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -348,6 +352,18 @@
             indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
             indicatorEmaMenuItem.Size = new Size(190, 22);
             indicatorEmaMenuItem.Text = "EMA (20)";
+            // 
+            // indicatorRemoveMaMenuItem
+            // 
+            indicatorRemoveMaMenuItem.Name = "indicatorRemoveMaMenuItem";
+            indicatorRemoveMaMenuItem.Size = new Size(190, 22);
+            indicatorRemoveMaMenuItem.Text = "حذف یک MA";
+            // 
+            // indicatorRemoveEmaMenuItem
+            // 
+            indicatorRemoveEmaMenuItem.Name = "indicatorRemoveEmaMenuItem";
+            indicatorRemoveEmaMenuItem.Size = new Size(190, 22);
+            indicatorRemoveEmaMenuItem.Text = "حذف یک EMA";
             // 
             // indicatorClearMenuItem
             // 
