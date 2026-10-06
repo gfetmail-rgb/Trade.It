@@ -11,7 +11,7 @@ namespace Trade.It
         public Color C20Color => c20ColorButton.BackColor;
         public Color C80Color => c80ColorButton.BackColor;
 
-        public StochasticSettingsForm(ChartIndicator indicator)
+        internal StochasticSettingsForm(ChartIndicator indicator)
         {
             InitializeComponent();
             showKCheckBox.Checked = indicator.ShowStochasticK;
