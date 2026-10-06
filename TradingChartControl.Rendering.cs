@@ -304,7 +304,8 @@ namespace Trade.It
             if (displayedCount <= 0 || plot.Width <= 0)
                 return;
 
-            var axisBottom = volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom;
+            var axisPanel = GetLowestPanelRectangle(plot, volumePlot);
+            var axisBottom = axisPanel.Bottom;
             var axisY = axisBottom - 1f;
             g.DrawLine(axisPen, plot.Left, axisBottom, plot.Right, axisBottom);
 
@@ -1156,6 +1157,8 @@ namespace Trade.It
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
             if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)IndicatorPercentToScreen(20, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
             if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
@@ -1188,6 +1191,8 @@ namespace Trade.It
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
 
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
 
             if (indicator.ShowStochasticRsi20)
             {
