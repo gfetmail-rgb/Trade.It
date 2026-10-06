@@ -915,7 +915,7 @@ namespace Trade.It
 
             if (activeLowerPanelSplitter == LowerPanelSplitter.PriceRsi && HasRsiIndicator)
             {
-                var rsiRatio = lowerPanelResizeStartRsiRatio + deltaRatio;
+                var rsiRatio = lowerPanelResizeStartRsiRatio - deltaRatio;
                 var volumeRatio = lowerPanelResizeStartVolumeRatio;
                 var minRsiRatio = minimumRsiHeight / (double)totalHeight;
                 var maxRsiRatio = 1.0 - volumeRatio -
