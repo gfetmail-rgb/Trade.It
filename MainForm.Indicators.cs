@@ -163,19 +163,19 @@ namespace Trade.It
 
             if (chart.Indicators[index].Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
             {
-                using var dialog = new StochasticRsiSettingsForm(chart.Indicators[index]);
+                using var dialog = new StochasticRsiSettingsForm(chart.Indicators[index], chart.Points.Count);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                     chart.ApplyStochasticRsiSettings(index, dialog.RsiPeriod, dialog.StochasticPeriod, dialog.KPeriod, dialog.DPeriod, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
             }
             else if (chart.Indicators[index].Type == ChartIndicatorType.Stochastic)
             {
-                using var dialog = new StochasticSettingsForm(chart.Indicators[index]);
+                using var dialog = new StochasticSettingsForm(chart.Indicators[index], chart.Points.Count);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                     chart.ApplyStochasticSettings(index, dialog.Period, dialog.KPeriod, dialog.DPeriod, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
             }
             else             if (chart.Indicators[index].Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
             {
-                using var dialog = new MacdSettingsForm(chart.Indicators[index]);
+                using var dialog = new MacdSettingsForm(chart.Indicators[index], chart.Points.Count);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     chart.ApplyMacdSettings(
@@ -196,7 +196,7 @@ namespace Trade.It
             }
             else if (chart.Indicators[index].Type == ChartIndicatorType.Ichimoku)
             {
-                using var dialog = new IchimokuSettingsForm(chart.Indicators[index]);
+                using var dialog = new IchimokuSettingsForm(chart.Indicators[index], chart.Points.Count);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     chart.ApplyIchimokuSettings(
