@@ -11,6 +11,7 @@ namespace Trade.It
             indicatorIchimokuMenuItem.Click += (_, _) => AddIchimokuToActiveChart();
             indicatorRsiMenuItem.Click += (_, _) => AddRsiToActiveChart();
             indicatorMacdMenuItem.Click += (_, _) => AddMacdToActiveChart();
+            indicatorStochasticMenuItem.Click += (_, _) => AddStochasticToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -64,6 +65,17 @@ namespace Trade.It
             chart.AddRelativeStrengthIndex(14);
         }
 
+        private void AddStochasticToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            chart.AddStochastic();
+        }
+
         private void AddMacdToActiveChart()
         {
             var chart = GetActiveChart();
@@ -104,8 +116,9 @@ namespace Trade.It
             var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
             var isRsi = indicator.Type == ChartIndicatorType.RelativeStrengthIndex;
             var isMacd = indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence;
+            var isStochastic = indicator.Type == ChartIndicatorType.Stochastic;
 
-            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochastic;
             indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
             indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
             indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
@@ -135,7 +148,13 @@ namespace Trade.It
             if (index < 0 || index >= chart.Indicators.Count)
                 return;
 
-            if (chart.Indicators[index].Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+            if (chart.Indicators[index].Type == ChartIndicatorType.Stochastic)
+            {
+                using var dialog = new StochasticSettingsForm(chart.Indicators[index]);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    chart.ApplyStochasticSettings(index, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
+            }
+            else             if (chart.Indicators[index].Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
             {
                 using var dialog = new MacdSettingsForm(chart.Indicators[index]);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
