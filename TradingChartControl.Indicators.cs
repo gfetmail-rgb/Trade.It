@@ -1063,6 +1063,91 @@ namespace Trade.It
             return result;
         }
 
+        private void EnsureStochasticRsiCache()
+        {
+            if (stochasticRsiKCache != null && stochasticRsiDCache != null &&
+                stochasticRsiKCache.Length == points.Count && stochasticRsiDCache.Length == points.Count)
+                return;
+
+            const int rsiPeriod = 14;
+            const int stochasticPeriod = 14;
+            const int smoothK = 3;
+            const int smoothD = 3;
+
+            var rsi = CalculateRsi(rsiPeriod);
+            var rawK = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            stochasticRsiKCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            stochasticRsiDCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+
+            for (var i = stochasticPeriod - 1; i < points.Count; i++)
+            {
+                if (double.IsNaN(rsi[i]))
+                    continue;
+
+                var highest = double.MinValue;
+                var lowest = double.MaxValue;
+                var valid = true;
+
+                for (var j = i - stochasticPeriod + 1; j <= i; j++)
+                {
+                    if (double.IsNaN(rsi[j]))
+                    {
+                        valid = false;
+                        break;
+                    }
+                    highest = Math.Max(highest, rsi[j]);
+                    lowest = Math.Min(lowest, rsi[j]);
+                }
+
+                if (valid)
+                    rawK[i] = highest - lowest <= 1e-12
+                        ? 50.0
+                        : 100.0 * (rsi[i] - lowest) / (highest - lowest);
+            }
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                if (i < stochasticPeriod - 1 + smoothK - 1)
+                    continue;
+
+                var sum = 0.0;
+                var valid = true;
+                for (var j = i - smoothK + 1; j <= i; j++)
+                {
+                    if (double.IsNaN(rawK[j]))
+                    {
+                        valid = false;
+                        break;
+                    }
+                    sum += rawK[j];
+                }
+
+                if (valid)
+                    stochasticRsiKCache[i] = sum / smoothK;
+            }
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                if (i < stochasticPeriod - 1 + smoothK - 1 + smoothD - 1)
+                    continue;
+
+                var sum = 0.0;
+                var valid = true;
+                for (var j = i - smoothD + 1; j <= i; j++)
+                {
+                    if (double.IsNaN(stochasticRsiKCache[j]))
+                    {
+                        valid = false;
+                        break;
+                    }
+                    sum += stochasticRsiKCache[j];
+                }
+
+                if (valid)
+                    stochasticRsiDCache[i] = sum / smoothD;
+            }
+        }
+
         private void EnsureStochasticCache()
         {
             if (stochasticKCache != null && stochasticDCache != null && stochasticKCache.Length == points.Count && stochasticDCache.Length == points.Count) return;
