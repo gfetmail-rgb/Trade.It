@@ -12,6 +12,7 @@ namespace Trade.It
         private CheckBox rsi70CheckBox;
         private Button rsi70ColorButton;
         private Button okButton;
+        private Button defaultButton;
         private Button cancelButton;
 
         protected override void Dispose(bool disposing)
@@ -31,6 +32,7 @@ namespace Trade.It
             rsi70CheckBox = new CheckBox();
             rsi70ColorButton = new Button();
             okButton = new Button();
+            defaultButton = new Button();
             cancelButton = new Button();
 
             ((System.ComponentModel.ISupportInitialize)periodNumeric).BeginInit();
@@ -76,13 +78,19 @@ namespace Trade.It
             rsi70ColorButton.UseVisualStyleBackColor = false;
 
             okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(190, 225);
+            okButton.Location = new Point(300, 225);
             okButton.Size = new Size(100, 36);
             okButton.Text = "تأیید";
             okButton.UseVisualStyleBackColor = true;
 
             cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(80, 225);
+            defaultButton.Location = new Point(80, 225);
+            defaultButton.Name = "defaultButton";
+            defaultButton.Size = new Size(100, 36);
+            defaultButton.Text = "پیش‌فرض";
+            defaultButton.UseVisualStyleBackColor = true;
+
+            cancelButton.Location = new Point(190, 225);
             cancelButton.Size = new Size(100, 36);
             cancelButton.Text = "انصراف";
             cancelButton.UseVisualStyleBackColor = true;
@@ -90,6 +98,7 @@ namespace Trade.It
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(400, 285);
+            Controls.Add(defaultButton);
             Controls.Add(cancelButton);
             Controls.Add(okButton);
             Controls.Add(rsi70ColorButton);
