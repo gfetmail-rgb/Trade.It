@@ -9,6 +9,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorIchimokuMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -134,6 +135,7 @@
             indicatorsMenuItem = new ToolStripMenuItem();
             indicatorMaMenuItem = new ToolStripMenuItem();
             indicatorEmaMenuItem = new ToolStripMenuItem();
+            indicatorIchimokuMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -350,7 +352,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -359,13 +361,19 @@
             // 
             indicatorMaMenuItem.Name = "indicatorMaMenuItem";
             indicatorMaMenuItem.Size = new Size(190, 22);
-            indicatorMaMenuItem.Text = "MA (20)";
+            indicatorMaMenuItem.Text = "MA";
             // 
             // indicatorEmaMenuItem
             // 
             indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
             indicatorEmaMenuItem.Size = new Size(190, 22);
-            indicatorEmaMenuItem.Text = "EMA (20)";
+            indicatorEmaMenuItem.Text = "EMA";
+            // 
+            // indicatorIchimokuMenuItem
+            // 
+            indicatorIchimokuMenuItem.Name = "indicatorIchimokuMenuItem";
+            indicatorIchimokuMenuItem.Size = new Size(190, 22);
+            indicatorIchimokuMenuItem.Text = "Ichimoku";
             // 
             // indicatorClearMenuItem
             // 
