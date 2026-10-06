@@ -67,6 +67,29 @@ namespace Trade.It
             chikouColorButton.Click += (_, _) => PickColor(chikouColorButton);
             bullishCloudColorButton.Click += (_, _) => PickColor(bullishCloudColorButton);
             bearishCloudColorButton.Click += (_, _) => PickColor(bearishCloudColorButton);
+            defaultButton.Click += (_, _) => ApplyDefaults();
+        }
+
+        private void ApplyDefaults()
+        {
+            tenkanPeriodNumeric.Value = Math.Min(9, tenkanPeriodNumeric.Maximum);
+            kijunPeriodNumeric.Value = Math.Min(26, kijunPeriodNumeric.Maximum);
+            spanBPeriodNumeric.Value = Math.Min(52, spanBPeriodNumeric.Maximum);
+            displacementNumeric.Value = Math.Min(26, displacementNumeric.Maximum);
+            tenkanCheckBox.Checked = true;
+            kijunCheckBox.Checked = true;
+            spanACheckBox.Checked = true;
+            spanBCheckBox.Checked = true;
+            chikouCheckBox.Checked = true;
+            bullishCloudCheckBox.Checked = true;
+            bearishCloudCheckBox.Checked = true;
+            SetColorButton(tenkanColorButton, Color.FromArgb(220, 80, 80));
+            SetColorButton(kijunColorButton, Color.FromArgb(80, 100, 220));
+            SetColorButton(spanAColorButton, Color.FromArgb(50, 150, 80));
+            SetColorButton(spanBColorButton, Color.FromArgb(180, 100, 60));
+            SetColorButton(chikouColorButton, Color.FromArgb(150, 80, 180));
+            SetColorButton(bullishCloudColorButton, Color.FromArgb(130, 200, 130));
+            SetColorButton(bearishCloudColorButton, Color.FromArgb(230, 150, 150));
         }
 
         private static void SetColorButton(Button button, Color color)
