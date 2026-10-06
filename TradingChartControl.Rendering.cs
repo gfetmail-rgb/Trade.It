@@ -162,6 +162,10 @@ namespace Trade.It
             if (atrPlot != Rectangle.Empty && HasAtrIndicator)
                 RenderClippedPanel(e.Graphics, atrPlot, g => RenderAtrPanel(g, atrPlot, panelVisible, step, initialOffset));
 
+            var adxPlot = GetAdxPlotRectangle();
+            if (adxPlot != Rectangle.Empty && HasAdxIndicator)
+                RenderClippedPanel(e.Graphics, adxPlot, g => RenderAdxPanel(g, adxPlot, panelVisible, step, initialOffset));
+
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty && HasStochasticRsiIndicator)
                 RenderClippedPanel(e.Graphics, stochasticRsiPlot, g => RenderStochasticRsiPanel(g, stochasticRsiPlot, panelVisible, step, initialOffset));
@@ -181,6 +185,9 @@ namespace Trade.It
 
                 if (volumePlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, volumePlot.Top - 1, plot.Right, volumePlot.Top - 1);
+
+                if (adxPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, adxPlot.Top - 1, plot.Right, adxPlot.Top - 1);
 
                 if (macdPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, macdPlot.Top - 1, plot.Right, macdPlot.Top - 1);
@@ -818,6 +825,7 @@ namespace Trade.It
             public Rectangle Stochastic { get; init; }
             public Rectangle StochasticRsi { get; init; }
             public Rectangle Atr { get; init; }
+            public Rectangle Adx { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -854,6 +862,7 @@ namespace Trade.It
             var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var stochasticRsiHeight = HasStochasticRsiIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticRsiPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var atrHeight = HasAtrIndicator ? Math.Clamp((int)Math.Round(totalHeight * atrPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
+            var adxHeight = HasAdxIndicator ? Math.Clamp((int)Math.Round(totalHeight * adxPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
 
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
@@ -881,6 +890,7 @@ namespace Trade.It
                                  (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                                  (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
+                           (adxHeight > 0 ? adxHeight + gap : 0) +
                                  (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             if (lowerRequested > availableLower && lowerRequested > 0)
@@ -891,6 +901,7 @@ namespace Trade.It
                 stochasticHeight = (int)Math.Floor(stochasticHeight * scale);
                 stochasticRsiHeight = (int)Math.Floor(stochasticRsiHeight * scale);
                  atrHeight = (int)Math.Floor(atrHeight * scale);
+                adxHeight = (int)Math.Floor(adxHeight * scale);
                 volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
@@ -942,6 +953,15 @@ namespace Trade.It
                 cursor = atr.Bottom;
             }
 
+            Rectangle adx = Rectangle.Empty;
+            if (adxHeight > 0)
+            {
+                var adxTop = Math.Min(overallBottom - 1, cursor + gap);
+                var adxBottom = Math.Min(overallBottom - 1, adxTop + adxHeight);
+                adx = Rectangle.FromLTRB(left, adxTop, right, Math.Max(adxTop + 1, adxBottom));
+                cursor = adx.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -957,6 +977,7 @@ namespace Trade.It
                 Stochastic = stochastic,
                 StochasticRsi = stochasticRsi,
                 Atr = atr,
+                Adx = adx,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
@@ -973,6 +994,7 @@ namespace Trade.It
         private Rectangle GetStochasticRsiPlotRectangle() => GetLowerPanelLayout().StochasticRsi;
 
         private Rectangle GetAtrPlotRectangle() => GetLowerPanelLayout().Atr;
+        private Rectangle GetAdxPlotRectangle() => GetLowerPanelLayout().Adx;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
@@ -1289,6 +1311,80 @@ namespace Trade.It
             var innerHeight = plot.Height * (1.0 - 2.0 * padding);
             var clamped = Math.Clamp(value, 0.0, 100.0);
             return plot.Bottom - plot.Height * padding - (clamped / 100.0 * innerHeight);
+        }
+
+        private void RenderAdxPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasAdxIndicator)
+                return;
+
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.AverageDirectionalIndex);
+            EnsureAdxCache(indicator);
+
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Regular);
+            using var labelBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
+
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+
+            if (indicator.ShowAdx25)
+            {
+                using var p = new Pen(indicator.Adx25Color);
+                var y = (float)AdxValueToScreen(25, plot);
+                g.DrawLine(p, plot.Left, y, plot.Right, y);
+                g.DrawString("25", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g));
+            }
+
+            DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxCache!, indicator.ShowAdxLine, indicator.AdxLineColor);
+            DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxPlusDiCache!, indicator.ShowAdxPlusDi, indicator.AdxPlusDiColor);
+            DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxMinusDiCache!, indicator.ShowAdxMinusDi, indicator.AdxMinusDiColor);
+
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            var valueText = absoluteIndex >= 0 && absoluteIndex < adxCache!.Length &&
+                            !double.IsNaN(adxCache[absoluteIndex]) && !double.IsInfinity(adxCache[absoluteIndex])
+                ? adxCache[absoluteIndex].ToString("0.##", CultureInfo.InvariantCulture)
+                : "—";
+
+            DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})={valueText}", titleFont, indicator.AdxLineColor);
+        }
+
+        private static void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
+        {
+            if (!show) return;
+
+            using var pen = new Pen(color, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= values.Length ||
+                    double.IsNaN(values[absoluteIndex]) || double.IsInfinity(values[absoluteIndex]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var current = new PointF(
+                    (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                    (float)AdxValueToScreen(values[absoluteIndex], plot));
+
+                if (previous.HasValue)
+                    g.DrawLine(pen, previous.Value, current);
+
+                previous = current;
+            }
+        }
+
+        private static double AdxValueToScreen(double value, Rectangle plot)
+        {
+            const double maxValue = 100.0;
+            value = Math.Clamp(value, 0, maxValue);
+            return plot.Bottom - (value / maxValue) * plot.Height;
         }
 
         private void RenderStochasticRsiPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
