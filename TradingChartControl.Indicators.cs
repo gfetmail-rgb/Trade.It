@@ -597,6 +597,13 @@ namespace Trade.It
                 return selectedIndicatorIndex;
             }
 
+            var obvPlot = GetObvPlotRectangle();
+            if (obvPlot != Rectangle.Empty && obvPlot.Contains(location))
+            {
+                selectedIndicatorIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.OnBalanceVolume);
+                return selectedIndicatorIndex;
+            }
+
             var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
             if (stochasticRsiPlot != Rectangle.Empty && stochasticRsiPlot.Contains(location))
             {
