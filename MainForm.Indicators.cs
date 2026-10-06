@@ -15,6 +15,8 @@ namespace Trade.It
             indicatorStochasticRsiMenuItem.Click += (_, _) => AddStochasticRsiToActiveChart();
             indicatorAtrMenuItem.Click += (_, _) => AddAtrToActiveChart();
             indicatorAdxMenuItem.Click += (_, _) => AddAdxToActiveChart();
+            indicatorBollingerMenuItem.Click += (_, _) => AddBollingerToActiveChart();
+            indicatorObvMenuItem.Click += (_, _) => AddObvToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -94,6 +96,28 @@ namespace Trade.It
             }
 
             chart.AddAverageTrueRange(14);
+        }
+
+        private void AddBollingerToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            chart.AddBollingerBands(20, 2.0);
+        }
+
+        private void AddObvToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            chart.AddOnBalanceVolume();
         }
 
         private void AddAdxToActiveChart()
@@ -217,6 +241,18 @@ namespace Trade.It
                         dialog.BullishCloudColor,
                         dialog.BearishCloudColor);
                 }
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.BollingerBands)
+            {
+                using var dialog = new BollingerSettingsForm(chart.Indicators[index], chart.Points.Count);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    chart.ApplyBollingerSettings(index, dialog.Period, dialog.StandardDeviation, dialog.ShowMiddle, dialog.ShowUpper, dialog.ShowLower, dialog.MiddleColor, dialog.UpperColor, dialog.LowerColor);
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.OnBalanceVolume)
+            {
+                using var dialog = new ObvSettingsForm(chart.Indicators[index], chart.Points.Count);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    chart.ApplyObvSettings(index, dialog.ShowLine, dialog.ShowZero, dialog.LineColor, dialog.ZeroColor);
             }
             else if (chart.Indicators[index].Type == ChartIndicatorType.AverageDirectionalIndex)
             {
