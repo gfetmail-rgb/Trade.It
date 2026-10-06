@@ -912,6 +912,8 @@ namespace Trade.It
 
         private Rectangle GetStochasticPlotRectangle() => GetLowerPanelLayout().Stochastic;
 
+        private Rectangle GetStochasticRsiPlotRectangle() => GetLowerPanelLayout().StochasticRsi;
+
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
         private void RenderRsiPanel(
