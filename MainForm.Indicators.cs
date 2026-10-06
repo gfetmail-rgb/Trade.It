@@ -19,13 +19,6 @@ namespace Trade.It
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
             indicatorDeleteMenuItem.Click += (_, _) => DeleteContextIndicator();
             indicatorSettingsMenuItem.Click += (_, _) => OpenIndicatorSettings();
-            indicatorPeriod9MenuItem.Click += (_, _) => SetContextIndicatorPeriod(9);
-            indicatorPeriod13MenuItem.Click += (_, _) => SetContextIndicatorPeriod(13);
-            indicatorPeriod21MenuItem.Click += (_, _) => SetContextIndicatorPeriod(21);
-            indicatorPeriod34MenuItem.Click += (_, _) => SetContextIndicatorPeriod(34);
-            indicatorPeriod55MenuItem.Click += (_, _) => SetContextIndicatorPeriod(55);
-            indicatorPeriod89MenuItem.Click += (_, _) => SetContextIndicatorPeriod(89);
-            indicatorPeriod200MenuItem.Click += (_, _) => SetContextIndicatorPeriod(200);
         }
 
         private void AddMovingAverageToActiveChart()
@@ -139,30 +132,7 @@ namespace Trade.It
                 return;
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
-            var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
-            var isRsi = indicator.Type == ChartIndicatorType.RelativeStrengthIndex;
-            var isMacd = indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence;
-            var isStochastic = indicator.Type == ChartIndicatorType.Stochastic;
-            var isStochasticRsi = indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex;
-
-            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochastic && !isStochasticRsi;
-            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
-
-            if (!isIchimoku)
-            {
-                indicatorPeriod9MenuItem.Checked = indicator.Period == 9;
-                indicatorPeriod13MenuItem.Checked = indicator.Period == 13;
-                indicatorPeriod21MenuItem.Checked = indicator.Period == 21;
-                indicatorPeriod34MenuItem.Checked = indicator.Period == 34;
-                indicatorPeriod55MenuItem.Checked = indicator.Period == 55;
-                indicatorPeriod89MenuItem.Checked = indicator.Period == 89;
-                indicatorPeriod200MenuItem.Checked = indicator.Period == 200;
-            }
+        }
         }
 
         private void OpenIndicatorSettings()
