@@ -152,6 +152,10 @@ namespace Trade.It
             if (macdPlot != Rectangle.Empty)
                 RenderMacdPanel(e.Graphics, macdPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
+            var stochasticPlot = GetStochasticPlotRectangle();
+            if (stochasticPlot != Rectangle.Empty && HasStochasticIndicator)
+                RenderStochasticPanel(e.Graphics, stochasticPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
@@ -765,6 +769,7 @@ namespace Trade.It
             public Rectangle Price { get; init; }
             public Rectangle Rsi { get; init; }
             public Rectangle Macd { get; init; }
+            public Rectangle Stochastic { get; init; }
             public Rectangle Volume { get; init; }
             public int OverallBottom { get; init; }
         }
@@ -798,6 +803,8 @@ namespace Trade.It
                     Math.Max(60, totalHeight / 2))
                 : 0;
 
+            var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
+
             var volumeHeight = volumePanelVisible
                 ? Math.Clamp(
                     (int)Math.Round(totalHeight * volumePanelRatio),
@@ -807,6 +814,7 @@ namespace Trade.It
 
             var reserved = (rsiHeight > 0 ? rsiHeight + gap : 0) +
                            (macdHeight > 0 ? macdHeight + gap : 0) +
+                           (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
@@ -849,6 +857,15 @@ namespace Trade.It
                 cursor = macd.Bottom;
             }
 
+            Rectangle stochastic = Rectangle.Empty;
+            if (stochasticHeight > 0)
+            {
+                var stochasticTop = Math.Min(overallBottom - 1, cursor + gap);
+                var stochasticBottom = Math.Min(overallBottom - 1, stochasticTop + stochasticHeight);
+                stochastic = Rectangle.FromLTRB(left, stochasticTop, right, Math.Max(stochasticTop + 1, stochasticBottom));
+                cursor = stochastic.Bottom;
+            }
+
             Rectangle volume = Rectangle.Empty;
             if (volumeHeight > 0)
             {
@@ -861,6 +878,7 @@ namespace Trade.It
                 Price = price,
                 Rsi = rsi,
                 Macd = macd,
+                Stochastic = stochastic,
                 Volume = volume,
                 OverallBottom = overallBottom
             };
@@ -871,6 +889,8 @@ namespace Trade.It
         private Rectangle GetRsiPlotRectangle() => GetLowerPanelLayout().Rsi;
 
         private Rectangle GetMacdPlotRectangle() => GetLowerPanelLayout().Macd;
+
+        private Rectangle GetStochasticPlotRectangle() => GetLowerPanelLayout().Stochastic;
 
         private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
@@ -1092,6 +1112,28 @@ namespace Trade.It
 
                 previous = current;
             }
+        }
+
+        private void RenderStochasticPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasStochasticIndicator) return;
+            EnsureStochasticCache();
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.Stochastic);
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)(plot.Bottom-.20*plot.Height); g.DrawLine(p,plot.Left,y,plot.Right,y); }
+            if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)(plot.Bottom-.80*plot.Height); g.DrawLine(p,plot.Left,y,plot.Right,y); }
+            DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
+            DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
+            var idx=crosshairIndex>=0&&crosshairIndex<visible.Count?crosshairIndex:visible.Count-1; var ai=firstIndex+idx;
+            if(ai>=0&&ai<stochasticKCache!.Length&&!double.IsNaN(stochasticKCache[ai])) g.DrawString($"Stochastic %K={stochasticKCache[ai]:0.00}  %D={stochasticDCache![ai]:0.00}",font,new SolidBrush(indicator.StochasticKColor),plot.Left+4,plot.Top+1);
+        }
+
+        private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
+        {
+            if(!show) return; using var pen=new Pen(color,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth)); PointF? previous=null;
+            for(var i=0;i<count;i++){var ai=firstIndex+i;if(ai<0||ai>=values.Length||double.IsNaN(values[ai])){previous=null;continue;} var current=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)(plot.Bottom-values[ai]/100.0*plot.Height));if(previous.HasValue)g.DrawLine(pen,previous.Value,current);previous=current;}
         }
 
         private void RenderVolumePanel(
