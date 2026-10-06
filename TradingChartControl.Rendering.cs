@@ -836,6 +836,8 @@ namespace Trade.It
             var availableLower = Math.Max(0, overallBottom - priceBottom);
             var lowerRequested = (rsiHeight > 0 ? rsiHeight + gap : 0) +
                                  (macdHeight > 0 ? macdHeight + gap : 0) +
+                                 (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
+                                 (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                                  (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             if (lowerRequested > availableLower && lowerRequested > 0)
@@ -843,6 +845,8 @@ namespace Trade.It
                 var scale = availableLower / (double)lowerRequested;
                 rsiHeight = (int)Math.Floor(rsiHeight * scale);
                 macdHeight = (int)Math.Floor(macdHeight * scale);
+                stochasticHeight = (int)Math.Floor(stochasticHeight * scale);
+                stochasticRsiHeight = (int)Math.Floor(stochasticRsiHeight * scale);
                 volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
