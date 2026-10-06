@@ -289,6 +289,30 @@ namespace Trade.It
         }
 
 
+        private Rectangle GetLowestPanelRectangle(Rectangle pricePlot, Rectangle volumePlot)
+        {
+            if (volumePlot != Rectangle.Empty)
+                return volumePlot;
+
+            var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
+            if (stochasticRsiPlot != Rectangle.Empty)
+                return stochasticRsiPlot;
+
+            var stochasticPlot = GetStochasticPlotRectangle();
+            if (stochasticPlot != Rectangle.Empty)
+                return stochasticPlot;
+
+            var macdPlot = GetMacdPlotRectangle();
+            if (macdPlot != Rectangle.Empty)
+                return macdPlot;
+
+            var rsiPlot = GetRsiPlotRectangle();
+            if (rsiPlot != Rectangle.Empty)
+                return rsiPlot;
+
+            return pricePlot;
+        }
+
         private void DrawTimeAxis(
             Graphics g,
             Rectangle plot,
