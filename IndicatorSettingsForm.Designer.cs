@@ -10,6 +10,7 @@ namespace Trade.It
         private Label backgroundColorLabel;
         private Button backgroundColorButton;
         private Button okButton;
+        private Button defaultButton;
         private Button cancelButton;
 
         protected override void Dispose(bool disposing)
@@ -27,6 +28,7 @@ namespace Trade.It
             backgroundColorLabel = new Label();
             backgroundColorButton = new Button();
             okButton = new Button();
+            defaultButton = new Button();
             cancelButton = new Button();
 
             ((System.ComponentModel.ISupportInitialize)periodNumeric).BeginInit();
@@ -68,14 +70,20 @@ namespace Trade.It
             backgroundColorButton.UseVisualStyleBackColor = false;
 
             okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(165, 180);
+            okButton.Location = new Point(275, 180);
             okButton.Name = "okButton";
             okButton.Size = new Size(100, 36);
             okButton.Text = "تأیید";
             okButton.UseVisualStyleBackColor = true;
 
+            defaultButton.Location = new Point(55, 180);
+            defaultButton.Name = "defaultButton";
+            defaultButton.Size = new Size(100, 36);
+            defaultButton.Text = "پیش‌فرض";
+            defaultButton.UseVisualStyleBackColor = true;
+
             cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(55, 180);
+            cancelButton.Location = new Point(165, 180);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(100, 36);
             cancelButton.Text = "انصراف";
@@ -84,6 +92,7 @@ namespace Trade.It
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(390, 235);
+            Controls.Add(defaultButton);
             Controls.Add(cancelButton);
             Controls.Add(okButton);
             Controls.Add(backgroundColorButton);
