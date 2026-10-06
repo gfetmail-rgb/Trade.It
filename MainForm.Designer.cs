@@ -9,7 +9,6 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indicatorIchimokuMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -135,7 +134,6 @@
             indicatorsMenuItem = new ToolStripMenuItem();
             indicatorMaMenuItem = new ToolStripMenuItem();
             indicatorEmaMenuItem = new ToolStripMenuItem();
-            indicatorIchimokuMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -352,7 +350,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -361,19 +359,13 @@
             // 
             indicatorMaMenuItem.Name = "indicatorMaMenuItem";
             indicatorMaMenuItem.Size = new Size(190, 22);
-            indicatorMaMenuItem.Text = "MA";
+            indicatorMaMenuItem.Text = "MA (20)";
             // 
             // indicatorEmaMenuItem
             // 
             indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
             indicatorEmaMenuItem.Size = new Size(190, 22);
-            indicatorEmaMenuItem.Text = "EMA";
-            // 
-            // indicatorIchimokuMenuItem
-            // 
-            indicatorIchimokuMenuItem.Name = "indicatorIchimokuMenuItem";
-            indicatorIchimokuMenuItem.Size = new Size(190, 22);
-            indicatorIchimokuMenuItem.Text = "Ichimoku";
+            indicatorEmaMenuItem.Text = "EMA (20)";
             // 
             // indicatorClearMenuItem
             // 
@@ -1206,3 +1198,896 @@
             // pastDaysGroup
             // 
             pastDaysGroup.Controls.Add(label4);
+            pastDaysGroup.Controls.Add(label3);
+            pastDaysGroup.Controls.Add(pastDaysTextBox);
+            pastDaysGroup.Controls.Add(pastDaysStatusComboBox);
+            pastDaysGroup.Controls.Add(label5_7);
+            pastDaysGroup.Dock = DockStyle.Top;
+            pastDaysGroup.Location = new Point(8, 281);
+            pastDaysGroup.Name = "pastDaysGroup";
+            pastDaysGroup.Size = new Size(371, 86);
+            pastDaysGroup.TabIndex = 3;
+            pastDaysGroup.TabStop = false;
+            pastDaysGroup.Text = " وضعیت معامله در روزهای اخیر:";
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label4.Location = new Point(318, 42);
+            label4.Name = "label4";
+            label4.Size = new Size(40, 33);
+            label4.TabIndex = 0;
+            label4.Text = "در";
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label3.Location = new Point(156, 39);
+            label3.Name = "label3";
+            label3.Size = new Size(78, 34);
+            label3.TabIndex = 1;
+            label3.Text = "روز اخیر";
+            // 
+            // pastDaysTextBox
+            // 
+            pastDaysTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pastDaysTextBox.Location = new Point(246, 42);
+            pastDaysTextBox.Name = "pastDaysTextBox";
+            pastDaysTextBox.Size = new Size(78, 31);
+            pastDaysTextBox.TabIndex = 2;
+            // 
+            // pastDaysStatusComboBox
+            // 
+            pastDaysStatusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            pastDaysStatusComboBox.Items.AddRange(new object[] { "داشته", "نداشته" });
+            pastDaysStatusComboBox.Location = new Point(9, 40);
+            pastDaysStatusComboBox.Name = "pastDaysStatusComboBox";
+            pastDaysStatusComboBox.Size = new Size(127, 33);
+            pastDaysStatusComboBox.TabIndex = 3;
+            // 
+            // label5_7
+            // 
+            label5_7.Location = new Point(172, 79);
+            label5_7.Name = "label5_7";
+            label5_7.Size = new Size(100, 23);
+            label5_7.TabIndex = 4;
+            // 
+            // volumeRatioGroup
+            // 
+            volumeRatioGroup.Controls.Add(label2);
+            volumeRatioGroup.Controls.Add(volumeRatioOperatorComboBox);
+            volumeRatioGroup.Controls.Add(textBox1);
+            volumeRatioGroup.Controls.Add(volumeRatioTextBox);
+            volumeRatioGroup.Dock = DockStyle.Top;
+            volumeRatioGroup.Location = new Point(8, 196);
+            volumeRatioGroup.Name = "volumeRatioGroup";
+            volumeRatioGroup.Size = new Size(371, 85);
+            volumeRatioGroup.TabIndex = 2;
+            volumeRatioGroup.TabStop = false;
+            volumeRatioGroup.Text = " نسبت حجم آخرین کندل به میانگین: ";
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label2.Location = new Point(190, 36);
+            label2.Name = "label2";
+            label2.Size = new Size(82, 31);
+            label2.TabIndex = 0;
+            label2.Text = "کندل قبل";
+            // 
+            // volumeRatioOperatorComboBox
+            // 
+            volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            volumeRatioOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            volumeRatioOperatorComboBox.Location = new Point(109, 33);
+            volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";
+            volumeRatioOperatorComboBox.Size = new Size(78, 33);
+            volumeRatioOperatorComboBox.TabIndex = 4;
+            // 
+            // textBox1
+            // 
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            textBox1.Location = new Point(271, 36);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(79, 31);
+            textBox1.TabIndex = 2;
+            // 
+            // volumeRatioTextBox
+            // 
+            volumeRatioTextBox.Location = new Point(14, 33);
+            volumeRatioTextBox.Name = "volumeRatioTextBox";
+            volumeRatioTextBox.Size = new Size(86, 31);
+            volumeRatioTextBox.TabIndex = 3;
+            // 
+            // nameFilterGroup
+            // 
+            nameFilterGroup.Controls.Add(nameComboBox);
+            nameFilterGroup.Controls.Add(nameTextBox);
+            nameFilterGroup.Dock = DockStyle.Top;
+            nameFilterGroup.Location = new Point(8, 111);
+            nameFilterGroup.Name = "nameFilterGroup";
+            nameFilterGroup.Size = new Size(371, 85);
+            nameFilterGroup.TabIndex = 1;
+            nameFilterGroup.TabStop = false;
+            nameFilterGroup.Text = " جستجو در نام نماد:";
+            // 
+            // nameComboBox
+            // 
+            nameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            nameComboBox.Items.AddRange(new object[] { "در ابتدا", "در انتها", "در میانه", "در هرجا", "در هیچ جا" });
+            nameComboBox.Location = new Point(20, 38);
+            nameComboBox.Name = "nameComboBox";
+            nameComboBox.Size = new Size(167, 33);
+            nameComboBox.TabIndex = 0;
+            // 
+            // nameTextBox
+            // 
+            nameTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            nameTextBox.Location = new Point(190, 40);
+            nameTextBox.Name = "nameTextBox";
+            nameTextBox.Size = new Size(168, 31);
+            nameTextBox.TabIndex = 1;
+            // 
+            // tradingStatusGroup
+            // 
+            tradingStatusGroup.Controls.Add(statusAllRadio);
+            tradingStatusGroup.Controls.Add(statusPositiveRadio);
+            tradingStatusGroup.Controls.Add(statusNegativeRadio);
+            tradingStatusGroup.Dock = DockStyle.Top;
+            tradingStatusGroup.Location = new Point(8, 8);
+            tradingStatusGroup.Name = "tradingStatusGroup";
+            tradingStatusGroup.Size = new Size(371, 103);
+            tradingStatusGroup.TabIndex = 0;
+            tradingStatusGroup.TabStop = false;
+            tradingStatusGroup.Text = "وضعیت معامله در امروز (تقویمی) :";
+            // 
+            // statusAllRadio
+            // 
+            statusAllRadio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            statusAllRadio.Location = new Point(260, 49);
+            statusAllRadio.Name = "statusAllRadio";
+            statusAllRadio.Size = new Size(90, 29);
+            statusAllRadio.TabIndex = 0;
+            statusAllRadio.Text = "همه";
+            // 
+            // statusPositiveRadio
+            // 
+            statusPositiveRadio.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            statusPositiveRadio.Location = new Point(130, 47);
+            statusPositiveRadio.Name = "statusPositiveRadio";
+            statusPositiveRadio.Size = new Size(106, 33);
+            statusPositiveRadio.TabIndex = 1;
+            statusPositiveRadio.Text = "دارد";
+            // 
+            // statusNegativeRadio
+            // 
+            statusNegativeRadio.Location = new Point(35, 47);
+            statusNegativeRadio.Name = "statusNegativeRadio";
+            statusNegativeRadio.Size = new Size(81, 33);
+            statusNegativeRadio.TabIndex = 2;
+            statusNegativeRadio.Text = "ندارد";
+            // 
+            // marketsTabPage
+            // 
+            marketsTabPage.Controls.Add(marketCountLabel);
+            marketsTabPage.Controls.Add(marketClearButton);
+            marketsTabPage.Controls.Add(marketApplyButton);
+            marketsTabPage.Controls.Add(marketOtherCheckedListBox);
+            marketsTabPage.Controls.Add(marketAssetCheckedListBox);
+            marketsTabPage.Controls.Add(marketFilterTreeView);
+            marketsTabPage.Controls.Add(label17);
+            marketsTabPage.Controls.Add(label16);
+            marketsTabPage.Controls.Add(label13);
+            marketsTabPage.Location = new Point(4, 34);
+            marketsTabPage.Name = "marketsTabPage";
+            marketsTabPage.Padding = new Padding(8);
+            marketsTabPage.Size = new Size(387, 911);
+            marketsTabPage.TabIndex = 3;
+            marketsTabPage.Text = "بازارها";
+            // 
+            // marketCountLabel
+            // 
+            marketCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            marketCountLabel.Font = new Font("Segoe UI", 9F);
+            marketCountLabel.Location = new Point(16, 867);
+            marketCountLabel.Name = "marketCountLabel";
+            marketCountLabel.RightToLeft = RightToLeft.Yes;
+            marketCountLabel.Size = new Size(351, 36);
+            marketCountLabel.TabIndex = 20;
+            marketCountLabel.Text = "کل: ۰    پیدا شده: ۰";
+            marketCountLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // marketClearButton
+            // 
+            marketClearButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            marketClearButton.Location = new Point(83, 825);
+            marketClearButton.Name = "marketClearButton";
+            marketClearButton.Size = new Size(85, 35);
+            marketClearButton.TabIndex = 13;
+            marketClearButton.Text = "پاک";
+            marketClearButton.UseVisualStyleBackColor = true;
+            // 
+            // marketApplyButton
+            // 
+            marketApplyButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            marketApplyButton.Location = new Point(229, 825);
+            marketApplyButton.Name = "marketApplyButton";
+            marketApplyButton.Size = new Size(85, 35);
+            marketApplyButton.TabIndex = 12;
+            marketApplyButton.Text = "تایید";
+            marketApplyButton.UseVisualStyleBackColor = true;
+            // 
+            // marketOtherCheckedListBox
+            // 
+            marketOtherCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketOtherCheckedListBox.CheckOnClick = true;
+            marketOtherCheckedListBox.FormattingEnabled = true;
+            marketOtherCheckedListBox.HorizontalScrollbar = true;
+            marketOtherCheckedListBox.Location = new Point(8, 416);
+            marketOtherCheckedListBox.Name = "marketOtherCheckedListBox";
+            marketOtherCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketOtherCheckedListBox.Size = new Size(266, 396);
+            marketOtherCheckedListBox.TabIndex = 8;
+            // 
+            // marketAssetCheckedListBox
+            // 
+            marketAssetCheckedListBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetCheckedListBox.CheckOnClick = true;
+            marketAssetCheckedListBox.FormattingEnabled = true;
+            marketAssetCheckedListBox.HorizontalScrollbar = true;
+            marketAssetCheckedListBox.Location = new Point(8, 297);
+            marketAssetCheckedListBox.Name = "marketAssetCheckedListBox";
+            marketAssetCheckedListBox.RightToLeft = RightToLeft.Yes;
+            marketAssetCheckedListBox.Size = new Size(266, 116);
+            marketAssetCheckedListBox.TabIndex = 7;
+            // 
+            // marketFilterTreeView
+            // 
+            marketFilterTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFilterTreeView.CheckBoxes = true;
+            marketFilterTreeView.Location = new Point(8, 39);
+            marketFilterTreeView.Name = "marketFilterTreeView";
+            marketFilterTreeView.RightToLeft = RightToLeft.Yes;
+            marketFilterTreeView.RightToLeftLayout = true;
+            marketFilterTreeView.Size = new Size(266, 253);
+            marketFilterTreeView.TabIndex = 6;
+            // 
+            // label17
+            // 
+            label17.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label17.AutoSize = true;
+            label17.Location = new Point(283, 614);
+            label17.Name = "label17";
+            label17.Size = new Size(95, 25);
+            label17.TabIndex = 4;
+            label17.Text = "سایر موارد:";
+            // 
+            // label16
+            // 
+            label16.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label16.AutoSize = true;
+            label16.Location = new Point(283, 335);
+            label16.Name = "label16";
+            label16.Size = new Size(93, 25);
+            label16.TabIndex = 3;
+            label16.Text = "نوع دارایی:";
+            // 
+            // label13
+            // 
+            label13.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label13.Location = new Point(276, 150);
+            label13.Name = "label13";
+            label13.Size = new Size(102, 29);
+            label13.TabIndex = 0;
+            label13.Text = "ساختار بازار:";
+            // 
+            // chartPanel
+            // 
+            chartPanel.BorderStyle = BorderStyle.FixedSingle;
+            chartPanel.Controls.Add(chartTabControl);
+            chartPanel.Controls.Add(chartToolbarPanel);
+            chartPanel.Dock = DockStyle.Fill;
+            chartPanel.Location = new Point(0, 0);
+            chartPanel.Name = "chartPanel";
+            chartPanel.Size = new Size(1229, 949);
+            chartPanel.TabIndex = 0;
+            // 
+            // chartTabControl
+            // 
+            chartTabControl.Controls.Add(chartTabPage);
+            chartTabControl.Dock = DockStyle.Fill;
+            chartTabControl.Location = new Point(0, 88);
+            chartTabControl.Name = "chartTabControl";
+            chartTabControl.SelectedIndex = 0;
+            chartTabControl.Size = new Size(1227, 859);
+            chartTabControl.TabIndex = 0;
+            // 
+            // chartTabPage
+            // 
+            chartTabPage.Controls.Add(chartInfoPanel);
+            chartTabPage.Controls.Add(chartPlaceholderLabel);
+            chartTabPage.Location = new Point(4, 34);
+            chartTabPage.Name = "chartTabPage";
+            chartTabPage.Padding = new Padding(3);
+            chartTabPage.Size = new Size(1219, 821);
+            chartTabPage.TabIndex = 0;
+            chartTabPage.Text = "نماد";
+            // 
+            // chartInfoPanel
+            // 
+            chartInfoPanel.BackColor = SystemColors.Control;
+            chartInfoPanel.Controls.Add(chartInfoLabel);
+            chartInfoPanel.Dock = DockStyle.Top;
+            chartInfoPanel.Location = new Point(3, 3);
+            chartInfoPanel.Name = "chartInfoPanel";
+            chartInfoPanel.Size = new Size(1213, 30);
+            chartInfoPanel.TabIndex = 0;
+            // 
+            // chartInfoLabel
+            // 
+            chartInfoLabel.Dock = DockStyle.Fill;
+            chartInfoLabel.Location = new Point(0, 0);
+            chartInfoLabel.Name = "chartInfoLabel";
+            chartInfoLabel.Padding = new Padding(8, 0, 0, 0);
+            chartInfoLabel.Size = new Size(1213, 30);
+            chartInfoLabel.TabIndex = 0;
+            chartInfoLabel.Text = "O: —    H: —    L: —    C: —    V: — تاریخ/زمان : —    ";
+            chartInfoLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // chartPlaceholderLabel
+            // 
+            chartPlaceholderLabel.Dock = DockStyle.Fill;
+            chartPlaceholderLabel.Font = new Font("Segoe UI", 14F);
+            chartPlaceholderLabel.Location = new Point(3, 3);
+            chartPlaceholderLabel.Name = "chartPlaceholderLabel";
+            chartPlaceholderLabel.Size = new Size(1213, 815);
+            chartPlaceholderLabel.TabIndex = 1;
+            chartPlaceholderLabel.Text = "ناحیه رسم چارت";
+            chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // chartToolbarPanel
+            // 
+            chartToolbarPanel.BorderStyle = BorderStyle.FixedSingle;
+            chartToolbarPanel.Controls.Add(label20);
+            chartToolbarPanel.Controls.Add(label19);
+            chartToolbarPanel.Controls.Add(label12);
+            chartToolbarPanel.Controls.Add(label11);
+            chartToolbarPanel.Controls.Add(label10);
+            chartToolbarPanel.Controls.Add(closeAllChartsToolbarButton);
+            chartToolbarPanel.Controls.Add(saveAnalysisButton);
+            chartToolbarPanel.Controls.Add(chartTypeComboBox);
+            chartToolbarPanel.Controls.Add(gridButton);
+            chartToolbarPanel.Controls.Add(crossButton);
+            chartToolbarPanel.Controls.Add(indicatorPanelButton);
+            chartToolbarPanel.Controls.Add(testModeButton);
+            chartToolbarPanel.Controls.Add(testStepBackButton);
+            chartToolbarPanel.Controls.Add(testStepForwardButton);
+            chartToolbarPanel.Controls.Add(zoomInButton);
+            chartToolbarPanel.Controls.Add(zoomOutButton);
+            chartToolbarPanel.Controls.Add(resetChartButton);
+            chartToolbarPanel.Controls.Add(hideChartButton);
+            chartToolbarPanel.Controls.Add(hideToolsButton);
+            chartToolbarPanel.Controls.Add(printChartButton);
+            chartToolbarPanel.Controls.Add(snapshotChartButton);
+            chartToolbarPanel.Controls.Add(fullScreenChartButton);
+            chartToolbarPanel.Controls.Add(drawTrendLineButton);
+            chartToolbarPanel.Controls.Add(drawTrendChannelButton);
+            chartToolbarPanel.Controls.Add(drawHorizontalDoubleButton);
+            chartToolbarPanel.Controls.Add(drawVerticalDoubleButton);
+            chartToolbarPanel.Controls.Add(drawHorizontalRayButton);
+            chartToolbarPanel.Controls.Add(drawTrendLineArrowButton);
+            chartToolbarPanel.Controls.Add(drawRectangleButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciButton);
+            chartToolbarPanel.Controls.Add(drawTextButton);
+            chartToolbarPanel.Controls.Add(drawPitchforkButton);
+            chartToolbarPanel.Controls.Add(drawFibonacciExtensionButton);
+            chartToolbarPanel.Controls.Add(drawMeasureButton);
+            chartToolbarPanel.Dock = DockStyle.Top;
+            chartToolbarPanel.Location = new Point(0, 0);
+            chartToolbarPanel.Name = "chartToolbarPanel";
+            chartToolbarPanel.Padding = new Padding(6, 5, 6, 5);
+            chartToolbarPanel.RightToLeft = RightToLeft.Yes;
+            chartToolbarPanel.Size = new Size(1227, 88);
+            chartToolbarPanel.TabIndex = 1;
+            // 
+            // label20
+            // 
+            label20.BorderStyle = BorderStyle.FixedSingle;
+            label20.Location = new Point(1113, 46);
+            label20.Name = "label20";
+            label20.Size = new Size(2, 30);
+            label20.TabIndex = 26;
+            label20.Text = "label20";
+            // 
+            // label19
+            // 
+            label19.BorderStyle = BorderStyle.FixedSingle;
+            label19.Location = new Point(967, 46);
+            label19.Name = "label19";
+            label19.Size = new Size(2, 30);
+            label19.TabIndex = 25;
+            label19.Text = "label19";
+            // 
+            // label12
+            // 
+            label12.BorderStyle = BorderStyle.FixedSingle;
+            label12.Location = new Point(434, 10);
+            label12.Name = "label12";
+            label12.Size = new Size(2, 30);
+            label12.TabIndex = 24;
+            label12.Text = "label12";
+            // 
+            // label11
+            // 
+            label11.BorderStyle = BorderStyle.FixedSingle;
+            label11.Location = new Point(703, 10);
+            label11.Name = "label11";
+            label11.Size = new Size(2, 30);
+            label11.TabIndex = 23;
+            label11.Text = "label11";
+            // 
+            // label10
+            // 
+            label10.BorderStyle = BorderStyle.FixedSingle;
+            label10.Location = new Point(225, 10);
+            label10.Name = "label10";
+            label10.Size = new Size(2, 30);
+            label10.TabIndex = 22;
+            label10.Text = "label10";
+            // 
+            // closeAllChartsToolbarButton
+            // 
+            closeAllChartsToolbarButton.Location = new Point(936, 7);
+            closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
+            closeAllChartsToolbarButton.Size = new Size(110, 34);
+            closeAllChartsToolbarButton.TabIndex = 21;
+            closeAllChartsToolbarButton.Text = "بستن چارتها";
+            closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
+            // 
+            // saveAnalysisButton
+            // 
+            saveAnalysisButton.Location = new Point(1116, 46);
+            saveAnalysisButton.Name = "saveAnalysisButton";
+            saveAnalysisButton.RightToLeft = RightToLeft.Yes;
+            saveAnalysisButton.Size = new Size(88, 34);
+            saveAnalysisButton.TabIndex = 11;
+            saveAnalysisButton.Text = "ذخیره تحلیل";
+            saveAnalysisButton.UseVisualStyleBackColor = true;
+            // 
+            // chartTypeComboBox
+            // 
+            chartTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            chartTypeComboBox.Items.AddRange(new object[] { "شمعی", "خطی", "میله ای" });
+            chartTypeComboBox.Location = new Point(6, 7);
+            chartTypeComboBox.Name = "chartTypeComboBox";
+            chartTypeComboBox.Size = new Size(84, 33);
+            chartTypeComboBox.TabIndex = 0;
+            // 
+            // gridButton
+            // 
+            gridButton.Location = new Point(94, 7);
+            gridButton.Name = "gridButton";
+            gridButton.Size = new Size(60, 34);
+            gridButton.TabIndex = 1;
+            gridButton.Text = "گرید";
+            // 
+            // crossButton
+            // 
+            crossButton.AutoSize = true;
+            crossButton.Location = new Point(156, 7);
+            crossButton.Name = "crossButton";
+            crossButton.Size = new Size(66, 35);
+            crossButton.TabIndex = 2;
+            crossButton.Text = "Cross";
+            // 
+            // indicatorPanelButton
+            // 
+            indicatorPanelButton.Location = new Point(1049, 7);
+            indicatorPanelButton.Name = "indicatorPanelButton";
+            indicatorPanelButton.Size = new Size(88, 34);
+            indicatorPanelButton.TabIndex = 3;
+            indicatorPanelButton.Text = "حجم";
+            indicatorPanelButton.UseVisualStyleBackColor = true;
+            // 
+            // testModeButton
+            // 
+            testModeButton.Location = new Point(1011, 46);
+            testModeButton.Name = "testModeButton";
+            testModeButton.Size = new Size(58, 34);
+            testModeButton.TabIndex = 22;
+            testModeButton.Text = "تست";
+            testModeButton.UseVisualStyleBackColor = true;
+            // 
+            // testStepBackButton
+            // 
+            testStepBackButton.Location = new Point(971, 46);
+            testStepBackButton.Name = "testStepBackButton";
+            testStepBackButton.Size = new Size(34, 34);
+            testStepBackButton.TabIndex = 23;
+            testStepBackButton.Text = "◀";
+            testStepBackButton.UseVisualStyleBackColor = true;
+            // 
+            // testStepForwardButton
+            // 
+            testStepForwardButton.Location = new Point(1075, 46);
+            testStepForwardButton.Name = "testStepForwardButton";
+            testStepForwardButton.Size = new Size(34, 34);
+            testStepForwardButton.TabIndex = 24;
+            testStepForwardButton.Text = "▶";
+            testStepForwardButton.UseVisualStyleBackColor = true;
+            // 
+            // zoomInButton
+            // 
+            zoomInButton.Location = new Point(233, 7);
+            zoomInButton.Name = "zoomInButton";
+            zoomInButton.Size = new Size(54, 34);
+            zoomInButton.TabIndex = 4;
+            zoomInButton.Text = "+";
+            // 
+            // zoomOutButton
+            // 
+            zoomOutButton.Location = new Point(288, 7);
+            zoomOutButton.Name = "zoomOutButton";
+            zoomOutButton.Size = new Size(54, 34);
+            zoomOutButton.TabIndex = 5;
+            zoomOutButton.Text = "-";
+            // 
+            // resetChartButton
+            // 
+            resetChartButton.AutoSize = true;
+            resetChartButton.Location = new Point(343, 7);
+            resetChartButton.Name = "resetChartButton";
+            resetChartButton.Size = new Size(86, 35);
+            resetChartButton.TabIndex = 6;
+            resetChartButton.Text = "بازنشانی";
+            // 
+            // hideChartButton
+            // 
+            hideChartButton.Location = new Point(829, 7);
+            hideChartButton.Name = "hideChartButton";
+            hideChartButton.Size = new Size(104, 34);
+            hideChartButton.TabIndex = 6;
+            hideChartButton.Text = "چارت پنهان";
+            hideChartButton.Click += hideChartButton_Click;
+            // 
+            // hideToolsButton
+            // 
+            hideToolsButton.Location = new Point(707, 7);
+            hideToolsButton.Name = "hideToolsButton";
+            hideToolsButton.Size = new Size(120, 34);
+            hideToolsButton.TabIndex = 7;
+            hideToolsButton.Text = "حذف ابزارها";
+            // 
+            // printChartButton
+            // 
+            printChartButton.Location = new Point(441, 7);
+            printChartButton.Name = "printChartButton";
+            printChartButton.Size = new Size(70, 34);
+            printChartButton.TabIndex = 8;
+            printChartButton.Text = "چاپ";
+            // 
+            // snapshotChartButton
+            // 
+            snapshotChartButton.Location = new Point(514, 7);
+            snapshotChartButton.Name = "snapshotChartButton";
+            snapshotChartButton.Size = new Size(79, 34);
+            snapshotChartButton.TabIndex = 9;
+            snapshotChartButton.Text = "تصویر";
+            // 
+            // fullScreenChartButton
+            // 
+            fullScreenChartButton.Active = false;
+            fullScreenChartButton.FlatStyle = FlatStyle.Flat;
+            fullScreenChartButton.Location = new Point(595, 7);
+            fullScreenChartButton.Name = "fullScreenChartButton";
+            fullScreenChartButton.Size = new Size(106, 34);
+            fullScreenChartButton.TabIndex = 10;
+            fullScreenChartButton.Text = "تمام صفحه";
+            // 
+            // drawTrendLineButton
+            // 
+            drawTrendLineButton.Location = new Point(8, 46);
+            drawTrendLineButton.Name = "drawTrendLineButton";
+            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineButton.Size = new Size(82, 34);
+            drawTrendLineButton.TabIndex = 20;
+            drawTrendLineButton.Text = "خط روند";
+            drawTrendLineButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendChannelButton
+            // 
+            drawTrendChannelButton.Location = new Point(91, 46);
+            drawTrendChannelButton.Name = "drawTrendChannelButton";
+            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
+            drawTrendChannelButton.Size = new Size(68, 34);
+            drawTrendChannelButton.TabIndex = 20;
+            drawTrendChannelButton.Text = "کانال روند";
+            drawTrendChannelButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalDoubleButton
+            // 
+            drawHorizontalDoubleButton.Location = new Point(159, 46);
+            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
+            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalDoubleButton.Size = new Size(69, 34);
+            drawHorizontalDoubleButton.TabIndex = 20;
+            drawHorizontalDoubleButton.Text = "افقی";
+            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawVerticalDoubleButton
+            // 
+            drawVerticalDoubleButton.Location = new Point(227, 46);
+            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
+            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawVerticalDoubleButton.Size = new Size(74, 34);
+            drawVerticalDoubleButton.TabIndex = 20;
+            drawVerticalDoubleButton.Text = "عمودی";
+            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalRayButton
+            // 
+            drawHorizontalRayButton.Location = new Point(300, 46);
+            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
+            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalRayButton.Size = new Size(76, 34);
+            drawHorizontalRayButton.TabIndex = 20;
+            drawHorizontalRayButton.Text = "نیم خط افقی";
+            drawHorizontalRayButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendLineArrowButton
+            // 
+            drawTrendLineArrowButton.Location = new Point(375, 46);
+            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
+            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineArrowButton.Size = new Size(81, 34);
+            drawTrendLineArrowButton.TabIndex = 20;
+            drawTrendLineArrowButton.Text = "فلش";
+            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
+            // 
+            // drawRectangleButton
+            // 
+            drawRectangleButton.Location = new Point(456, 46);
+            drawRectangleButton.Name = "drawRectangleButton";
+            drawRectangleButton.RightToLeft = RightToLeft.Yes;
+            drawRectangleButton.Size = new Size(90, 34);
+            drawRectangleButton.TabIndex = 20;
+            drawRectangleButton.Text = "مستطیل";
+            drawRectangleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciButton
+            // 
+            drawFibonacciButton.Location = new Point(610, 46);
+            drawFibonacciButton.Name = "drawFibonacciButton";
+            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciButton.Size = new Size(95, 34);
+            drawFibonacciButton.TabIndex = 20;
+            drawFibonacciButton.Text = "فیبو R";
+            drawFibonacciButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTextButton
+            // 
+            drawTextButton.Location = new Point(801, 46);
+            drawTextButton.Name = "drawTextButton";
+            drawTextButton.RightToLeft = RightToLeft.Yes;
+            drawTextButton.Size = new Size(82, 34);
+            drawTextButton.TabIndex = 20;
+            drawTextButton.Text = "متن";
+            drawTextButton.UseVisualStyleBackColor = true;
+            // 
+            // drawPitchforkButton
+            // 
+            drawPitchforkButton.Location = new Point(545, 46);
+            drawPitchforkButton.Name = "drawPitchforkButton";
+            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
+            drawPitchforkButton.Size = new Size(65, 34);
+            drawPitchforkButton.TabIndex = 20;
+            drawPitchforkButton.Text = "چنگال";
+            drawPitchforkButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciExtensionButton
+            // 
+            drawFibonacciExtensionButton.Location = new Point(705, 46);
+            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
+            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciExtensionButton.Size = new Size(96, 34);
+            drawFibonacciExtensionButton.TabIndex = 20;
+            drawFibonacciExtensionButton.Text = "فیبو X";
+            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
+            // 
+            // drawMeasureButton
+            // 
+            drawMeasureButton.Location = new Point(883, 46);
+            drawMeasureButton.Name = "drawMeasureButton";
+            drawMeasureButton.RightToLeft = RightToLeft.Yes;
+            drawMeasureButton.Size = new Size(82, 34);
+            drawMeasureButton.TabIndex = 20;
+            drawMeasureButton.Text = "خط کش";
+            drawMeasureButton.UseVisualStyleBackColor = true;
+            // 
+            // marketTypeComboBox
+            // 
+            marketTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketTypeComboBox.FormattingEnabled = true;
+            marketTypeComboBox.Location = new Point(11, 132);
+            marketTypeComboBox.Name = "marketTypeComboBox";
+            marketTypeComboBox.Size = new Size(198, 33);
+            marketTypeComboBox.TabIndex = 11;
+            // 
+            // marketBoardComboBox
+            // 
+            marketBoardComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketBoardComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketBoardComboBox.FormattingEnabled = true;
+            marketBoardComboBox.Location = new Point(11, 197);
+            marketBoardComboBox.Name = "marketBoardComboBox";
+            marketBoardComboBox.Size = new Size(198, 33);
+            marketBoardComboBox.TabIndex = 10;
+            // 
+            // marketAssetComboBox
+            // 
+            marketAssetComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketAssetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketAssetComboBox.FormattingEnabled = true;
+            marketAssetComboBox.Location = new Point(11, 266);
+            marketAssetComboBox.Name = "marketAssetComboBox";
+            marketAssetComboBox.Size = new Size(198, 33);
+            marketAssetComboBox.TabIndex = 9;
+            // 
+            // marketFundTypeComboBox
+            // 
+            marketFundTypeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketFundTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketFundTypeComboBox.FormattingEnabled = true;
+            marketFundTypeComboBox.Location = new Point(11, 339);
+            marketFundTypeComboBox.Name = "marketFundTypeComboBox";
+            marketFundTypeComboBox.Size = new Size(198, 33);
+            marketFundTypeComboBox.TabIndex = 8;
+            // 
+            // marketIndustryGroupComboBox
+            // 
+            marketIndustryGroupComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketIndustryGroupComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketIndustryGroupComboBox.FormattingEnabled = true;
+            marketIndustryGroupComboBox.Location = new Point(11, 408);
+            marketIndustryGroupComboBox.Name = "marketIndustryGroupComboBox";
+            marketIndustryGroupComboBox.Size = new Size(198, 33);
+            marketIndustryGroupComboBox.TabIndex = 7;
+            // 
+            // marketExchangeComboBox
+            // 
+            marketExchangeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            marketExchangeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            marketExchangeComboBox.FormattingEnabled = true;
+            marketExchangeComboBox.Location = new Point(11, 66);
+            marketExchangeComboBox.Name = "marketExchangeComboBox";
+            marketExchangeComboBox.Size = new Size(198, 33);
+            marketExchangeComboBox.TabIndex = 6;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Location = new Point(0, 0);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(200, 100);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            // 
+            // refreshButtonPortfolio
+            // 
+            refreshButtonPortfolio.Location = new Point(0, 0);
+            refreshButtonPortfolio.Name = "refreshButtonPortfolio";
+            refreshButtonPortfolio.Size = new Size(75, 23);
+            refreshButtonPortfolio.TabIndex = 0;
+            // 
+            // MainForm
+            // 
+            ClientSize = new Size(1630, 982);
+            Controls.Add(mainSplitContainer);
+            Controls.Add(mainMenuStrip);
+            MainMenuStrip = mainMenuStrip;
+            Name = "MainForm";
+            RightToLeft = RightToLeft.Yes;
+            RightToLeftLayout = true;
+            Text = "Trade.It";
+            WindowState = FormWindowState.Maximized;
+            Load += MainForm_Load;
+            mainMenuStrip.ResumeLayout(false);
+            mainMenuStrip.PerformLayout();
+            mainSplitContainer.Panel1.ResumeLayout(false);
+            mainSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
+            mainSplitContainer.ResumeLayout(false);
+            controlTabControl.ResumeLayout(false);
+            stocksTabPage.ResumeLayout(false);
+            stocksTabPage.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            ohlcChangeFilterGroup.ResumeLayout(false);
+            ohlcChangeFilterGroup.PerformLayout();
+            comparisonGroup8.ResumeLayout(false);
+            comparisonGroup8.PerformLayout();
+            comparisonGroup7.ResumeLayout(false);
+            comparisonGroup7.PerformLayout();
+            pastDaysGroup.ResumeLayout(false);
+            pastDaysGroup.PerformLayout();
+            volumeRatioGroup.ResumeLayout(false);
+            volumeRatioGroup.PerformLayout();
+            nameFilterGroup.ResumeLayout(false);
+            nameFilterGroup.PerformLayout();
+            tradingStatusGroup.ResumeLayout(false);
+            marketsTabPage.ResumeLayout(false);
+            marketsTabPage.PerformLayout();
+            chartPanel.ResumeLayout(false);
+            chartTabControl.ResumeLayout(false);
+            chartTabPage.ResumeLayout(false);
+            chartInfoPanel.ResumeLayout(false);
+            chartToolbarPanel.ResumeLayout(false);
+            chartToolbarPanel.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private GroupBox groupBox2;
+        private Button symbolsPrintButton;
+        private DataGridViewTextBoxColumn rowColumn;
+        private DataGridViewTextBoxColumn symbolColumn;
+        private DataGridViewTextBoxColumn lastTradeColumn;
+        private DataGridViewCheckBoxColumn selectColumn;
+        private GroupBox comparisonGroup7;
+        private TextBox comparisonSecondTextBox2;
+        private TextBox comparisonFirstTextBox2;
+        private Label label6;
+        private ComboBox comparisonFirstComboBox1;
+        private ComboBox comparisonOperatorComboBox2;
+        private ComboBox comparisonSecondComboBox1;
+        private Label label5_7;
+        private Button clearFiltersButton;
+        private GroupBox groupBox3;
+        private Label label7;
+        private TextBox comparisonSecondTextBox3;
+        private Label label8;
+        private TextBox comparisonFirstTextBox3;
+        private Label label9;
+        private ComboBox comparisonFirstComboBox3;
+        private ComboBox comparisonOperatorComboBox3;
+        private ComboBox comparisonSecondComboBox3;
+        private Button closeAllChartsToolbarButton;
+        private Label label12;
+        private Label label11;
+        private Label label10;
+        private ToolStripMenuItem symbolDefinitionMenuItem;
+        private ToolStripMenuItem marketStructureMenuItem;
+        private ComboBox marketTypeComboBox;
+        private ComboBox marketBoardComboBox;
+        private ComboBox marketAssetComboBox;
+        private ComboBox marketFundTypeComboBox;
+        private ComboBox marketIndustryGroupComboBox;
+        private ComboBox marketExchangeComboBox;
+        private TreeView marketFilterTreeView;
+        private CheckedListBox marketAssetCheckedListBox;
+        private CheckedListBox marketOtherCheckedListBox;
+        private Button marketClearButton;
+        private Button marketApplyButton;
+        private Label label16;
+        private Label label17;
+        private Label label13;
+        private Label label20;
+        private Label label19;
+        private FullScreenToggleButton fullScreenChartButton;
+        private Label label14;
+        private Label label18;
+        private Label label15;
+        private Label label5;
+        private Label label1;
+        private TextBox textBox2;
+    }
+}
