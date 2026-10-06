@@ -165,13 +165,13 @@ namespace Trade.It
             {
                 using var dialog = new StochasticRsiSettingsForm(chart.Indicators[index]);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
-                    chart.ApplyStochasticRsiSettings(index, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
+                    chart.ApplyStochasticRsiSettings(index, dialog.RsiPeriod, dialog.StochasticPeriod, dialog.KPeriod, dialog.DPeriod, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
             }
             else if (chart.Indicators[index].Type == ChartIndicatorType.Stochastic)
             {
                 using var dialog = new StochasticSettingsForm(chart.Indicators[index]);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
-                    chart.ApplyStochasticSettings(index, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
+                    chart.ApplyStochasticSettings(index, dialog.Period, dialog.KPeriod, dialog.DPeriod, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
             }
             else             if (chart.Indicators[index].Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
             {
@@ -180,6 +180,9 @@ namespace Trade.It
                 {
                     chart.ApplyMacdSettings(
                         index,
+                        dialog.FastPeriod,
+                        dialog.SlowPeriod,
+                        dialog.SignalPeriod,
                         dialog.ShowMacdLine,
                         dialog.ShowMacdSignal,
                         dialog.ShowMacdHistogram,
@@ -198,6 +201,9 @@ namespace Trade.It
                 {
                     chart.ApplyIchimokuSettings(
                         index,
+                        dialog.TenkanPeriod,
+                        dialog.KijunPeriod,
+                        dialog.SpanBPeriod,
                         dialog.ShowTenkan,
                         dialog.ShowKijun,
                         dialog.ShowSpanA,
