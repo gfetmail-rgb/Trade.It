@@ -492,7 +492,10 @@ namespace Trade.It
         {
             var bestIndex = -1;
             var bestDistance = 8.0;
-            EnsureMacdCache();
+            var macdIndicator = indicators.FirstOrDefault(i => i.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
+            if (macdIndicator == null)
+                return -1;
+            EnsureMacdCache(macdIndicator);
             var maxAbs = GetMacdScaleMax(macdLineCache!, macdSignalCache!, macdHistogramCache!, firstIndex, displayedCount);
 
             for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
@@ -653,7 +656,7 @@ namespace Trade.It
             out double bestDistance)
         {
             var localBestDistance = double.MaxValue;
-            EnsureIchimokuCache();
+            EnsureIchimokuCache(indicator);
             var tenkan = ichimokuTenkanCache!;
             var kijun = ichimokuKijunCache!;
             var spanA = ichimokuSpanACache!;
@@ -825,7 +828,7 @@ namespace Trade.It
             double initialOffset,
             ChartIndicator indicator)
         {
-            EnsureIchimokuCache();
+            EnsureIchimokuCache(indicator);
             var tenkan = ichimokuTenkanCache!;
             var kijun = ichimokuKijunCache!;
             var spanA = ichimokuSpanACache!;
@@ -1148,25 +1151,53 @@ namespace Trade.It
             }
         }
 
-        private void EnsureStochasticCache()
+        private void EnsureStochasticCache(ChartIndicator indicator)
         {
-            if (stochasticKCache != null && stochasticDCache != null && stochasticKCache.Length == points.Count && stochasticDCache.Length == points.Count) return;
+            if (stochasticKCache != null && stochasticDCache != null &&
+                stochasticKCache.Length == points.Count && stochasticDCache.Length == points.Count)
+                return;
+
+            var period = indicator.StochasticPeriod;
+            var smoothK = indicator.StochasticKPeriod;
+            var smoothD = indicator.StochasticDPeriod;
+
+            var rawK = Enumerable.Repeat(double.NaN, points.Count).ToArray();
             stochasticKCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
             stochasticDCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
-            const int period = 14, smoothK = 3, smoothD = 3;
+
             for (var i = period - 1; i < points.Count; i++)
             {
-                var high = double.MinValue; var low = double.MaxValue;
-                for (var j = i - period + 1; j <= i; j++) { high = Math.Max(high, points[j].High); low = Math.Min(low, points[j].Low); }
-                stochasticKCache[i] = high - low <= 1e-12 ? 50 : 100.0 * (points[i].Close - low) / (high - low);
+                var high = double.MinValue;
+                var low = double.MaxValue;
+                for (var j = i - period + 1; j <= i; j++)
+                {
+                    high = Math.Max(high, points[j].High);
+                    low = Math.Min(low, points[j].Low);
+                }
+
+                rawK[i] = high - low <= 1e-12
+                    ? 50.0
+                    : 100.0 * (points[i].Close - low) / (high - low);
             }
+
             for (var i = period - 1 + smoothK - 1; i < points.Count; i++)
             {
-                var sum = 0.0; for (var j = i - smoothK + 1; j <= i; j++) sum += stochasticKCache[j];
-                stochasticDCache[i] = sum / smoothK;
+                var sum = 0.0;
+                for (var j = i - smoothK + 1; j <= i; j++)
+                    sum += rawK[j];
+
+                stochasticKCache[i] = sum / smoothK;
+            }
+
+            for (var i = period - 1 + smoothK - 1 + smoothD - 1; i < points.Count; i++)
+            {
+                var sum = 0.0;
+                for (var j = i - smoothD + 1; j <= i; j++)
+                    sum += stochasticKCache[j];
+
+                stochasticDCache[i] = sum / smoothD;
             }
         }
-
         internal void InvalidateStochasticCache() { stochasticKCache = null; stochasticDCache = null; }
 
         internal void InvalidateStochasticRsiCache()
