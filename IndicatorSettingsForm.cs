@@ -30,6 +30,15 @@ namespace Trade.It
             defaultButton.Click += (_, _) => ApplyDefaults();
         }
 
+        private void ApplyDefaults()
+        {
+            periodNumeric.Value = indicatorDefaultPeriod;
+            SetColorButton(lineColorButton, Color.FromArgb(30, 100, 220));
+            SetColorButton(backgroundColorButton, Color.White);
+        }
+
+        private const int indicatorDefaultPeriod = 20;
+
         private static void SetColorButton(Button button, Color color)
         {
             button.BackColor = color;
