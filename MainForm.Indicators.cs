@@ -12,6 +12,7 @@ namespace Trade.It
             indicatorRsiMenuItem.Click += (_, _) => AddRsiToActiveChart();
             indicatorMacdMenuItem.Click += (_, _) => AddMacdToActiveChart();
             indicatorStochasticMenuItem.Click += (_, _) => AddStochasticToActiveChart();
+            indicatorStochasticRsiMenuItem.Click += (_, _) => AddStochasticRsiToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -76,6 +77,17 @@ namespace Trade.It
             chart.AddStochastic();
         }
 
+        private void AddStochasticRsiToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            chart.AddStochasticRelativeStrengthIndex();
+        }
+
         private void AddMacdToActiveChart()
         {
             var chart = GetActiveChart();
@@ -117,14 +129,15 @@ namespace Trade.It
             var isRsi = indicator.Type == ChartIndicatorType.RelativeStrengthIndex;
             var isMacd = indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence;
             var isStochastic = indicator.Type == ChartIndicatorType.Stochastic;
+            var isStochasticRsi = indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex;
 
-            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochastic;
-            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
-            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
-            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
-            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
-            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
-            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochastic && !isStochasticRsi;
+            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
+            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
+            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
+            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
+            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
+            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi && !isMacd && !isStochasticRsi;
 
             if (!isIchimoku)
             {
@@ -148,7 +161,13 @@ namespace Trade.It
             if (index < 0 || index >= chart.Indicators.Count)
                 return;
 
-            if (chart.Indicators[index].Type == ChartIndicatorType.Stochastic)
+            if (chart.Indicators[index].Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
+            {
+                using var dialog = new StochasticRsiSettingsForm(chart.Indicators[index]);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    chart.ApplyStochasticRsiSettings(index, dialog.ShowK, dialog.ShowD, dialog.Show20, dialog.Show80, dialog.KColor, dialog.DColor, dialog.C20Color, dialog.C80Color);
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.Stochastic)
             {
                 using var dialog = new StochasticSettingsForm(chart.Indicators[index]);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
