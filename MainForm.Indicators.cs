@@ -71,13 +71,25 @@ namespace Trade.It
             if (e.Cancel)
                 return;
 
-            var period = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex].Period;
-            indicatorPeriod5MenuItem.Checked = period == 5;
-            indicatorPeriod10MenuItem.Checked = period == 10;
-            indicatorPeriod20MenuItem.Checked = period == 20;
-            indicatorPeriod50MenuItem.Checked = period == 50;
-            indicatorPeriod100MenuItem.Checked = period == 100;
-            indicatorPeriod200MenuItem.Checked = period == 200;
+            var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
+            var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
+
+            indicatorPeriod5MenuItem.Visible = !isIchimoku;
+            indicatorPeriod10MenuItem.Visible = !isIchimoku;
+            indicatorPeriod20MenuItem.Visible = !isIchimoku;
+            indicatorPeriod50MenuItem.Visible = !isIchimoku;
+            indicatorPeriod100MenuItem.Visible = !isIchimoku;
+            indicatorPeriod200MenuItem.Visible = !isIchimoku;
+
+            if (!isIchimoku)
+            {
+                indicatorPeriod5MenuItem.Checked = indicator.Period == 5;
+                indicatorPeriod10MenuItem.Checked = indicator.Period == 10;
+                indicatorPeriod20MenuItem.Checked = indicator.Period == 20;
+                indicatorPeriod50MenuItem.Checked = indicator.Period == 50;
+                indicatorPeriod100MenuItem.Checked = indicator.Period == 100;
+                indicatorPeriod200MenuItem.Checked = indicator.Period == 200;
+            }
         }
 
         private void OpenIndicatorSettings()
