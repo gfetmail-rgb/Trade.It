@@ -69,7 +69,6 @@ namespace Trade.It
         private double stochasticRsiPanelRatio = 0.10;
         private double atrPanelRatio = 0.10;
         private double adxPanelRatio = 0.10;
-            obvPanelRatio = 0.10;
         private double obvPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
