@@ -31,6 +31,9 @@ namespace Trade.It
         public Color ChikouColor { get; set; } = Color.FromArgb(150, 80, 180);
         public Color BullishCloudColor { get; set; } = Color.FromArgb(130, 200, 130);
         public Color BearishCloudColor { get; set; } = Color.FromArgb(230, 150, 150);
+        public int IchimokuTenkanPeriod { get; set; } = 9;
+        public int IchimokuKijunPeriod { get; set; } = 26;
+        public int IchimokuSpanBPeriod { get; set; } = 52;
         public bool ShowRsiLine { get; set; } = true;
         public bool ShowRsi30 { get; set; } = true;
         public bool ShowRsi70 { get; set; } = true;
@@ -46,6 +49,9 @@ namespace Trade.It
         public Color MacdBullishHistogramColor { get; set; } = Color.FromArgb(80, 170, 100);
         public Color MacdBearishHistogramColor { get; set; } = Color.FromArgb(210, 100, 100);
         public Color MacdZeroColor { get; set; } = Color.FromArgb(150, 150, 150);
+        public int MacdFastPeriod { get; set; } = 12;
+        public int MacdSlowPeriod { get; set; } = 26;
+        public int MacdSignalPeriod { get; set; } = 9;
         public bool ShowStochasticK { get; set; } = true;
         public bool ShowStochasticD { get; set; } = true;
         public bool ShowStochastic20 { get; set; } = true;
@@ -54,6 +60,9 @@ namespace Trade.It
         public Color StochasticDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color Stochastic20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color Stochastic80Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public int StochasticPeriod { get; set; } = 14;
+        public int StochasticKPeriod { get; set; } = 3;
+        public int StochasticDPeriod { get; set; } = 3;
         public bool ShowStochasticRsiK { get; set; } = true;
         public bool ShowStochasticRsiD { get; set; } = true;
         public bool ShowStochasticRsi20 { get; set; } = true;
@@ -62,6 +71,10 @@ namespace Trade.It
         public Color StochasticRsiDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color StochasticRsi20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color StochasticRsi80Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public int StochasticRsiRsiPeriod { get; set; } = 14;
+        public int StochasticRsiPeriod { get; set; } = 14;
+        public int StochasticRsiKPeriod { get; set; } = 3;
+        public int StochasticRsiDPeriod { get; set; } = 3;
     }
 
     internal sealed partial class TradingChartControl
@@ -168,13 +181,16 @@ namespace Trade.It
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool ApplyStochasticSettings(int index, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
+        public bool ApplyStochasticSettings(int index, int period, int kPeriod, int dPeriod, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
         {
             if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.Stochastic || points.Count < 2) return false;
             var indicator = indicators[index];
+            indicator.StochasticPeriod = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            indicator.StochasticKPeriod = Math.Clamp(kPeriod, 1, Math.Max(1, points.Count));
+            indicator.StochasticDPeriod = Math.Clamp(dPeriod, 1, Math.Max(1, points.Count));
             indicator.ShowStochasticK = showK; indicator.ShowStochasticD = showD; indicator.ShowStochastic20 = show20; indicator.ShowStochastic80 = show80;
             indicator.StochasticKColor = kColor; indicator.StochasticDColor = dColor; indicator.Stochastic20Color = c20; indicator.Stochastic80Color = c80;
-            selectedIndicatorIndex = index; Invalidate(); AnalysisChanged?.Invoke(this, EventArgs.Empty); return true;
+            selectedIndicatorIndex = index; InvalidateStochasticCache(); Invalidate(); AnalysisChanged?.Invoke(this, EventArgs.Empty); return true;
         }
 
         public void AddStochasticRelativeStrengthIndex()
@@ -185,11 +201,15 @@ namespace Trade.It
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool ApplyStochasticRsiSettings(int index, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
+        public bool ApplyStochasticRsiSettings(int index, int rsiPeriod, int stochasticPeriod, int kPeriod, int dPeriod, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
         {
             if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.StochasticRelativeStrengthIndex || points.Count < 2)
                 return false;
             var indicator = indicators[index];
+            indicator.StochasticRsiRsiPeriod = Math.Clamp(rsiPeriod, 2, Math.Max(2, points.Count - 1));
+            indicator.StochasticRsiPeriod = Math.Clamp(stochasticPeriod, 2, Math.Max(2, points.Count));
+            indicator.StochasticRsiKPeriod = Math.Clamp(kPeriod, 1, Math.Max(1, points.Count));
+            indicator.StochasticRsiDPeriod = Math.Clamp(dPeriod, 1, Math.Max(1, points.Count));
             indicator.ShowStochasticRsiK = showK;
             indicator.ShowStochasticRsiD = showD;
             indicator.ShowStochasticRsi20 = show20;
@@ -199,6 +219,7 @@ namespace Trade.It
             indicator.StochasticRsi20Color = c20;
             indicator.StochasticRsi80Color = c80;
             selectedIndicatorIndex = index;
+            InvalidateStochasticRsiCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
@@ -218,6 +239,9 @@ namespace Trade.It
 
         public bool ApplyMacdSettings(
             int index,
+            int fastPeriod,
+            int slowPeriod,
+            int signalPeriod,
             bool showMacdLine,
             bool showMacdSignal,
             bool showMacdHistogram,
@@ -233,6 +257,11 @@ namespace Trade.It
                 return false;
 
             var indicator = indicators[index];
+            indicator.MacdFastPeriod = Math.Clamp(fastPeriod, 2, Math.Max(2, points.Count));
+            indicator.MacdSlowPeriod = Math.Clamp(slowPeriod, 2, Math.Max(2, points.Count));
+            indicator.MacdSignalPeriod = Math.Clamp(signalPeriod, 2, Math.Max(2, points.Count));
+            if (indicator.MacdFastPeriod >= indicator.MacdSlowPeriod)
+                indicator.MacdFastPeriod = Math.Max(2, indicator.MacdSlowPeriod - 1);
             indicator.ShowMacdLine = showMacdLine;
             indicator.ShowMacdSignal = showMacdSignal;
             indicator.ShowMacdHistogram = showMacdHistogram;
@@ -243,6 +272,7 @@ namespace Trade.It
             indicator.MacdBearishHistogramColor = macdBearishHistogramColor;
             indicator.MacdZeroColor = macdZeroColor;
             selectedIndicatorIndex = index;
+            InvalidateMacdCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
@@ -313,6 +343,9 @@ namespace Trade.It
 
         public bool ApplyIchimokuSettings(
             int index,
+            int tenkanPeriod,
+            int kijunPeriod,
+            int spanBPeriod,
             bool showTenkan,
             bool showKijun,
             bool showSpanA,
@@ -333,6 +366,9 @@ namespace Trade.It
                 return false;
 
             var indicator = indicators[index];
+            indicator.IchimokuTenkanPeriod = Math.Clamp(tenkanPeriod, 2, Math.Max(2, points.Count));
+            indicator.IchimokuKijunPeriod = Math.Clamp(kijunPeriod, 2, Math.Max(2, points.Count));
+            indicator.IchimokuSpanBPeriod = Math.Clamp(spanBPeriod, 2, Math.Max(2, points.Count));
             indicator.ShowTenkan = showTenkan;
             indicator.ShowKijun = showKijun;
             indicator.ShowSpanA = showSpanA;
@@ -348,6 +384,7 @@ namespace Trade.It
             indicator.BullishCloudColor = bullishCloudColor;
             indicator.BearishCloudColor = bearishCloudColor;
             selectedIndicatorIndex = index;
+            InvalidateIchimokuCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
@@ -936,26 +973,19 @@ namespace Trade.It
             }
         }
 
-        private void EnsureIchimokuCache()
+        private void EnsureIchimokuCache(ChartIndicator indicator)
         {
-            if (ichimokuTenkanCache != null &&
-                ichimokuKijunCache != null &&
-                ichimokuSpanACache != null &&
-                ichimokuSpanBCache != null &&
-                ichimokuChikouCache != null &&
-                ichimokuTenkanCache.Length == points.Count &&
-                ichimokuKijunCache.Length == points.Count &&
-                ichimokuSpanACache.Length == points.Count &&
-                ichimokuSpanBCache.Length == points.Count &&
-                ichimokuChikouCache.Length == points.Count)
-            {
+            if (ichimokuTenkanCache != null && ichimokuKijunCache != null &&
+                ichimokuSpanACache != null && ichimokuSpanBCache != null &&
+                ichimokuChikouCache != null && ichimokuTenkanCache.Length == points.Count &&
+                ichimokuKijunCache.Length == points.Count && ichimokuSpanACache.Length == points.Count &&
+                ichimokuSpanBCache.Length == points.Count && ichimokuChikouCache.Length == points.Count)
                 return;
-            }
 
-            ichimokuTenkanCache = CalculateIchimokuMidpoint(9);
-            ichimokuKijunCache = CalculateIchimokuMidpoint(26);
+            ichimokuTenkanCache = CalculateIchimokuMidpoint(indicator.IchimokuTenkanPeriod);
+            ichimokuKijunCache = CalculateIchimokuMidpoint(indicator.IchimokuKijunPeriod);
             ichimokuSpanACache = CalculateIchimokuSpanA(ichimokuTenkanCache, ichimokuKijunCache);
-            ichimokuSpanBCache = CalculateIchimokuMidpoint(52);
+            ichimokuSpanBCache = CalculateIchimokuMidpoint(indicator.IchimokuSpanBPeriod);
             ichimokuChikouCache = points.Select(p => p.Close).ToArray();
         }
 
@@ -1066,17 +1096,16 @@ namespace Trade.It
             return result;
         }
 
-        private void EnsureStochasticRsiCache()
+        private void EnsureStochasticRsiCache(ChartIndicator indicator)
         {
             if (stochasticRsiKCache != null && stochasticRsiDCache != null &&
                 stochasticRsiKCache.Length == points.Count && stochasticRsiDCache.Length == points.Count)
                 return;
 
-            const int rsiPeriod = 14;
-            const int stochasticPeriod = 14;
-            const int smoothK = 3;
-            const int smoothD = 3;
-
+            var rsiPeriod = indicator.StochasticRsiRsiPeriod;
+            var stochasticPeriod = indicator.StochasticRsiPeriod;
+            var smoothK = indicator.StochasticRsiKPeriod;
+            var smoothD = indicator.StochasticRsiDPeriod;
             var rsi = CalculateRsi(rsiPeriod);
             var rawK = Enumerable.Repeat(double.NaN, points.Count).ToArray();
             stochasticRsiKCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
@@ -1084,70 +1113,26 @@ namespace Trade.It
 
             for (var i = stochasticPeriod - 1; i < points.Count; i++)
             {
-                if (double.IsNaN(rsi[i]))
-                    continue;
-
-                var highest = double.MinValue;
-                var lowest = double.MaxValue;
-                var valid = true;
-
+                if (double.IsNaN(rsi[i])) continue;
+                var highest = double.MinValue; var lowest = double.MaxValue; var valid = true;
                 for (var j = i - stochasticPeriod + 1; j <= i; j++)
                 {
-                    if (double.IsNaN(rsi[j]))
-                    {
-                        valid = false;
-                        break;
-                    }
-                    highest = Math.Max(highest, rsi[j]);
-                    lowest = Math.Min(lowest, rsi[j]);
+                    if (double.IsNaN(rsi[j])) { valid = false; break; }
+                    highest = Math.Max(highest, rsi[j]); lowest = Math.Min(lowest, rsi[j]);
                 }
-
-                if (valid)
-                    rawK[i] = highest - lowest <= 1e-12
-                        ? 50.0
-                        : 100.0 * (rsi[i] - lowest) / (highest - lowest);
+                if (valid) rawK[i] = highest - lowest <= 1e-12 ? 50.0 : 100.0 * (rsi[i] - lowest) / (highest - lowest);
             }
-
-            for (var i = 0; i < points.Count; i++)
+            for (var i = stochasticPeriod - 1 + smoothK - 1; i < points.Count; i++)
             {
-                if (i < stochasticPeriod - 1 + smoothK - 1)
-                    continue;
-
-                var sum = 0.0;
-                var valid = true;
-                for (var j = i - smoothK + 1; j <= i; j++)
-                {
-                    if (double.IsNaN(rawK[j]))
-                    {
-                        valid = false;
-                        break;
-                    }
-                    sum += rawK[j];
-                }
-
-                if (valid)
-                    stochasticRsiKCache[i] = sum / smoothK;
+                var sum = 0.0; var valid = true;
+                for (var j = i - smoothK + 1; j <= i; j++) { if (double.IsNaN(rawK[j])) { valid = false; break; } sum += rawK[j]; }
+                if (valid) stochasticRsiKCache[i] = sum / smoothK;
             }
-
-            for (var i = 0; i < points.Count; i++)
+            for (var i = stochasticPeriod - 1 + smoothK - 1 + smoothD - 1; i < points.Count; i++)
             {
-                if (i < stochasticPeriod - 1 + smoothK - 1 + smoothD - 1)
-                    continue;
-
-                var sum = 0.0;
-                var valid = true;
-                for (var j = i - smoothD + 1; j <= i; j++)
-                {
-                    if (double.IsNaN(stochasticRsiKCache[j]))
-                    {
-                        valid = false;
-                        break;
-                    }
-                    sum += stochasticRsiKCache[j];
-                }
-
-                if (valid)
-                    stochasticRsiDCache[i] = sum / smoothD;
+                var sum = 0.0; var valid = true;
+                for (var j = i - smoothD + 1; j <= i; j++) { if (double.IsNaN(stochasticRsiKCache[j])) { valid = false; break; } sum += stochasticRsiKCache[j]; }
+                if (valid) stochasticRsiDCache[i] = sum / smoothD;
             }
         }
 
@@ -1206,34 +1191,23 @@ namespace Trade.It
             stochasticRsiDCache = null;
         }
 
-        private void EnsureMacdCache()
+        private void EnsureMacdCache(ChartIndicator indicator)
         {
-            if (macdLineCache != null &&
-                macdSignalCache != null &&
-                macdHistogramCache != null &&
-                macdLineCache.Length == points.Count &&
-                macdSignalCache.Length == points.Count &&
+            if (macdLineCache != null && macdSignalCache != null && macdHistogramCache != null &&
+                macdLineCache.Length == points.Count && macdSignalCache.Length == points.Count &&
                 macdHistogramCache.Length == points.Count)
                 return;
 
-            var fast = CalculateExponentialMovingAverage(12);
-            var slow = CalculateExponentialMovingAverage(26);
+            var fast = CalculateExponentialMovingAverage(indicator.MacdFastPeriod);
+            var slow = CalculateExponentialMovingAverage(indicator.MacdSlowPeriod);
             macdLineCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
-
             for (var i = 0; i < points.Count; i++)
-            {
-                if (!double.IsNaN(fast[i]) && !double.IsNaN(slow[i]))
-                    macdLineCache[i] = fast[i] - slow[i];
-            }
+                if (!double.IsNaN(fast[i]) && !double.IsNaN(slow[i])) macdLineCache[i] = fast[i] - slow[i];
 
-            macdSignalCache = CalculateExponentialMovingAverageSeries(macdLineCache, 9);
+            macdSignalCache = CalculateExponentialMovingAverageSeries(macdLineCache, indicator.MacdSignalPeriod);
             macdHistogramCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
-
             for (var i = 0; i < points.Count; i++)
-            {
-                if (!double.IsNaN(macdLineCache[i]) && !double.IsNaN(macdSignalCache[i]))
-                    macdHistogramCache[i] = macdLineCache[i] - macdSignalCache[i];
-            }
+                if (!double.IsNaN(macdLineCache[i]) && !double.IsNaN(macdSignalCache[i])) macdHistogramCache[i] = macdLineCache[i] - macdSignalCache[i];
         }
 
         internal void InvalidateMacdCache()
