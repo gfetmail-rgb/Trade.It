@@ -17,8 +17,8 @@ namespace Trade.It
             RightToLeftLayout = true;
 
             periodNumeric.Minimum = 2;
-            periodNumeric.Maximum = Math.Max(2, maxPeriod);
-            periodNumeric.Value = Math.Clamp(indicator.Period, 2, Math.Max(2, maxPeriod));
+            periodNumeric.Maximum = Math.Max(2, maxPeriod - 1);
+            periodNumeric.Value = Math.Clamp(indicator.Period, 2, Math.Max(2, maxPeriod - 1));
 
             rsiLineCheckBox.Checked = indicator.ShowRsiLine;
             rsi30CheckBox.Checked = indicator.ShowRsi30;
