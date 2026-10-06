@@ -7,7 +7,8 @@ namespace Trade.It
         Ichimoku,
         RelativeStrengthIndex,
         MovingAverageConvergenceDivergence,
-        Stochastic
+        Stochastic,
+        StochasticRelativeStrengthIndex
     }
 
     internal sealed class ChartIndicator
@@ -53,6 +54,14 @@ namespace Trade.It
         public Color StochasticDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color Stochastic20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color Stochastic80Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public bool ShowStochasticRsiK { get; set; } = true;
+        public bool ShowStochasticRsiD { get; set; } = true;
+        public bool ShowStochasticRsi20 { get; set; } = true;
+        public bool ShowStochasticRsi80 { get; set; } = true;
+        public Color StochasticRsiKColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color StochasticRsiDColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color StochasticRsi20Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public Color StochasticRsi80Color { get; set; } = Color.FromArgb(150, 150, 150);
     }
 
     internal sealed partial class TradingChartControl
@@ -73,11 +82,14 @@ namespace Trade.It
         private double[]? macdHistogramCache;
         private double[]? stochasticKCache;
         private double[]? stochasticDCache;
+        private double[]? stochasticRsiKCache;
+        private double[]? stochasticRsiDCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
         internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
+        internal bool HasStochasticRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -163,6 +175,33 @@ namespace Trade.It
             indicator.ShowStochasticK = showK; indicator.ShowStochasticD = showD; indicator.ShowStochastic20 = show20; indicator.ShowStochastic80 = show80;
             indicator.StochasticKColor = kColor; indicator.StochasticDColor = dColor; indicator.Stochastic20Color = c20; indicator.Stochastic80Color = c80;
             selectedIndicatorIndex = index; Invalidate(); AnalysisChanged?.Invoke(this, EventArgs.Empty); return true;
+        }
+
+        public void AddStochasticRelativeStrengthIndex()
+        {
+            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.StochasticRelativeStrengthIndex, Period = 14 });
+            InvalidateStochasticRsiCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyStochasticRsiSettings(int index, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
+        {
+            if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.StochasticRelativeStrengthIndex || points.Count < 2)
+                return false;
+            var indicator = indicators[index];
+            indicator.ShowStochasticRsiK = showK;
+            indicator.ShowStochasticRsiD = showD;
+            indicator.ShowStochasticRsi20 = show20;
+            indicator.ShowStochasticRsi80 = show80;
+            indicator.StochasticRsiKColor = kColor;
+            indicator.StochasticRsiDColor = dColor;
+            indicator.StochasticRsi20Color = c20;
+            indicator.StochasticRsi80Color = c80;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public void AddMovingAverageConvergenceDivergence()
@@ -730,7 +769,7 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
@@ -1037,6 +1076,12 @@ namespace Trade.It
 
         internal void InvalidateStochasticCache() { stochasticKCache = null; stochasticDCache = null; }
 
+        internal void InvalidateStochasticRsiCache()
+        {
+            stochasticRsiKCache = null;
+            stochasticRsiDCache = null;
+        }
+
         private void EnsureMacdCache()
         {
             if (macdLineCache != null &&
@@ -1070,6 +1115,7 @@ namespace Trade.It
         internal void InvalidateMacdCache()
         {
             InvalidateStochasticCache();
+            InvalidateStochasticRsiCache();
             macdLineCache = null;
             macdSignalCache = null;
             macdHistogramCache = null;
