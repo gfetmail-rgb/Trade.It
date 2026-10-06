@@ -8,6 +8,7 @@ namespace Trade.It
         {
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
+            indicatorIchimokuMenuItem.Click += (_, _) => AddIchimokuToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -32,6 +33,19 @@ namespace Trade.It
             }
 
             chart.AddMovingAverage(20);
+        }
+
+        private void AddIchimokuToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddIchimoku();
         }
 
         private void AddExponentialMovingAverageToActiveChart()
@@ -76,9 +90,35 @@ namespace Trade.It
             if (index < 0 || index >= chart.Indicators.Count)
                 return;
 
-            using var dialog = new IndicatorSettingsForm(chart.Indicators[index], chart.Points.Count);
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-                chart.ApplyIndicatorSettings(index, dialog.Period, dialog.LineColor, dialog.BackgroundColor);
+            if (chart.Indicators[index].Type == ChartIndicatorType.Ichimoku)
+            {
+                using var dialog = new IchimokuSettingsForm(chart.Indicators[index]);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    chart.ApplyIchimokuSettings(
+                        index,
+                        dialog.ShowTenkan,
+                        dialog.ShowKijun,
+                        dialog.ShowSpanA,
+                        dialog.ShowSpanB,
+                        dialog.ShowChikou,
+                        dialog.ShowBullishCloud,
+                        dialog.ShowBearishCloud,
+                        dialog.TenkanColor,
+                        dialog.KijunColor,
+                        dialog.SpanAColor,
+                        dialog.SpanBColor,
+                        dialog.ChikouColor,
+                        dialog.BullishCloudColor,
+                        dialog.BearishCloudColor);
+                }
+            }
+            else
+            {
+                using var dialog = new IndicatorSettingsForm(chart.Indicators[index], chart.Points.Count);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    chart.ApplyIndicatorSettings(index, dialog.Period, dialog.LineColor, dialog.BackgroundColor);
+            }
 
             indicatorContextChart = null;
         }
