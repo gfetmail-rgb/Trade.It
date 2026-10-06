@@ -63,10 +63,19 @@ namespace Trade.It
         private string chartSymbol = string.Empty;
         private string chartTimeFrame = string.Empty;
         private double volumePanelRatio = 0.10;
+        private double rsiPanelRatio = 0.18;
         private int volumePanelGap = 8;
-        private bool volumePanelResizeDrag;
-        private int volumePanelResizeStartY;
-        private double volumePanelResizeStartRatio;
+        private bool lowerPanelResizeDrag;
+        private int lowerPanelResizeStartY;
+        private double lowerPanelResizeStartRsiRatio;
+        private double lowerPanelResizeStartVolumeRatio;
+        private enum LowerPanelSplitter
+        {
+            None,
+            PriceRsi,
+            RsiVolume
+        }
+        private LowerPanelSplitter activeLowerPanelSplitter;
         private bool volumePanelVisible = true;
         private bool testMode;
         private bool testStartSelected;
@@ -121,8 +130,9 @@ namespace Trade.It
 
             visibleCount = Math.Min(200, Math.Max(1, points.Count));
             firstIndex = Math.Max(0, points.Count - visibleCount);
-            // ارتفاع اولیه پنل حجم هنگام باز شدن هر چارت: ۱۰٪ فضای رسم نمودار.
+            // نسبت اولیه پنل‌ها هنگام باز شدن هر چارت.
             volumePanelRatio = 0.10;
+            rsiPanelRatio = 0.18;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
@@ -872,6 +882,69 @@ namespace Trade.It
             base.OnKeyDown(e);
         }
 
+        private LowerPanelSplitter GetLowerPanelSplitterAt(int y)
+        {
+            var layout = GetLowerPanelLayout();
+            const int tolerance = 5;
+
+            if (!layout.Rsi.IsEmpty &&
+                Math.Abs(y - layout.Rsi.Top) <= tolerance)
+                return LowerPanelSplitter.PriceRsi;
+
+            if (volumePanelVisible &&
+                !layout.Volume.IsEmpty &&
+                Math.Abs(y - layout.Volume.Top) <= tolerance)
+                return HasRsiIndicator
+                    ? LowerPanelSplitter.RsiVolume
+                    : LowerPanelSplitter.PriceRsi;
+
+            return LowerPanelSplitter.None;
+        }
+
+        private void ResizeLowerPanels(int mouseY)
+        {
+            var layout = GetLowerPanelLayout();
+            var totalHeight = Math.Max(1, layout.OverallBottom - layout.Price.Top);
+            var delta = mouseY - lowerPanelResizeStartY;
+            var deltaRatio = delta / (double)totalHeight;
+
+            const int minimumPriceHeight = 80;
+            const int minimumRsiHeight = 60;
+            const int minimumVolumeHeight = 45;
+
+            if (activeLowerPanelSplitter == LowerPanelSplitter.PriceRsi && HasRsiIndicator)
+            {
+                var rsiRatio = lowerPanelResizeStartRsiRatio + deltaRatio;
+                var volumeRatio = lowerPanelResizeStartVolumeRatio;
+                var minRsiRatio = minimumRsiHeight / (double)totalHeight;
+                var maxRsiRatio = 1.0 - volumeRatio -
+                                  minimumPriceHeight / (double)totalHeight -
+                                  (2.0 * Math.Clamp(volumePanelGap, 2, 30) / totalHeight);
+
+                rsiPanelRatio = Math.Clamp(rsiRatio, minRsiRatio, Math.Max(minRsiRatio, maxRsiRatio));
+                return;
+            }
+
+            if (activeLowerPanelSplitter == LowerPanelSplitter.PriceRsi && !HasRsiIndicator)
+            {
+                var volumeRatio = lowerPanelResizeStartVolumeRatio - deltaRatio;
+                var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
+                var maxVolumeRatio = 0.45;
+                volumePanelRatio = Math.Clamp(volumeRatio, minVolumeRatio, maxVolumeRatio);
+                return;
+            }
+
+            if (activeLowerPanelSplitter == LowerPanelSplitter.RsiVolume)
+            {
+                var rsiRatio = lowerPanelResizeStartRsiRatio - deltaRatio;
+                var volumeRatio = lowerPanelResizeStartVolumeRatio + deltaRatio;
+                var minRsiRatio = minimumRsiHeight / (double)totalHeight;
+                var minVolumeRatio = minimumVolumeHeight / (double)totalHeight;
+                rsiPanelRatio = Math.Clamp(rsiRatio, minRsiRatio, Math.Max(minRsiRatio, 1.0 - minVolumeRatio));
+                volumePanelRatio = Math.Clamp(volumeRatio, minVolumeRatio, 0.45);
+            }
+        }
+
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
@@ -946,16 +1019,17 @@ namespace Trade.It
                 : volumePlotForAxis.Bottom;
             var axisBandTop = Math.Max(0, timeAxisBottom);
 
-            // جداکننده بین چارت قیمت و حجم باید مستقیماً با ماوس قابل کشیدن باشد.
-            // نیازی به Shift نیست؛ نوار جداکننده از ناحیه زوم افقی مستقل است.
-            var onVolumeSeparator = volumePanelVisible &&
-                                    IsVolumePanelSeparator(e.Location.Y);
-
-            if (onVolumeSeparator)
+            // همه‌ی پنل‌های پایین با Splitter قابل تغییر اندازه هستند:
+            // قیمت/RSI و RSI/حجم. اگر RSI وجود نداشته باشد، جداکننده قیمت/حجم
+            // همان رفتار قبلی را حفظ می‌کند.
+            var splitter = GetLowerPanelSplitterAt(e.Location.Y);
+            if (splitter != LowerPanelSplitter.None)
             {
-                volumePanelResizeDrag = true;
-                volumePanelResizeStartY = e.Location.Y;
-                volumePanelResizeStartRatio = volumePanelRatio;
+                lowerPanelResizeDrag = true;
+                activeLowerPanelSplitter = splitter;
+                lowerPanelResizeStartY = e.Location.Y;
+                lowerPanelResizeStartRsiRatio = rsiPanelRatio;
+                lowerPanelResizeStartVolumeRatio = volumePanelRatio;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
@@ -1128,9 +1202,8 @@ namespace Trade.It
         {
             base.OnMouseMove(e);
 
-            // وقتی ماوس روی جداکننده قیمت/حجم است، شکل Splitter را نشان بده.
-            // فقط در حالت Drag، منطق تغییر ارتفاع اجرا می‌شود.
-            if (!Capture && volumePanelVisible && IsVolumePanelSeparator(e.Location.Y))
+            // روی تمام جداکننده‌های پنل‌ها شکل Splitter نشان داده می‌شود.
+            if (!Capture && GetLowerPanelSplitterAt(e.Location.Y) != LowerPanelSplitter.None)
             {
                 Cursor = Cursors.SizeNS;
             }
@@ -1139,15 +1212,9 @@ namespace Trade.It
                 Cursor = Cursors.Default;
             }
             if (extraInputHandled) { extraInputHandled = false; return; }
-            if (volumePanelResizeDrag && Capture)
+            if (lowerPanelResizeDrag && Capture)
             {
-                var delta = e.Location.Y - volumePanelResizeStartY;
-                var totalHeight = Math.Max(120, Height - 35 - 15);
-                var deltaRatio = -delta / (double)totalHeight;
-                volumePanelRatio = Math.Clamp(
-                    volumePanelResizeStartRatio + deltaRatio,
-                    0.10,
-                    0.45);
+                ResizeLowerPanels(e.Location.Y);
                 Invalidate();
                 return;
             }
@@ -1255,9 +1322,10 @@ namespace Trade.It
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button == MouseButtons.Left)
             {
-                if (volumePanelResizeDrag)
+                if (lowerPanelResizeDrag)
                 {
-                    volumePanelResizeDrag = false;
+                    lowerPanelResizeDrag = false;
+                    activeLowerPanelSplitter = LowerPanelSplitter.None;
                     Capture = false;
                     Cursor = Cursors.Default;
                     Invalidate();
