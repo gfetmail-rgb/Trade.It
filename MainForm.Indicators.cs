@@ -12,6 +12,7 @@ namespace Trade.It
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
             indicatorDeleteMenuItem.Click += (_, _) => DeleteContextIndicator();
+            indicatorSettingsMenuItem.Click += (_, _) => OpenIndicatorSettings();
             indicatorPeriod5MenuItem.Click += (_, _) => SetContextIndicatorPeriod(5);
             indicatorPeriod10MenuItem.Click += (_, _) => SetContextIndicatorPeriod(10);
             indicatorPeriod20MenuItem.Click += (_, _) => SetContextIndicatorPeriod(20);
@@ -63,6 +64,23 @@ namespace Trade.It
             indicatorPeriod50MenuItem.Checked = period == 50;
             indicatorPeriod100MenuItem.Checked = period == 100;
             indicatorPeriod200MenuItem.Checked = period == 200;
+        }
+
+        private void OpenIndicatorSettings()
+        {
+            var chart = indicatorContextChart;
+            if (chart == null)
+                return;
+
+            var index = chart.SelectedIndicatorIndex;
+            if (index < 0 || index >= chart.Indicators.Count)
+                return;
+
+            using var dialog = new IndicatorSettingsForm(chart.Indicators[index], chart.Points.Count);
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+                chart.ApplyIndicatorSettings(index, dialog.Period, dialog.LineColor, dialog.BackgroundColor);
+
+            indicatorContextChart = null;
         }
 
         private void DeleteContextIndicator()
