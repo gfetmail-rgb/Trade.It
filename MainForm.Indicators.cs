@@ -105,6 +105,7 @@ namespace Trade.It
                 indicatorPeriod21MenuItem.Checked = indicator.Period == 21;
                 indicatorPeriod34MenuItem.Checked = indicator.Period == 34;
                 indicatorPeriod55MenuItem.Checked = indicator.Period == 55;
+                indicatorPeriod89MenuItem.Checked = indicator.Period == 89;
                 indicatorPeriod200MenuItem.Checked = indicator.Period == 200;
             }
         }
