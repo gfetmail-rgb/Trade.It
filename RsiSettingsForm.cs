@@ -33,6 +33,18 @@ namespace Trade.It
             rsi70ColorButton.Click += (_, _) => PickColor(rsi70ColorButton);
             okButton.Click += (_, _) => DialogResult = DialogResult.OK;
             cancelButton.Click += (_, _) => DialogResult = DialogResult.Cancel;
+            defaultButton.Click += (_, _) => ApplyDefaults();
+        }
+
+        private void ApplyDefaults()
+        {
+            periodNumeric.Value = 14;
+            rsiLineCheckBox.Checked = true;
+            rsi30CheckBox.Checked = true;
+            rsi70CheckBox.Checked = true;
+            SetColorButton(rsiLineColorButton, Color.FromArgb(30, 100, 220));
+            SetColorButton(rsi30ColorButton, Color.FromArgb(150, 150, 150));
+            SetColorButton(rsi70ColorButton, Color.FromArgb(150, 150, 150));
         }
 
         private static void SetColorButton(Button button, Color color)
