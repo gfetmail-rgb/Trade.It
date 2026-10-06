@@ -4,7 +4,8 @@ namespace Trade.It
     {
         MovingAverage,
         ExponentialMovingAverage,
-        Ichimoku
+        Ichimoku,
+        RelativeStrengthIndex
     }
 
     internal sealed class ChartIndicator
@@ -27,6 +28,12 @@ namespace Trade.It
         public Color ChikouColor { get; set; } = Color.FromArgb(150, 80, 180);
         public Color BullishCloudColor { get; set; } = Color.FromArgb(130, 200, 130);
         public Color BearishCloudColor { get; set; } = Color.FromArgb(230, 150, 150);
+        public bool ShowRsiLine { get; set; } = true;
+        public bool ShowRsi30 { get; set; } = true;
+        public bool ShowRsi70 { get; set; } = true;
+        public Color RsiLineColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color Rsi30Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public Color Rsi70Color { get; set; } = Color.FromArgb(150, 150, 150);
     }
 
     internal sealed partial class TradingChartControl
@@ -44,6 +51,7 @@ namespace Trade.It
         private double[]? ichimokuChikouCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
+        internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -68,6 +76,50 @@ namespace Trade.It
                 BackgroundColor = BackColor
             });
             Invalidate();
+        }
+
+        public void AddRelativeStrengthIndex(int period = 14)
+        {
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.RelativeStrengthIndex,
+                Period = period,
+                RsiLineColor = Color.FromArgb(30, 100, 220),
+                Rsi30Color = Color.FromArgb(150, 150, 150),
+                Rsi70Color = Color.FromArgb(150, 150, 150)
+            });
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyRsiSettings(
+            int index,
+            int period,
+            bool showRsiLine,
+            bool showRsi30,
+            bool showRsi70,
+            Color rsiLineColor,
+            Color rsi30Color,
+            Color rsi70Color)
+        {
+            if (index < 0 || index >= indicators.Count ||
+                indicators[index].Type != ChartIndicatorType.RelativeStrengthIndex ||
+                points.Count < 2)
+                return false;
+
+            var indicator = indicators[index];
+            indicator.Period = Math.Clamp(period, 2, points.Count);
+            indicator.ShowRsiLine = showRsiLine;
+            indicator.ShowRsi30 = showRsi30;
+            indicator.ShowRsi70 = showRsi70;
+            indicator.RsiLineColor = rsiLineColor;
+            indicator.Rsi30Color = rsi30Color;
+            indicator.Rsi70Color = rsi70Color;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public void AddIchimoku()
@@ -185,7 +237,7 @@ namespace Trade.It
 
         internal int HitTestIndicator(Point location)
         {
-            if (indicators.Count == 0 || points.Count == 0 || !GetPlotRectangle().Contains(location))
+            if (indicators.Count == 0 || points.Count == 0)
                 return -1;
 
             var plot = GetPlotRectangle();
@@ -198,6 +250,20 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var rsiPlot = GetRsiPlotRectangle();
+            if (rsiPlot != Rectangle.Empty && rsiPlot.Contains(location))
+            {
+                var rsiIndex = HitTestRsi(location, rsiPlot, displayedCount, step: rsiPlot.Width / (double)Math.Max(1, visibleCount), initialOffset: -rsiPlot.Width * 0.25);
+                selectedIndicatorIndex = rsiIndex;
+                return selectedIndicatorIndex;
+            }
+
+            if (!GetPlotRectangle().Contains(location))
+            {
+                selectedIndicatorIndex = -1;
+                return -1;
+            }
+
             GetVerticalRange(visible, out var min, out var max);
             var step = plot.Width / (double)Math.Max(1, visibleCount);
             var initialOffset = -plot.Width * 0.25;
@@ -209,6 +275,9 @@ namespace Trade.It
             for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
             {
                 var indicator = indicators[indicatorIndex];
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
+                    continue;
+
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
                 {
                     if (HitTestIchimoku(location, indicator, plot, min, max, displayedCount, step, initialOffset, tolerance, out var ichimokuDistance))
@@ -258,7 +327,68 @@ namespace Trade.It
             return selectedIndicatorIndex;
         }
 
+        private int HitTestRsi(Point location, Rectangle rsiPlot, int displayedCount, double step, double initialOffset)
+        {
+            var bestIndex = -1;
+            var bestDistance = 8.0;
+
+            for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
+            {
+                var indicator = indicators[indicatorIndex];
+                if (indicator.Type != ChartIndicatorType.RelativeStrengthIndex)
+                    continue;
+
+                var values = CalculateRsi(indicator.Period);
+                PointF? previous = null;
+                for (var i = 0; i < displayedCount; i++)
+                {
+                    var absoluteIndex = firstIndex + i;
+                    if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
+                    {
+                        previous = null;
+                        continue;
+                    }
+
+                    var current = RsiValueToScreen(values[absoluteIndex], rsiPlot, step, i, initialOffset);
+                    if (previous.HasValue)
+                    {
+                        var distance = DistanceToIndicatorSegment(location, previous.Value, current);
+                        if (distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+
+                    if (indicator.ShowRsi30)
+                    {
+                        var y30 = RsiValueToScreen(30, rsiPlot, step, i, initialOffset).Y;
+                        if (Math.Abs(location.Y - y30) <= bestDistance)
+                        {
+                            bestDistance = Math.Abs(location.Y - y30);
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+
+                    if (indicator.ShowRsi70)
+                    {
+                        var y70 = RsiValueToScreen(70, rsiPlot, step, i, initialOffset).Y;
+                        if (Math.Abs(location.Y - y70) <= bestDistance)
+                        {
+                            bestDistance = Math.Abs(location.Y - y70);
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+
+                    previous = current;
+                }
+            }
+
+            return bestIndex;
+        }
+
         private bool HitTestIchimoku(
+
             Point location,
             ChartIndicator indicator,
             Rectangle plot,
@@ -395,6 +525,12 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
+                    continue;
+
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
+                    continue;
+
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
                 {
                     DrawIchimoku(g, plot, min, max, displayedCount, step, initialOffset, indicator);
@@ -610,6 +746,60 @@ namespace Trade.It
                 result[i] = (highest + lowest) / 2.0;
             }
             return result;
+        }
+
+        private double[] CalculateRsi(int period)
+        {
+            var result = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            if (period <= 0 || points.Count <= period)
+                return result;
+
+            double gainSum = 0;
+            double lossSum = 0;
+            for (var i = 1; i <= period; i++)
+            {
+                var change = points[i].Close - points[i - 1].Close;
+                if (change >= 0)
+                    gainSum += change;
+                else
+                    lossSum -= change;
+            }
+
+            var averageGain = gainSum / period;
+            var averageLoss = lossSum / period;
+            result[period] = RsiFromAverages(averageGain, averageLoss);
+
+            for (var i = period + 1; i < points.Count; i++)
+            {
+                var change = points[i].Close - points[i - 1].Close;
+                var gain = Math.Max(0, change);
+                var loss = Math.Max(0, -change);
+                averageGain = ((averageGain * (period - 1)) + gain) / period;
+                averageLoss = ((averageLoss * (period - 1)) + loss) / period;
+                result[i] = RsiFromAverages(averageGain, averageLoss);
+            }
+
+            return result;
+        }
+
+        private static double RsiFromAverages(double averageGain, double averageLoss)
+        {
+            if (averageLoss <= 1e-12)
+                return averageGain <= 1e-12 ? 50.0 : 100.0;
+            var relativeStrength = averageGain / averageLoss;
+            return 100.0 - (100.0 / (1.0 + relativeStrength));
+        }
+
+        private static double RsiValueToScreenY(double value, Rectangle plot)
+        {
+            return plot.Bottom - (value / 100.0 * plot.Height);
+        }
+
+        private PointF RsiValueToScreen(double value, Rectangle plot, double step, int relativeIndex, double initialOffset)
+        {
+            var x = (float)(plot.Left + step * (relativeIndex + 0.5) + initialOffset + horizontalPanOffset);
+            var y = (float)RsiValueToScreenY(value, plot);
+            return new PointF(x, y);
         }
 
         private static double[] CalculateIchimokuSpanA(double[] tenkan, double[] kijun)
