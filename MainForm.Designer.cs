@@ -16,6 +16,8 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorStochasticRsiMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorAtrMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorAdxMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorBollingerMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorObvMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -142,6 +144,8 @@
             indicatorStochasticRsiMenuItem = new ToolStripMenuItem();
             indicatorAtrMenuItem = new ToolStripMenuItem();
             indicatorAdxMenuItem = new ToolStripMenuItem();
+            indicatorBollingerMenuItem = new ToolStripMenuItem();
+            indicatorObvMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -352,7 +356,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorAtrMenuItem, indicatorAdxMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorAtrMenuItem, indicatorAdxMenuItem, indicatorBollingerMenuItem, indicatorObvMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -404,6 +408,8 @@
             indicatorAdxMenuItem.Name = "indicatorAdxMenuItem";
             indicatorAdxMenuItem.Size = new Size(180, 34);
             indicatorAdxMenuItem.Text = "ADX";
+            indicatorBollingerMenuItem.Text = "بولینگر";
+            indicatorObvMenuItem.Text = "OBV";
             // indicatorClearMenuItem
             // 
             indicatorClearMenuItem.Name = "indicatorClearMenuItem";
