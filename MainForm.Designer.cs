@@ -19,7 +19,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorPeriod34MenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorPeriod55MenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorPeriod89MenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod89MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorPeriod200MenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorDeleteMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
@@ -146,7 +146,7 @@
             indicatorPeriod34MenuItem = new ToolStripMenuItem();
             indicatorPeriod55MenuItem = new ToolStripMenuItem();
             indicatorPeriod89MenuItem = new ToolStripMenuItem();
-            indicatorPeriod89MenuItem = new ToolStripMenuItem();
+            indicatorPeriod200MenuItem = new ToolStripMenuItem();
             indicatorDeleteMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
@@ -391,7 +391,7 @@
             // 
             // indicatorSettingsMenuItem
             // 
-            indicatorSettingsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorPeriod9MenuItem, indicatorPeriod13MenuItem, indicatorPeriod21MenuItem, indicatorPeriod34MenuItem, indicatorPeriod55MenuItem, indicatorPeriod89MenuItem, indicatorPeriod89MenuItem });
+            indicatorSettingsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorPeriod9MenuItem, indicatorPeriod13MenuItem, indicatorPeriod21MenuItem, indicatorPeriod34MenuItem, indicatorPeriod55MenuItem, indicatorPeriod89MenuItem, indicatorPeriod200MenuItem });
             indicatorSettingsMenuItem.Name = "indicatorSettingsMenuItem";
             indicatorSettingsMenuItem.Size = new Size(179, 22);
             indicatorSettingsMenuItem.Text = "تنظیمات";
