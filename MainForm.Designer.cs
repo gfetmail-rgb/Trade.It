@@ -6,6 +6,10 @@
         private System.Windows.Forms.MenuStrip mainMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem portfolioDefinitionMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiTimeframeAnalysisMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM1MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM5MenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisM15MenuItem;
@@ -118,6 +122,10 @@
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
+            indicatorsMenuItem = new ToolStripMenuItem();
+            indicatorMaMenuItem = new ToolStripMenuItem();
+            indicatorEmaMenuItem = new ToolStripMenuItem();
+            indicatorClearMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
             analysisM15MenuItem = new ToolStripMenuItem();
@@ -300,7 +308,7 @@
             // mainMenuStrip
             // 
             mainMenuStrip.ImageScalingSize = new Size(20, 20);
-            mainMenuStrip.Items.AddRange(new ToolStripItem[] { multiTimeframeAnalysisMenuItem, portfolioDefinitionMenuItem, portfolioManagementMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem, settingsMenuItem });
+            mainMenuStrip.Items.AddRange(new ToolStripItem[] { multiTimeframeAnalysisMenuItem, indicatorsMenuItem, portfolioDefinitionMenuItem, portfolioManagementMenuItem, symbolDefinitionMenuItem, marketStructureMenuItem, settingsMenuItem });
             mainMenuStrip.Location = new Point(0, 0);
             mainMenuStrip.Name = "mainMenuStrip";
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
@@ -321,6 +329,31 @@
             multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
             multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
             multiTimeframeAnalysisMenuItem.DropDownOpening += MultiTimeframeAnalysisMenuItem_DropDownOpening;
+            // 
+            // indicatorsMenuItem
+            // 
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.Name = "indicatorsMenuItem";
+            indicatorsMenuItem.Size = new Size(105, 29);
+            indicatorsMenuItem.Text = "اندیکاتورها";
+            // 
+            // indicatorMaMenuItem
+            // 
+            indicatorMaMenuItem.Name = "indicatorMaMenuItem";
+            indicatorMaMenuItem.Size = new Size(190, 22);
+            indicatorMaMenuItem.Text = "MA (20)";
+            // 
+            // indicatorEmaMenuItem
+            // 
+            indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
+            indicatorEmaMenuItem.Size = new Size(190, 22);
+            indicatorEmaMenuItem.Text = "EMA (20)";
+            // 
+            // indicatorClearMenuItem
+            // 
+            indicatorClearMenuItem.Name = "indicatorClearMenuItem";
+            indicatorClearMenuItem.Size = new Size(190, 22);
+            indicatorClearMenuItem.Text = "حذف همه اندیکاتورها";
             // 
             // analysisM1MenuItem
             // 
