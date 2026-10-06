@@ -682,22 +682,22 @@ namespace Trade.It
                 {
                     EnsureBollingerCache(indicator);
                     var series = new[] { bollingerMiddleCache!, bollingerUpperCache!, bollingerLowerCache! };
-                    foreach (var values in series)
+                    foreach (var seriesValues in series)
                     {
-                        PointF? previous = null;
+                        PointF? previousPoint = null;
                         for (var i = 0; i < displayedCount; i++)
                         {
                             var absoluteIndex = firstIndex + i;
-                            if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex])) { previous = null; continue; }
+                            if (absoluteIndex < 0 || absoluteIndex >= seriesValues.Length || double.IsNaN(seriesValues[absoluteIndex])) { previousPoint = null; continue; }
                             var current = new PointF(
                                 (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
                                 (float)PriceToScreen(values[absoluteIndex], plot, min, max));
-                            if (previous.HasValue)
+                            if (previousPoint.HasValue)
                             {
-                                var distance = DistanceToIndicatorSegment(location, previous.Value, current);
+                                var distance = DistanceToIndicatorSegment(location, previousPoint.Value, current);
                                 if (distance < bestDistance) { bestDistance = distance; bestIndex = indicatorIndex; }
                             }
-                            previous = current;
+                            previousPoint = current;
                         }
                     }
                     continue;
