@@ -1067,7 +1067,7 @@ namespace Trade.It
                 var absoluteIndex = firstIndex + crossIndex;
                 if (absoluteIndex >= 0 && absoluteIndex < values.Length && !double.IsNaN(values[absoluteIndex]))
                 {
-                    DrawIndicatorPanelTitle(g, rsiPlot, "RSI", titleFont, indicator.RsiLineColor);
+                    DrawIndicatorPanelTitle(g, rsiPlot, $"RSI({indicator.Period})", titleFont, indicator.RsiLineColor);
                 }
             }
         }
@@ -1155,7 +1155,7 @@ namespace Trade.It
                     if (absoluteIndex >= 0 && absoluteIndex < macdHistogramCache!.Length &&
                         !double.IsNaN(macdHistogramCache[absoluteIndex]))
                     {
-                        DrawIndicatorPanelTitle(g, macdPlot, "MACD", titleFont, indicator.MacdLineColor);
+                        DrawIndicatorPanelTitle(g, macdPlot, $"MACD({indicator.MacdFastPeriod},{indicator.MacdSlowPeriod},{indicator.MacdSignalPeriod})", titleFont, indicator.MacdLineColor);
                     }
                 }
             }
@@ -1233,7 +1233,12 @@ namespace Trade.It
                 previous = current;
             }
 
-            DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})", titleFont, indicator.LineColor);
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            var atrValueText = absoluteIndex >= 0 && absoluteIndex < atrCache!.Length && !double.IsNaN(atrCache[absoluteIndex]) && !double.IsInfinity(atrCache[absoluteIndex])
+                ? atrCache[absoluteIndex].ToString("0.########", CultureInfo.InvariantCulture)
+                : "—";
+            DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})={atrValueText}", titleFont, indicator.LineColor);
         }
 
         private static double GetAtrScaleMax(double[] values, int firstIndex, int displayedCount)
@@ -1269,7 +1274,7 @@ namespace Trade.It
             if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); g.DrawString("80", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g)); }
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
-            DrawIndicatorPanelTitle(g, plot, "Stochastic", font, indicator.StochasticKColor);
+            DrawIndicatorPanelTitle(g, plot, $"Stochastic({indicator.StochasticPeriod},{indicator.StochasticKPeriod},{indicator.StochasticDPeriod})", font, indicator.StochasticKColor);
         }
 
         private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1321,7 +1326,7 @@ namespace Trade.It
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiKCache!, indicator.ShowStochasticRsiK, indicator.StochasticRsiKColor);
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiDCache!, indicator.ShowStochasticRsiD, indicator.StochasticRsiDColor);
 
-            DrawIndicatorPanelTitle(g, plot, "Stochastic RSI", font, indicator.StochasticRsiKColor);
+            DrawIndicatorPanelTitle(g, plot, $"Stochastic RSI({indicator.StochasticRsiRsiPeriod},{indicator.StochasticRsiPeriod},{indicator.StochasticRsiKPeriod},{indicator.StochasticRsiDPeriod})", font, indicator.StochasticRsiKColor);
         }
 
         private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
