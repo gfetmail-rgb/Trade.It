@@ -3,137 +3,37 @@ namespace Trade.It
     partial class MacdSettingsForm
     {
         private System.ComponentModel.IContainer components = null;
-        private CheckBox macdLineCheckBox;
-        private Button macdLineColorButton;
-        private CheckBox macdSignalCheckBox;
-        private Button macdSignalColorButton;
-        private CheckBox macdHistogramCheckBox;
-        private Button macdBullishHistogramColorButton;
-        private Button macdBearishHistogramColorButton;
-        private CheckBox macdZeroCheckBox;
-        private Button macdZeroColorButton;
-        private Label bullishLabel;
-        private Label bearishLabel;
-        private Button okButton;
-        private Button cancelButton;
+        private Label fastPeriodLabel, slowPeriodLabel, signalPeriodLabel;
+        private NumericUpDown fastPeriodNumeric, slowPeriodNumeric, signalPeriodNumeric;
+        private CheckBox macdLineCheckBox, macdSignalCheckBox, macdHistogramCheckBox, macdZeroCheckBox;
+        private Button macdLineColorButton, macdSignalColorButton, macdBullishHistogramColorButton, macdBearishHistogramColorButton, macdZeroColorButton, okButton, cancelButton;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && components != null) components.Dispose();
-            base.Dispose(disposing);
-        }
-
+        protected override void Dispose(bool disposing) { if (disposing && components != null) components.Dispose(); base.Dispose(disposing); }
         private void InitializeComponent()
         {
-            macdLineCheckBox = new CheckBox();
-            macdLineColorButton = new Button();
-            macdSignalCheckBox = new CheckBox();
-            macdSignalColorButton = new Button();
-            macdHistogramCheckBox = new CheckBox();
-            macdBullishHistogramColorButton = new Button();
-            macdBearishHistogramColorButton = new Button();
-            macdZeroCheckBox = new CheckBox();
-            macdZeroColorButton = new Button();
-            bullishLabel = new Label();
-            bearishLabel = new Label();
-            okButton = new Button();
-            cancelButton = new Button();
-            SuspendLayout();
+            fastPeriodLabel=new Label(); slowPeriodLabel=new Label(); signalPeriodLabel=new Label();
+            fastPeriodNumeric=new NumericUpDown(); slowPeriodNumeric=new NumericUpDown(); signalPeriodNumeric=new NumericUpDown();
+            macdLineCheckBox=new CheckBox(); macdSignalCheckBox=new CheckBox(); macdHistogramCheckBox=new CheckBox(); macdZeroCheckBox=new CheckBox();
+            macdLineColorButton=new Button(); macdSignalColorButton=new Button(); macdBullishHistogramColorButton=new Button(); macdBearishHistogramColorButton=new Button(); macdZeroColorButton=new Button();
+            okButton=new Button(); cancelButton=new Button();
+            ((System.ComponentModel.ISupportInitialize)fastPeriodNumeric).BeginInit(); ((System.ComponentModel.ISupportInitialize)slowPeriodNumeric).BeginInit(); ((System.ComponentModel.ISupportInitialize)signalPeriodNumeric).BeginInit(); SuspendLayout();
 
-            macdLineCheckBox.AutoSize = true;
-            macdLineCheckBox.Location = new Point(250, 22);
-            macdLineCheckBox.Size = new Size(125, 29);
-            macdLineCheckBox.Text = "خط MACD";
-
-            macdLineColorButton.Location = new Point(105, 18);
-            macdLineColorButton.Size = new Size(125, 36);
-            macdLineColorButton.Text = "انتخاب رنگ";
-            macdLineColorButton.UseVisualStyleBackColor = false;
-
-            macdSignalCheckBox.AutoSize = true;
-            macdSignalCheckBox.Location = new Point(250, 68);
-            macdSignalCheckBox.Size = new Size(125, 29);
-            macdSignalCheckBox.Text = "خط Signal";
-
-            macdSignalColorButton.Location = new Point(105, 64);
-            macdSignalColorButton.Size = new Size(125, 36);
-            macdSignalColorButton.Text = "انتخاب رنگ";
-            macdSignalColorButton.UseVisualStyleBackColor = false;
-
-            macdHistogramCheckBox.AutoSize = true;
-            macdHistogramCheckBox.Location = new Point(250, 114);
-            macdHistogramCheckBox.Size = new Size(125, 29);
-            macdHistogramCheckBox.Text = "هیستوگرام";
-
-            bullishLabel.AutoSize = true;
-            bullishLabel.Location = new Point(300, 164);
-            bullishLabel.Size = new Size(75, 25);
-            bullishLabel.Text = "صعودی:";
-
-            macdBullishHistogramColorButton.Location = new Point(105, 158);
-            macdBullishHistogramColorButton.Size = new Size(125, 36);
-            macdBullishHistogramColorButton.Text = "رنگ صعودی";
-            macdBullishHistogramColorButton.UseVisualStyleBackColor = false;
-
-            bearishLabel.AutoSize = true;
-            bearishLabel.Location = new Point(300, 210);
-            bearishLabel.Size = new Size(75, 25);
-            bearishLabel.Text = "نزولی:";
-
-            macdBearishHistogramColorButton.Location = new Point(105, 204);
-            macdBearishHistogramColorButton.Size = new Size(125, 36);
-            macdBearishHistogramColorButton.Text = "رنگ نزولی";
-            macdBearishHistogramColorButton.UseVisualStyleBackColor = false;
-
-            macdZeroCheckBox.AutoSize = true;
-            macdZeroCheckBox.Location = new Point(250, 256);
-            macdZeroCheckBox.Size = new Size(125, 29);
-            macdZeroCheckBox.Text = "خط صفر";
-
-            macdZeroColorButton.Location = new Point(105, 252);
-            macdZeroColorButton.Size = new Size(125, 36);
-            macdZeroColorButton.Text = "انتخاب رنگ";
-            macdZeroColorButton.UseVisualStyleBackColor = false;
-
-            okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(190, 310);
-            okButton.Size = new Size(100, 36);
-            okButton.Text = "تأیید";
-            okButton.UseVisualStyleBackColor = true;
-
-            cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(80, 310);
-            cancelButton.Size = new Size(100, 36);
-            cancelButton.Text = "انصراف";
-            cancelButton.UseVisualStyleBackColor = true;
-
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(400, 370);
-            Controls.Add(cancelButton);
-            Controls.Add(okButton);
-            Controls.Add(macdZeroColorButton);
-            Controls.Add(macdZeroCheckBox);
-            Controls.Add(bearishLabel);
-            Controls.Add(macdBearishHistogramColorButton);
-            Controls.Add(bullishLabel);
-            Controls.Add(macdBullishHistogramColorButton);
-            Controls.Add(macdHistogramCheckBox);
-            Controls.Add(macdSignalColorButton);
-            Controls.Add(macdSignalCheckBox);
-            Controls.Add(macdLineColorButton);
-            Controls.Add(macdLineCheckBox);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "MacdSettingsForm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "تنظیمات MACD";
-            RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
-            ShowInTaskbar = false;
-            ResumeLayout(false);
-            PerformLayout();
+            ConfigureNumber(fastPeriodLabel,fastPeriodNumeric,"دوره سریع:",22); ConfigureNumber(slowPeriodLabel,slowPeriodNumeric,"دوره کند:",62); ConfigureNumber(signalPeriodLabel,signalPeriodNumeric,"دوره Signal:",102);
+            ConfigureRow(macdLineCheckBox,macdLineColorButton,"خط MACD",148); ConfigureRow(macdSignalCheckBox,macdSignalColorButton,"خط Signal",188);
+            macdHistogramCheckBox.AutoSize=true; macdHistogramCheckBox.Text="هیستوگرام"; macdHistogramCheckBox.Location=new Point(285,228); macdHistogramCheckBox.Size=new Size(120,29);
+            macdBullishHistogramColorButton.Text="رنگ صعودی"; macdBullishHistogramColorButton.Location=new Point(115,224); macdBullishHistogramColorButton.Size=new Size(125,34);
+            macdBearishHistogramColorButton.Text="رنگ نزولی"; macdBearishHistogramColorButton.Location=new Point(115,264); macdBearishHistogramColorButton.Size=new Size(125,34);
+            macdZeroCheckBox.AutoSize=true; macdZeroCheckBox.Text="خط صفر"; macdZeroCheckBox.Location=new Point(285,304); macdZeroCheckBox.Size=new Size(120,29);
+            macdZeroColorButton.Text="انتخاب رنگ"; macdZeroColorButton.Location=new Point(115,300); macdZeroColorButton.Size=new Size(125,34); macdZeroColorButton.UseVisualStyleBackColor=false;
+            okButton.Text="تأیید"; okButton.DialogResult=DialogResult.OK; okButton.Location=new Point(200,350); okButton.Size=new Size(100,34);
+            cancelButton.Text="انصراف"; cancelButton.DialogResult=DialogResult.Cancel; cancelButton.Location=new Point(90,350); cancelButton.Size=new Size(100,34);
+            AcceptButton=okButton; CancelButton=cancelButton;
+            Controls.AddRange(new Control[]{fastPeriodLabel,fastPeriodNumeric,slowPeriodLabel,slowPeriodNumeric,signalPeriodLabel,signalPeriodNumeric,macdLineCheckBox,macdLineColorButton,macdSignalCheckBox,macdSignalColorButton,macdHistogramCheckBox,macdBullishHistogramColorButton,macdBearishHistogramColorButton,macdZeroCheckBox,macdZeroColorButton,okButton,cancelButton});
+            AutoScaleDimensions=new SizeF(7F,15F); AutoScaleMode=AutoScaleMode.Font; ClientSize=new Size(420,405);
+            FormBorderStyle=FormBorderStyle.FixedDialog; MaximizeBox=false; MinimizeBox=false; Name="MacdSettingsForm"; StartPosition=FormStartPosition.CenterParent; Text="تنظیمات MACD"; RightToLeft=RightToLeft.Yes; RightToLeftLayout=true; ShowInTaskbar=false;
+            ((System.ComponentModel.ISupportInitialize)fastPeriodNumeric).EndInit(); ((System.ComponentModel.ISupportInitialize)slowPeriodNumeric).EndInit(); ((System.ComponentModel.ISupportInitialize)signalPeriodNumeric).EndInit(); ResumeLayout(false); PerformLayout();
         }
+        private static void ConfigureNumber(Label label, NumericUpDown numeric,string text,int y){label.AutoSize=true;label.Text=text;label.Location=new Point(285,y+4);label.Size=new Size(115,25);numeric.Location=new Point(140,y);numeric.Size=new Size(125,33);numeric.TextAlign=HorizontalAlignment.Center;}
+        private static void ConfigureRow(CheckBox check,Button color,string text,int y){check.AutoSize=true;check.Text=text;check.Location=new Point(285,y+4);check.Size=new Size(120,29);color.Text="انتخاب رنگ";color.Location=new Point(115,y);color.Size=new Size(125,34);color.UseVisualStyleBackColor=false;}
     }
 }
