@@ -10,6 +10,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorMaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorEmaMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorIchimokuMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorRsiMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -137,6 +138,7 @@
             indicatorMaMenuItem = new ToolStripMenuItem();
             indicatorEmaMenuItem = new ToolStripMenuItem();
             indicatorIchimokuMenuItem = new ToolStripMenuItem();
+            indicatorRsiMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -354,7 +356,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -377,6 +379,11 @@
             indicatorIchimokuMenuItem.Size = new Size(190, 22);
             indicatorIchimokuMenuItem.Text = "Ichimoku";
             // 
+            // indicatorRsiMenuItem
+            // 
+            indicatorRsiMenuItem.Name = "indicatorRsiMenuItem";
+            indicatorRsiMenuItem.Size = new Size(180, 34);
+            indicatorRsiMenuItem.Text = "RSI";
             // indicatorClearMenuItem
             // 
             indicatorClearMenuItem.Name = "indicatorClearMenuItem";
