@@ -892,7 +892,21 @@ namespace Trade.It
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Button == MouseButtons.Right) { CancelDrawing(); return; }
+            if (e.Button == MouseButtons.Right)
+            {
+                var indicatorIndex = HitTestIndicator(e.Location);
+                if (indicatorIndex >= 0)
+                {
+                    CancelDrawing();
+                    Focus();
+                    Invalidate();
+                    return;
+                }
+
+                selectedIndicatorIndex = -1;
+                CancelDrawing();
+                return;
+            }
             if (extraInputHandled) { extraInputHandled = false; return; }
             if (e.Button != MouseButtons.Left) return;
             if (testMode && !testStartSelected)
