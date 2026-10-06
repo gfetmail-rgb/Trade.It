@@ -2,13 +2,22 @@ namespace Trade.It
 {
     public partial class MainForm
     {
+        private TradingChartControl? indicatorContextChart;
+
         private void InitializeIndicatorMenuRuntime()
         {
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
-            indicatorRemoveMaMenuItem.Click += (_, _) => RemoveOneIndicatorFromActiveChart(ChartIndicatorType.MovingAverage);
-            indicatorRemoveEmaMenuItem.Click += (_, _) => RemoveOneIndicatorFromActiveChart(ChartIndicatorType.ExponentialMovingAverage);
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
+
+            indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
+            indicatorDeleteMenuItem.Click += (_, _) => DeleteContextIndicator();
+            indicatorPeriod5MenuItem.Click += (_, _) => SetContextIndicatorPeriod(5);
+            indicatorPeriod10MenuItem.Click += (_, _) => SetContextIndicatorPeriod(10);
+            indicatorPeriod20MenuItem.Click += (_, _) => SetContextIndicatorPeriod(20);
+            indicatorPeriod50MenuItem.Click += (_, _) => SetContextIndicatorPeriod(50);
+            indicatorPeriod100MenuItem.Click += (_, _) => SetContextIndicatorPeriod(100);
+            indicatorPeriod200MenuItem.Click += (_, _) => SetContextIndicatorPeriod(200);
         }
 
         private void AddMovingAverageToActiveChart()
@@ -37,18 +46,32 @@ namespace Trade.It
             chart.AddExponentialMovingAverage(20);
         }
 
-        private void RemoveOneIndicatorFromActiveChart(ChartIndicatorType type)
+        private void IndicatorContextMenuStrip_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            var chart = GetActiveChart();
+            indicatorContextChart = indicatorContextMenuStrip.SourceControl as TradingChartControl;
+            e.Cancel = indicatorContextChart == null ||
+                       indicatorContextChart.SelectedIndicatorIndex < 0 ||
+                       indicatorContextChart.SelectedIndicatorIndex >= indicatorContextChart.Indicators.Count;
+        }
+
+        private void DeleteContextIndicator()
+        {
+            var chart = indicatorContextChart;
             if (chart == null)
                 return;
 
-            if (!chart.RemoveOneIndicator(type))
-            {
-                var name = type == ChartIndicatorType.MovingAverage ? "MA" : "EMA";
-                MessageBox.Show(this, $"هیچ اندیکاتور {name} فعالی وجود ندارد.", "اندیکاتورها",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            chart.RemoveIndicatorAt(chart.SelectedIndicatorIndex);
+            indicatorContextChart = null;
+        }
+
+        private void SetContextIndicatorPeriod(int period)
+        {
+            var chart = indicatorContextChart;
+            if (chart == null)
+                return;
+
+            chart.SetIndicatorPeriod(chart.SelectedIndicatorIndex, period);
+            indicatorContextChart = null;
         }
 
         private void ClearIndicatorsFromActiveChart()
