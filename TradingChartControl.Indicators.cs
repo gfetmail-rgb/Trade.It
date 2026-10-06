@@ -10,6 +10,8 @@ namespace Trade.It
     {
         public ChartIndicatorType Type { get; init; }
         public int Period { get; set; }
+        public Color LineColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color BackgroundColor { get; set; } = Color.Transparent;
     }
 
     internal sealed partial class TradingChartControl
