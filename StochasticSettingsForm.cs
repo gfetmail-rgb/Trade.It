@@ -2,38 +2,23 @@ namespace Trade.It
 {
     public partial class StochasticSettingsForm : Form
     {
-        public bool ShowK => showKCheckBox.Checked;
-        public bool ShowD => showDCheckBox.Checked;
-        public bool Show20 => show20CheckBox.Checked;
-        public bool Show80 => show80CheckBox.Checked;
-        public Color KColor => kColorButton.BackColor;
-        public Color DColor => dColorButton.BackColor;
-        public Color C20Color => c20ColorButton.BackColor;
-        public Color C80Color => c80ColorButton.BackColor;
+        public int Period => (int)periodNumeric.Value;
+        public int KPeriod => (int)kPeriodNumeric.Value;
+        public int DPeriod => (int)dPeriodNumeric.Value;
+        public bool ShowK => showKCheckBox.Checked; public bool ShowD => showDCheckBox.Checked; public bool Show20 => show20CheckBox.Checked; public bool Show80 => show80CheckBox.Checked;
+        public Color KColor => kColorButton.BackColor; public Color DColor => dColorButton.BackColor; public Color C20Color => c20ColorButton.BackColor; public Color C80Color => c80ColorButton.BackColor;
 
-        internal StochasticSettingsForm(ChartIndicator indicator)
+        internal StochasticSettingsForm(ChartIndicator indicator, int maxPeriod)
         {
             InitializeComponent();
-            showKCheckBox.Checked = indicator.ShowStochasticK;
-            showDCheckBox.Checked = indicator.ShowStochasticD;
-            show20CheckBox.Checked = indicator.ShowStochastic20;
-            show80CheckBox.Checked = indicator.ShowStochastic80;
-            kColorButton.BackColor = indicator.StochasticKColor;
-            dColorButton.BackColor = indicator.StochasticDColor;
-            c20ColorButton.BackColor = indicator.Stochastic20Color;
-            c80ColorButton.BackColor = indicator.Stochastic80Color;
+            var max=Math.Max(2,maxPeriod);
+            periodNumeric.Minimum=2; periodNumeric.Maximum=max; kPeriodNumeric.Minimum=1; kPeriodNumeric.Maximum=max; dPeriodNumeric.Minimum=1; dPeriodNumeric.Maximum=max;
+            periodNumeric.Value=Math.Clamp(indicator.StochasticPeriod,2,max); kPeriodNumeric.Value=Math.Clamp(indicator.StochasticKPeriod,1,max); dPeriodNumeric.Value=Math.Clamp(indicator.StochasticDPeriod,1,max);
+            showKCheckBox.Checked=indicator.ShowStochasticK; showDCheckBox.Checked=indicator.ShowStochasticD; show20CheckBox.Checked=indicator.ShowStochastic20; show80CheckBox.Checked=indicator.ShowStochastic80;
+            SetColor(kColorButton,indicator.StochasticKColor); SetColor(dColorButton,indicator.StochasticDColor); SetColor(c20ColorButton,indicator.Stochastic20Color); SetColor(c80ColorButton,indicator.Stochastic80Color);
+            kColorButton.Click+=(_,_)=>ChooseColor(kColorButton); dColorButton.Click+=(_,_)=>ChooseColor(dColorButton); c20ColorButton.Click+=(_,_)=>ChooseColor(c20ColorButton); c80ColorButton.Click+=(_,_)=>ChooseColor(c80ColorButton);
         }
-
-        private void ChooseColor(Button button)
-        {
-            using var dialog = new ColorDialog { Color = button.BackColor };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-                button.BackColor = dialog.Color;
-        }
-
-        private void kColorButton_Click(object sender, EventArgs e) => ChooseColor(kColorButton);
-        private void dColorButton_Click(object sender, EventArgs e) => ChooseColor(dColorButton);
-        private void c20ColorButton_Click(object sender, EventArgs e) => ChooseColor(c20ColorButton);
-        private void c80ColorButton_Click(object sender, EventArgs e) => ChooseColor(c80ColorButton);
+        private static void SetColor(Button b,Color c){b.BackColor=c;b.ForeColor=c.GetBrightness()<0.5f?Color.White:Color.Black;}
+        private void ChooseColor(Button b){using var d=new ColorDialog{FullOpen=true,Color=b.BackColor};if(d.ShowDialog(this)==DialogResult.OK)SetColor(b,d.Color);}
     }
 }
