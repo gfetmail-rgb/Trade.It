@@ -691,7 +691,7 @@ namespace Trade.It
                             if (absoluteIndex < 0 || absoluteIndex >= seriesValues.Length || double.IsNaN(seriesValues[absoluteIndex])) { previousPoint = null; continue; }
                             var current = new PointF(
                                 (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
-                                (float)PriceToScreen(values[absoluteIndex], plot, min, max));
+                                (float)PriceToScreen(seriesValues[absoluteIndex], plot, min, max));
                             if (previousPoint.HasValue)
                             {
                                 var distance = DistanceToIndicatorSegment(location, previousPoint.Value, current);
