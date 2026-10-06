@@ -144,6 +144,10 @@ namespace Trade.It
 
             e.Graphics.Restore(chartState);
 
+            var rsiPlot = GetRsiPlotRectangle();
+            if (rsiPlot != Rectangle.Empty)
+                RenderRsiPanel(e.Graphics, rsiPlot, visible.Take(displayedCount).ToList(), step, initialOffset);
+
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
@@ -755,23 +759,40 @@ namespace Trade.It
 
             var overallBottom = Math.Max(top + 1, Height - 35);
 
-            // وقتی پنل اندیکاتور/حجم مخفی است، چارت قیمت باید تمام فضای
-            // آزاد تا انتهای ناحیه چارت را در اختیار داشته باشد.
-            if (!volumePanelVisible)
-                return Rectangle.FromLTRB(left, top, right, overallBottom);
-
             var gap = Math.Clamp(volumePanelGap, 2, 30);
+            var rsiGap = Math.Clamp(volumePanelGap, 2, 30);
             var totalHeight = Math.Max(120, overallBottom - top);
-            var volumeHeight = Math.Clamp(
-                (int)Math.Round(totalHeight * volumePanelRatio),
-                1,
-                Math.Max(1, totalHeight / 2));
 
-            var bottom = Math.Max(
-                top + 80,
-                overallBottom - volumeHeight - gap);
+            var volumeHeight = volumePanelVisible
+                ? Math.Clamp((int)Math.Round(totalHeight * volumePanelRatio), 1, Math.Max(1, totalHeight / 2))
+                : 0;
+
+            var rsiHeight = HasRsiIndicator
+                ? Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2))
+                : 0;
+
+            var reservedHeight = volumeHeight +
+                                 (volumeHeight > 0 ? gap : 0) +
+                                 (rsiHeight > 0 ? rsiGap + rsiHeight : 0);
+
+            var bottom = Math.Max(top + 80, overallBottom - reservedHeight);
 
             return Rectangle.FromLTRB(left, top, right, bottom);
+        }
+
+        private Rectangle GetRsiPlotRectangle()
+        {
+            if (!HasRsiIndicator)
+                return Rectangle.Empty;
+
+            var pricePlot = GetPlotRectangle();
+            var overallBottom = Math.Max(pricePlot.Top + 1, Height - 35);
+            var totalHeight = Math.Max(120, overallBottom - pricePlot.Top);
+            var rsiHeight = Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2));
+            var gap = Math.Clamp(volumePanelGap, 2, 30);
+            var top = pricePlot.Bottom + gap;
+            var bottom = Math.Min(overallBottom - (volumePanelVisible ? Math.Clamp(volumePanelGap, 2, 30) : 0), top + rsiHeight);
+            return Rectangle.FromLTRB(pricePlot.Left, top, pricePlot.Right, Math.Max(top + 1, bottom));
         }
 
         private Rectangle GetVolumePlotRectangle()
@@ -783,8 +804,109 @@ namespace Trade.It
             var left = pricePlot.Left;
             var right = pricePlot.Right;
             var overallBottom = Math.Max(pricePlot.Top + 1, Height - 35);
-            var top = Math.Min(overallBottom - 1, pricePlot.Bottom + Math.Clamp(volumePanelGap, 2, 30));
+            var top = pricePlot.Bottom + Math.Clamp(volumePanelGap, 2, 30);
+
+            if (HasRsiIndicator)
+            {
+                var totalHeight = Math.Max(120, overallBottom - pricePlot.Top);
+                var rsiHeight = Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2));
+                top += rsiHeight + Math.Clamp(volumePanelGap, 2, 30);
+            }
+
             return Rectangle.FromLTRB(left, top, right, overallBottom);
+        }
+
+        private void RenderRsiPanel(
+            Graphics g,
+            Rectangle rsiPlot,
+            List<TradingChartPoint> visible,
+            double step,
+            double initialOffset)
+        {
+            if (visible.Count == 0 || rsiPlot.Width <= 0 || rsiPlot.Height <= 0)
+                return;
+
+            using var separatorPen = new Pen(Color.FromArgb(170, 170, 170), 1f);
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var textBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Regular);
+
+            g.DrawLine(separatorPen, rsiPlot.Left, rsiPlot.Top, rsiPlot.Right, rsiPlot.Top);
+            g.DrawLine(axisPen, rsiPlot.Left, rsiPlot.Bottom, rsiPlot.Right, rsiPlot.Bottom);
+            g.DrawLine(axisPen, rsiPlot.Left, rsiPlot.Top, rsiPlot.Left, rsiPlot.Bottom);
+
+            var indicatorsToDraw = indicators
+                .Where(x => x.Type == ChartIndicatorType.RelativeStrengthIndex)
+                .ToList();
+
+            foreach (var indicator in indicatorsToDraw)
+            {
+                if (indicator.ShowRsi30)
+                {
+                    using var pen30 = new Pen(indicator.Rsi30Color, Math.Max(1f, LineAppearanceSettings.ChartLineWidth));
+                    var y30 = (float)RsiValueToScreenY(30, rsiPlot);
+                    g.DrawLine(pen30, rsiPlot.Left, y30, rsiPlot.Right, y30);
+                    g.DrawString("30", labelFont, textBrush, rsiPlot.Left + 4f, y30 - labelFont.GetHeight(g));
+                }
+
+                if (indicator.ShowRsi70)
+                {
+                    using var pen70 = new Pen(indicator.Rsi70Color, Math.Max(1f, LineAppearanceSettings.ChartLineWidth));
+                    var y70 = (float)RsiValueToScreenY(70, rsiPlot);
+                    g.DrawLine(pen70, rsiPlot.Left, y70, rsiPlot.Right, y70);
+                    g.DrawString("70", labelFont, textBrush, rsiPlot.Left + 4f, y70 - labelFont.GetHeight(g));
+                }
+
+                if (!indicator.ShowRsiLine)
+                    continue;
+
+                var values = CalculateRsi(indicator.Period);
+                using var linePen = new Pen(indicator.RsiLineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+                PointF? previous = null;
+
+                for (var i = 0; i < visible.Count; i++)
+                {
+                    var absoluteIndex = firstIndex + i;
+                    if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
+                    {
+                        previous = null;
+                        continue;
+                    }
+
+                    var current = RsiValueToScreen(values[absoluteIndex], rsiPlot, step, i, initialOffset);
+                    if (previous.HasValue)
+                        g.DrawLine(linePen, previous.Value, current);
+                    previous = current;
+                }
+
+                if (previous.HasValue)
+                {
+                    var label = $"RSI({indicator.Period})";
+                    using var labelBrush = new SolidBrush(indicator.RsiLineColor);
+                    g.DrawString(label, titleFont, labelBrush, previous.Value.X + 4f,
+                        Math.Clamp(previous.Value.Y - 10f, rsiPlot.Top, rsiPlot.Bottom - 14f));
+                }
+            }
+
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count
+                ? crosshairIndex
+                : visible.Count - 1;
+
+            foreach (var indicator in indicatorsToDraw)
+            {
+                var values = CalculateRsi(indicator.Period);
+                if (crossIndex < 0)
+                    continue;
+
+                var absoluteIndex = firstIndex + crossIndex;
+                if (absoluteIndex >= 0 && absoluteIndex < values.Length && !double.IsNaN(values[absoluteIndex]))
+                {
+                    var valueText = $"RSI={values[absoluteIndex]:0.00}";
+                    using var valueBrush = new SolidBrush(indicator.RsiLineColor);
+                    g.DrawString(valueText, titleFont, valueBrush, rsiPlot.Left + 4f, rsiPlot.Top + 1f);
+                }
+            }
         }
 
         private void RenderVolumePanel(
