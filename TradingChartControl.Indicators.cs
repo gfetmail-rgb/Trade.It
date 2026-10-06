@@ -1065,7 +1065,7 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume || indicator.Type == ChartIndicatorType.BollingerBands)
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume )
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.BollingerBands)
