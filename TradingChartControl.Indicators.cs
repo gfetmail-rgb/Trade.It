@@ -1081,13 +1081,23 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume )
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume || indicator.Type == ChartIndicatorType.VolumeWeightedAveragePrice)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.BollingerBands)
                 {
                     EnsureBollingerCache(indicator);
                     DrawBollinger(g, plot, min, max, displayedCount, step, initialOffset, indicator);
+                    continue;
+                }
+
+                if (indicator.Type == ChartIndicatorType.VolumeWeightedAveragePrice)
+                {
+                    if (!points.Any(x => double.IsFinite(x.Volume) && x.Volume > 0))
+                        continue;
+
+                    EnsureVwapCache();
+                    DrawVwap(g, plot, min, max, displayedCount, step, initialOffset, indicator);
                     continue;
                 }
 
@@ -1124,6 +1134,55 @@ namespace Trade.It
                     g.DrawString(label, labelFont, labelBrush, p.X + 4f, Math.Clamp(p.Y - 10f, plot.Top, plot.Bottom - 14f));
                 }
             }
+        }
+
+        private void DrawVwap(
+            Graphics g,
+            Rectangle plot,
+            double min,
+            double max,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            ChartIndicator indicator)
+        {
+            if (vwapCache == null || displayedCount <= 0)
+                return;
+
+            using var pen = new Pen(indicator.VwapLineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            PointF? previous = null;
+
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= vwapCache.Length ||
+                    double.IsNaN(vwapCache[absoluteIndex]) || double.IsInfinity(vwapCache[absoluteIndex]))
+                {
+                    previous = null;
+                    continue;
+                }
+
+                var current = new PointF(
+                    (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                    (float)PriceToScreen(vwapCache[absoluteIndex], plot, min, max));
+
+                if (previous.HasValue)
+                    g.DrawLine(pen, previous.Value, current);
+
+                previous = current;
+            }
+
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < displayedCount
+                ? crosshairIndex
+                : displayedCount - 1;
+            var absoluteCrossIndex = firstIndex + crossIndex;
+            var valueText = absoluteCrossIndex >= 0 && absoluteCrossIndex < vwapCache.Length &&
+                            !double.IsNaN(vwapCache[absoluteCrossIndex]) && !double.IsInfinity(vwapCache[absoluteCrossIndex])
+                ? vwapCache[absoluteCrossIndex].ToString("0.########", CultureInfo.InvariantCulture)
+                : "—";
+
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            DrawIndicatorPanelTitle(g, plot, $"VWAP={valueText}", titleFont, indicator.VwapLineColor);
         }
 
         private void DrawIchimoku(
