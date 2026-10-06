@@ -1122,8 +1122,8 @@ namespace Trade.It
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
-            if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)(plot.Bottom-.20*plot.Height); g.DrawLine(p,plot.Left,y,plot.Right,y); }
-            if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)(plot.Bottom-.80*plot.Height); g.DrawLine(p,plot.Left,y,plot.Right,y); }
+            if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)IndicatorPercentToScreen(20, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
+            if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
             var idx=crosshairIndex>=0&&crosshairIndex<visible.Count?crosshairIndex:visible.Count-1; var ai=firstIndex+idx;
@@ -1133,7 +1133,15 @@ namespace Trade.It
         private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
         {
             if(!show) return; using var pen=new Pen(color,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth)); PointF? previous=null;
-            for(var i=0;i<count;i++){var ai=firstIndex+i;if(ai<0||ai>=values.Length||double.IsNaN(values[ai])){previous=null;continue;} var current=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)(plot.Bottom-values[ai]/100.0*plot.Height));if(previous.HasValue)g.DrawLine(pen,previous.Value,current);previous=current;}
+            for(var i=0;i<count;i++){var ai=firstIndex+i;if(ai<0||ai>=values.Length||double.IsNaN(values[ai])){previous=null;continue;} var current=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)IndicatorPercentToScreen(values[ai], plot));if(previous.HasValue)g.DrawLine(pen,previous.Value,current);previous=current;}
+        }
+
+        private static double IndicatorPercentToScreen(double value, Rectangle plot)
+        {
+            const double padding = 0.05;
+            var innerHeight = plot.Height * (1.0 - 2.0 * padding);
+            var clamped = Math.Clamp(value, 0.0, 100.0);
+            return plot.Bottom - plot.Height * padding - (clamped / 100.0 * innerHeight);
         }
 
         private void RenderVolumePanel(
