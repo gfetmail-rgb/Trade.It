@@ -1022,10 +1022,7 @@ namespace Trade.It
 
                 if (previous.HasValue)
                 {
-                    var label = $"RSI({indicator.Period})";
-                    using var labelBrush = new SolidBrush(indicator.RsiLineColor);
-                    g.DrawString(label, titleFont, labelBrush, previous.Value.X + 4f,
-                        Math.Clamp(previous.Value.Y - 10f, rsiPlot.Top, rsiPlot.Bottom - 14f));
+                    // نام RSI فقط در عنوان بالای سمت راست پنل نمایش داده می‌شود.
                 }
             }
 
@@ -1179,12 +1176,14 @@ namespace Trade.It
             var indicator = indicators.First(x => x.Type == ChartIndicatorType.Stochastic);
             EnsureStochasticCache(indicator);
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
-            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
+            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Regular);
+            using var labelBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
             g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
-            if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)IndicatorPercentToScreen(20, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
-            if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
+            if (indicator.ShowStochastic20) { using var p = new Pen(indicator.Stochastic20Color); var y=(float)IndicatorPercentToScreen(20, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); g.DrawString("20", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g)); }
+            if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); g.DrawString("80", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g)); }
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
             DrawIndicatorPanelTitle(g, plot, "Stochastic", font, indicator.StochasticKColor);
@@ -1212,7 +1211,9 @@ namespace Trade.It
             var indicator = indicators.First(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
             EnsureStochasticRsiCache(indicator);
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
-            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
+            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Regular);
+            using var labelBrush = new SolidBrush(Color.FromArgb(85, 85, 85));
 
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
             g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
@@ -1223,6 +1224,7 @@ namespace Trade.It
                 using var p = new Pen(indicator.StochasticRsi20Color);
                 var y = (float)IndicatorPercentToScreen(20, plot);
                 g.DrawLine(p, plot.Left, y, plot.Right, y);
+                g.DrawString("20", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g));
             }
 
             if (indicator.ShowStochasticRsi80)
@@ -1230,6 +1232,7 @@ namespace Trade.It
                 using var p = new Pen(indicator.StochasticRsi80Color);
                 var y = (float)IndicatorPercentToScreen(80, plot);
                 g.DrawLine(p, plot.Left, y, plot.Right, y);
+                g.DrawString("80", labelFont, labelBrush, plot.Left + 4f, y - labelFont.GetHeight(g));
             }
 
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiKCache!, indicator.ShowStochasticRsiK, indicator.StochasticRsiKColor);
@@ -1267,11 +1270,12 @@ namespace Trade.It
 
         private void DrawIndicatorPanelTitle(Graphics g, Rectangle plot, string title, Font font, Color color)
         {
+            using var boldFont = new Font(font.FontFamily, font.Size, FontStyle.Bold);
             using var brush = new SolidBrush(color);
-            var size = g.MeasureString(title, font);
+            var size = g.MeasureString(title, boldFont);
             var x = plot.Right - size.Width - 4f;
             var y = plot.Top + 1f;
-            g.DrawString(title, font, brush, x, y);
+            g.DrawString(title, boldFont, brush, x, y);
         }
 
         private void RenderVolumePanel(
