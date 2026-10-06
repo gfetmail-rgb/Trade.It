@@ -3,118 +3,69 @@ namespace Trade.It
     partial class IchimokuSettingsForm
     {
         private System.ComponentModel.IContainer components = null;
-        private CheckBox tenkanCheckBox;
-        private CheckBox kijunCheckBox;
-        private CheckBox spanACheckBox;
-        private CheckBox spanBCheckBox;
-        private CheckBox chikouCheckBox;
-        private CheckBox bullishCloudCheckBox;
-        private CheckBox bearishCloudCheckBox;
-        private Button tenkanColorButton;
-        private Button kijunColorButton;
-        private Button spanAColorButton;
-        private Button spanBColorButton;
-        private Button chikouColorButton;
-        private Button bullishCloudColorButton;
-        private Button bearishCloudColorButton;
-        private Button okButton;
-        private Button cancelButton;
+        private Label tenkanPeriodLabel, kijunPeriodLabel, spanBPeriodLabel;
+        private NumericUpDown tenkanPeriodNumeric, kijunPeriodNumeric, spanBPeriodNumeric;
+        private CheckBox tenkanCheckBox, kijunCheckBox, spanACheckBox, spanBCheckBox, chikouCheckBox, bullishCloudCheckBox, bearishCloudCheckBox;
+        private Button tenkanColorButton, kijunColorButton, spanAColorButton, spanBColorButton, chikouColorButton, bullishCloudColorButton, bearishCloudColorButton;
+        private Button okButton, cancelButton;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && components != null) components.Dispose();
-            base.Dispose(disposing);
-        }
+        protected override void Dispose(bool disposing) { if (disposing && components != null) components.Dispose(); base.Dispose(disposing); }
 
         private void InitializeComponent()
         {
-            tenkanCheckBox = new CheckBox();
-            kijunCheckBox = new CheckBox();
-            spanACheckBox = new CheckBox();
-            spanBCheckBox = new CheckBox();
-            chikouCheckBox = new CheckBox();
-            bullishCloudCheckBox = new CheckBox();
-            bearishCloudCheckBox = new CheckBox();
-            tenkanColorButton = new Button();
-            kijunColorButton = new Button();
-            spanAColorButton = new Button();
-            spanBColorButton = new Button();
-            chikouColorButton = new Button();
-            bullishCloudColorButton = new Button();
-            bearishCloudColorButton = new Button();
-            okButton = new Button();
-            cancelButton = new Button();
+            tenkanPeriodLabel = new Label(); kijunPeriodLabel = new Label(); spanBPeriodLabel = new Label();
+            tenkanPeriodNumeric = new NumericUpDown(); kijunPeriodNumeric = new NumericUpDown(); spanBPeriodNumeric = new NumericUpDown();
+            tenkanCheckBox = new CheckBox(); kijunCheckBox = new CheckBox(); spanACheckBox = new CheckBox(); spanBCheckBox = new CheckBox(); chikouCheckBox = new CheckBox(); bullishCloudCheckBox = new CheckBox(); bearishCloudCheckBox = new CheckBox();
+            tenkanColorButton = new Button(); kijunColorButton = new Button(); spanAColorButton = new Button(); spanBColorButton = new Button(); chikouColorButton = new Button(); bullishCloudColorButton = new Button(); bearishCloudColorButton = new Button();
+            okButton = new Button(); cancelButton = new Button();
+            ((System.ComponentModel.ISupportInitialize)tenkanPeriodNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)kijunPeriodNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)spanBPeriodNumeric).BeginInit();
             SuspendLayout();
 
-            ConfigureRow(tenkanCheckBox, tenkanColorButton, "Tenkan-sen");
-            ConfigureRow(kijunCheckBox, kijunColorButton, "Kijun-sen");
-            ConfigureRow(spanACheckBox, spanAColorButton, "Senkou Span A");
-            ConfigureRow(spanBCheckBox, spanBColorButton, "Senkou Span B");
-            ConfigureRow(chikouCheckBox, chikouColorButton, "Chikou Span");
-            ConfigureRow(bullishCloudCheckBox, bullishCloudColorButton, "ابر صعودی");
-            ConfigureRow(bearishCloudCheckBox, bearishCloudColorButton, "ابر نزولی");
+            ConfigureNumber(tenkanPeriodLabel, tenkanPeriodNumeric, "دوره Tenkan:", 24);
+            ConfigureNumber(kijunPeriodLabel, kijunPeriodNumeric, "دوره Kijun:", 64);
+            ConfigureNumber(spanBPeriodLabel, spanBPeriodNumeric, "دوره Span B:", 104);
 
-            tenkanCheckBox.Location = new Point(205, 20);
-            tenkanColorButton.Location = new Point(45, 15);
-            kijunCheckBox.Location = new Point(205, 60);
-            kijunColorButton.Location = new Point(45, 55);
-            spanACheckBox.Location = new Point(205, 100);
-            spanAColorButton.Location = new Point(45, 95);
-            spanBCheckBox.Location = new Point(205, 140);
-            spanBColorButton.Location = new Point(45, 135);
-            chikouCheckBox.Location = new Point(205, 180);
-            chikouColorButton.Location = new Point(45, 175);
-            bullishCloudCheckBox.Location = new Point(205, 220);
-            bullishCloudColorButton.Location = new Point(45, 215);
-            bearishCloudCheckBox.Location = new Point(205, 260);
-            bearishCloudColorButton.Location = new Point(45, 255);
+            ConfigureRow(tenkanCheckBox, tenkanColorButton, "Tenkan-sen", 150);
+            ConfigureRow(kijunCheckBox, kijunColorButton, "Kijun-sen", 190);
+            ConfigureRow(spanACheckBox, spanAColorButton, "Senkou Span A", 230);
+            ConfigureRow(spanBCheckBox, spanBColorButton, "Senkou Span B", 270);
+            ConfigureRow(chikouCheckBox, chikouColorButton, "Chikou Span", 310);
+            ConfigureRow(bullishCloudCheckBox, bullishCloudColorButton, "ابر صعودی", 350);
+            ConfigureRow(bearishCloudCheckBox, bearishCloudColorButton, "ابر نزولی", 390);
 
-            okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(165, 310);
-            okButton.Size = new Size(100, 36);
-            okButton.Text = "تأیید";
+            okButton.Text = "تأیید"; okButton.DialogResult = DialogResult.OK; okButton.Location = new Point(190, 440); okButton.Size = new Size(100, 34);
+            cancelButton.Text = "انصراف"; cancelButton.DialogResult = DialogResult.Cancel; cancelButton.Location = new Point(80, 440); cancelButton.Size = new Size(100, 34);
+            AcceptButton = okButton; CancelButton = cancelButton;
 
-            cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(55, 310);
-            cancelButton.Size = new Size(100, 36);
-            cancelButton.Text = "انصراف";
-
-            Controls.AddRange(new Control[]
-            {
-                tenkanCheckBox, tenkanColorButton,
-                kijunCheckBox, kijunColorButton,
-                spanACheckBox, spanAColorButton,
-                spanBCheckBox, spanBColorButton,
-                chikouCheckBox, chikouColorButton,
-                bullishCloudCheckBox, bullishCloudColorButton,
-                bearishCloudCheckBox, bearishCloudColorButton,
-                okButton, cancelButton
+            Controls.AddRange(new Control[] {
+                tenkanPeriodLabel, tenkanPeriodNumeric, kijunPeriodLabel, kijunPeriodNumeric, spanBPeriodLabel, spanBPeriodNumeric,
+                tenkanCheckBox, tenkanColorButton, kijunCheckBox, kijunColorButton, spanACheckBox, spanAColorButton,
+                spanBCheckBox, spanBColorButton, chikouCheckBox, chikouColorButton, bullishCloudCheckBox, bullishCloudColorButton,
+                bearishCloudCheckBox, bearishCloudColorButton, okButton, cancelButton
             });
 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(390, 365);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            Name = "IchimokuSettingsForm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "تنظیمات ایچیموکو";
-            RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
-            ShowInTaskbar = false;
-            ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F,15F); AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(420, 495); FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false;
+            Name = "IchimokuSettingsForm"; StartPosition = FormStartPosition.CenterParent; Text = "تنظیمات ایچیموکو";
+            RightToLeft = RightToLeft.Yes; RightToLeftLayout = true; ShowInTaskbar = false;
+            ((System.ComponentModel.ISupportInitialize)tenkanPeriodNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)kijunPeriodNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)spanBPeriodNumeric).EndInit();
+            ResumeLayout(false); PerformLayout();
         }
 
-        private static void ConfigureRow(CheckBox checkBox, Button colorButton, string text)
+        private static void ConfigureNumber(Label label, NumericUpDown numeric, string text, int y)
         {
-            checkBox.AutoSize = true;
-            checkBox.Size = new Size(140, 29);
-            checkBox.Text = text;
+            label.AutoSize = true; label.Text = text; label.Location = new Point(285, y + 4); label.Size = new Size(115, 25);
+            numeric.Location = new Point(140, y); numeric.Size = new Size(125, 33); numeric.TextAlign = HorizontalAlignment.Center;
+        }
 
-            colorButton.Size = new Size(130, 32);
-            colorButton.Text = "انتخاب رنگ";
-            colorButton.UseVisualStyleBackColor = false;
+        private static void ConfigureRow(CheckBox check, Button color, string text, int y)
+        {
+            check.AutoSize = true; check.Text = text; check.Location = new Point(265, y + 4); check.Size = new Size(130, 29);
+            color.Text = "انتخاب رنگ"; color.Location = new Point(115, y); color.Size = new Size(125, 34); color.UseVisualStyleBackColor = false;
         }
     }
 }
