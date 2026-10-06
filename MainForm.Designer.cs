@@ -415,47 +415,6 @@
             indicatorSettingsMenuItem.Size = new Size(179, 22);
             indicatorSettingsMenuItem.Text = "تنظیمات";
             // 
-            // indicatorPeriod9MenuItem
-            // 
-            indicatorPeriod9MenuItem.Name = "indicatorPeriod9MenuItem";
-            indicatorPeriod9MenuItem.Size = new Size(180, 22);
-            indicatorPeriod9MenuItem.Text = "دوره 9";
-            // 
-            // indicatorPeriod13MenuItem
-            // 
-            indicatorPeriod13MenuItem.Name = "indicatorPeriod13MenuItem";
-            indicatorPeriod13MenuItem.Size = new Size(180, 22);
-            indicatorPeriod13MenuItem.Text = "دوره 13";
-            // 
-            // indicatorPeriod21MenuItem
-            // 
-            indicatorPeriod21MenuItem.Name = "indicatorPeriod21MenuItem";
-            indicatorPeriod21MenuItem.Size = new Size(180, 22);
-            indicatorPeriod21MenuItem.Text = "دوره 21";
-            // 
-            // indicatorPeriod34MenuItem
-            // 
-            indicatorPeriod34MenuItem.Name = "indicatorPeriod34MenuItem";
-            indicatorPeriod34MenuItem.Size = new Size(180, 22);
-            indicatorPeriod34MenuItem.Text = "دوره 34";
-            // 
-            // indicatorPeriod55MenuItem
-            // 
-            indicatorPeriod55MenuItem.Name = "indicatorPeriod55MenuItem";
-            indicatorPeriod55MenuItem.Size = new Size(180, 22);
-            indicatorPeriod55MenuItem.Text = "دوره 55";
-            // 
-            // indicatorPeriod89MenuItem
-            // 
-            indicatorPeriod89MenuItem.Name = "indicatorPeriod89MenuItem";
-            indicatorPeriod89MenuItem.Size = new Size(180, 22);
-            indicatorPeriod89MenuItem.Text = "دوره 89";
-
-            // indicatorPeriod200MenuItem
-            indicatorPeriod200MenuItem.Name = "indicatorPeriod200MenuItem";
-            indicatorPeriod200MenuItem.Size = new Size(180, 22);
-            indicatorPeriod200MenuItem.Text = "دوره 200";
-            // 
             // indicatorDeleteMenuItem
             // 
             indicatorDeleteMenuItem.Name = "indicatorDeleteMenuItem";
