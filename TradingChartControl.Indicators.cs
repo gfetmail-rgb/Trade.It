@@ -376,6 +376,13 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
+            if (stochasticRsiPlot != Rectangle.Empty && stochasticRsiPlot.Contains(location))
+            {
+                selectedIndicatorIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
+                return selectedIndicatorIndex;
+            }
+
             var stochasticPlot = GetStochasticPlotRectangle();
             if (stochasticPlot != Rectangle.Empty && stochasticPlot.Contains(location))
             {
@@ -418,7 +425,8 @@ namespace Trade.It
                 var indicator = indicators[indicatorIndex];
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex ||
                     indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence ||
-                    indicator.Type == ChartIndicatorType.Stochastic)
+                    indicator.Type == ChartIndicatorType.Stochastic ||
+                    indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
