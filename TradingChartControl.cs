@@ -66,6 +66,7 @@ namespace Trade.It
         private double rsiPanelRatio = 0.10;
         private double macdPanelRatio = 0.10;
         private double stochasticPanelRatio = 0.10;
+        private double stochasticRsiPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
         private int lowerPanelResizeStartY;
@@ -73,6 +74,7 @@ namespace Trade.It
         private double lowerPanelResizeStartVolumeRatio;
         private double lowerPanelResizeStartMacdRatio;
         private double lowerPanelResizeStartStochasticRatio;
+        private double lowerPanelResizeStartStochasticRsiRatio;
         private enum LowerPanelSplitter
         {
             None,
@@ -85,6 +87,8 @@ namespace Trade.It
             PriceStochastic,
             RsiStochastic,
             MacdStochastic,
+            StochasticRsi,
+            StochasticRsiVolume,
             StochasticVolume
         }
         private LowerPanelSplitter activeLowerPanelSplitter;
@@ -147,6 +151,7 @@ namespace Trade.It
             rsiPanelRatio = 0.10;
             macdPanelRatio = 0.10;
             stochasticPanelRatio = 0.10;
+            stochasticRsiPanelRatio = 0.10;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
@@ -925,6 +930,15 @@ namespace Trade.It
                 Math.Abs(y - layout.Volume.Top) <= tolerance)
                 return LowerPanelSplitter.RsiVolume;
 
+            if (HasStochasticRsiIndicator && !layout.StochasticRsi.IsEmpty &&
+                Math.Abs(y - layout.StochasticRsi.Top) <= tolerance)
+            {
+                if (HasStochasticIndicator) return LowerPanelSplitter.StochasticRsi;
+                if (HasMacdIndicator) return LowerPanelSplitter.MacdStochastic;
+                if (HasRsiIndicator) return LowerPanelSplitter.RsiStochastic;
+                return LowerPanelSplitter.PriceStochastic;
+            }
+
             if (HasStochasticIndicator && !layout.Stochastic.IsEmpty &&
                 Math.Abs(y - layout.Stochastic.Top) <= tolerance)
             {
@@ -1163,6 +1177,7 @@ namespace Trade.It
                 lowerPanelResizeStartVolumeRatio = volumePanelRatio;
                 lowerPanelResizeStartMacdRatio = macdPanelRatio;
                 lowerPanelResizeStartStochasticRatio = stochasticPanelRatio;
+                lowerPanelResizeStartStochasticRsiRatio = stochasticRsiPanelRatio;
                 Capture = true;
                 Cursor = Cursors.SizeNS;
                 return;
