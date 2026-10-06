@@ -662,7 +662,11 @@ namespace Trade.It
         private TradingChartControl GetOrCreateChart(string symbol)
         {
             if (chartControls.TryGetValue(symbol, out var existing)) return existing;
-            var chart = new TradingChartControl { Dock = DockStyle.Fill };
+            var chart = new TradingChartControl
+            {
+                Dock = DockStyle.Fill,
+                ContextMenuStrip = indicatorContextMenuStrip
+            };
             chart.VolumeSettingsChanged += Chart_VolumeSettingsChanged;
             chart.SetVolumePanelVisible(lastVolumePanelVisible);
             chart.VolumePanelRatio = lastVolumePanelRatio;
