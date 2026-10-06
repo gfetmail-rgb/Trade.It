@@ -6,7 +6,8 @@ namespace Trade.It
         ExponentialMovingAverage,
         Ichimoku,
         RelativeStrengthIndex,
-        MovingAverageConvergenceDivergence
+        MovingAverageConvergenceDivergence,
+        Stochastic
     }
 
     internal sealed class ChartIndicator
@@ -44,6 +45,14 @@ namespace Trade.It
         public Color MacdBullishHistogramColor { get; set; } = Color.FromArgb(80, 170, 100);
         public Color MacdBearishHistogramColor { get; set; } = Color.FromArgb(210, 100, 100);
         public Color MacdZeroColor { get; set; } = Color.FromArgb(150, 150, 150);
+        public bool ShowStochasticK { get; set; } = true;
+        public bool ShowStochasticD { get; set; } = true;
+        public bool ShowStochastic20 { get; set; } = true;
+        public bool ShowStochastic80 { get; set; } = true;
+        public Color StochasticKColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color StochasticDColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color Stochastic20Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public Color Stochastic80Color { get; set; } = Color.FromArgb(150, 150, 150);
     }
 
     internal sealed partial class TradingChartControl
@@ -62,10 +71,13 @@ namespace Trade.It
         private double[]? macdLineCache;
         private double[]? macdSignalCache;
         private double[]? macdHistogramCache;
+        private double[]? stochasticKCache;
+        private double[]? stochasticDCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
+        internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -134,6 +146,23 @@ namespace Trade.It
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        public void AddStochastic()
+        {
+            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.Stochastic, Period = 14 });
+            InvalidateStochasticCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyStochasticSettings(int index, bool showK, bool showD, bool show20, bool show80, Color kColor, Color dColor, Color c20, Color c80)
+        {
+            if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.Stochastic || points.Count < 2) return false;
+            var indicator = indicators[index];
+            indicator.ShowStochasticK = showK; indicator.ShowStochasticD = showD; indicator.ShowStochastic20 = show20; indicator.ShowStochastic80 = show80;
+            indicator.StochasticKColor = kColor; indicator.StochasticDColor = dColor; indicator.Stochastic20Color = c20; indicator.Stochastic80Color = c80;
+            selectedIndicatorIndex = index; Invalidate(); AnalysisChanged?.Invoke(this, EventArgs.Empty); return true;
         }
 
         public void AddMovingAverageConvergenceDivergence()
@@ -308,6 +337,13 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var stochasticPlot = GetStochasticPlotRectangle();
+            if (stochasticPlot != Rectangle.Empty && stochasticPlot.Contains(location))
+            {
+                selectedIndicatorIndex = HitTestStochastic(location, stochasticPlot, displayedCount, stochasticPlot.Width / (double)Math.Max(1, visibleCount), -stochasticPlot.Width * 0.25);
+                return selectedIndicatorIndex;
+            }
+
             var macdPlot = GetMacdPlotRectangle();
             if (macdPlot != Rectangle.Empty && macdPlot.Contains(location))
             {
@@ -342,10 +378,11 @@ namespace Trade.It
             {
                 var indicator = indicators[indicatorIndex];
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex ||
-                    indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+                    indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence ||
+                    indicator.Type == ChartIndicatorType.Stochastic)
                     continue;
 
-                if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+                if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
@@ -395,6 +432,13 @@ namespace Trade.It
 
             selectedIndicatorIndex = bestDistance <= tolerance ? bestIndex : -1;
             return selectedIndicatorIndex;
+        }
+
+        private int HitTestStochastic(Point location, Rectangle plot, int displayedCount, double step, double initialOffset)
+        {
+            var index = indicators.FindIndex(x => x.Type == ChartIndicatorType.Stochastic);
+            if (index < 0) return -1;
+            return index;
         }
 
         private int HitTestMacd(Point location, Rectangle macdPlot, int displayedCount, double step, double initialOffset)
@@ -686,7 +730,7 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
@@ -972,6 +1016,27 @@ namespace Trade.It
             return result;
         }
 
+        private void EnsureStochasticCache()
+        {
+            if (stochasticKCache != null && stochasticDCache != null && stochasticKCache.Length == points.Count && stochasticDCache.Length == points.Count) return;
+            stochasticKCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            stochasticDCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            const int period = 14, smoothK = 3, smoothD = 3;
+            for (var i = period - 1; i < points.Count; i++)
+            {
+                var high = double.MinValue; var low = double.MaxValue;
+                for (var j = i - period + 1; j <= i; j++) { high = Math.Max(high, points[j].High); low = Math.Min(low, points[j].Low); }
+                stochasticKCache[i] = high - low <= 1e-12 ? 50 : 100.0 * (points[i].Close - low) / (high - low);
+            }
+            for (var i = period - 1 + smoothK - 1; i < points.Count; i++)
+            {
+                var sum = 0.0; for (var j = i - smoothK + 1; j <= i; j++) sum += stochasticKCache[j];
+                stochasticDCache[i] = sum / smoothK;
+            }
+        }
+
+        internal void InvalidateStochasticCache() { stochasticKCache = null; stochasticDCache = null; }
+
         private void EnsureMacdCache()
         {
             if (macdLineCache != null &&
@@ -1004,6 +1069,7 @@ namespace Trade.It
 
         internal void InvalidateMacdCache()
         {
+            InvalidateStochasticCache();
             macdLineCache = null;
             macdSignalCache = null;
             macdHistogramCache = null;
