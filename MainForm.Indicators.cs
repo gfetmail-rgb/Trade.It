@@ -14,11 +14,11 @@ namespace Trade.It
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
             indicatorDeleteMenuItem.Click += (_, _) => DeleteContextIndicator();
             indicatorSettingsMenuItem.Click += (_, _) => OpenIndicatorSettings();
-            indicatorPeriod5MenuItem.Click += (_, _) => SetContextIndicatorPeriod(5);
-            indicatorPeriod10MenuItem.Click += (_, _) => SetContextIndicatorPeriod(10);
-            indicatorPeriod20MenuItem.Click += (_, _) => SetContextIndicatorPeriod(20);
-            indicatorPeriod50MenuItem.Click += (_, _) => SetContextIndicatorPeriod(50);
-            indicatorPeriod100MenuItem.Click += (_, _) => SetContextIndicatorPeriod(100);
+            indicatorPeriod9MenuItem.Click += (_, _) => SetContextIndicatorPeriod(9);
+            indicatorPeriod13MenuItem.Click += (_, _) => SetContextIndicatorPeriod(13);
+            indicatorPeriod21MenuItem.Click += (_, _) => SetContextIndicatorPeriod(21);
+            indicatorPeriod34MenuItem.Click += (_, _) => SetContextIndicatorPeriod(34);
+            indicatorPeriod55MenuItem.Click += (_, _) => SetContextIndicatorPeriod(55);
             indicatorPeriod200MenuItem.Click += (_, _) => SetContextIndicatorPeriod(200);
         }
 
@@ -74,20 +74,20 @@ namespace Trade.It
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
             var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
 
-            indicatorPeriod5MenuItem.Visible = !isIchimoku;
-            indicatorPeriod10MenuItem.Visible = !isIchimoku;
-            indicatorPeriod20MenuItem.Visible = !isIchimoku;
-            indicatorPeriod50MenuItem.Visible = !isIchimoku;
-            indicatorPeriod100MenuItem.Visible = !isIchimoku;
+            indicatorPeriod9MenuItem.Visible = !isIchimoku;
+            indicatorPeriod13MenuItem.Visible = !isIchimoku;
+            indicatorPeriod21MenuItem.Visible = !isIchimoku;
+            indicatorPeriod34MenuItem.Visible = !isIchimoku;
+            indicatorPeriod55MenuItem.Visible = !isIchimoku;
             indicatorPeriod200MenuItem.Visible = !isIchimoku;
 
             if (!isIchimoku)
             {
-                indicatorPeriod5MenuItem.Checked = indicator.Period == 5;
-                indicatorPeriod10MenuItem.Checked = indicator.Period == 10;
-                indicatorPeriod20MenuItem.Checked = indicator.Period == 20;
-                indicatorPeriod50MenuItem.Checked = indicator.Period == 50;
-                indicatorPeriod100MenuItem.Checked = indicator.Period == 100;
+                indicatorPeriod9MenuItem.Checked = indicator.Period == 9;
+                indicatorPeriod13MenuItem.Checked = indicator.Period == 13;
+                indicatorPeriod21MenuItem.Checked = indicator.Period == 21;
+                indicatorPeriod34MenuItem.Checked = indicator.Period == 34;
+                indicatorPeriod55MenuItem.Checked = indicator.Period == 55;
                 indicatorPeriod200MenuItem.Checked = indicator.Period == 200;
             }
         }
