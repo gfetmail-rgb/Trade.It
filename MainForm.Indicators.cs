@@ -14,6 +14,7 @@ namespace Trade.It
             indicatorStochasticMenuItem.Click += (_, _) => AddStochasticToActiveChart();
             indicatorStochasticRsiMenuItem.Click += (_, _) => AddStochasticRsiToActiveChart();
             indicatorAtrMenuItem.Click += (_, _) => AddAtrToActiveChart();
+            indicatorAdxMenuItem.Click += (_, _) => AddAdxToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -93,6 +94,19 @@ namespace Trade.It
             }
 
             chart.AddAverageTrueRange(14);
+        }
+
+        private void AddAdxToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddAverageDirectionalIndex(14);
         }
 
         private void AddMacdToActiveChart()
@@ -202,6 +216,24 @@ namespace Trade.It
                         dialog.ChikouColor,
                         dialog.BullishCloudColor,
                         dialog.BearishCloudColor);
+                }
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.AverageDirectionalIndex)
+            {
+                using var dialog = new AdxSettingsForm(chart.Indicators[index], chart.Points.Count);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    chart.ApplyAdxSettings(
+                        index,
+                        dialog.Period,
+                        dialog.ShowAdxLine,
+                        dialog.ShowAdxPlusDi,
+                        dialog.ShowAdxMinusDi,
+                        dialog.ShowAdx25,
+                        dialog.AdxLineColor,
+                        dialog.AdxPlusDiColor,
+                        dialog.AdxMinusDiColor,
+                        dialog.Adx25Color);
                 }
             }
             else if (chart.Indicators[index].Type == ChartIndicatorType.RelativeStrengthIndex)
