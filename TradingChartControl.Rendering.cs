@@ -151,6 +151,16 @@ namespace Trade.It
             var volumePlot = GetVolumePlotRectangle();
             RenderVolumePanel(e.Graphics, volumePlot, visible.Take(displayedCount).ToList(), step, initialOffset);
 
+            // خطوط جداکننده پنل‌ها نقش Splitter را نیز به‌صورت بصری مشخص می‌کنند.
+            using (var splitterPen = new Pen(Color.FromArgb(145, 145, 145), 1f))
+            {
+                if (rsiPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, rsiPlot.Top - 1, plot.Right, rsiPlot.Top - 1);
+
+                if (volumePlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, volumePlot.Top - 1, plot.Right, volumePlot.Top - 1);
+            }
+
             // محور زمان: بر اساس تاریخ واقعی کندل‌ها، با تعداد Tick متناسب با فضای موجود.
             // در محورهای مصنوعی/بدون تاریخ، این بخش عمداً چیزی رسم نمی‌کند تا NoDateAxis مسئول نمایش شماره کندل بماند.
             if (!IsSyntheticNoDateAxis())
