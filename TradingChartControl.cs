@@ -63,7 +63,7 @@ namespace Trade.It
         private string chartSymbol = string.Empty;
         private string chartTimeFrame = string.Empty;
         private double volumePanelRatio = 0.10;
-        private double rsiPanelRatio = 0.18;
+        private double rsiPanelRatio = 0.10;
         private int volumePanelGap = 8;
         private bool lowerPanelResizeDrag;
         private int lowerPanelResizeStartY;
@@ -132,7 +132,7 @@ namespace Trade.It
             firstIndex = Math.Max(0, points.Count - visibleCount);
             // نسبت اولیه پنل‌ها هنگام باز شدن هر چارت.
             volumePanelRatio = 0.10;
-            rsiPanelRatio = 0.18;
+            rsiPanelRatio = 0.10;
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
@@ -1044,7 +1044,7 @@ namespace Trade.It
             if (horizontalAxisDrag)
             {
                 panning = false;
-                volumePanelResizeDrag = false;
+                lowerPanelResizeDrag = false;
                 horizontalAxisStartPoint = e.Location;
                 horizontalAxisStartVisibleCount = Math.Max(2, visibleCount);
 
