@@ -1480,7 +1480,7 @@ namespace Trade.It
         private void RenderPriceIndicatorTitles(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset)
         {
             using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            var xRight = plot.Right;
+            var xRight = (float)plot.Right;
             var y = plot.Top + 1f;
             foreach (var indicator in indicators)
             {
