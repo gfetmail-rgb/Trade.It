@@ -133,7 +133,6 @@ namespace Trade.It
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
         }
-        }
 
         private void OpenIndicatorSettings()
         {
