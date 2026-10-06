@@ -6,7 +6,7 @@ namespace Trade.It
         private Label fastPeriodLabel, slowPeriodLabel, signalPeriodLabel;
         private NumericUpDown fastPeriodNumeric, slowPeriodNumeric, signalPeriodNumeric;
         private CheckBox macdLineCheckBox, macdSignalCheckBox, macdHistogramCheckBox, macdZeroCheckBox;
-        private Button macdLineColorButton, macdSignalColorButton, macdBullishHistogramColorButton, macdBearishHistogramColorButton, macdZeroColorButton, okButton, cancelButton;
+        private Button macdLineColorButton, macdSignalColorButton, macdBullishHistogramColorButton, macdBearishHistogramColorButton, macdZeroColorButton, defaultButton, okButton, cancelButton;
 
         protected override void Dispose(bool disposing) { if (disposing && components != null) components.Dispose(); base.Dispose(disposing); }
         private void InitializeComponent()
@@ -28,7 +28,7 @@ namespace Trade.It
             okButton.Text="تأیید"; okButton.DialogResult=DialogResult.OK; okButton.Location=new Point(200,350); okButton.Size=new Size(100,34);
             cancelButton.Text="انصراف"; cancelButton.DialogResult=DialogResult.Cancel; cancelButton.Location=new Point(90,350); cancelButton.Size=new Size(100,34);
             AcceptButton=okButton; CancelButton=cancelButton;
-            Controls.AddRange(new Control[]{fastPeriodLabel,fastPeriodNumeric,slowPeriodLabel,slowPeriodNumeric,signalPeriodLabel,signalPeriodNumeric,macdLineCheckBox,macdLineColorButton,macdSignalCheckBox,macdSignalColorButton,macdHistogramCheckBox,macdBullishHistogramColorButton,macdBearishHistogramColorButton,macdZeroCheckBox,macdZeroColorButton,okButton,cancelButton});
+            Controls.AddRange(new Control[]{fastPeriodLabel,fastPeriodNumeric,slowPeriodLabel,slowPeriodNumeric,signalPeriodLabel,signalPeriodNumeric,macdLineCheckBox,macdLineColorButton,macdSignalCheckBox,macdSignalColorButton,macdHistogramCheckBox,macdBullishHistogramColorButton,macdBearishHistogramColorButton,macdZeroCheckBox,macdZeroColorButton,defaultButton,okButton,cancelButton});
             AutoScaleDimensions=new SizeF(7F,15F); AutoScaleMode=AutoScaleMode.Font; ClientSize=new Size(420,405);
             FormBorderStyle=FormBorderStyle.FixedDialog; MaximizeBox=false; MinimizeBox=false; Name="MacdSettingsForm"; StartPosition=FormStartPosition.CenterParent; Text="تنظیمات MACD"; RightToLeft=RightToLeft.Yes; RightToLeftLayout=true; ShowInTaskbar=false;
             ((System.ComponentModel.ISupportInitialize)fastPeriodNumeric).EndInit(); ((System.ComponentModel.ISupportInitialize)slowPeriodNumeric).EndInit(); ((System.ComponentModel.ISupportInitialize)signalPeriodNumeric).EndInit(); ResumeLayout(false); PerformLayout();
