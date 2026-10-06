@@ -1006,9 +1006,7 @@ namespace Trade.It
                 var absoluteIndex = firstIndex + crossIndex;
                 if (absoluteIndex >= 0 && absoluteIndex < values.Length && !double.IsNaN(values[absoluteIndex]))
                 {
-                    var valueText = $"RSI={values[absoluteIndex]:0.00}";
-                    using var valueBrush = new SolidBrush(indicator.RsiLineColor);
-                    g.DrawString(valueText, titleFont, valueBrush, rsiPlot.Left + 4f, rsiPlot.Top + 1f);
+                    DrawIndicatorPanelTitle(g, rsiPlot, "RSI", titleFont, indicator.RsiLineColor);
                 }
             }
         }
@@ -1095,9 +1093,7 @@ namespace Trade.It
                     if (absoluteIndex >= 0 && absoluteIndex < macdHistogramCache!.Length &&
                         !double.IsNaN(macdHistogramCache[absoluteIndex]))
                     {
-                        var valueText = $"MACD={macdLineCache![absoluteIndex]:0.#####}  Signal={macdSignalCache![absoluteIndex]:0.#####}";
-                        using var valueBrush = new SolidBrush(indicator.MacdLineColor);
-                        g.DrawString(valueText, titleFont, valueBrush, macdPlot.Left + 4f, macdPlot.Top + 1f);
+                        DrawIndicatorPanelTitle(g, macdPlot, "MACD", titleFont, indicator.MacdLineColor);
                     }
                 }
             }
@@ -1152,8 +1148,7 @@ namespace Trade.It
             if (indicator.ShowStochastic80) { using var p = new Pen(indicator.Stochastic80Color); var y=(float)IndicatorPercentToScreen(80, plot); g.DrawLine(p,plot.Left,y,plot.Right,y); }
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
-            var idx=crosshairIndex>=0&&crosshairIndex<visible.Count?crosshairIndex:visible.Count-1; var ai=firstIndex+idx;
-            if(ai>=0&&ai<stochasticKCache!.Length&&!double.IsNaN(stochasticKCache[ai])) g.DrawString($"Stochastic %K={stochasticKCache[ai]:0.00}  %D={stochasticDCache![ai]:0.00}",font,new SolidBrush(indicator.StochasticKColor),plot.Left+4,plot.Top+1);
+            DrawIndicatorPanelTitle(g, plot, "Stochastic", font, indicator.StochasticKColor);
         }
 
         private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1199,14 +1194,7 @@ namespace Trade.It
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiKCache!, indicator.ShowStochasticRsiK, indicator.StochasticRsiKColor);
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiDCache!, indicator.ShowStochasticRsiD, indicator.StochasticRsiDColor);
 
-            var idx = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var ai = firstIndex + idx;
-            if (ai >= 0 && ai < stochasticRsiKCache!.Length && !double.IsNaN(stochasticRsiKCache[ai]))
-            {
-                var dText = double.IsNaN(stochasticRsiDCache![ai]) ? "n/a" : stochasticRsiDCache[ai].ToString("0.00");
-                using var valueBrush = new SolidBrush(indicator.StochasticRsiKColor);
-                g.DrawString($"Stoch RSI %K={stochasticRsiKCache[ai]:0.00}  %D={dText}", font, valueBrush, plot.Left + 4, plot.Top + 1);
-            }
+            DrawIndicatorPanelTitle(g, plot, "Stochastic RSI", font, indicator.StochasticRsiKColor);
         }
 
         private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1234,6 +1222,15 @@ namespace Trade.It
                     g.DrawLine(pen, previous.Value, current);
                 previous = current;
             }
+        }
+
+        private void DrawIndicatorPanelTitle(Graphics g, Rectangle plot, string title, Font font, Color color)
+        {
+            using var brush = new SolidBrush(color);
+            var size = g.MeasureString(title, font);
+            var x = plot.Right - size.Width - 4f;
+            var y = plot.Top + 1f;
+            g.DrawString(title, font, brush, x, y);
         }
 
         private void RenderVolumePanel(
