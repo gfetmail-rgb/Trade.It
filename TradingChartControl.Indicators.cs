@@ -657,7 +657,6 @@ namespace Trade.It
                     indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex ||
                     indicator.Type == ChartIndicatorType.AverageTrueRange ||
                     indicator.Type == ChartIndicatorType.AverageDirectionalIndex ||
-                    indicator.Type == ChartIndicatorType.BollingerBands ||
                     indicator.Type == ChartIndicatorType.OnBalanceVolume)
                     continue;
 
@@ -672,6 +671,31 @@ namespace Trade.It
                         {
                             bestDistance = ichimokuDistance;
                             bestIndex = indicatorIndex;
+                        }
+                    }
+                    continue;
+                }
+
+                if (indicator.Type == ChartIndicatorType.BollingerBands)
+                {
+                    EnsureBollingerCache(indicator);
+                    var series = new[] { bollingerMiddleCache!, bollingerUpperCache!, bollingerLowerCache! };
+                    foreach (var values in series)
+                    {
+                        PointF? previous = null;
+                        for (var i = 0; i < displayedCount; i++)
+                        {
+                            var absoluteIndex = firstIndex + i;
+                            if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex])) { previous = null; continue; }
+                            var current = new PointF(
+                                (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                                (float)PriceToScreen(values[absoluteIndex], plot, min, max));
+                            if (previous.HasValue)
+                            {
+                                var distance = DistanceToIndicatorSegment(location, previous.Value, current);
+                                if (distance < bestDistance) { bestDistance = distance; bestIndex = indicatorIndex; }
+                            }
+                            previous = current;
                         }
                     }
                     continue;
