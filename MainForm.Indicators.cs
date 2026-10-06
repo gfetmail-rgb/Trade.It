@@ -204,6 +204,7 @@ namespace Trade.It
                         dialog.TenkanPeriod,
                         dialog.KijunPeriod,
                         dialog.SpanBPeriod,
+                        dialog.Displacement,
                         dialog.ShowTenkan,
                         dialog.ShowKijun,
                         dialog.ShowSpanA,
