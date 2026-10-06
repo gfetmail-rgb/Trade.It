@@ -10,6 +10,7 @@ namespace Trade.It
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
             indicatorIchimokuMenuItem.Click += (_, _) => AddIchimokuToActiveChart();
             indicatorRsiMenuItem.Click += (_, _) => AddRsiToActiveChart();
+            indicatorMacdMenuItem.Click += (_, _) => AddMacdToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -63,6 +64,19 @@ namespace Trade.It
             chart.AddRelativeStrengthIndex(14);
         }
 
+        private void AddMacdToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddMovingAverageConvergenceDivergence();
+        }
+
         private void AddExponentialMovingAverageToActiveChart()
         {
             var chart = GetActiveChart();
@@ -89,14 +103,15 @@ namespace Trade.It
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
             var isIchimoku = indicator.Type == ChartIndicatorType.Ichimoku;
             var isRsi = indicator.Type == ChartIndicatorType.RelativeStrengthIndex;
+            var isMacd = indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence;
 
-            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi;
-            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi;
+            indicatorPeriod9MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod13MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod21MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod34MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod55MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod89MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
+            indicatorPeriod200MenuItem.Visible = !isIchimoku && !isRsi && !isMacd;
 
             if (!isIchimoku)
             {
@@ -120,7 +135,25 @@ namespace Trade.It
             if (index < 0 || index >= chart.Indicators.Count)
                 return;
 
-            if (chart.Indicators[index].Type == ChartIndicatorType.Ichimoku)
+            if (chart.Indicators[index].Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+            {
+                using var dialog = new MacdSettingsForm(chart.Indicators[index]);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    chart.ApplyMacdSettings(
+                        index,
+                        dialog.ShowMacdLine,
+                        dialog.ShowMacdSignal,
+                        dialog.ShowMacdHistogram,
+                        dialog.ShowMacdZero,
+                        dialog.MacdLineColor,
+                        dialog.MacdSignalColor,
+                        dialog.MacdBullishHistogramColor,
+                        dialog.MacdBearishHistogramColor,
+                        dialog.MacdZeroColor);
+                }
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.Ichimoku)
             {
                 using var dialog = new IchimokuSettingsForm(chart.Indicators[index]);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
