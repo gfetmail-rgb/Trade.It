@@ -3,7 +3,8 @@ namespace Trade.It
     internal enum ChartIndicatorType
     {
         MovingAverage,
-        ExponentialMovingAverage
+        ExponentialMovingAverage,
+        Ichimoku
     }
 
     internal sealed class ChartIndicator
@@ -12,6 +13,20 @@ namespace Trade.It
         public int Period { get; set; }
         public Color LineColor { get; set; } = Color.FromArgb(30, 100, 220);
         public Color BackgroundColor { get; set; } = Color.White;
+        public bool ShowTenkan { get; set; } = true;
+        public bool ShowKijun { get; set; } = true;
+        public bool ShowSpanA { get; set; } = true;
+        public bool ShowSpanB { get; set; } = true;
+        public bool ShowChikou { get; set; } = true;
+        public bool ShowBullishCloud { get; set; } = true;
+        public bool ShowBearishCloud { get; set; } = true;
+        public Color TenkanColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color KijunColor { get; set; } = Color.FromArgb(80, 100, 220);
+        public Color SpanAColor { get; set; } = Color.FromArgb(50, 150, 80);
+        public Color SpanBColor { get; set; } = Color.FromArgb(180, 100, 60);
+        public Color ChikouColor { get; set; } = Color.FromArgb(150, 80, 180);
+        public Color BullishCloudColor { get; set; } = Color.FromArgb(130, 200, 130);
+        public Color BearishCloudColor { get; set; } = Color.FromArgb(230, 150, 150);
     }
 
     internal sealed partial class TradingChartControl
@@ -44,6 +59,18 @@ namespace Trade.It
                 BackgroundColor = BackColor
             });
             Invalidate();
+        }
+
+        public void AddIchimoku()
+        {
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.Ichimoku,
+                Period = 9,
+                BackgroundColor = BackColor
+            });
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool RemoveIndicatorAt(int index)
@@ -97,6 +124,48 @@ namespace Trade.It
             return true;
         }
 
+        public bool ApplyIchimokuSettings(
+            int index,
+            bool showTenkan,
+            bool showKijun,
+            bool showSpanA,
+            bool showSpanB,
+            bool showChikou,
+            bool showBullishCloud,
+            bool showBearishCloud,
+            Color tenkanColor,
+            Color kijunColor,
+            Color spanAColor,
+            Color spanBColor,
+            Color chikouColor,
+            Color bullishCloudColor,
+            Color bearishCloudColor)
+        {
+            if (index < 0 || index >= indicators.Count ||
+                indicators[index].Type != ChartIndicatorType.Ichimoku)
+                return false;
+
+            var indicator = indicators[index];
+            indicator.ShowTenkan = showTenkan;
+            indicator.ShowKijun = showKijun;
+            indicator.ShowSpanA = showSpanA;
+            indicator.ShowSpanB = showSpanB;
+            indicator.ShowChikou = showChikou;
+            indicator.ShowBullishCloud = showBullishCloud;
+            indicator.ShowBearishCloud = showBearishCloud;
+            indicator.TenkanColor = tenkanColor;
+            indicator.KijunColor = kijunColor;
+            indicator.SpanAColor = spanAColor;
+            indicator.SpanBColor = spanBColor;
+            indicator.ChikouColor = chikouColor;
+            indicator.BullishCloudColor = bullishCloudColor;
+            indicator.BearishCloudColor = bearishCloudColor;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
         public void RemoveAllIndicators()
         {
             indicators.Clear();
@@ -131,6 +200,19 @@ namespace Trade.It
             for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
             {
                 var indicator = indicators[indicatorIndex];
+                if (indicator.Type == ChartIndicatorType.Ichimoku)
+                {
+                    if (HitTestIchimoku(location, indicator, plot, min, max, displayedCount, step, initialOffset, tolerance, out var ichimokuDistance))
+                    {
+                        if (ichimokuDistance < bestDistance)
+                        {
+                            bestDistance = ichimokuDistance;
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+                    continue;
+                }
+
                 var values = indicator.Type == ChartIndicatorType.MovingAverage
                     ? CalculateMovingAverage(indicator.Period)
                     : CalculateExponentialMovingAverage(indicator.Period);
@@ -165,6 +247,54 @@ namespace Trade.It
 
             selectedIndicatorIndex = bestDistance <= tolerance ? bestIndex : -1;
             return selectedIndicatorIndex;
+        }
+
+        private bool HitTestIchimoku(
+            Point location,
+            ChartIndicator indicator,
+            Rectangle plot,
+            double min,
+            double max,
+            int displayedCount,
+            double step,
+            double initialOffset,
+            double tolerance,
+            out double bestDistance)
+        {
+            bestDistance = double.MaxValue;
+            var tenkan = CalculateIchimokuTenkan();
+            var kijun = CalculateIchimokuKijun();
+            var spanA = CalculateIchimokuSpanA(tenkan, kijun);
+            var spanB = CalculateIchimokuSpanB();
+            var chikou = points.Select(p => p.Close).ToArray();
+
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= points.Count) continue;
+
+                Check(tenkan, absoluteIndex, 0, indicator.ShowTenkan, indicator.TenkanColor);
+                Check(kijun, absoluteIndex, 0, indicator.ShowKijun, indicator.KijunColor);
+                Check(spanA, absoluteIndex, 26, indicator.ShowSpanA, indicator.SpanAColor);
+                Check(spanB, absoluteIndex, 26, indicator.ShowSpanB, indicator.SpanBColor);
+                Check(chikou, absoluteIndex, -26, indicator.ShowChikou, indicator.ChikouColor);
+            }
+
+            return bestDistance < double.MaxValue;
+
+            void Check(double[] values, int sourceIndex, int shift, bool show, Color color)
+            {
+                if (!show || double.IsNaN(values[sourceIndex])) return;
+                var screenIndex = sourceIndex - firstIndex + shift;
+                var current = new PointF(
+                    (float)(plot.Left + step * (screenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                    PriceToScreen(values[sourceIndex], plot, min, max));
+
+                if (screenIndex < 0 || screenIndex > displayedCount) return;
+
+                var distance = DistanceToIndicatorSegment(location, current, current);
+                if (distance < bestDistance) bestDistance = distance;
+            }
         }
 
         private static double DistanceToIndicatorSegment(Point p, PointF a, PointF b)
