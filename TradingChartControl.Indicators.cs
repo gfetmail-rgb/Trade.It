@@ -468,7 +468,7 @@ namespace Trade.It
 
                     var current = new PointF(
                         (float)(macdPlot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
-                        MacdValueToScreen(values[absoluteIndex], macdPlot, maxAbs));
+                        (float)MacdValueToScreen(values[absoluteIndex], macdPlot, maxAbs));
 
                     if (previous.HasValue)
                     {
