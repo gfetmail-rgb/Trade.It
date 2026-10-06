@@ -384,7 +384,10 @@ namespace Trade.It
                 }
             }
 
-            return bestIndex;
+            if (bestIndex >= 0)
+                return bestIndex;
+
+            return indicators.FindIndex(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         }
 
         private bool HitTestIchimoku(
@@ -525,9 +528,6 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
-                    continue;
-
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
                     continue;
 
