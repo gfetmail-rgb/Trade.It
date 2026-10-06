@@ -743,14 +743,19 @@ namespace Trade.It
             return separator < 0 ? 0 : text.Length - separator - 1;
         }
 
-        private Rectangle GetPlotRectangle()
+        private readonly struct LowerPanelLayout
+        {
+            public Rectangle Price { get; init; }
+            public Rectangle Rsi { get; init; }
+            public Rectangle Volume { get; init; }
+            public int OverallBottom { get; init; }
+        }
+
+        private LowerPanelLayout GetLowerPanelLayout()
         {
             var left = 70;
             var right = Math.Max(left + 1, Width - 15);
 
-            // حاشیه بالای چارت باید از تنظیم ChartTopEmptyPercent محاسبه شود.
-            // مقدار قبلی 15 پیکسل ثابت بود و باعث می‌شد تغییر این تنظیم در
-            // SettingsForm هیچ اثری روی محل شروع نمودار نداشته باشد.
             var topMargin = Math.Max(0, Height * ChartTopEmptyPercent / 100.0);
             var top = Math.Clamp(
                 (int)Math.Round(topMargin),
@@ -758,63 +763,76 @@ namespace Trade.It
                 Math.Max(0, Height - 120));
 
             var overallBottom = Math.Max(top + 1, Height - 35);
-
+            var totalHeight = Math.Max(1, overallBottom - top);
             var gap = Math.Clamp(volumePanelGap, 2, 30);
-            var rsiGap = Math.Clamp(volumePanelGap, 2, 30);
-            var totalHeight = Math.Max(120, overallBottom - top);
-
-            var volumeHeight = volumePanelVisible
-                ? Math.Clamp((int)Math.Round(totalHeight * volumePanelRatio), 1, Math.Max(1, totalHeight / 2))
-                : 0;
 
             var rsiHeight = HasRsiIndicator
-                ? Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2))
+                ? Math.Clamp(
+                    (int)Math.Round(totalHeight * rsiPanelRatio),
+                    60,
+                    Math.Max(60, totalHeight / 2))
                 : 0;
 
-            var reservedHeight = volumeHeight +
-                                 (volumeHeight > 0 ? gap : 0) +
-                                 (rsiHeight > 0 ? rsiGap + rsiHeight : 0);
+            var volumeHeight = volumePanelVisible
+                ? Math.Clamp(
+                    (int)Math.Round(totalHeight * volumePanelRatio),
+                    45,
+                    Math.Max(45, totalHeight / 2))
+                : 0;
 
-            var bottom = Math.Max(top + 80, overallBottom - reservedHeight);
+            var reserved = (rsiHeight > 0 ? rsiHeight + gap : 0) +
+                           (volumeHeight > 0 ? volumeHeight + gap : 0);
 
-            return Rectangle.FromLTRB(left, top, right, bottom);
-        }
+            var priceBottom = Math.Max(
+                top + 80,
+                overallBottom - reserved);
 
-        private Rectangle GetRsiPlotRectangle()
-        {
-            if (!HasRsiIndicator)
-                return Rectangle.Empty;
+            // در صورت کوچک شدن شدید کنترل، اولویت با حداقل فضای نمودار قیمت است.
+            // پنل‌های پایین تا حد ممکن کوچک می‌شوند اما هیچ‌گاه روی هم نمی‌افتند.
+            var availableLower = Math.Max(0, overallBottom - priceBottom);
+            var lowerRequested = (rsiHeight > 0 ? rsiHeight + gap : 0) +
+                                 (volumeHeight > 0 ? volumeHeight + gap : 0);
 
-            var pricePlot = GetPlotRectangle();
-            var overallBottom = Math.Max(pricePlot.Top + 1, Height - 35);
-            var totalHeight = Math.Max(120, overallBottom - pricePlot.Top);
-            var rsiHeight = Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2));
-            var gap = Math.Clamp(volumePanelGap, 2, 30);
-            var top = pricePlot.Bottom + gap;
-            var bottom = Math.Min(overallBottom - (volumePanelVisible ? Math.Clamp(volumePanelGap, 2, 30) : 0), top + rsiHeight);
-            return Rectangle.FromLTRB(pricePlot.Left, top, pricePlot.Right, Math.Max(top + 1, bottom));
-        }
-
-        private Rectangle GetVolumePlotRectangle()
-        {
-            if (!volumePanelVisible)
-                return Rectangle.Empty;
-
-            var pricePlot = GetPlotRectangle();
-            var left = pricePlot.Left;
-            var right = pricePlot.Right;
-            var overallBottom = Math.Max(pricePlot.Top + 1, Height - 35);
-            var top = pricePlot.Bottom + Math.Clamp(volumePanelGap, 2, 30);
-
-            if (HasRsiIndicator)
+            if (lowerRequested > availableLower && lowerRequested > 0)
             {
-                var totalHeight = Math.Max(120, overallBottom - pricePlot.Top);
-                var rsiHeight = Math.Clamp((int)Math.Round(totalHeight * 0.18), 60, Math.Max(60, totalHeight / 2));
-                top += rsiHeight + Math.Clamp(volumePanelGap, 2, 30);
+                var scale = availableLower / (double)lowerRequested;
+                rsiHeight = (int)Math.Floor(rsiHeight * scale);
+                volumeHeight = (int)Math.Floor(volumeHeight * scale);
             }
 
-            return Rectangle.FromLTRB(left, top, right, overallBottom);
+            var price = Rectangle.FromLTRB(left, top, right, Math.Max(top + 1, priceBottom));
+            var cursor = price.Bottom;
+
+            Rectangle rsi = Rectangle.Empty;
+            if (rsiHeight > 0)
+            {
+                var rsiTop = Math.Min(overallBottom - 1, cursor + gap);
+                var rsiBottom = Math.Min(overallBottom - 1, rsiTop + rsiHeight);
+                rsi = Rectangle.FromLTRB(left, rsiTop, right, Math.Max(rsiTop + 1, rsiBottom));
+                cursor = rsi.Bottom;
+            }
+
+            Rectangle volume = Rectangle.Empty;
+            if (volumeHeight > 0)
+            {
+                var volumeTop = Math.Min(overallBottom - 1, cursor + gap);
+                volume = Rectangle.FromLTRB(left, volumeTop, right, overallBottom);
+            }
+
+            return new LowerPanelLayout
+            {
+                Price = price,
+                Rsi = rsi,
+                Volume = volume,
+                OverallBottom = overallBottom
+            };
         }
+
+        private Rectangle GetPlotRectangle() => GetLowerPanelLayout().Price;
+
+        private Rectangle GetRsiPlotRectangle() => GetLowerPanelLayout().Rsi;
+
+        private Rectangle GetVolumePlotRectangle() => GetLowerPanelLayout().Volume;
 
         private void RenderRsiPanel(
             Graphics g,
