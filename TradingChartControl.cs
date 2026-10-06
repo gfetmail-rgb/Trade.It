@@ -726,7 +726,8 @@ namespace Trade.It
             panning = false;
             horizontalAxisDrag = false;
             verticalAxisDrag = false;
-            volumePanelResizeDrag = false;
+            lowerPanelResizeDrag = false;
+            activeLowerPanelSplitter = LowerPanelSplitter.None;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
 
