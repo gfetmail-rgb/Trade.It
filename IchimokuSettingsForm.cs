@@ -2,6 +2,9 @@ namespace Trade.It
 {
     public partial class IchimokuSettingsForm : Form
     {
+        public int TenkanPeriod => (int)tenkanPeriodNumeric.Value;
+        public int KijunPeriod => (int)kijunPeriodNumeric.Value;
+        public int SpanBPeriod => (int)spanBPeriodNumeric.Value;
         public bool ShowTenkan => tenkanCheckBox.Checked;
         public bool ShowKijun => kijunCheckBox.Checked;
         public bool ShowSpanA => spanACheckBox.Checked;
@@ -18,13 +21,24 @@ namespace Trade.It
         public Color BullishCloudColor => bullishCloudColorButton.BackColor;
         public Color BearishCloudColor => bearishCloudColorButton.BackColor;
 
-        internal IchimokuSettingsForm(ChartIndicator indicator)
+        internal IchimokuSettingsForm(ChartIndicator indicator, int maxPeriod)
         {
             InitializeComponent();
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
-
             Text = "تنظیمات ایچیموکو";
+
+            var max = Math.Max(2, maxPeriod);
+            tenkanPeriodNumeric.Minimum = 2;
+            tenkanPeriodNumeric.Maximum = max;
+            kijunPeriodNumeric.Minimum = 2;
+            kijunPeriodNumeric.Maximum = max;
+            spanBPeriodNumeric.Minimum = 2;
+            spanBPeriodNumeric.Maximum = max;
+
+            tenkanPeriodNumeric.Value = Math.Clamp(indicator.IchimokuTenkanPeriod, 2, max);
+            kijunPeriodNumeric.Value = Math.Clamp(indicator.IchimokuKijunPeriod, 2, max);
+            spanBPeriodNumeric.Value = Math.Clamp(indicator.IchimokuSpanBPeriod, 2, max);
 
             tenkanCheckBox.Checked = indicator.ShowTenkan;
             kijunCheckBox.Checked = indicator.ShowKijun;
@@ -59,12 +73,7 @@ namespace Trade.It
 
         private static void PickColor(Button button)
         {
-            using var dialog = new ColorDialog
-            {
-                FullOpen = true,
-                Color = button.BackColor
-            };
-
+            using var dialog = new ColorDialog { FullOpen = true, Color = button.BackColor };
             if (dialog.ShowDialog() == DialogResult.OK)
                 SetColorButton(button, dialog.Color);
         }
