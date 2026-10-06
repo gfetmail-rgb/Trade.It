@@ -11,7 +11,7 @@ namespace Trade.It
         public ChartIndicatorType Type { get; init; }
         public int Period { get; set; }
         public Color LineColor { get; set; } = Color.FromArgb(30, 100, 220);
-        public Color BackgroundColor { get; set; } = Color.Transparent;
+        public Color BackgroundColor { get; set; } = Color.White;
     }
 
     internal sealed partial class TradingChartControl
@@ -40,7 +40,8 @@ namespace Trade.It
             indicators.Add(new ChartIndicator
             {
                 Type = ChartIndicatorType.ExponentialMovingAverage,
-                Period = period
+                Period = period,
+                BackgroundColor = BackColor
             });
             Invalidate();
         }
@@ -76,6 +77,15 @@ namespace Trade.It
                 return false;
 
             period = Math.Clamp(period, 2, points.Count);
+
+            // Transparent is not supported as TradingChartControl.BackColor.
+            // If an older indicator instance contains Transparent, keep the
+            // chart's current background instead of assigning an invalid value.
+            if (backgroundColor == Color.Transparent)
+                backgroundColor = BackColor == Color.Transparent
+                    ? Color.White
+                    : BackColor;
+
             var indicator = indicators[index];
             indicator.Period = period;
             indicator.LineColor = lineColor;
