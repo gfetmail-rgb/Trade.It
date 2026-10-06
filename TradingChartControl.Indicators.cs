@@ -69,6 +69,23 @@ namespace Trade.It
             return true;
         }
 
+        public bool ApplyIndicatorSettings(int index, int period, Color lineColor, Color backgroundColor)
+        {
+            if (index < 0 || index >= indicators.Count || points.Count < 2)
+                return false;
+
+            period = Math.Clamp(period, 2, points.Count);
+            var indicator = indicators[index];
+            indicator.Period = period;
+            indicator.LineColor = lineColor;
+            indicator.BackgroundColor = backgroundColor;
+            BackColor = backgroundColor;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
         public void RemoveAllIndicators()
         {
             indicators.Clear();
