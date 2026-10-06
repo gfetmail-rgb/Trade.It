@@ -17,7 +17,23 @@ namespace Trade.It
             showKCheckBox.Checked=indicator.ShowStochasticK; showDCheckBox.Checked=indicator.ShowStochasticD; show20CheckBox.Checked=indicator.ShowStochastic20; show80CheckBox.Checked=indicator.ShowStochastic80;
             SetColor(kColorButton,indicator.StochasticKColor); SetColor(dColorButton,indicator.StochasticDColor); SetColor(c20ColorButton,indicator.Stochastic20Color); SetColor(c80ColorButton,indicator.Stochastic80Color);
             kColorButton.Click+=(_,_)=>ChooseColor(kColorButton); dColorButton.Click+=(_,_)=>ChooseColor(dColorButton); c20ColorButton.Click+=(_,_)=>ChooseColor(c20ColorButton); c80ColorButton.Click+=(_,_)=>ChooseColor(c80ColorButton);
+            defaultButton.Click+=(_,_)=>ApplyDefaults();
         }
+        private void ApplyDefaults()
+        {
+            periodNumeric.Value = 14;
+            kPeriodNumeric.Value = 3;
+            dPeriodNumeric.Value = 3;
+            showKCheckBox.Checked = true;
+            showDCheckBox.Checked = true;
+            show20CheckBox.Checked = true;
+            show80CheckBox.Checked = true;
+            SetColor(kColorButton, Color.FromArgb(30, 100, 220));
+            SetColor(dColorButton, Color.FromArgb(220, 80, 80));
+            SetColor(c20ColorButton, Color.FromArgb(150, 150, 150));
+            SetColor(c80ColorButton, Color.FromArgb(150, 150, 150));
+        }
+
         private static void SetColor(Button b,Color c){b.BackColor=c;b.ForeColor=c.GetBrightness()<0.5f?Color.White:Color.Black;}
         private void ChooseColor(Button b){using var d=new ColorDialog{FullOpen=true,Color=b.BackColor};if(d.ShowDialog(this)==DialogResult.OK)SetColor(b,d.Color);}
     }
