@@ -10,7 +10,9 @@ namespace Trade.It
         Stochastic,
         StochasticRelativeStrengthIndex,
         AverageTrueRange,
-        AverageDirectionalIndex
+        AverageDirectionalIndex,
+        BollingerBands,
+        OnBalanceVolume
     }
 
     internal sealed class ChartIndicator
@@ -74,6 +76,18 @@ namespace Trade.It
         public Color StochasticRsiDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color StochasticRsi20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color StochasticRsi80Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public bool ShowBollingerMiddle { get; set; } = true;
+        public bool ShowBollingerUpper { get; set; } = true;
+        public bool ShowBollingerLower { get; set; } = true;
+        public double BollingerStdDev { get; set; } = 2.0;
+        public Color BollingerMiddleColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color BollingerUpperColor { get; set; } = Color.FromArgb(50, 160, 80);
+        public Color BollingerLowerColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color BollingerBandColor { get; set; } = Color.FromArgb(150, 150, 150);
+        public Color ObvLineColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public bool ShowObvLine { get; set; } = true;
+        public bool ShowObvZero { get; set; } = true;
+        public Color ObvZeroColor { get; set; } = Color.FromArgb(150, 150, 150);
         public bool ShowAdxLine { get; set; } = true;
         public bool ShowAdxPlusDi { get; set; } = true;
         public bool ShowAdxMinusDi { get; set; } = true;
@@ -112,6 +126,10 @@ namespace Trade.It
         private double[]? adxCache;
         private double[]? adxPlusDiCache;
         private double[]? adxMinusDiCache;
+        private double[]? bollingerMiddleCache;
+        private double[]? bollingerUpperCache;
+        private double[]? bollingerLowerCache;
+        private double[]? obvCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
@@ -120,6 +138,8 @@ namespace Trade.It
         internal bool HasStochasticRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
         internal bool HasAtrIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageTrueRange);
         internal bool HasAdxIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageDirectionalIndex);
+        internal bool HasObvIndicator => indicators.Any(x => x.Type == ChartIndicatorType.OnBalanceVolume);
+        internal bool HasBollingerIndicator => indicators.Any(x => x.Type == ChartIndicatorType.BollingerBands);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -184,6 +204,63 @@ namespace Trade.It
             indicator.RsiLineColor = rsiLineColor;
             indicator.Rsi30Color = rsi30Color;
             indicator.Rsi70Color = rsi70Color;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        public void AddBollingerBands(int period = 20, double standardDeviation = 2.0)
+        {
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.BollingerBands,
+                Period = period,
+                BollingerStdDev = Math.Clamp(standardDeviation, 0.1, 10.0)
+            });
+            InvalidateBollingerCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyBollingerSettings(int index, int period, double standardDeviation, bool showMiddle, bool showUpper, bool showLower, Color middleColor, Color upperColor, Color lowerColor)
+        {
+            if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.BollingerBands || points.Count < 2)
+                return false;
+            var indicator = indicators[index];
+            indicator.Period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+            indicator.BollingerStdDev = Math.Clamp(standardDeviation, 0.1, 10.0);
+            indicator.ShowBollingerMiddle = showMiddle;
+            indicator.ShowBollingerUpper = showUpper;
+            indicator.ShowBollingerLower = showLower;
+            indicator.BollingerMiddleColor = middleColor;
+            indicator.BollingerUpperColor = upperColor;
+            indicator.BollingerLowerColor = lowerColor;
+            selectedIndicatorIndex = index;
+            InvalidateBollingerCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        public void AddOnBalanceVolume()
+        {
+            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.OnBalanceVolume });
+            InvalidateObvCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyObvSettings(int index, bool showLine, bool showZero, Color lineColor, Color zeroColor)
+        {
+            if (index < 0 || index >= indicators.Count || indicators[index].Type != ChartIndicatorType.OnBalanceVolume || points.Count < 2)
+                return false;
+            var indicator = indicators[index];
+            indicator.ShowObvLine = showLine;
+            indicator.ShowObvZero = showZero;
+            indicator.ObvLineColor = lineColor;
+            indicator.ObvZeroColor = zeroColor;
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -1531,6 +1608,49 @@ namespace Trade.It
             for (var i = firstAdx + 1; i < points.Count; i++)
                 adx[i] = ((adx[i - 1] * (period - 1)) + dx[i]) / period;
         }
+
+        private void EnsureBollingerCache(ChartIndicator indicator)
+        {
+            if (bollingerMiddleCache != null && bollingerUpperCache != null && bollingerLowerCache != null &&
+                bollingerMiddleCache.Length == points.Count && bollingerUpperCache.Length == points.Count && bollingerLowerCache.Length == points.Count)
+                return;
+            bollingerMiddleCache = CalculateMovingAverage(indicator.Period);
+            bollingerUpperCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            bollingerLowerCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            for (var i = indicator.Period - 1; i < points.Count; i++)
+            {
+                var mean = bollingerMiddleCache[i];
+                if (double.IsNaN(mean)) continue;
+                var sum = 0.0;
+                for (var j = i - indicator.Period + 1; j <= i; j++)
+                {
+                    var d = points[j].Close - mean;
+                    sum += d * d;
+                }
+                var sd = Math.Sqrt(sum / indicator.Period);
+                bollingerUpperCache[i] = mean + indicator.BollingerStdDev * sd;
+                bollingerLowerCache[i] = mean - indicator.BollingerStdDev * sd;
+            }
+        }
+        internal void InvalidateBollingerCache()
+        {
+            bollingerMiddleCache = null; bollingerUpperCache = null; bollingerLowerCache = null;
+        }
+
+        private void EnsureObvCache()
+        {
+            if (obvCache != null && obvCache.Length == points.Count) return;
+            obvCache = new double[points.Count];
+            if (points.Count == 0) return;
+            obvCache[0] = 0;
+            for (var i = 1; i < points.Count; i++)
+            {
+                obvCache[i] = obvCache[i - 1];
+                if (points[i].Close > points[i - 1].Close) obvCache[i] += points[i].Volume;
+                else if (points[i].Close < points[i - 1].Close) obvCache[i] -= points[i].Volume;
+            }
+        }
+        internal void InvalidateObvCache() => obvCache = null;
 
         private double[] CalculateMovingAverage(int period)
         {
