@@ -301,13 +301,13 @@ namespace Trade.It
             if (volumePlot != Rectangle.Empty)
                 return volumePlot;
 
-            var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
-            if (stochasticRsiPlot != Rectangle.Empty)
-                return stochasticRsiPlot;
-
             var atrPlot = GetAtrPlotRectangle();
             if (atrPlot != Rectangle.Empty)
                 return atrPlot;
+
+            var stochasticRsiPlot = GetStochasticRsiPlotRectangle();
+            if (stochasticRsiPlot != Rectangle.Empty)
+                return stochasticRsiPlot;
 
             var stochasticPlot = GetStochasticPlotRectangle();
             if (stochasticPlot != Rectangle.Empty)
