@@ -121,7 +121,7 @@ namespace Trade.It
 
                     if (previous.HasValue)
                     {
-                        var distance = DistanceToSegment(location, previous.Value, current);
+                        var distance = DistanceToIndicatorSegment(location, previous.Value, current);
                         if (distance < bestDistance)
                         {
                             bestDistance = distance;
@@ -137,7 +137,7 @@ namespace Trade.It
             return selectedIndicatorIndex;
         }
 
-        private static double DistanceToSegment(Point p, PointF a, PointF b)
+        private static double DistanceToIndicatorSegment(Point p, PointF a, PointF b)
         {
             var dx = b.X - a.X;
             var dy = b.Y - a.Y;
