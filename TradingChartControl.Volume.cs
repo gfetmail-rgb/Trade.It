@@ -47,7 +47,7 @@ namespace Trade.It
             volumePanelVisible = !volumePanelVisible;
             if (!volumePanelVisible)
             {
-                volumePanelResizeDrag = false;
+                lowerPanelResizeDrag = false;
                 Capture = false;
                 Cursor = Cursors.Default;
             }
@@ -64,7 +64,7 @@ namespace Trade.It
             volumePanelVisible = visible;
             if (!visible)
             {
-                volumePanelResizeDrag = false;
+                lowerPanelResizeDrag = false;
                 Capture = false;
                 Cursor = Cursors.Default;
             }
