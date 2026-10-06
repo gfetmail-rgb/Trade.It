@@ -328,6 +328,8 @@ namespace Trade.It
 
             period = Math.Clamp(period, 2, points.Count);
             indicators[index].Period = period;
+            if (indicators[index].Type == ChartIndicatorType.AverageTrueRange)
+                InvalidateAtrCache();
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -353,6 +355,8 @@ namespace Trade.It
             indicator.Period = period;
             indicator.LineColor = lineColor;
             indicator.BackgroundColor = backgroundColor;
+            if (indicator.Type == ChartIndicatorType.AverageTrueRange)
+                InvalidateAtrCache();
             BackColor = backgroundColor;
             selectedIndicatorIndex = index;
             Invalidate();
@@ -1330,14 +1334,13 @@ namespace Trade.It
             }
 
             var sum = 0.0;
-            for (var i = 1; i < points.Count; i++)
-            {
+            for (var i = 1; i <= period; i++)
                 sum += trueRanges[i];
-                if (i - period >= 1)
-                    sum -= trueRanges[i - period];
-                if (i >= period)
-                    result[i] = sum / period;
-            }
+
+            result[period] = sum / period;
+
+            for (var i = period + 1; i < points.Count; i++)
+                result[i] = ((result[i - 1] * (period - 1)) + trueRanges[i]) / period;
 
             return result;
         }
