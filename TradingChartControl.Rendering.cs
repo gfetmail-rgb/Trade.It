@@ -1533,7 +1533,12 @@ namespace Trade.It
                 using var pen=new Pen(indicator.ObvLineColor,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth));
                 PointF? prev=null;
                 for(var i=0;i<visible.Count;i++){var ai=firstIndex+i;if(ai<0||ai>=obvCache.Length||!double.IsFinite(obvCache[ai])){prev=null;continue;}var pt=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)Y(obvCache[ai]));if(prev.HasValue)g.DrawLine(pen,prev.Value,pt);prev=pt;}
-                DrawIndicatorPanelTitle(g, plot, "OBV=" + obvCache[firstIndex + visible.Count - 1].ToString("0.##"), titleFont, indicator.ObvLineColor);
+                var obvCrossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+                var obvAbsoluteIndex = firstIndex + obvCrossIndex;
+                var obvValueText = obvAbsoluteIndex >= 0 && obvAbsoluteIndex < obvCache.Length && double.IsFinite(obvCache[obvAbsoluteIndex])
+                    ? obvCache[obvAbsoluteIndex].ToString("0.##", CultureInfo.InvariantCulture)
+                    : "—";
+                DrawIndicatorPanelTitle(g, plot, "OBV=" + obvValueText, titleFont, indicator.ObvLineColor);
             }
         }
 
