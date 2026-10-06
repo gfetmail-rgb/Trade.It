@@ -342,7 +342,6 @@ namespace Trade.It
             for (var i = 0; i < polygon.Count; i++)
             {
                 var j = i == 0 ? polygon.Count - 1 : i - 1;
-            {
                 var pi = polygon[i];
                 var pj = polygon[j];
 
