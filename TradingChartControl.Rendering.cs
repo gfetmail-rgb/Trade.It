@@ -876,6 +876,7 @@ namespace Trade.It
                            (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                            (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
+                           (adxHeight > 0 ? adxHeight + gap : 0) +
                            (volumeHeight > 0 ? volumeHeight + gap : 0);
 
             var priceBottom = Math.Max(
