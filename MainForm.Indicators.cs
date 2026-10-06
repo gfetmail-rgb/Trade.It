@@ -17,6 +17,7 @@ namespace Trade.It
             indicatorAdxMenuItem.Click += (_, _) => AddAdxToActiveChart();
             indicatorBollingerMenuItem.Click += (_, _) => AddBollingerToActiveChart();
             indicatorObvMenuItem.Click += (_, _) => AddObvToActiveChart();
+            indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -120,6 +121,17 @@ namespace Trade.It
             chart.AddOnBalanceVolume();
         }
 
+        private void AddVwapToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            chart.AddVolumeWeightedAveragePrice();
+        }
+
         private void AddAdxToActiveChart()
         {
             var chart = GetActiveChart();
@@ -170,6 +182,7 @@ namespace Trade.It
                 return;
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
+            indicatorSettingsMenuItem.Enabled = indicator.Type != ChartIndicatorType.VolumeWeightedAveragePrice;
         }
 
         private void OpenIndicatorSettings()
