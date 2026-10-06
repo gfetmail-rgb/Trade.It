@@ -473,6 +473,8 @@ namespace Trade.It
                 InvalidateAtrCache();
             if (indicators[index].Type == ChartIndicatorType.AverageDirectionalIndex)
                 InvalidateAdxCache();
+            if (indicators[index].Type == ChartIndicatorType.BollingerBands)
+                InvalidateBollingerCache();
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
