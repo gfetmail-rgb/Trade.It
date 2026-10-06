@@ -1234,9 +1234,9 @@ namespace Trade.It
             }
 
             var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var absoluteIndex = firstIndex + crossIndex;
-            var atrValueText = absoluteIndex >= 0 && absoluteIndex < atrCache!.Length && !double.IsNaN(atrCache[absoluteIndex]) && !double.IsInfinity(atrCache[absoluteIndex])
-                ? atrCache[absoluteIndex].ToString("0.########", CultureInfo.InvariantCulture)
+            var crosshairAbsoluteIndex = firstIndex + crossIndex;
+            var atrValueText = crosshairAbsoluteIndex >= 0 && crosshairAbsoluteIndex < atrCache!.Length && !double.IsNaN(atrCache[crosshairAbsoluteIndex]) && !double.IsInfinity(atrCache[crosshairAbsoluteIndex])
+                ? atrCache[crosshairAbsoluteIndex].ToString("0.########", CultureInfo.InvariantCulture)
                 : "—";
             DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})={atrValueText}", titleFont, indicator.LineColor);
         }
