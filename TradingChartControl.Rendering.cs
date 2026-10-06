@@ -119,7 +119,7 @@ namespace Trade.It
                 }
             }
 
-            DrawDrawings(e.Graphics, plot, layoutCount, min, max);
+            DrawIndicators(e.Graphics, plot, layoutCount, min, max, displayedCount, step, initialOffset);\n\n            DrawDrawings(e.Graphics, plot, layoutCount, min, max);
             RenderAdvancedDrawings(e.Graphics);
             // Extra drawingها باید دقیقاً با همان مختصات داده/صفحه‌ای
             // رندر شوند که چارت اصلی در مد تست استفاده می‌کند.
