@@ -52,6 +52,17 @@ namespace Trade.It
             e.Cancel = indicatorContextChart == null ||
                        indicatorContextChart.SelectedIndicatorIndex < 0 ||
                        indicatorContextChart.SelectedIndicatorIndex >= indicatorContextChart.Indicators.Count;
+
+            if (e.Cancel)
+                return;
+
+            var period = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex].Period;
+            indicatorPeriod5MenuItem.Checked = period == 5;
+            indicatorPeriod10MenuItem.Checked = period == 10;
+            indicatorPeriod20MenuItem.Checked = period == 20;
+            indicatorPeriod50MenuItem.Checked = period == 50;
+            indicatorPeriod100MenuItem.Checked = period == 100;
+            indicatorPeriod200MenuItem.Checked = period == 200;
         }
 
         private void DeleteContextIndicator()
