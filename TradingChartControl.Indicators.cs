@@ -5,7 +5,8 @@ namespace Trade.It
         MovingAverage,
         ExponentialMovingAverage,
         Ichimoku,
-        RelativeStrengthIndex
+        RelativeStrengthIndex,
+        MovingAverageConvergenceDivergence
     }
 
     internal sealed class ChartIndicator
@@ -34,6 +35,15 @@ namespace Trade.It
         public Color RsiLineColor { get; set; } = Color.FromArgb(30, 100, 220);
         public Color Rsi30Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color Rsi70Color { get; set; } = Color.FromArgb(150, 150, 150);
+        public bool ShowMacdLine { get; set; } = true;
+        public bool ShowMacdSignal { get; set; } = true;
+        public bool ShowMacdHistogram { get; set; } = true;
+        public bool ShowMacdZero { get; set; } = true;
+        public Color MacdLineColor { get; set; } = Color.FromArgb(30, 100, 220);
+        public Color MacdSignalColor { get; set; } = Color.FromArgb(220, 80, 80);
+        public Color MacdBullishHistogramColor { get; set; } = Color.FromArgb(80, 170, 100);
+        public Color MacdBearishHistogramColor { get; set; } = Color.FromArgb(210, 100, 100);
+        public Color MacdZeroColor { get; set; } = Color.FromArgb(150, 150, 150);
     }
 
     internal sealed partial class TradingChartControl
@@ -49,9 +59,13 @@ namespace Trade.It
         private double[]? ichimokuSpanACache;
         private double[]? ichimokuSpanBCache;
         private double[]? ichimokuChikouCache;
+        private double[]? macdLineCache;
+        private double[]? macdSignalCache;
+        private double[]? macdHistogramCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
+        internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
         public void AddMovingAverage(int period = 20)
@@ -116,6 +130,50 @@ namespace Trade.It
             indicator.RsiLineColor = rsiLineColor;
             indicator.Rsi30Color = rsi30Color;
             indicator.Rsi70Color = rsi70Color;
+            selectedIndicatorIndex = index;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        public void AddMovingAverageConvergenceDivergence()
+        {
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.MovingAverageConvergenceDivergence,
+                Period = 9
+            });
+            InvalidateMacdCache();
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool ApplyMacdSettings(
+            int index,
+            bool showMacdLine,
+            bool showMacdSignal,
+            bool showMacdHistogram,
+            bool showMacdZero,
+            Color macdLineColor,
+            Color macdSignalColor,
+            Color macdBullishHistogramColor,
+            Color macdBearishHistogramColor,
+            Color macdZeroColor)
+        {
+            if (index < 0 || index >= indicators.Count ||
+                indicators[index].Type != ChartIndicatorType.MovingAverageConvergenceDivergence)
+                return false;
+
+            var indicator = indicators[index];
+            indicator.ShowMacdLine = showMacdLine;
+            indicator.ShowMacdSignal = showMacdSignal;
+            indicator.ShowMacdHistogram = showMacdHistogram;
+            indicator.ShowMacdZero = showMacdZero;
+            indicator.MacdLineColor = macdLineColor;
+            indicator.MacdSignalColor = macdSignalColor;
+            indicator.MacdBullishHistogramColor = macdBullishHistogramColor;
+            indicator.MacdBearishHistogramColor = macdBearishHistogramColor;
+            indicator.MacdZeroColor = macdZeroColor;
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -250,6 +308,14 @@ namespace Trade.It
             if (visible.Count == 0)
                 return -1;
 
+            var macdPlot = GetMacdPlotRectangle();
+            if (macdPlot != Rectangle.Empty && macdPlot.Contains(location))
+            {
+                var macdIndex = HitTestMacd(location, macdPlot, displayedCount, macdPlot.Width / (double)Math.Max(1, visibleCount), -macdPlot.Width * 0.25);
+                selectedIndicatorIndex = macdIndex;
+                return selectedIndicatorIndex;
+            }
+
             var rsiPlot = GetRsiPlotRectangle();
             if (rsiPlot != Rectangle.Empty && rsiPlot.Contains(location))
             {
@@ -275,7 +341,11 @@ namespace Trade.It
             for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
             {
                 var indicator = indicators[indicatorIndex];
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex)
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex ||
+                    indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
+                    continue;
+
+                if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.Ichimoku)
@@ -325,6 +395,94 @@ namespace Trade.It
 
             selectedIndicatorIndex = bestDistance <= tolerance ? bestIndex : -1;
             return selectedIndicatorIndex;
+        }
+
+        private int HitTestMacd(Point location, Rectangle macdPlot, int displayedCount, double step, double initialOffset)
+        {
+            var bestIndex = -1;
+            var bestDistance = 8.0;
+            EnsureMacdCache();
+            var maxAbs = GetMacdScaleMax(macdLineCache!, macdSignalCache!, macdHistogramCache!, firstIndex, displayedCount);
+
+            for (var indicatorIndex = 0; indicatorIndex < indicators.Count; indicatorIndex++)
+            {
+                var indicator = indicators[indicatorIndex];
+                if (indicator.Type != ChartIndicatorType.MovingAverageConvergenceDivergence)
+                    continue;
+
+                if (indicator.ShowMacdLine)
+                    CheckLine(macdLineCache!, indicatorIndex);
+                if (indicator.ShowMacdSignal)
+                    CheckLine(macdSignalCache!, indicatorIndex);
+
+                if (indicator.ShowMacdHistogram)
+                {
+                    var zeroY = MacdValueToScreen(0, macdPlot, maxAbs);
+                    for (var i = 0; i < displayedCount; i++)
+                    {
+                        var absoluteIndex = firstIndex + i;
+                        if (absoluteIndex < 0 || absoluteIndex >= macdHistogramCache!.Length ||
+                            double.IsNaN(macdHistogramCache[absoluteIndex]))
+                            continue;
+
+                        var x = (float)(macdPlot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                        var y = MacdValueToScreen(macdHistogramCache[absoluteIndex], macdPlot, maxAbs);
+                        var distance = Math.Abs(location.X - x);
+                        if (location.Y >= Math.Min(y, zeroY) &&
+                            location.Y <= Math.Max(y, zeroY) &&
+                            distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            bestIndex = indicatorIndex;
+                        }
+                    }
+                }
+
+                if (indicator.ShowMacdZero)
+                {
+                    var zeroY = MacdValueToScreen(0, macdPlot, maxAbs);
+                    var distance = Math.Abs(location.Y - zeroY);
+                    if (distance <= bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestIndex = indicatorIndex;
+                    }
+                }
+            }
+
+            return bestIndex >= 0
+                ? bestIndex
+                : indicators.FindIndex(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
+
+            void CheckLine(double[] values, int index)
+            {
+                PointF? previous = null;
+                for (var i = 0; i < displayedCount; i++)
+                {
+                    var absoluteIndex = firstIndex + i;
+                    if (absoluteIndex < 0 || absoluteIndex >= values.Length || double.IsNaN(values[absoluteIndex]))
+                    {
+                        previous = null;
+                        continue;
+                    }
+
+                    var current = new PointF(
+                        (float)(macdPlot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                        MacdValueToScreen(values[absoluteIndex], macdPlot, maxAbs));
+
+                    if (previous.HasValue)
+                    {
+                        var distance = DistanceToIndicatorSegment(location, previous.Value, current);
+                        if (distance < bestDistance)
+                        {
+                            bestDistance = distance;
+                            bestIndex = index;
+                        }
+                    }
+
+                    previous = current;
+                }
+            }
         }
 
         private int HitTestRsi(Point location, Rectangle rsiPlot, int displayedCount, double step, double initialOffset)
@@ -714,6 +872,7 @@ namespace Trade.It
             ichimokuSpanACache = null;
             ichimokuSpanBCache = null;
             ichimokuChikouCache = null;
+            InvalidateMacdCache();
         }
 
         private double[] CalculateIchimokuTenkan()
@@ -811,6 +970,98 @@ namespace Trade.It
                     result[i] = (tenkan[i] + kijun[i]) / 2.0;
             }
             return result;
+        }
+
+        private void EnsureMacdCache()
+        {
+            if (macdLineCache != null &&
+                macdSignalCache != null &&
+                macdHistogramCache != null &&
+                macdLineCache.Length == points.Count &&
+                macdSignalCache.Length == points.Count &&
+                macdHistogramCache.Length == points.Count)
+                return;
+
+            var fast = CalculateExponentialMovingAverage(12);
+            var slow = CalculateExponentialMovingAverage(26);
+            macdLineCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                if (!double.IsNaN(fast[i]) && !double.IsNaN(slow[i]))
+                    macdLineCache[i] = fast[i] - slow[i];
+            }
+
+            macdSignalCache = CalculateExponentialMovingAverageSeries(macdLineCache, 9);
+            macdHistogramCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                if (!double.IsNaN(macdLineCache[i]) && !double.IsNaN(macdSignalCache[i]))
+                    macdHistogramCache[i] = macdLineCache[i] - macdSignalCache[i];
+            }
+        }
+
+        internal void InvalidateMacdCache()
+        {
+            macdLineCache = null;
+            macdSignalCache = null;
+            macdHistogramCache = null;
+        }
+
+        private static double[] CalculateExponentialMovingAverageSeries(double[] source, int period)
+        {
+            var result = Enumerable.Repeat(double.NaN, source.Length).ToArray();
+            if (period <= 0 || source.Length < period)
+                return result;
+
+            var firstValid = Array.FindIndex(source, x => !double.IsNaN(x));
+            if (firstValid < 0 || firstValid + period - 1 >= source.Length)
+                return result;
+
+            var sum = 0.0;
+            for (var i = firstValid; i < firstValid + period; i++)
+            {
+                if (double.IsNaN(source[i]))
+                    return result;
+                sum += source[i];
+            }
+
+            var ema = sum / period;
+            result[firstValid + period - 1] = ema;
+            var multiplier = 2.0 / (period + 1.0);
+
+            for (var i = firstValid + period; i < source.Length; i++)
+            {
+                if (double.IsNaN(source[i]))
+                    continue;
+                ema = ((source[i] - ema) * multiplier) + ema;
+                result[i] = ema;
+            }
+
+            return result;
+        }
+
+        private static double GetMacdScaleMax(double[] line, double[] signal, double[] histogram, int firstIndex, int displayedCount)
+        {
+            var max = 0.0;
+            var end = Math.Min(line.Length, firstIndex + displayedCount);
+            for (var i = Math.Max(0, firstIndex); i < end; i++)
+            {
+                if (!double.IsNaN(line[i])) max = Math.Max(max, Math.Abs(line[i]));
+                if (!double.IsNaN(signal[i])) max = Math.Max(max, Math.Abs(signal[i]));
+                if (!double.IsNaN(histogram[i])) max = Math.Max(max, Math.Abs(histogram[i]));
+            }
+
+            return Math.Max(max * 1.15, 1e-9);
+        }
+
+        private static double MacdValueToScreen(double value, Rectangle plot, double maxAbs)
+        {
+            if (maxAbs <= 1e-12)
+                return plot.Top + plot.Height / 2.0;
+
+            return plot.Bottom - ((value + maxAbs) / (2.0 * maxAbs)) * plot.Height;
         }
 
         private double[] CalculateMovingAverage(int period)
