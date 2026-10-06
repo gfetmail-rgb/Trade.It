@@ -1173,17 +1173,8 @@ namespace Trade.It
                 previous = current;
             }
 
-            var crossIndex = crosshairIndex >= 0 && crosshairIndex < displayedCount
-                ? crosshairIndex
-                : displayedCount - 1;
-            var absoluteCrossIndex = firstIndex + crossIndex;
-            var valueText = absoluteCrossIndex >= 0 && absoluteCrossIndex < vwapCache.Length &&
-                            !double.IsNaN(vwapCache[absoluteCrossIndex]) && !double.IsInfinity(vwapCache[absoluteCrossIndex])
-                ? vwapCache[absoluteCrossIndex].ToString("0.########", CultureInfo.InvariantCulture)
-                : "—";
-
             using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            DrawIndicatorPanelTitle(g, plot, $"VWAP={valueText}", titleFont, indicator.VwapLineColor);
+            DrawIndicatorPanelTitle(g, plot, "VWAP", titleFont, indicator.VwapLineColor);
         }
 
         private void DrawIchimoku(
