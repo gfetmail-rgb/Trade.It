@@ -13,7 +13,7 @@ namespace Trade.It
 
         private void InitializeComponent()
         {
-            tenkanPeriodLabel = new Label(); kijunPeriodLabel = new Label(); spanBPeriodLabel = new Label();
+            tenkanPeriodLabel = new Label(); kijunPeriodLabel = new Label(); spanBPeriodLabel = new Label(); displacementLabel = new Label();
             tenkanPeriodNumeric = new NumericUpDown(); kijunPeriodNumeric = new NumericUpDown(); spanBPeriodNumeric = new NumericUpDown(); displacementNumeric = new NumericUpDown();
             tenkanCheckBox = new CheckBox(); kijunCheckBox = new CheckBox(); spanACheckBox = new CheckBox(); spanBCheckBox = new CheckBox(); chikouCheckBox = new CheckBox(); bullishCloudCheckBox = new CheckBox(); bearishCloudCheckBox = new CheckBox();
             tenkanColorButton = new Button(); kijunColorButton = new Button(); spanAColorButton = new Button(); spanBColorButton = new Button(); chikouColorButton = new Button(); bullishCloudColorButton = new Button(); bearishCloudColorButton = new Button();
