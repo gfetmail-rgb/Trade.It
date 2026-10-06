@@ -1032,6 +1032,7 @@ namespace Trade.It
             if (visible.Count == 0 || macdPlot.Width <= 0 || macdPlot.Height <= 0 || !HasMacdIndicator)
                 return;
 
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
             EnsureMacdCache(indicator);
             var maxAbs = GetMacdScaleMax(macdLineCache!, macdSignalCache!, macdHistogramCache!, firstIndex, visible.Count);
 
@@ -1150,8 +1151,8 @@ namespace Trade.It
         private void RenderStochasticPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
         {
             if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasStochasticIndicator) return;
-            EnsureStochasticCache(indicator);
             var indicator = indicators.First(x => x.Type == ChartIndicatorType.Stochastic);
+            EnsureStochasticCache(indicator);
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
             g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
@@ -1181,8 +1182,8 @@ namespace Trade.It
             if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasStochasticRsiIndicator)
                 return;
 
-            EnsureStochasticRsiCache(indicator);
             var indicator = indicators.First(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
+            EnsureStochasticRsiCache(indicator);
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
             using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f));
 
