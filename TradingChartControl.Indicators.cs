@@ -278,10 +278,48 @@ namespace Trade.It
                 Check(spanA, absoluteIndex, 26, indicator.ShowSpanA, indicator.SpanAColor);
                 Check(spanB, absoluteIndex, 26, indicator.ShowSpanB, indicator.SpanBColor);
                 Check(chikou, absoluteIndex, -26, indicator.ShowChikou, indicator.ChikouColor);
+                CheckCloud(absoluteIndex, spanA, spanB, indicator);
             }
 
             bestDistance = localBestDistance;
             return localBestDistance < double.MaxValue;
+
+            void CheckCloud(int sourceIndex, double[] valuesA, double[] valuesB, ChartIndicator currentIndicator)
+            {
+                if (sourceIndex < 0 || sourceIndex + 1 >= valuesA.Length ||
+                    double.IsNaN(valuesA[sourceIndex]) || double.IsNaN(valuesB[sourceIndex]) ||
+                    double.IsNaN(valuesA[sourceIndex + 1]) || double.IsNaN(valuesB[sourceIndex + 1]))
+                    return;
+
+                var bullish = valuesA[sourceIndex] >= valuesB[sourceIndex];
+                if ((bullish && !currentIndicator.ShowBullishCloud) ||
+                    (!bullish && !currentIndicator.ShowBearishCloud))
+                    return;
+
+                var screenIndex = sourceIndex - firstIndex + 26;
+                var nextScreenIndex = screenIndex + 1;
+                if (nextScreenIndex < 0 || screenIndex > displayedCount)
+                    return;
+
+                var polygon = new[]
+                {
+                    new PointF(
+                        (float)(plot.Left + step * (screenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                        PriceToScreen(valuesA[sourceIndex], plot, min, max)),
+                    new PointF(
+                        (float)(plot.Left + step * (nextScreenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                        PriceToScreen(valuesA[sourceIndex + 1], plot, min, max)),
+                    new PointF(
+                        (float)(plot.Left + step * (nextScreenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                        PriceToScreen(valuesB[sourceIndex + 1], plot, min, max)),
+                    new PointF(
+                        (float)(plot.Left + step * (screenIndex + 0.5) + initialOffset + horizontalPanOffset),
+                        PriceToScreen(valuesB[sourceIndex], plot, min, max))
+                };
+
+                if (PointInPolygon(location, polygon))
+                    localBestDistance = 0;
+            }
 
             void Check(double[] values, int sourceIndex, int shift, bool show, Color color)
             {
@@ -296,6 +334,24 @@ namespace Trade.It
                 var distance = DistanceToIndicatorSegment(location, current, current);
                 if (distance < localBestDistance) localBestDistance = distance;
             }
+        }
+
+        private static bool PointInPolygon(Point point, IReadOnlyList<PointF> polygon)
+        {
+            var inside = false;
+            for (var i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
+            {
+                var pi = polygon[i];
+                var pj = polygon[j];
+
+                if ((pi.Y > point.Y) != (pj.Y > point.Y) &&
+                    point.X < (pj.X - pi.X) * (point.Y - pi.Y) / (pj.Y - pi.Y) + pi.X)
+                {
+                    inside = !inside;
+                }
+            }
+
+            return inside;
         }
 
         private static double DistanceToIndicatorSegment(Point p, PointF a, PointF b)
