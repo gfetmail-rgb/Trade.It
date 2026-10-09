@@ -83,7 +83,8 @@ namespace Trade.It
             var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
             var initialOffset = -plot.Width * 0.25;
             var x = plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset;
-            var candleNumber = points.Count - 1 - (firstIndex + crosshairIndex);
+            var numberingEndIndex = testMode && testEndIndex >= firstIndex ? testEndIndex : points.Count - 1;
+            var candleNumber = numberingEndIndex - (firstIndex + crosshairIndex);
             var text = $"کندل {candleNumber:N0}";
 
             // The renderer still has a legacy date-label path for the crosshair.
