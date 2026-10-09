@@ -2119,6 +2119,7 @@ namespace Trade.It
                 dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
 
             var collected = new List<(DateTime Date, long Sequence, string[] Row)>();
+            var filesContainingSymbolRows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             long sequence = 0;
 
             foreach (var file in GetSymbolFiles(definition, symbol))
@@ -2142,6 +2143,7 @@ namespace Trade.It
                          !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
                         continue;
 
+                    filesContainingSymbolRows.Add(file);
                     if (dateColumn > 0)
                     {
                         if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
@@ -2154,6 +2156,12 @@ namespace Trade.It
                     }
                 }
             }
+
+            // Without dates, chronology across separate inside-file data sources
+            // cannot be inferred safely. Do not let arbitrary file order silently
+            // produce incorrect candle offsets.
+            if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
+                return new List<string[]>();
 
             return dateColumn > 0
                 ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
