@@ -54,6 +54,8 @@ namespace Trade.It
 
             marketApplyButton.Click += (_, _) =>
             {
+                ClearDisplayedChartIfAny();
+
                 if (marketFiltersEnabled)
                 {
                     marketFiltersEnabled = false;
@@ -89,6 +91,7 @@ namespace Trade.It
 
             marketClearButton.Click += (_, _) =>
             {
+                ClearDisplayedChartIfAny();
                 ClearMarketSelections();
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
@@ -1464,6 +1467,8 @@ namespace Trade.It
 
         private void ClearFiltersButton_Click(object? sender, EventArgs e)
         {
+            ClearDisplayedChartIfAny();
+
             // تا وقتی فیلترها فعال هستند، «پاک کردن» مجاز نیست.
             if (filtersApplied)
                 return;
@@ -1539,6 +1544,8 @@ namespace Trade.It
 
         private void FilterApplyButton_Click(object? sender, EventArgs e)
         {
+            ClearDisplayedChartIfAny();
+
             if (filtersApplied)
             {
                 filtersApplied = false;
