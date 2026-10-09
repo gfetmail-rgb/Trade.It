@@ -222,6 +222,24 @@ namespace Trade.It
                     plot.Top,
                     crosshairX,
                     volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom);
+
+                // Candle numbering is reverse chronological: the newest candle is 0.
+                var absoluteCrosshairIndex = firstIndex + crosshairIndex;
+                var candleNumber = points.Count - 1 - absoluteCrosshairIndex;
+                var candleNumberText = candleNumber.ToString(CultureInfo.InvariantCulture);
+                var candleNumberSize = e.Graphics.MeasureString(candleNumberText, axisTextFont);
+                var candleNumberRect = new RectangleF(
+                    Math.Clamp(crosshairX - candleNumberSize.Width / 2f - 3f,
+                        plot.Left, Math.Max(plot.Left, plot.Right - candleNumberSize.Width - 6f)),
+                    plot.Top,
+                    candleNumberSize.Width + 6f,
+                    candleNumberSize.Height + 4f);
+
+                using var candleNumberBrush = new SolidBrush(LineAppearanceSettings.CrosshairColor);
+                using var candleNumberTextBrush = new SolidBrush(Color.White);
+                e.Graphics.FillRectangle(candleNumberBrush, candleNumberRect);
+                e.Graphics.DrawString(candleNumberText, axisTextFont, candleNumberTextBrush,
+                    candleNumberRect.X + 3f, candleNumberRect.Y + 2f);
             }
 
             var priceDecimalPlaces = GetPriceDecimalPlaces(visible);
