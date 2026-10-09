@@ -964,7 +964,7 @@ namespace Trade.It
                     return;
 
                 foreach (var file in Directory.GetFiles(folder, "*.json")
-                             .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                             .OrderBy(file => Path.GetFileName(file), StringComparer.OrdinalIgnoreCase))
                 {
                     try
                     {
@@ -2093,7 +2093,7 @@ namespace Trade.It
                 }
 
                 foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly)
-                             .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                             .OrderBy(file => Path.GetFileName(file), StringComparer.OrdinalIgnoreCase))
                 {
                     if (string.Equals(Path.GetFileNameWithoutExtension(file), symbol, StringComparison.OrdinalIgnoreCase))
                         yield return file;
@@ -2102,7 +2102,7 @@ namespace Trade.It
             }
 
             foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly)
-                         .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                         .OrderBy(file => Path.GetFileName(file), StringComparer.OrdinalIgnoreCase))
                 yield return file;
         }
 
