@@ -223,9 +223,11 @@ namespace Trade.It
                     crosshairX,
                     volumePlot == Rectangle.Empty ? plot.Bottom : volumePlot.Bottom);
 
-                // Candle numbering is reverse chronological: the newest candle is 0.
+                // Candle numbering is reverse chronological: the newest available candle is 0.
+                // In Test Mode, the newest available candle is testEndIndex, not the end of the full dataset.
                 var absoluteCrosshairIndex = firstIndex + crosshairIndex;
-                var candleNumber = points.Count - 1 - absoluteCrosshairIndex;
+                var numberingEndIndex = testMode && testEndIndex >= firstIndex ? testEndIndex : points.Count - 1;
+                var candleNumber = numberingEndIndex - absoluteCrosshairIndex;
                 var candleNumberText = candleNumber.ToString(CultureInfo.InvariantCulture);
                 var candleNumberSize = e.Graphics.MeasureString(candleNumberText, axisTextFont);
                 var candleNumberRect = new RectangleF(
