@@ -1571,7 +1571,9 @@ namespace Trade.It
                 !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
                 return;
 
-            var result = (definition.Symbols ?? new List<string>())
+            // Turning off the Filters tab must remove only those filters.
+            // Keep the Market tab's filter applied when it is still enabled.
+            var result = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
