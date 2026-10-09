@@ -294,24 +294,25 @@ namespace Trade.It
 
         private bool CollectMarketFilterExplicitSelections(TreeNode node)
         {
-            if (!node.Checked)
-                return false;
-
             if (node.Nodes.Count == 0)
             {
-                AddMarketFilterExplicitNode(node);
-                return true;
+                if (node.Checked)
+                    AddMarketFilterExplicitNode(node);
+
+                return node.Checked;
             }
 
             var allChildrenFullySelected = true;
 
+            // Visit children even when this parent is unchecked. A user can
+            // select an individual market or board without selecting its root.
             foreach (TreeNode child in node.Nodes)
             {
                 if (!CollectMarketFilterExplicitSelections(child))
                     allChildrenFullySelected = false;
             }
 
-            if (allChildrenFullySelected)
+            if (node.Checked && allChildrenFullySelected)
             {
                 // The parent represents the complete selected branch.
                 // Remove its descendants from the explicit set so that a
@@ -330,9 +331,10 @@ namespace Trade.It
                 }
 
                 AddMarketFilterExplicitNode(node);
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void AddMarketFilterExplicitNode(TreeNode node)
