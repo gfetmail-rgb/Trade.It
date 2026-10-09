@@ -1460,11 +1460,9 @@ namespace Trade.It
         {
             if (controlTabControl.SelectedTab == tabPage2)
             {
-                // Only restore the applied snapshot while market filters are enabled.
-                // When disabled, preserve the user's visible, pending market selections.
-                if (marketFiltersEnabled)
-                    RestoreAppliedMarketFilters();
-
+                // Switching tabs must not rewrite the visible market-tree checks.
+                // Applied selections are captured when the user confirms market filters;
+                // the current tree state should remain intact during tab navigation.
                 UpdateFilterControlAvailability();
             }
         }
