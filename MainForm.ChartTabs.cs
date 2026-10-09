@@ -84,6 +84,16 @@ namespace Trade.It
             }
         }
 
+        private void ClearDisplayedChartIfAny()
+        {
+            if (GetActiveChart() == null)
+                return;
+
+            var selectedIndex = chartTabControl.SelectedIndex;
+            if (selectedIndex >= 0)
+                CloseSingleChartTab(selectedIndex);
+        }
+
         private void CloseSingleChartTab(int index)
         {
             if (index < 0 || index >= chartTabControl.TabPages.Count)
