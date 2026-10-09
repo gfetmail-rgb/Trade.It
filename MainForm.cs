@@ -1844,37 +1844,40 @@ namespace Trade.It
         {
             ratio = 0;
             var volumeColumn = GetMappingColumn(definition, "حجم");
-            if (volumeColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
-            var volumes = new List<double>();
+            if (volumeColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return false;
+
+            List<string[]> rows;
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol))
-                    ReadVolumesFromFile(definition, file, symbol, volumeColumn, volumes);
+                rows = ReadOrderedSymbolRows(definition, symbol);
             }
-            catch { return false; }
-            if (volumes.Count < n + 1) return false;
-            var last = volumes[^1];
-            var average = volumes.Skip(volumes.Count - n - 1).Take(n).Average();
-            if (average <= 0 || double.IsNaN(last) || double.IsInfinity(last)) return false;
-            ratio = last / average;
-            return !double.IsNaN(ratio) && !double.IsInfinity(ratio);
-        }
-
-        private void ReadVolumesFromFile(PortfolioDefinition definition, string filePath, string symbol, int volumeColumn, List<double> volumes)
-        {
-            var symbolColumn = GetMappingColumn(definition, "نماد");
-            var firstLine = true;
-            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            catch
             {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var row = SplitTradingDataLine(line, definition.Separator);
-                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile &&
-                    (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
-                if (volumeColumn > row.Length) continue;
-                if (TryParseTradingNumber(row[volumeColumn - 1], out var volume)) volumes.Add(volume);
+                return false;
             }
+
+            if (rows.Count < n + 1)
+                return false;
+
+            if (volumeColumn > rows[^1].Length || !TryParseTradingNumber(rows[^1][volumeColumn - 1], out var latestVolume))
+                return false;
+
+            var priorVolumes = new List<double>(n);
+            for (var offset = n; offset >= 1; offset--)
+            {
+                var row = rows[rows.Count - 1 - offset];
+                if (volumeColumn > row.Length || !TryParseTradingNumber(row[volumeColumn - 1], out var volume))
+                    return false;
+                priorVolumes.Add(volume);
+            }
+
+            var average = priorVolumes.Average();
+            if (average <= 0 || double.IsNaN(latestVolume) || double.IsInfinity(latestVolume))
+                return false;
+
+            ratio = latestVolume / average;
+            return !double.IsNaN(ratio) && !double.IsInfinity(ratio);
         }
 
         private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
@@ -2083,12 +2086,78 @@ namespace Trade.It
             if (definition.SymbolSource == SymbolSource.FileName)
             {
                 var direct = Path.Combine(definition.DataPath, symbol + extension);
-                if (File.Exists(direct)) { yield return direct; yield break; }
-                foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
-                    if (string.Equals(Path.GetFileNameWithoutExtension(file), symbol, StringComparison.OrdinalIgnoreCase)) yield return file;
+                if (File.Exists(direct))
+                {
+                    yield return direct;
+                    yield break;
+                }
+
+                foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly)
+                             .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                {
+                    if (string.Equals(Path.GetFileNameWithoutExtension(file), symbol, StringComparison.OrdinalIgnoreCase))
+                        yield return file;
+                }
                 yield break;
             }
-            foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly)) yield return file;
+
+            foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly)
+                         .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+                yield return file;
+        }
+
+        // All candle-offset filters use this common ordered row set. When a date
+        // column is configured, rows with unparseable dates are excluded and the
+        // remaining candles are sorted oldest-to-newest by their actual date.
+        // This makes index 0 (from the end) the latest dated candle even when
+        // one symbol's rows are spread across multiple files.
+        private List<string[]> ReadOrderedSymbolRows(PortfolioDefinition definition, string symbol)
+        {
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0)
+                dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+
+            var collected = new List<(DateTime Date, long Sequence, string[] Row)>();
+            long sequence = 0;
+
+            foreach (var file in GetSymbolFiles(definition, symbol))
+            {
+                var firstLine = true;
+                foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var row = SplitTradingDataLine(line, definition.Separator);
+                    if (firstLine && definition.HasHeader)
+                    {
+                        firstLine = false;
+                        continue;
+                    }
+                    firstLine = false;
+
+                    if (definition.SymbolSource == SymbolSource.InsideFile &&
+                        (symbolColumn <= 0 || symbolColumn > row.Length ||
+                         !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                        continue;
+
+                    if (dateColumn > 0)
+                    {
+                        if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                            continue;
+                        collected.Add((date.Date, sequence++, row));
+                    }
+                    else
+                    {
+                        collected.Add((DateTime.MinValue, sequence++, row));
+                    }
+                }
+            }
+
+            return dateColumn > 0
+                ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
+                : collected.OrderBy(x => x.Sequence).Select(x => x.Row).ToList();
         }
 
         private static int GetMappingColumn(PortfolioDefinition definition, string field)
@@ -2266,41 +2335,37 @@ namespace Trade.It
 
         private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, out double left, out double right)
         {
-            left = 0; right = 0;
+            left = 0;
+            right = 0;
             var firstColumn = GetMappingColumn(definition, firstField);
             var secondColumn = GetMappingColumn(definition, secondField);
-            if (firstColumn <= 0 || secondColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
-            var rows = new List<(double? First, double? Second)>();
-            var symbolColumn = GetMappingColumn(definition, "نماد");
+            if (firstColumn <= 0 || secondColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return false;
+
+            List<string[]> rows;
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol)) ReadComparisonRows(definition, file, symbol, symbolColumn, firstColumn, secondColumn, rows);
+                rows = ReadOrderedSymbolRows(definition, symbol);
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
+
             var firstIndex = rows.Count - 1 - firstOffset;
             var secondIndex = rows.Count - 1 - secondOffset;
-            if (firstOffset < 0 || secondOffset < 0 || firstIndex < 0 || secondIndex < 0 || firstIndex >= rows.Count || secondIndex >= rows.Count) return false;
-            var first = rows[firstIndex].First; var second = rows[secondIndex].Second;
-            if (!first.HasValue || !second.HasValue) return false;
-            left = first.Value; right = second.Value;
-            return !double.IsNaN(left) && !double.IsInfinity(left) && !double.IsNaN(right) && !double.IsInfinity(right);
-        }
+            if (firstOffset < 0 || secondOffset < 0 || firstIndex < 0 || secondIndex < 0 ||
+                firstIndex >= rows.Count || secondIndex >= rows.Count)
+                return false;
 
-        private void ReadComparisonRows(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int firstColumn, int secondColumn, List<(double? First, double? Second)> rows)
-        {
-            var firstLine = true;
-            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
-            {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var row = SplitTradingDataLine(line, definition.Separator);
-                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile && (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
-                if (firstColumn > row.Length || secondColumn > row.Length) { rows.Add((null, null)); continue; }
-                double? firstValue = TryParseTradingNumber(row[firstColumn - 1], out var firstParsed) ? firstParsed : null;
-                double? secondValue = TryParseTradingNumber(row[secondColumn - 1], out var secondParsed) ? secondParsed : null;
-                rows.Add((firstValue, secondValue));
-            }
+            var firstRow = rows[firstIndex];
+            var secondRow = rows[secondIndex];
+            if (firstColumn > firstRow.Length || secondColumn > secondRow.Length ||
+                !TryParseTradingNumber(firstRow[firstColumn - 1], out left) ||
+                !TryParseTradingNumber(secondRow[secondColumn - 1], out right))
+                return false;
+
+            return double.IsFinite(left) && double.IsFinite(right);
         }
 
         private static bool CompareComparisonOperator(double left, double right, string op) => op.Trim() switch
@@ -2407,34 +2472,32 @@ namespace Trade.It
         {
             changePercent = 0;
             var column = GetMappingColumn(definition, field);
-            if (column <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
-            var values = new List<double>();
-            var symbolColumn = GetMappingColumn(definition, "نماد");
+            if (column <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                return false;
+
+            List<string[]> rows;
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol)) ReadOhlcValues(definition, file, symbol, symbolColumn, column, values);
+                rows = ReadOrderedSymbolRows(definition, symbol);
             }
-            catch { return false; }
-            if (values.Count <= n) return false;
-            var latest = values[^1]; var previous = values[values.Count - 1 - n];
-            if (previous == 0 || double.IsNaN(latest) || double.IsInfinity(latest) || double.IsNaN(previous) || double.IsInfinity(previous)) return false;
-            changePercent = (latest - previous) / Math.Abs(previous) * 100.0;
-            return !double.IsNaN(changePercent) && !double.IsInfinity(changePercent);
-        }
-
-        private void ReadOhlcValues(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int valueColumn, List<double> values)
-        {
-            var firstLine = true;
-            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            catch
             {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var row = SplitTradingDataLine(line, definition.Separator);
-                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile && (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
-                if (valueColumn > row.Length) continue;
-                if (TryParseTradingNumber(row[valueColumn - 1], out var value)) values.Add(value);
+                return false;
             }
+
+            if (n <= 0 || rows.Count <= n)
+                return false;
+
+            var latestRow = rows[^1];
+            var previousRow = rows[rows.Count - 1 - n];
+            if (column > latestRow.Length || column > previousRow.Length ||
+                !TryParseTradingNumber(latestRow[column - 1], out var latest) ||
+                !TryParseTradingNumber(previousRow[column - 1], out var previous) ||
+                previous == 0 || !double.IsFinite(latest) || !double.IsFinite(previous))
+                return false;
+
+            changePercent = (latest - previous) / Math.Abs(previous) * 100.0;
+            return double.IsFinite(changePercent);
         }
 
         private static string NormalizeOhlcChangeField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
