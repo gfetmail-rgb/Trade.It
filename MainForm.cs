@@ -1479,9 +1479,6 @@ namespace Trade.It
                 statusAllRadio.Checked = true;
                 nameComboBox.SelectedIndex = -1;
 
-                // فیلترهای بازار نیز باید از وضعیت اعمال‌شده پاک شوند؛
-                // سپس کل زنجیره فیلترها یک‌بار از ابتدا اجرا می‌شود.
-                ClearMarketSelections();
             }
             finally
             {
