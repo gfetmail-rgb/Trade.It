@@ -302,8 +302,8 @@ namespace Trade.It
                 return;
             var headerPoint = visible[Math.Clamp(headerIndex, 0, displayedCount - 1)];
             var headerText = string.IsNullOrWhiteSpace(chartSymbol)
-                ? $"{chartTimeFrame}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}"
-                : $"{chartSymbol}   {chartTimeFrame}    O: {headerPoint.Open:0.##}   H: {headerPoint.High:0.##}   L: {headerPoint.Low:0.##}   C: {headerPoint.Close:0.##}   V: {headerPoint.Volume:N0}";
+                ? $"{chartTimeFrame}    O: {FormatPrice(headerPoint.Open, priceDecimalPlaces)}   H: {FormatPrice(headerPoint.High, priceDecimalPlaces)}   L: {FormatPrice(headerPoint.Low, priceDecimalPlaces)}   C: {FormatPrice(headerPoint.Close, priceDecimalPlaces)}   V: {headerPoint.Volume:N0}"
+                : $"{chartSymbol}   {chartTimeFrame}    O: {FormatPrice(headerPoint.Open, priceDecimalPlaces)}   H: {FormatPrice(headerPoint.High, priceDecimalPlaces)}   L: {FormatPrice(headerPoint.Low, priceDecimalPlaces)}   C: {FormatPrice(headerPoint.Close, priceDecimalPlaces)}   V: {headerPoint.Volume:N0}";
             using (var headerBrush = new SolidBrush(Color.FromArgb(45, 45, 45)))
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
