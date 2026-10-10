@@ -1629,7 +1629,8 @@ namespace Trade.It
 
             foreach (var filter in comparisons)
             {
-                if (!filter.GroupEnabled) continue;\n                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
+                if (!filter.GroupEnabled) continue;
+                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
                     || HasValue(filter.FirstOffset) || HasValue(filter.SecondOffset);
                 if (!active) continue;
 
