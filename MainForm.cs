@@ -1546,8 +1546,158 @@ namespace Trade.It
             UpdateFilterControlAvailability();
         }
 
+        private bool ValidateFilterInputs()
+        {
+            var errors = new List<string>();
+            Control? firstInvalid = null;
+
+            void AddError(string message, Control control)
+            {
+                errors.Add("• " + message);
+                firstInvalid ??= control;
+            }
+
+            bool HasValue(TextBox box) => !string.IsNullOrWhiteSpace(box.Text);
+            bool HasSelection(ComboBox combo) => combo.SelectedItem != null;
+            bool TryReadNumber(TextBox box, out double value)
+            {
+                var text = NormalizeTradingDigits(box.Text).Trim();
+                return double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value) && double.IsFinite(value);
+            }
+            bool TryReadNonNegativeInteger(TextBox box, out int value)
+            {
+                return int.TryParse(NormalizeTradingDigits(box.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out value) && value >= 0;
+            }
+            bool IsValidOperator(ComboBox combo)
+            {
+                var op = combo.SelectedItem?.ToString()?.Trim();
+                return op is ">" or "<" or "=" or "!=" or ">=" or "<=";
+            }
+
+            // Name filter: either both controls are empty, or both are valid.
+            var hasNameText = HasValue(nameTextBox);
+            var hasNameMode = HasSelection(nameComboBox);
+            if (hasNameText != hasNameMode)
+            {
+                if (!hasNameText) AddError("فیلتر نام: کادر نام نماد پر نشده است.", nameTextBox);
+                else AddError("فیلتر نام: نوع جست‌وجو را انتخاب کنید.", nameComboBox);
+            }
+
+            // Volume ratio filter.
+            var hasVolumeThreshold = HasValue(volumeRatioTextBox);
+            var hasVolumeDays = HasValue(textBox1);
+            var hasVolumeOperator = HasSelection(volumeRatioOperatorComboBox);
+            if (hasVolumeThreshold || hasVolumeDays || hasVolumeOperator)
+            {
+                if (!hasVolumeThreshold)
+                    AddError("فیلتر نسبت حجم: مقدار نسبت حجم وارد نشده است.", volumeRatioTextBox);
+                else if (!TryReadNumber(volumeRatioTextBox, out var threshold) || threshold < 0)
+                    AddError("فیلتر نسبت حجم: مقدار باید عددی و صفر یا بزرگ‌تر باشد.", volumeRatioTextBox);
+
+                if (!hasVolumeDays)
+                    AddError("فیلتر نسبت حجم: تعداد روزها وارد نشده است.", textBox1);
+                else if (!int.TryParse(NormalizeTradingDigits(textBox1.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var volumeDays) || volumeDays <= 0)
+                    AddError("فیلتر نسبت حجم: تعداد روزها باید عدد صحیح بزرگ‌تر از صفر باشد.", textBox1);
+
+                if (!hasVolumeOperator)
+                    AddError("فیلتر نسبت حجم: عملگر مقایسه انتخاب نشده است.", volumeRatioOperatorComboBox);
+                else if (!IsValidOperator(volumeRatioOperatorComboBox))
+                    AddError("فیلتر نسبت حجم: عملگر مقایسه معتبر نیست.", volumeRatioOperatorComboBox);
+            }
+
+            // Past-days activity filter.
+            var hasPastDays = HasValue(pastDaysTextBox);
+            var hasPastDaysMode = HasSelection(pastDaysStatusComboBox);
+            if (hasPastDays || hasPastDaysMode)
+            {
+                if (!hasPastDays)
+                    AddError("فیلتر سابقه معامله: تعداد روزها وارد نشده است.", pastDaysTextBox);
+                else if (!TryReadNonNegativeInteger(pastDaysTextBox, out _))
+                    AddError("فیلتر سابقه معامله: تعداد روزها باید عدد صحیح صفر یا بزرگ‌تر باشد.", pastDaysTextBox);
+
+                if (!hasPastDaysMode)
+                    AddError("فیلتر سابقه معامله: وضعیت «داشته/نداشته» انتخاب نشده است.", pastDaysStatusComboBox);
+            }
+
+            // The three OHLC comparison filters.
+            var comparisons = new[]
+            {
+                (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, Label: "فیلتر مقایسه ۱"),
+                (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, Label: "فیلتر مقایسه ۲"),
+                (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, Label: "فیلتر مقایسه ۳")
+            };
+
+            foreach (var filter in comparisons)
+            {
+                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
+                    || HasValue(filter.FirstOffset) || HasValue(filter.SecondOffset);
+                if (!active) continue;
+
+                if (!HasSelection(filter.First))
+                    AddError($"{filter.Label}: قیمت اول انتخاب نشده است.", filter.First);
+                if (!HasSelection(filter.Operator))
+                    AddError($"{filter.Label}: عملگر مقایسه انتخاب نشده است.", filter.Operator);
+                else if (!IsValidOperator(filter.Operator))
+                    AddError($"{filter.Label}: عملگر مقایسه معتبر نیست.", filter.Operator);
+                if (!HasSelection(filter.Second))
+                    AddError($"{filter.Label}: قیمت دوم انتخاب نشده است.", filter.Second);
+
+                if (!HasValue(filter.FirstOffset))
+                    AddError($"{filter.Label}: تعداد روزِ قیمت اول وارد نشده است.", filter.FirstOffset);
+                else if (!TryReadNonNegativeInteger(filter.FirstOffset, out _))
+                    AddError($"{filter.Label}: تعداد روزِ قیمت اول باید عدد صحیح صفر یا بزرگ‌تر باشد.", filter.FirstOffset);
+
+                if (!HasValue(filter.SecondOffset))
+                    AddError($"{filter.Label}: تعداد روزِ قیمت دوم وارد نشده است.", filter.SecondOffset);
+                else if (!TryReadNonNegativeInteger(filter.SecondOffset, out _))
+                    AddError($"{filter.Label}: تعداد روزِ قیمت دوم باید عدد صحیح صفر یا بزرگ‌تر باشد.", filter.SecondOffset);
+            }
+
+            // Percentage-change filter.
+            var hasChangeField = HasSelection(ohlcChangeFieldComboBox);
+            var hasChangeDays = HasValue(ohlcChangeDaysTextBox);
+            var hasChangePercent = HasValue(ohlcChangePercentTextBox);
+            var hasChangeOperator = HasSelection(ohlcChangeDirectionComboBox);
+            if (hasChangeField || hasChangeDays || hasChangePercent || hasChangeOperator)
+            {
+                if (!hasChangeField || string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString())))
+                    AddError("فیلتر تغییر قیمت: نوع قیمت (اولین/بیشترین/کمترین/آخرین) انتخاب نشده است.", ohlcChangeFieldComboBox);
+
+                if (!hasChangeDays)
+                    AddError("فیلتر تغییر قیمت: تعداد روزها وارد نشده است.", ohlcChangeDaysTextBox);
+                else if (!int.TryParse(NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var changeDays) || changeDays <= 0)
+                    AddError("فیلتر تغییر قیمت: تعداد روزها باید عدد صحیح بزرگ‌تر از صفر باشد.", ohlcChangeDaysTextBox);
+
+                if (!hasChangePercent)
+                    AddError("فیلتر تغییر قیمت: درصد تغییر وارد نشده است.", ohlcChangePercentTextBox);
+                else if (!TryReadNumber(ohlcChangePercentTextBox, out _))
+                    AddError("فیلتر تغییر قیمت: درصد تغییر باید یک عدد معتبر باشد.", ohlcChangePercentTextBox);
+
+                if (!hasChangeOperator)
+                    AddError("فیلتر تغییر قیمت: عملگر مقایسه انتخاب نشده است.", ohlcChangeDirectionComboBox);
+                else if (!IsValidOperator(ohlcChangeDirectionComboBox))
+                    AddError("فیلتر تغییر قیمت: عملگر مقایسه معتبر نیست.", ohlcChangeDirectionComboBox);
+            }
+
+            if (errors.Count == 0)
+                return true;
+
+            MessageBox.Show(
+                this,
+                "فیلترها اعمال نشدند. موارد زیر را اصلاح کنید:\n\n" + string.Join(Environment.NewLine, errors),
+                "اعتبارسنجی فیلترها",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            firstInvalid?.Focus();
+            return false;
+        }
+
         private void FilterApplyButton_Click(object? sender, EventArgs e)
         {
+            if (!filtersApplied && !ValidateFilterInputs())
+                return;
+
             ClearDisplayedChartIfAny();
 
             if (filtersApplied)
