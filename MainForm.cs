@@ -2014,14 +2014,14 @@ namespace Trade.It
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var source = symbols.ToList();
             var calculated = new List<(string Symbol, double Ratio)>();
-            var notCalculated = 0;
+            var notCalculatedSymbols = new List<string>();
 
             foreach (var symbol in source)
             {
                 if (TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
                     calculated.Add((symbol, ratio));
                 else
-                    notCalculated++;
+                    notCalculatedSymbols.Add(symbol);
             }
 
             // Use one consistent tolerance for all three operators so >, < and =
