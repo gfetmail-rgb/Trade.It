@@ -2043,7 +2043,10 @@ namespace Trade.It
                 $"بزرگ‌تر از آستانه: {greaterCount}\n" +
                 $"کوچک‌تر از آستانه: {lessCount}\n" +
                 $"مساوی آستانه (با تلورانس عددی): {equalCount}\n" +
-                $"غیرقابل محاسبه و حذف‌شده: {notCalculated}\n\n" +
+                $"غیرقابل محاسبه و حذف‌شده: {notCalculatedSymbols.Count}\n" +
+                (notCalculatedSymbols.Count > 0
+                    ? $"نام نمادهای غیرقابل محاسبه: {string.Join("، ", notCalculatedSymbols)}\n\n"
+                    : "\n") +
                 $"نتیجه عملگر انتخاب‌شده: {result.Count}",
                 "گزارش فیلتر نسبت حجم",
                 MessageBoxButtons.OK,
