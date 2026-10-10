@@ -2510,12 +2510,11 @@ namespace Trade.It
 
         private static string NormalizeOhlcChangeField(string? value) => (value ?? string.Empty).Trim().ToUpperInvariant() switch
         {
-            "O" => "اولین",
-            "اولین" => "اولین",
-            "H" => "بیشترین",
-            "L" => "کمترین",
-            "C" => "آخرین",
-                        _ => string.Empty
+            "O" or "اولین" => "اولین",
+            "H" or "بیشترین" => "بیشترین",
+            "L" or "کمترین" => "کمترین",
+            "C" or "آخرین" => "آخرین",
+            _ => string.Empty
         };
 
         private void hideChartButton_Click(object sender, EventArgs e)
