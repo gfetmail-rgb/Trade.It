@@ -1191,13 +1191,32 @@ namespace Trade.It
                     return;
 
                 var batchStart = start;
-                var batch = await Task.Run(() =>
+                string[] batch;
+                try
                 {
-                    var values = new string[Math.Min(batchSize, symbols.Count - batchStart)];
-                    for (var i = 0; i < values.Length; i++)
-                        values[i] = GetLatestTradeDateText(definition, symbols[batchStart + i]);
-                    return values;
-                });
+                    batch = await Task.Run(() =>
+                    {
+                        var values = new string[Math.Min(batchSize, symbols.Count - batchStart)];
+                        for (var i = 0; i < values.Length; i++)
+                        {
+                            try
+                            {
+                                values[i] = GetLatestTradeDateText(definition, symbols[batchStart + i]);
+                            }
+                            catch
+                            {
+                                // A failure for one symbol must not stop loading dates for later symbols.
+                                values[i] = string.Empty;
+                            }
+                        }
+                        return values;
+                    });
+                }
+                catch
+                {
+                    // If an unexpected batch-level error occurs, continue with the next batch.
+                    batch = Enumerable.Repeat(string.Empty, Math.Min(batchSize, symbols.Count - batchStart)).ToArray();
+                }
 
                 if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
                     return;
