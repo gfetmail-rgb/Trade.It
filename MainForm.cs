@@ -1577,7 +1577,7 @@ namespace Trade.It
             // Name filter: either both controls are empty, or both are valid.
             var hasNameText = HasValue(nameTextBox);
             var hasNameMode = HasSelection(nameComboBox);
-            if (hasNameText != hasNameMode)
+            if (nameFilterGroup.Enabled && hasNameText != hasNameMode)
             {
                 if (!hasNameText) AddError("فیلتر نام: کادر نام نماد پر نشده است.", nameTextBox);
                 else AddError("فیلتر نام: نوع جست‌وجو را انتخاب کنید.", nameComboBox);
@@ -1587,7 +1587,7 @@ namespace Trade.It
             var hasVolumeThreshold = HasValue(volumeRatioTextBox);
             var hasVolumeDays = HasValue(textBox1);
             var hasVolumeOperator = HasSelection(volumeRatioOperatorComboBox);
-            if (hasVolumeThreshold || hasVolumeDays || hasVolumeOperator)
+            if (volumeRatioGroup.Enabled && (hasVolumeThreshold || hasVolumeDays || hasVolumeOperator))
             {
                 if (!hasVolumeThreshold)
                     AddError("فیلتر نسبت حجم: مقدار نسبت حجم وارد نشده است.", volumeRatioTextBox);
@@ -1608,7 +1608,7 @@ namespace Trade.It
             // Past-days activity filter.
             var hasPastDays = HasValue(pastDaysTextBox);
             var hasPastDaysMode = HasSelection(pastDaysStatusComboBox);
-            if (hasPastDays || hasPastDaysMode)
+            if (pastDaysGroup.Enabled && (hasPastDays || hasPastDaysMode))
             {
                 if (!hasPastDays)
                     AddError("فیلتر سابقه معامله: تعداد روزها وارد نشده است.", pastDaysTextBox);
@@ -1622,14 +1622,14 @@ namespace Trade.It
             // The three OHLC comparison filters.
             var comparisons = new[]
             {
-                (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, Label: "فیلتر مقایسه ۱"),
-                (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, Label: "فیلتر مقایسه ۲"),
-                (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, Label: "فیلتر مقایسه ۳")
+                (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, GroupEnabled: comparisonGroup7.Enabled, Label: "فیلتر مقایسه ۱"),
+                (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, GroupEnabled: comparisonGroup8.Enabled, Label: "فیلتر مقایسه ۲"),
+                (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, GroupEnabled: groupBox3.Enabled, Label: "فیلتر مقایسه ۳")
             };
 
             foreach (var filter in comparisons)
             {
-                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
+                if (!filter.GroupEnabled) continue;\n                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
                     || HasValue(filter.FirstOffset) || HasValue(filter.SecondOffset);
                 if (!active) continue;
 
@@ -1658,7 +1658,7 @@ namespace Trade.It
             var hasChangeDays = HasValue(ohlcChangeDaysTextBox);
             var hasChangePercent = HasValue(ohlcChangePercentTextBox);
             var hasChangeOperator = HasSelection(ohlcChangeDirectionComboBox);
-            if (hasChangeField || hasChangeDays || hasChangePercent || hasChangeOperator)
+            if (ohlcChangeFilterGroup.Enabled && (hasChangeField || hasChangeDays || hasChangePercent || hasChangeOperator))
             {
                 if (!hasChangeField || string.IsNullOrEmpty(NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString())))
                     AddError("فیلتر تغییر قیمت: نوع قیمت (اولین/بیشترین/کمترین/آخرین) انتخاب نشده است.", ohlcChangeFieldComboBox);
