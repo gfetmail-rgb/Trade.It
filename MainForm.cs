@@ -2061,6 +2061,7 @@ namespace Trade.It
                 "<=" => left <= right,
                 "=" => Math.Abs(left - right) < 1e-12,
                 "==" => Math.Abs(left - right) < 1e-12,
+                "!=" => Math.Abs(left - right) >= 1e-12,
                 "مساوی" => Math.Abs(left - right) < 1e-12,
                 "بزرگتر از" => left > right,
                 "بزرگتر" => left > right,
