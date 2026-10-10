@@ -2089,27 +2089,36 @@ namespace Trade.It
                 return false;
             }
 
-            if (rows.Count < n + 1)
+            // Use up to n available rows before the latest row. A short history
+            // must not disqualify a symbol if at least one prior volume is usable.
+            if (rows.Count < 2)
                 return false;
 
             if (volumeColumn > rows[^1].Length || !TryParseTradingNumber(rows[^1][volumeColumn - 1], out var latestVolume))
                 return false;
 
-            var priorVolumes = new List<double>(n);
-            for (var offset = n; offset >= 1; offset--)
+            var availablePriorRows = Math.Min(n, rows.Count - 1);
+            var priorVolumes = new List<double>(availablePriorRows);
+            for (var offset = availablePriorRows; offset >= 1; offset--)
             {
                 var row = rows[rows.Count - 1 - offset];
-                if (volumeColumn > row.Length || !TryParseTradingNumber(row[volumeColumn - 1], out var volume))
-                    return false;
-                priorVolumes.Add(volume);
+                if (volumeColumn <= row.Length &&
+                    TryParseTradingNumber(row[volumeColumn - 1], out var volume) &&
+                    double.IsFinite(volume))
+                {
+                    priorVolumes.Add(volume);
+                }
             }
 
+            if (priorVolumes.Count == 0 || !double.IsFinite(latestVolume))
+                return false;
+
             var average = priorVolumes.Average();
-            if (average <= 0 || double.IsNaN(latestVolume) || double.IsInfinity(latestVolume))
+            if (average <= 0)
                 return false;
 
             ratio = latestVolume / average;
-            return !double.IsNaN(ratio) && !double.IsInfinity(ratio);
+            return double.IsFinite(ratio);
         }
 
         private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
