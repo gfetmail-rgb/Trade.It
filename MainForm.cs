@@ -2000,14 +2000,73 @@ namespace Trade.It
         private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
         {
             if (!HasVolumeColumn(definition)) return symbols;
+
             var ratioText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
             var nText = NormalizeTradingDigits(textBox1.Text).Trim();
             if (!double.TryParse(ratioText, NumberStyles.Float, CultureInfo.InvariantCulture, out var threshold) ||
+                !double.IsFinite(threshold) ||
                 !int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n <= 0)
                 return symbols;
-            if (volumeRatioOperatorComboBox.SelectedIndex < 0 || volumeRatioOperatorComboBox.SelectedItem == null) return symbols;
+
+            if (volumeRatioOperatorComboBox.SelectedIndex < 0 || volumeRatioOperatorComboBox.SelectedItem == null)
+                return symbols;
+
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
-            return symbols.Where(symbol => TryGetLatestVolumeRatio(definition, symbol, n, out var ratio) && CompareNumeric(ratio, threshold, op));
+            var source = symbols.ToList();
+            var calculated = new List<(string Symbol, double Ratio)>();
+            var notCalculated = 0;
+
+            foreach (var symbol in source)
+            {
+                if (TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
+                    calculated.Add((symbol, ratio));
+                else
+                    notCalculated++;
+            }
+
+            // Use one consistent tolerance for all three operators so >, < and =
+            // form a disjoint partition of every ratio that could be calculated.
+            var tolerance = 1e-10 * Math.Max(1.0, Math.Abs(threshold));
+            var greaterCount = calculated.Count(x => x.Ratio > threshold + tolerance);
+            var lessCount = calculated.Count(x => x.Ratio < threshold - tolerance);
+            var equalCount = calculated.Count - greaterCount - lessCount;
+
+            var result = calculated
+                .Where(x => MatchesVolumeRatioOperator(x.Ratio, threshold, tolerance, op))
+                .Select(x => x.Symbol)
+                .ToList();
+
+            MessageBox.Show(
+                this,
+                $"کل نمادهای ورودی: {source.Count}\n" +
+                $"نسبت حجم قابل محاسبه: {calculated.Count}\n" +
+                $"بزرگ‌تر از آستانه: {greaterCount}\n" +
+                $"کوچک‌تر از آستانه: {lessCount}\n" +
+                $"مساوی آستانه (با تلورانس عددی): {equalCount}\n" +
+                $"غیرقابل محاسبه و حذف‌شده: {notCalculated}\n\n" +
+                $"نتیجه عملگر انتخاب‌شده: {result.Count}",
+                "گزارش فیلتر نسبت حجم",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            return result;
+        }
+
+        private static bool MatchesVolumeRatioOperator(double ratio, double threshold, double tolerance, string op)
+        {
+            var normalized = NormalizeSymbolName(op);
+            var delta = ratio - threshold;
+
+            return normalized switch
+            {
+                ">" or "بزرگتر از" or "بزرگتر" => delta > tolerance,
+                "<" or "کوچکتر از" or "کوچکتر" => delta < -tolerance,
+                "=" or "==" or "مساوی" => Math.Abs(delta) <= tolerance,
+                ">=" or "بزرگتر یا مساوی" or "بزرگتر مساوی" => delta >= -tolerance,
+                "<=" or "کوچکتر یا مساوی" or "کوچکتر مساوی" => delta <= tolerance,
+                "!=" => Math.Abs(delta) > tolerance,
+                _ => false
+            };
         }
 
         private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, out double ratio)
