@@ -1558,7 +1558,7 @@ namespace Trade.It
             }
 
             bool HasValue(TextBox box) => !string.IsNullOrWhiteSpace(box.Text);
-            bool HasSelection(ComboBox combo) => combo.SelectedItem != null;
+            bool HasSelection(ComboBox combo) => combo.SelectedIndex != -1;
             bool TryReadNumber(TextBox box, out double value)
             {
                 var text = NormalizeTradingDigits(box.Text).Trim();
