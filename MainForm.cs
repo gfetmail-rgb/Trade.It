@@ -1990,7 +1990,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, string.Empty);
             }
             finally
             {
@@ -2001,7 +2001,9 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
-            _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);
+            var loadVersion = ++latestTradeDateLoadVersion;
+            _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
+            _ = LoadLatestVolumesAsync(definition, result, loadVersion);
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
@@ -2769,10 +2771,11 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, "");
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
+            _ = LoadLatestVolumesAsync(definition, result, ++latestTradeDateLoadVersion);
         }
 
         private IEnumerable<string> GetDisplayedGridSymbolsForOhlcFilter()
