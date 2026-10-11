@@ -98,8 +98,6 @@ public sealed partial class MarketStructureForm : Form
             .Distinct(StringComparer.CurrentCultureIgnoreCase)
             .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
-
-        MarketStructureStore.Save(data);
     }
 
     private void RebuildTree(string? selectId = null)
