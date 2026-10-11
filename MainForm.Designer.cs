@@ -185,6 +185,7 @@
             symbolColumn = new DataGridViewTextBoxColumn();
             lastTradeColumn = new DataGridViewTextBoxColumn();
             selectColumn = new DataGridViewCheckBoxColumn();
+            volumeColumn = new DataGridViewTextBoxColumn();
             portfolioComboBox = new ComboBox();
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
@@ -709,7 +710,7 @@
             stocksDataGridView.AllowUserToResizeRows = false;
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksDataGridView.ColumnHeadersHeight = 34;
-            stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn });
+            stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn, volumeColumn });
             stocksDataGridView.Location = new Point(11, 47);
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RowHeadersVisible = false;
@@ -747,6 +748,16 @@
             selectColumn.MinimumWidth = 8;
             selectColumn.Name = "selectColumn";
             selectColumn.Width = 68;
+            // 
+            // volumeColumn
+            // 
+            volumeColumn.HeaderText = "حجم";
+            volumeColumn.MinimumWidth = 8;
+            volumeColumn.Name = "volumeColumn";
+            volumeColumn.ReadOnly = true;
+            volumeColumn.Width = 100;
+            volumeColumn.DefaultCellStyle.Format = "N0";
+            volumeColumn.Visible = false;
             // 
             // portfolioComboBox
             // 
@@ -2054,6 +2065,7 @@
         private DataGridViewTextBoxColumn symbolColumn;
         private DataGridViewTextBoxColumn lastTradeColumn;
         private DataGridViewCheckBoxColumn selectColumn;
+        private DataGridViewTextBoxColumn volumeColumn;
         private GroupBox comparisonGroup7;
         private TextBox comparisonSecondTextBox2;
         private TextBox comparisonFirstTextBox2;
