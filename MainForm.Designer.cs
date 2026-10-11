@@ -1301,7 +1301,7 @@
             // volumeRatioOperatorComboBox
             // 
             volumeRatioOperatorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            volumeRatioOperatorComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            volumeRatioOperatorComboBox.Items.AddRange(new object[] { "=", ">", "<" });
             volumeRatioOperatorComboBox.Location = new Point(109, 33);
             volumeRatioOperatorComboBox.Name = "volumeRatioOperatorComboBox";
             volumeRatioOperatorComboBox.Size = new Size(78, 33);
