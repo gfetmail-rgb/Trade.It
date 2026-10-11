@@ -1002,6 +1002,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 displayedPortfolioName = null;
+                volumeColumn.Visible = false;
                 UpdateSelectionControls();
                 return;
             }
@@ -1158,6 +1159,7 @@ namespace Trade.It
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
         {
+            volumeColumn.Visible = HasVolumeColumn(definition);
             var symbols = GetMarketFilteredSymbols(definition);
             var loadVersion = ++latestTradeDateLoadVersion;
 
