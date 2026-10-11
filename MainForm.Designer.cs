@@ -921,9 +921,9 @@
             // filterApplyButton
             // 
             filterApplyButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            filterApplyButton.Location = new Point(315, 868);
+            filterApplyButton.Location = new Point(301, 868);
             filterApplyButton.Name = "filterApplyButton";
-            filterApplyButton.Size = new Size(64, 36);
+            filterApplyButton.Size = new Size(78, 36);
             filterApplyButton.TabIndex = 10;
             filterApplyButton.Text = "تایید";
             filterApplyButton.UseVisualStyleBackColor = true;
