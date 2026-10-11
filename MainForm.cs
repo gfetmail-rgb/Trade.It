@@ -1644,6 +1644,7 @@ namespace Trade.It
 
             bool HasValue(TextBox box) => !string.IsNullOrWhiteSpace(box.Text);
             bool HasSelection(ComboBox combo) => combo.SelectedIndex > 0 && !string.IsNullOrWhiteSpace(combo.SelectedItem?.ToString());
+            bool HasComparisonSelection(ComboBox combo) => combo.SelectedIndex >= 0 && !string.IsNullOrWhiteSpace(combo.SelectedItem?.ToString());
             bool TryReadNumber(TextBox box, out double value)
             {
                 var text = NormalizeTradingDigits(box.Text).Trim();
@@ -1715,17 +1716,17 @@ namespace Trade.It
             foreach (var filter in comparisons)
             {
                 if (!filter.GroupEnabled) continue;
-                var active = HasSelection(filter.First) || HasSelection(filter.Operator) || HasSelection(filter.Second)
+                var active = HasComparisonSelection(filter.First) || HasComparisonSelection(filter.Operator) || HasComparisonSelection(filter.Second)
                     || HasValue(filter.FirstOffset) || HasValue(filter.SecondOffset);
                 if (!active) continue;
 
-                if (!HasSelection(filter.First))
+                if (!HasComparisonSelection(filter.First))
                     AddError($"{filter.Label}: قیمت اول انتخاب نشده است.", filter.First);
-                if (!HasSelection(filter.Operator))
+                if (!HasComparisonSelection(filter.Operator))
                     AddError($"{filter.Label}: عملگر مقایسه انتخاب نشده است.", filter.Operator);
                 else if (!IsValidOperator(filter.Operator))
                     AddError($"{filter.Label}: عملگر مقایسه معتبر نیست.", filter.Operator);
-                if (!HasSelection(filter.Second))
+                if (!HasComparisonSelection(filter.Second))
                     AddError($"{filter.Label}: قیمت دوم انتخاب نشده است.", filter.Second);
 
                 if (!HasValue(filter.FirstOffset))
@@ -2652,10 +2653,9 @@ namespace Trade.It
         {
             "O" => "اولین",
             "اولین" => "اولین",
-            "H" => "بیشترین",
-            "L" => "کمترین",
-            "C" => "آخرین",
-            "آخرین" => "آخرین",
+            "H" or "بیشترین" => "بیشترین",
+            "L" or "کمترین" => "کمترین",
+            "C" or "آخرین" => "آخرین",
                     _ => string.Empty
         };
 
