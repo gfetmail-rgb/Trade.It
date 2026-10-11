@@ -1707,8 +1707,8 @@ namespace Trade.It
             // The three OHLC comparison filters.
             var comparisons = new[]
             {
-                (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, GroupEnabled: comparisonGroup7.Enabled, Label: "فیلتر مقایسه ۱"),
-                (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, GroupEnabled: comparisonGroup8.Enabled, Label: "فیلتر مقایسه ۲"),
+                (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, GroupEnabled: comparisonGroup7.Enabled, Label: "فیلتر مقایسه ۱"),
+                (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, GroupEnabled: comparisonGroup8.Enabled, Label: "فیلتر مقایسه ۲"),
                 (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, GroupEnabled: groupBox3.Enabled, Label: "فیلتر مقایسه ۳")
             };
 
@@ -1973,8 +1973,8 @@ namespace Trade.It
             filtered = ApplyNameFilter(filtered);
             filtered = ApplyVolumeRatioFilter(filtered, definition);
             filtered = ApplyPastDaysFilter(filtered, definition);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
             if (IsOhlcChangeFilterActive())
             {
@@ -2528,8 +2528,8 @@ namespace Trade.It
         {
             var filters = new[]
             {
-                (comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
-      (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
+                (comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2),
+      (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
       (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
             };
             foreach (var filter in filters)
@@ -2546,8 +2546,8 @@ namespace Trade.It
             comparisonFilterEventsAttached = true;
             var filters = new[]
             {
-                (comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1),
-      (comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2),
+                (comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2),
+      (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
       (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
             };
             foreach (var filter in filters)
@@ -2593,8 +2593,8 @@ namespace Trade.It
             IEnumerable<string> filtered = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
@@ -2623,8 +2623,8 @@ namespace Trade.It
         }
 
         private bool HasAnyActiveComparisonFilter() =>
-            IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
-            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2, comparisonFirstTextBox2, comparisonSecondTextBox2) ||
+            IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2) ||
+            IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
             IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
 
         private static bool IsComparisonFilterActive(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox) =>
