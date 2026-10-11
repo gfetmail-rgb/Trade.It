@@ -893,7 +893,7 @@
             // comparisonOperatorComboBox3
             // 
             comparisonOperatorComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox3.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            comparisonOperatorComboBox3.Items.AddRange(new object[] { "=", ">", "<" });
             comparisonOperatorComboBox3.Location = new Point(5, 38);
             comparisonOperatorComboBox3.Name = "comparisonOperatorComboBox3";
             comparisonOperatorComboBox3.Size = new Size(65, 33);
@@ -1026,7 +1026,7 @@
             // 
             ohlcChangeDirectionComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ohlcChangeDirectionComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            ohlcChangeDirectionComboBox.Items.AddRange(new object[] { "=", ">", "<" });
             ohlcChangeDirectionComboBox.Location = new Point(174, 64);
             ohlcChangeDirectionComboBox.Name = "ohlcChangeDirectionComboBox";
             ohlcChangeDirectionComboBox.Size = new Size(98, 33);
@@ -1109,7 +1109,7 @@
             // comparisonOperatorComboBox1
             // 
             comparisonOperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox1.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            comparisonOperatorComboBox1.Items.AddRange(new object[] { "=", ">", "<" });
             comparisonOperatorComboBox1.Location = new Point(4, 33);
             comparisonOperatorComboBox1.Name = "comparisonOperatorComboBox1";
             comparisonOperatorComboBox1.Size = new Size(65, 33);
@@ -1202,7 +1202,7 @@
             // comparisonOperatorComboBox2
             // 
             comparisonOperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonOperatorComboBox2.Items.AddRange(new object[] { ">", "<", "=", ">=", "<=", "!=" });
+            comparisonOperatorComboBox2.Items.AddRange(new object[] { "=", ">", "<" });
             comparisonOperatorComboBox2.Location = new Point(9, 43);
             comparisonOperatorComboBox2.Name = "comparisonOperatorComboBox2";
             comparisonOperatorComboBox2.Size = new Size(62, 33);
