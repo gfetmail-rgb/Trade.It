@@ -1244,21 +1244,21 @@ namespace Trade.It
                     return;
 
                 var batchStart = start;
-                string[] batch;
+                double?[] batch;
                 try
                 {
                     batch = await Task.Run(() =>
                     {
-                        var values = new string[Math.Min(batchSize, symbols.Count - batchStart)];
+                        var values = new double?[Math.Min(batchSize, symbols.Count - batchStart)];
                         for (var i = 0; i < values.Length; i++)
                         {
                             try
                             {
-                                values[i] = GetLatestVolumeText(definition, symbols[batchStart + i]);
+                                values[i] = GetLatestVolumeValue(definition, symbols[batchStart + i]);
                             }
                             catch
                             {
-                                values[i] = string.Empty;
+                                values[i] = null;
                             }
                         }
                         return values;
@@ -1266,7 +1266,7 @@ namespace Trade.It
                 }
                 catch
                 {
-                    batch = Enumerable.Repeat(string.Empty, Math.Min(batchSize, symbols.Count - batchStart)).ToArray();
+                    batch = new double?[Math.Min(batchSize, symbols.Count - batchStart)];
                 }
 
                 if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
@@ -1279,20 +1279,20 @@ namespace Trade.It
             }
         }
 
-        private string GetLatestVolumeText(PortfolioDefinition definition, string symbol)
+        private double? GetLatestVolumeValue(PortfolioDefinition definition, string symbol)
         {
             var volumeColumnIndex = GetMappingColumn(definition, "حجم");
             if (volumeColumnIndex <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) ||
                 !Directory.Exists(definition.DataPath))
-                return string.Empty;
+                return null;
 
             var rows = ReadOrderedSymbolRows(definition, symbol);
             if (rows.Count == 0 || volumeColumnIndex > rows[^1].Length ||
                 !TryParseTradingNumber(rows[^1][volumeColumnIndex - 1], out var volume) ||
                 !double.IsFinite(volume))
-                return string.Empty;
+                return null;
 
-            return ToPersianDigits(volume.ToString("N0", CultureInfo.InvariantCulture));
+            return volume;
         }
 
         private void StocksDataGridView_KeyDownForChartNavigation(object? sender, KeyEventArgs e)
