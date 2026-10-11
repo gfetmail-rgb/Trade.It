@@ -2777,7 +2777,9 @@ namespace Trade.It
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
-            _ = LoadLatestVolumesAsync(definition, result, ++latestTradeDateLoadVersion);
+            var loadVersion = ++latestTradeDateLoadVersion;
+            _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
+            _ = LoadLatestVolumesAsync(definition, result, loadVersion);
         }
 
         private IEnumerable<string> GetDisplayedGridSymbolsForOhlcFilter()
