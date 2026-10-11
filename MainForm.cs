@@ -2102,10 +2102,14 @@ namespace Trade.It
             var lessCount = calculated.Count(x => x.Ratio < threshold - tolerance);
             var equalCount = calculated.Count - greaterCount - lessCount;
 
-            var result = calculated
+            var matchingRatios = calculated
                 .Where(x => MatchesVolumeRatioOperator(x.Ratio, threshold, tolerance, op))
-                .Select(x => x.Symbol)
                 .ToList();
+            var result = matchingRatios.Select(x => x.Symbol).ToList();
+            var matchingRatioDetails = string.Join(
+                "، ",
+                matchingRatios.Take(25).Select(x =>
+                    $"{x.Symbol}: {x.Ratio.ToString("0.####", CultureInfo.InvariantCulture)}"));
 
             MessageBox.Show(
                 this,
@@ -2116,9 +2120,10 @@ namespace Trade.It
                 $"مساوی آستانه (با تلورانس عددی): {equalCount}\n" +
                 $"غیرقابل محاسبه و حذف‌شده: {notCalculatedSymbols.Count}\n" +
                 (notCalculatedSymbols.Count > 0
-                    ? $"نام نمادهای غیرقابل محاسبه: {string.Join("، ", notCalculatedSymbols)}\n\n"
-                    : "\n") +
-                $"نتیجه عملگر انتخاب‌شده: {result.Count}",
+                    ? $"نام نمادهای غیرقابل محاسبه: {string.Join("، ", notCalculatedSymbols)}\n"
+                    : string.Empty) +
+                $"نتیجه عملگر انتخاب‌شده: {result.Count}\n" +
+                $"نسبت نمادهای پذیرفته‌شده (حداکثر ۲۵ مورد):\n{matchingRatioDetails}",
                 "گزارش فیلتر نسبت حجم",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
