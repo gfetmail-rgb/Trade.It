@@ -1166,7 +1166,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < symbols.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false);
+                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false, string.Empty);
             }
             finally
             {
@@ -1177,6 +1177,7 @@ namespace Trade.It
             selectNoneCheckBox.Checked = true;
             UpdateSelectionControls();
             _ = LoadLatestTradeDatesAsync(definition, symbols, loadVersion);
+            _ = LoadLatestVolumesAsync(definition, symbols, loadVersion);
         }
 
         private async Task LoadLatestTradeDatesAsync(PortfolioDefinition definition, List<string> symbols, int loadVersion)
@@ -1228,6 +1229,69 @@ namespace Trade.It
             }
         }
 
+
+        private async Task LoadLatestVolumesAsync(PortfolioDefinition definition, List<string> symbols, int loadVersion)
+        {
+            if (!HasVolumeColumn(definition) || symbols.Count == 0)
+                return;
+
+            const int batchSize = 25;
+            for (var start = 0; start < symbols.Count; start += batchSize)
+            {
+                if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
+                    return;
+
+                var batchStart = start;
+                string[] batch;
+                try
+                {
+                    batch = await Task.Run(() =>
+                    {
+                        var values = new string[Math.Min(batchSize, symbols.Count - batchStart)];
+                        for (var i = 0; i < values.Length; i++)
+                        {
+                            try
+                            {
+                                values[i] = GetLatestVolumeText(definition, symbols[batchStart + i]);
+                            }
+                            catch
+                            {
+                                values[i] = string.Empty;
+                            }
+                        }
+                        return values;
+                    });
+                }
+                catch
+                {
+                    batch = Enumerable.Repeat(string.Empty, Math.Min(batchSize, symbols.Count - batchStart)).ToArray();
+                }
+
+                if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
+                    return;
+
+                for (var i = 0; i < batch.Length && batchStart + i < stocksDataGridView.Rows.Count; i++)
+                    stocksDataGridView.Rows[batchStart + i].Cells[volumeColumn.Index].Value = batch[i];
+
+                await Task.Yield();
+            }
+        }
+
+        private string GetLatestVolumeText(PortfolioDefinition definition, string symbol)
+        {
+            var volumeColumnIndex = GetMappingColumn(definition, "حجم");
+            if (volumeColumnIndex <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) ||
+                !Directory.Exists(definition.DataPath))
+                return string.Empty;
+
+            var rows = ReadOrderedSymbolRows(definition, symbol);
+            if (rows.Count == 0 || volumeColumnIndex > rows[^1].Length ||
+                !TryParseTradingNumber(rows[^1][volumeColumnIndex - 1], out var volume) ||
+                !double.IsFinite(volume))
+                return string.Empty;
+
+            return ToPersianDigits(volume.ToString("N0", CultureInfo.InvariantCulture));
+        }
 
         private void StocksDataGridView_KeyDownForChartNavigation(object? sender, KeyEventArgs e)
         {
@@ -1753,7 +1817,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, string.Empty);
             }
             finally
             {
@@ -1764,7 +1828,9 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
-            _ = LoadLatestTradeDatesAsync(definition, result, ++latestTradeDateLoadVersion);
+            var loadVersion = ++latestTradeDateLoadVersion;
+            _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
+            _ = LoadLatestVolumesAsync(definition, result, loadVersion);
         }
 
         private void UpdateFilterControlAvailability()
@@ -1776,6 +1842,7 @@ namespace Trade.It
             var hasStocks = definition?.Symbols?.Any(s => !string.IsNullOrWhiteSpace(s)) == true;
             var hasDate = hasStocks && HasDateColumn(definition);
             var hasVolume = hasStocks && HasVolumeColumn(definition);
+            volumeColumn.Visible = HasVolumeColumn(definition);
 
             var filtersEnabled = hasStocks && !filtersApplied;
             tradingStatusGroup.Enabled = filtersEnabled && hasDate;
@@ -2527,7 +2594,7 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, "");
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false;
