@@ -1944,7 +1944,6 @@ namespace Trade.It
             Cursor.Current = Cursors.WaitCursor;
             try
             {
-                Application.DoEvents();
                 ApplyTradingStatusFilter();
             }
             finally
