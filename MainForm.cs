@@ -933,6 +933,11 @@ namespace Trade.It
 
                 loadedPortfolios[currentName] = refreshed;
                 PopulateStocksGrid(refreshed);
+
+                // Refreshing the portfolio must not discard an already-applied Filters tab.
+                // Reapply the committed filters without changing their button/lock state.
+                if (filtersApplied)
+                    ApplyTradingStatusFilterWithWaitCursor();
             }
             catch (Exception ex)
             {
