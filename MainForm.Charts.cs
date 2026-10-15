@@ -244,12 +244,13 @@ namespace Trade.It
 
                 var currentChart = GetActiveChart();
 
-                // وضعیت واقعی چارت فعلی را هم بررسی می‌کنیم؛ ممکن است پرچم مشترک
-                // به هر دلیل از وضعیت داخلی چارت عقب مانده باشد.
-                if (currentChart != null &&
-                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase) &&
-                    !string.IsNullOrWhiteSpace(currentChart.ChartTimeFrame) &&
-                    currentChart.TestMode)
+                // وضعیت تست را از تمام Viewهای تایم‌فریم همین نماد بازیابی می‌کنیم،
+                // نه فقط از چارت فعال؛ ممکن است هنگام جابه‌جایی، چارت فعال موقتاً
+                // نمایندهٔ وضعیت مشترک نباشد.
+                if (chartControls.Values.Any(c =>
+                    string.Equals(c.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(c.ChartTimeFrame) &&
+                    c.TestMode))
                 {
                     multiTimeframeTestMode = true;
                 }
