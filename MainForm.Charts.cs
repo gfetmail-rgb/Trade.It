@@ -912,13 +912,18 @@ namespace Trade.It
                 string.IsNullOrWhiteSpace(symbol))
                 return result;
 
-            // تشخیص تایم‌فریم نباید به پسوند انتخاب‌شده در تعریف سبد وابسته باشد.
-            // ممکن است فایل‌های تایم‌فریم با هر یک از فرمت‌های مجاز داده ذخیره شده باشند.
+            // فقط فایل‌هایی مجازند که نماد/فایل آن‌ها در همین سبد انتخاب شده باشد.
+            // وجود فایل تایم‌فریم در پوشه به‌تنهایی به معنی عضویت آن در سبد نیست.
+            var selectedSymbols = new HashSet<string>(
+                definition.Symbols ?? new List<string>(),
+                StringComparer.OrdinalIgnoreCase);
+            if (selectedSymbols.Count == 0)
+                return result;
+
             var baseSymbol = symbol.Trim();
 
-            // activeChartSymbol ممکن است نام کامل فایل جاری باشد؛
-            // در این حالت تایم‌فریم انتهایی را از نام نماد جدا می‌کنیم تا
-            // فایل‌های هم‌خانواده با همان پیشوند مشترک پیدا شوند.
+            // activeChartSymbol ممکن است نام فایلِ دارای پسوند تایم‌فریم باشد؛
+            // پسوند را جدا می‌کنیم تا تایم‌فریم‌های انتخاب‌شدهٔ همان نماد پیدا شوند.
             foreach (var timeFrame in new[] { "M30", "M15", "M5", "M1", "H4", "H1", "D", "W", "M", "Y" })
             {
                 if (!baseSymbol.EndsWith(timeFrame, StringComparison.OrdinalIgnoreCase))
@@ -932,21 +937,32 @@ namespace Trade.It
                 break;
             }
 
-            foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*", SearchOption.TopDirectoryOnly))
+            var selectedExtension = definition.FileType?.Trim().ToUpperInvariant() switch
             {
-                var extension = Path.GetExtension(filePath);
-                if (!string.Equals(extension, ".txt", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(extension, ".csv", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(extension, ".prn", StringComparison.OrdinalIgnoreCase))
+                "CSV" => ".csv",
+                "PRN" => ".prn",
+                _ => ".txt"
+            };
+
+            foreach (var filePath in Directory.EnumerateFiles(definition.DataPath, "*" + selectedExtension, SearchOption.TopDirectoryOnly))
+            {
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                // در حالت انتخاب بر اساس نام فایل، فقط فایل‌هایی که در سبد تیک خورده‌اند
+                // باید در منوی تایم‌فریم‌ها ظاهر شوند و قابل باز شدن باشند.
+                if (definition.SymbolSource == SymbolSource.FileName &&
+                    !selectedSymbols.Contains(fileName))
                     continue;
 
-                var fileName = Path.GetFileNameWithoutExtension(filePath);
                 var suffix = GetTimeframeSuffix(fileName, baseSymbol);
                 if (suffix == null)
                     continue;
 
-                // وقتی نام فایل صراحتاً تایم‌فریم را مشخص کرده است،
-                // همان پسوند معتبر است و تشخیص فاصله زمانی نباید آن را override کند.
+                // در حالت «داخل فایل»، نماد انتخاب‌شده باید واقعاً در همان فایل وجود داشته باشد.
+                if (definition.SymbolSource == SymbolSource.InsideFile &&
+                    !selectedSymbols.Contains(symbol.Trim()))
+                    continue;
+
                 result.Add((filePath, suffix));
             }
 
