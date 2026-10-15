@@ -244,7 +244,17 @@ namespace Trade.It
 
                 var currentChart = GetActiveChart();
 
-                // وضعیت تست را از تمام Viewهای تایم‌فریم همین نماد بازیابی می‌کنیم،
+                // اگر تست روی چارت اصلی نماد پیش از ورود به تحلیل چندتایم‌فریمی
+                // روشن شده باشد، همان وضعیت باید به Viewهای تایم‌فریم منتقل شود.
+                if (currentChart != null &&
+                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase) &&
+                    string.IsNullOrWhiteSpace(currentChart.ChartTimeFrame) &&
+                    currentChart.TestMode)
+                {
+                    multiTimeframeTestMode = true;
+                }
+
+                // وضعیت تست را همچنین از تمام Viewهای تایم‌فریم همین نماد بازیابی می‌کنیم،
                 // نه فقط از چارت فعال؛ ممکن است هنگام جابه‌جایی، چارت فعال موقتاً
                 // نمایندهٔ وضعیت مشترک نباشد.
                 if (chartControls.Values.Any(c =>
