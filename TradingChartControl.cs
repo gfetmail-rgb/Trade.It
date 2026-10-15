@@ -792,12 +792,13 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
-            TestReferenceTimeChanged?.Invoke(this, GetCandleCloseTime(points[testEndIndex].Date, chartTimeFrame));
+            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
         }
 
         /// <summary>
-        /// هم‌تراز کردن چارت با زمان مرجع مشترک تست. در تایم‌فریم‌های بالاتر
-        /// فقط کندل‌هایی مجازند که زمان بسته‌شدنشان از زمان مرجع عبور نکرده باشد.
+        /// هم‌تراز کردن چارت‌ها بر اساس زمان ثبت‌شده‌ی کندل در فایل داده.
+        /// در هر تایم‌فریم، آخرین کندلی انتخاب می‌شود که زمان ثبت‌شده‌اش
+        /// از زمان مرجع مشترک جلوتر نباشد.
         /// </summary>
         public void SetTestReferenceTime(DateTime referenceTime)
         {
@@ -807,7 +808,7 @@ namespace Trade.It
             var endIndex = -1;
             for (var i = points.Count - 1; i >= 0; i--)
             {
-                if (GetCandleCloseTime(points[i].Date, chartTimeFrame) <= referenceTime)
+                if (points[i].Date <= referenceTime)
                 {
                     endIndex = i;
                     break;
@@ -897,7 +898,7 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
-            TestReferenceTimeChanged?.Invoke(this, GetCandleCloseTime(points[testEndIndex].Date, chartTimeFrame));
+            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
         }
         public ChartDrawingTool ActiveDrawingTool => activeDrawingTool;
         public bool DrawingInProgress => drawingInProgress;
