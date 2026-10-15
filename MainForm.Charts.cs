@@ -658,8 +658,20 @@ namespace Trade.It
             chart?.CancelExtraDrawing();
             chart?.EnableExtraDrawingMouseSafety();
 
-            // همگام‌سازی وضعیت دکمه تست با چارت فعال.
-            testMode = chart?.TestMode == true;
+            // در تحلیل چندتایم‌فریمی، وضعیت مشترک تست مرجع است؛
+            // تغییر Tab نباید آن را از وضعیت داخلی یک View بازنویسی کند.
+            if (chart != null && !string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
+            {
+                if (multiTimeframeTestMode && !chart.TestMode)
+                    chart.SetTestMode(true);
+
+                testMode = multiTimeframeTestMode;
+            }
+            else
+            {
+                testMode = chart?.TestMode == true;
+            }
+
             testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
 
