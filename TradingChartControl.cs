@@ -792,7 +792,7 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
-            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
+            TestReferenceTimeChanged?.Invoke(this, GetCandleCloseTime(points[testEndIndex].Date, chartTimeFrame));
         }
 
         /// <summary>
@@ -897,7 +897,7 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
-            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
+            TestReferenceTimeChanged?.Invoke(this, GetCandleCloseTime(points[testEndIndex].Date, chartTimeFrame));
         }
         public ChartDrawingTool ActiveDrawingTool => activeDrawingTool;
         public bool DrawingInProgress => drawingInProgress;
