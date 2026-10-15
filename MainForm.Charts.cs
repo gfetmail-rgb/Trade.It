@@ -384,8 +384,24 @@ namespace Trade.It
 
         private void Chart_TestReferenceTimeChanged(TradingChartControl source, DateTime referenceTime)
         {
-            if (syncingMultiTimeframeTest || !multiTimeframeTestMode ||
-                string.IsNullOrWhiteSpace(source.ChartTimeFrame))
+            if (syncingMultiTimeframeTest)
+                return;
+
+            // چارت اصلی هم باید زمان نقطهٔ انتخاب‌شده در تست را ذخیره کند.
+            // این رویداد ممکن است پیش از اولین ورود به تحلیل چندتایم‌فریمی رخ دهد؛
+            // اگر آن را نادیده بگیریم، تایم‌فریم مقصد فقط TestMode را می‌گیرد
+            // و بدون نقطهٔ شروع، کل نمودار را نمایش می‌دهد.
+            if (string.IsNullOrWhiteSpace(source.ChartTimeFrame))
+            {
+                if (source.TestMode)
+                {
+                    multiTimeframeTestMode = true;
+                    multiTimeframeTestReferenceTime = referenceTime;
+                }
+                return;
+            }
+
+            if (!multiTimeframeTestMode)
                 return;
 
             multiTimeframeTestReferenceTime = referenceTime;
