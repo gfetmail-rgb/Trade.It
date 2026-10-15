@@ -243,6 +243,17 @@ namespace Trade.It
                 }
 
                 var currentChart = GetActiveChart();
+
+                // وضعیت واقعی چارت فعلی را هم بررسی می‌کنیم؛ ممکن است پرچم مشترک
+                // به هر دلیل از وضعیت داخلی چارت عقب مانده باشد.
+                if (currentChart != null &&
+                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(currentChart.ChartTimeFrame) &&
+                    currentChart.TestMode)
+                {
+                    multiTimeframeTestMode = true;
+                }
+
                 if (currentChart != null &&
                     string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
                 {
@@ -278,6 +289,8 @@ namespace Trade.It
 
                 // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
                 // باید از فضای چندتایم‌فریمی به آن منتقل شود.
+                // وضعیت تست از چارت قبلی/پرچم مشترک حفظ می‌شود؛
+                // View تایم‌فریم مقصد نباید ناخواسته از حالت تست خارج شود.
                 if (multiTimeframeTestMode && !chart.TestMode)
                     chart.SetTestMode(true);
                 if (multiTimeframeTestMode && multiTimeframeTestReferenceTime.HasValue)
@@ -662,6 +675,16 @@ namespace Trade.It
             // تغییر Tab نباید آن را از وضعیت داخلی یک View بازنویسی کند.
             if (chart != null && !string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
             {
+                // اگر هر View تایم‌فریم همین نماد هنوز در تست است، تعویض Tab
+                // نباید وضعیت مشترک را خاموش کند.
+                if (!multiTimeframeTestMode)
+                {
+                    multiTimeframeTestMode = chartControls.Values.Any(c =>
+                        string.Equals(c.ChartSymbol, chart.ChartSymbol, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(c.ChartTimeFrame) &&
+                        c.TestMode);
+                }
+
                 if (multiTimeframeTestMode && !chart.TestMode)
                     chart.SetTestMode(true);
 
