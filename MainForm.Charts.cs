@@ -11,6 +11,9 @@ namespace Trade.It
         private bool chartRuntimeInitialized;
         private string? activeChartSymbol;
         private bool testMode;
+        private bool multiTimeframeTestMode;
+        private bool syncingMultiTimeframeTest;
+        private DateTime? multiTimeframeTestReferenceTime;
 
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
@@ -186,6 +189,13 @@ namespace Trade.It
                 if (isNewTimeframeChart)
                     chart.SetData(points, symbol, timeFrame);
 
+                // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
+                // باید از فضای چندتایم‌فریمی به آن منتقل شود.
+                if (multiTimeframeTestMode && !chart.TestMode)
+                    chart.SetTestMode(true);
+                if (multiTimeframeTestMode && multiTimeframeTestReferenceTime.HasValue)
+                    chart.SetTestReferenceTime(multiTimeframeTestReferenceTime.Value);
+
                 chart.SetChartType(GetSelectedChartType());
 
                 // فقط Drawingهای مشترک از تحلیل نماد به View تایم‌فریم منتقل می‌شوند.
@@ -233,9 +243,54 @@ namespace Trade.It
                 return;
 
             testMode = !testMode;
-            chart.SetTestMode(testMode);
+            if (!string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
+            {
+                // تست در تحلیل چندتایم‌فریمی یک وضعیت مشترک برای تمام
+                // تایم‌فریم‌های همان نماد است؛ چارت عادی دست‌نخورده می‌ماند.
+                multiTimeframeTestMode = testMode;
+                multiTimeframeTestReferenceTime = null;
+                syncingMultiTimeframeTest = true;
+                try
+                {
+                    foreach (var timeframeChart in chartControls.Values.Where(c =>
+                        string.Equals(c.ChartSymbol, chart.ChartSymbol, StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(c.ChartTimeFrame)))
+                        timeframeChart.SetTestMode(testMode);
+                }
+                finally
+                {
+                    syncingMultiTimeframeTest = false;
+                }
+            }
+            else
+            {
+                chart.SetTestMode(testMode);
+            }
+
             testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
+        }
+
+        private void Chart_TestReferenceTimeChanged(TradingChartControl source, DateTime referenceTime)
+        {
+            if (syncingMultiTimeframeTest || !multiTimeframeTestMode ||
+                string.IsNullOrWhiteSpace(source.ChartTimeFrame))
+                return;
+
+            multiTimeframeTestReferenceTime = referenceTime;
+            syncingMultiTimeframeTest = true;
+            try
+            {
+                foreach (var timeframeChart in chartControls.Values.Where(c =>
+                    !ReferenceEquals(c, source) &&
+                    string.Equals(c.ChartSymbol, source.ChartSymbol, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(c.ChartTimeFrame) && c.TestMode))
+                    timeframeChart.SetTestReferenceTime(referenceTime);
+            }
+            finally
+            {
+                syncingMultiTimeframeTest = false;
+            }
         }
 
         private void TestStepBackButton_Click(object? sender, EventArgs e)
@@ -668,6 +723,7 @@ namespace Trade.It
                 ContextMenuStrip = indicatorContextMenuStrip
             };
             chart.VolumeSettingsChanged += Chart_VolumeSettingsChanged;
+            chart.TestReferenceTimeChanged += Chart_TestReferenceTimeChanged;
             chart.SetVolumePanelVisible(lastVolumePanelVisible);
             chart.VolumePanelRatio = lastVolumePanelRatio;
             chartControls[symbol] = chart;

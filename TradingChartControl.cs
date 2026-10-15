@@ -115,6 +115,7 @@ namespace Trade.It
         public event EventHandler? ViewChanged;
         public event EventHandler? CrosshairDateChanged;
         public event EventHandler? AnalysisChanged;
+        public event Action<TradingChartControl, DateTime>? TestReferenceTimeChanged;
 
         private sealed class ChartDrawing
         {
@@ -791,6 +792,68 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
+            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
+        }
+
+        /// <summary>
+        /// هم‌تراز کردن چارت با زمان مرجع مشترک تست. در تایم‌فریم‌های بالاتر
+        /// فقط کندل‌هایی مجازند که زمان بسته‌شدنشان از زمان مرجع عبور نکرده باشد.
+        /// </summary>
+        public void SetTestReferenceTime(DateTime referenceTime)
+        {
+            if (!testMode || points.Count == 0)
+                return;
+
+            var endIndex = -1;
+            for (var i = points.Count - 1; i >= 0; i--)
+            {
+                if (GetCandleCloseTime(points[i].Date, chartTimeFrame) <= referenceTime)
+                {
+                    endIndex = i;
+                    break;
+                }
+            }
+
+            if (endIndex < 0)
+            {
+                testStartSelected = false;
+                testEndIndex = -1;
+                firstIndex = 0;
+                Invalidate();
+                return;
+            }
+
+            testEndIndex = endIndex;
+            testStartSelected = true;
+            testAnchorIndex = endIndex;
+            KeepTestAnchorFixed();
+            crosshairIndex = -1;
+            Invalidate();
+        }
+
+        private static DateTime GetCandleCloseTime(DateTime candleStart, string timeFrame)
+        {
+            try
+            {
+                return timeFrame.Trim().ToUpperInvariant() switch
+                {
+                    "M1" => candleStart.AddMinutes(1),
+                    "M5" => candleStart.AddMinutes(5),
+                    "M15" => candleStart.AddMinutes(15),
+                    "M30" => candleStart.AddMinutes(30),
+                    "H1" or "1H" => candleStart.AddHours(1),
+                    "H4" or "4H" => candleStart.AddHours(4),
+                    "D" => candleStart.AddDays(1),
+                    "W" => candleStart.AddDays(7),
+                    "M" => candleStart.AddMonths(1),
+                    "Y" => candleStart.AddYears(1),
+                    _ => candleStart
+                };
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return DateTime.MaxValue;
+            }
         }
 
         private void KeepTestAnchorFixed()
@@ -834,6 +897,7 @@ namespace Trade.It
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
+            TestReferenceTimeChanged?.Invoke(this, points[testEndIndex].Date);
         }
         public ChartDrawingTool ActiveDrawingTool => activeDrawingTool;
         public bool DrawingInProgress => drawingInProgress;
