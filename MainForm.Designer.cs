@@ -33,6 +33,7 @@
         private System.Windows.Forms.ToolStripMenuItem analysisWMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisMMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analysisYMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitMultiTimeframeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portfolioManagementMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsMenuItem;
 
@@ -162,6 +163,7 @@
             analysisWMenuItem = new ToolStripMenuItem();
             analysisMMenuItem = new ToolStripMenuItem();
             analysisYMenuItem = new ToolStripMenuItem();
+            exitMultiTimeframeMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
             settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
@@ -351,7 +353,7 @@
             // 
             // multiTimeframeAnalysisMenuItem
             // 
-            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem });
+            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem, new ToolStripSeparator(), exitMultiTimeframeMenuItem });
             multiTimeframeAnalysisMenuItem.Name = "multiTimeframeAnalysisMenuItem";
             multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
             multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
@@ -510,6 +512,12 @@
             analysisYMenuItem.Size = new Size(180, 22);
             analysisYMenuItem.Text = "Y";
             analysisYMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // exitMultiTimeframeMenuItem
+            // 
+            exitMultiTimeframeMenuItem.Name = "exitMultiTimeframeMenuItem";
+            exitMultiTimeframeMenuItem.Size = new Size(180, 22);
+            exitMultiTimeframeMenuItem.Text = "خروج از تحلیل چند تایم‌فریمی";
             // 
             // portfolioManagementMenuItem
             // 

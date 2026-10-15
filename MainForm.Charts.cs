@@ -41,6 +41,7 @@ namespace Trade.It
             testStepBackButton.Click += TestStepBackButton_Click;
             testStepForwardButton.Click += TestStepForwardButton_Click;
             hideChartButton.Click += HideChartButton_Click;
+            exitMultiTimeframeMenuItem.Click += ExitMultiTimeframeMenuItem_Click;
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
@@ -74,6 +75,10 @@ namespace Trade.It
 
             foreach (var item in items)
                 item.Enabled = false;
+
+            var activeChart = GetActiveChart();
+            exitMultiTimeframeMenuItem.Enabled = activeChart != null &&
+                !string.IsNullOrWhiteSpace(activeChart.ChartTimeFrame);
 
             var symbol = activeChartSymbol;
             if (string.IsNullOrWhiteSpace(symbol) ||
@@ -116,6 +121,88 @@ namespace Trade.It
                 "Y" => "Y",
                 _ => value.Trim().ToUpperInvariant()
             };
+        }
+
+        private void ExitMultiTimeframeMenuItem_Click(object? sender, EventArgs e)
+        {
+            var activeChart = GetActiveChart();
+            if (activeChart == null || string.IsNullOrWhiteSpace(activeChart.ChartTimeFrame))
+                return;
+
+            var symbol = activeChart.ChartSymbol;
+            if (string.IsNullOrWhiteSpace(symbol))
+                return;
+
+            // فقط رسم‌های مشترک ذخیره می‌شوند؛ وضعیت نمای تایم‌فریم نباید
+            // جای وضعیت چارت اصلی نماد را بگیرد.
+            try
+            {
+                SaveAnalysisForChart(activeChart);
+            }
+            catch
+            {
+                // خروج از حالت باید حتی در صورت خطای ذخیره تحلیل ممکن باشد.
+            }
+
+            var timeframeCharts = chartControls
+                .Where(pair =>
+                    string.Equals(pair.Value.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(pair.Value.ChartTimeFrame))
+                .ToList();
+
+            multiTimeframeTestMode = false;
+            multiTimeframeTestReferenceTime = null;
+            syncingMultiTimeframeTest = true;
+            try
+            {
+                foreach (var pair in timeframeCharts)
+                    pair.Value.SetTestMode(false);
+            }
+            finally
+            {
+                syncingMultiTimeframeTest = false;
+            }
+
+            // کنترل‌های تایم‌فریم این نماد دیگر لازم نیستند؛ آن‌ها را از
+            // دیکشنری و والد UI خارج می‌کنیم تا بعداً قابل جمع‌آوری باشند.
+            foreach (var pair in timeframeCharts)
+            {
+                var timeframeChart = pair.Value;
+                var parent = timeframeChart.Parent;
+                parent?.Controls.Remove(timeframeChart);
+                chartControls.Remove(pair.Key);
+                timeframeChart.Dispose();
+
+                if (parent is TabPage tabPage &&
+                    !ReferenceEquals(tabPage, chartTabPage) &&
+                    chartTabControl.TabPages.Contains(tabPage))
+                {
+                    chartTabControl.TabPages.Remove(tabPage);
+                    tabPage.Dispose();
+                }
+            }
+
+            activeChartSymbol = symbol;
+            if (chartControls.TryGetValue(symbol, out var primaryChart))
+            {
+                AttachChartToTab(primaryChart, symbol);
+                primaryChart.Visible = true;
+                testMode = primaryChart.TestMode;
+                SetToggleButtonState(crossButton, primaryChart.CrosshairVisible);
+                SetIndicatorPanelButtonState(primaryChart);
+                SyncChartToolbarFromActiveChart();
+                chartInfoLabel.Text = $"{symbol}";
+                chartPlaceholderLabel.Visible = false;
+            }
+            else
+            {
+                // حالت پشتیبان برای زمانی که چارت اصلی از قبل در حافظه نباشد.
+                ShowSymbolChart(symbol);
+            }
+
+            testModeButton.Text = "تست";
+            SetToggleButtonState(testModeButton, testMode);
+            SetToggleButtonState(hideChartButton, false);
         }
 
         private void MultiTimeframeAnalysisMenuItem_Click(object? sender, EventArgs e)
