@@ -688,6 +688,11 @@ namespace Trade.It
                 if (multiTimeframeTestMode && !chart.TestMode)
                     chart.SetTestMode(true);
 
+                // SetTestMode(true) resets the local test cursor. Restore the
+                // shared reference immediately after re-enabling a timeframe view.
+                if (multiTimeframeTestMode && multiTimeframeTestReferenceTime.HasValue)
+                    chart.SetTestReferenceTime(multiTimeframeTestReferenceTime.Value);
+
                 testMode = multiTimeframeTestMode;
             }
             else
