@@ -278,16 +278,10 @@ namespace Trade.It
 
                 // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
                 // باید از فضای چندتایم‌فریمی به آن منتقل شود.
-                if (multiTimeframeTestMode)
-                {
-                    // وضعیت تست در تمام Viewهای تایم‌فریم باید هنگام جابه‌جایی حفظ شود.
-                    // اگر این View قبلاً خاموش شده باشد، دوباره وارد حالت تست می‌شود.
-                    if (!chart.TestMode)
-                        chart.SetTestMode(true);
-
-                    if (multiTimeframeTestReferenceTime.HasValue)
-                        chart.SetTestReferenceTime(multiTimeframeTestReferenceTime.Value);
-                }
+                if (multiTimeframeTestMode && !chart.TestMode)
+                    chart.SetTestMode(true);
+                if (multiTimeframeTestMode && multiTimeframeTestReferenceTime.HasValue)
+                    chart.SetTestReferenceTime(multiTimeframeTestReferenceTime.Value);
 
                 chart.SetChartType(GetSelectedChartType());
 
@@ -310,9 +304,7 @@ namespace Trade.It
                 chartTabControl.SelectedTab = targetPage;
                 chartTabControl.Visible = true;
 
-                testMode = !string.IsNullOrWhiteSpace(chart.ChartTimeFrame)
-                    ? multiTimeframeTestMode
-                    : chart.TestMode;
+                testMode = chart.TestMode;
                 testModeButton.Text = "تست";
                 SetToggleButtonState(testModeButton, testMode);
                 SetToggleButtonState(hideChartButton, false);
