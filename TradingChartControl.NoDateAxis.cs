@@ -83,9 +83,8 @@ namespace Trade.It
             var step = plot.Width / (double)Math.Max(1, visibleCountForDrawing);
             var initialOffset = -plot.Width * 0.25;
             var x = plot.Left + step * (crosshairIndex + 0.5) + initialOffset + horizontalPanOffset;
-            var numberingEndIndex = testMode && testEndIndex >= firstIndex ? testEndIndex : points.Count - 1;
-            var candleNumber = numberingEndIndex - (firstIndex + crosshairIndex);
-            var text = $"کندل {candleNumber:N0}";
+            // Keep covering the renderer's synthetic date label, but do not display a candle number.
+            var text = string.Empty;
 
             // The renderer still has a legacy date-label path for the crosshair.
             // Make this no-date label wide enough to fully cover that synthetic
