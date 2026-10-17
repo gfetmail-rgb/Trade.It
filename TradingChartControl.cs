@@ -950,7 +950,19 @@ namespace Trade.It
             var newCount = Math.Clamp((int)Math.Round(oldCount * factor), 2, points.Count);
             if (newCount == oldCount) return;
             visibleCount = newCount;
-            firstIndex = Math.Max(0, points.Count - newCount);
+
+            if (testMode && testStartSelected)
+            {
+                // در حالت تست، زوم باید کندل مرجع را در لبهٔ راست نگه دارد؛
+                // مبنای محاسبه، انتهای دادهٔ مجاز تست است نه انتهای کل تاریخچه.
+                KeepTestAnchorFixed();
+            }
+            else
+            {
+                // رفتار زوم در حالت عادی بدون تغییر می‌ماند.
+                firstIndex = Math.Max(0, points.Count - newCount);
+            }
+
             crosshairIndex = -1;
             crosshairPosition = -1.0;
             syncedCrosshairDate = null;
