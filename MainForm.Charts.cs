@@ -328,6 +328,23 @@ namespace Trade.It
                 chartTabControl.SelectedTab = targetPage;
                 chartTabControl.Visible = true;
 
+                // پس از تعویض Tab، اندازهٔ نهایی کنترل چارت ممکن است تا پایان
+                // چرخهٔ Layout ویندوزفرمز مشخص نشود. بعد از نمایش، نمای اولیه را
+                // با ابعاد واقعی صفحه تنظیم می‌کنیم تا چارت از ابتدا درست جا بگیرد.
+                if (isNewTimeframeChart && !chart.TestMode && chart.IsHandleCreated)
+                {
+                    chart.BeginInvoke(new Action(() =>
+                    {
+                        if (chart.IsDisposed || !chart.Visible)
+                            return;
+
+                        targetPage.PerformLayout();
+                        chart.PerformLayout();
+                        chart.ResetView();
+                        chart.Invalidate();
+                    }));
+                }
+
                 testMode = chart.TestMode;
                 testModeButton.Text = "تست";
                 SetToggleButtonState(testModeButton, testMode);
