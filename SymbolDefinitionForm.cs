@@ -8,7 +8,7 @@ namespace Trade.It;
 public sealed partial class SymbolDefinitionForm : Form
 {
     private bool loading;
-    private string selectedMarketNodeId = "";
+    private bool loadingMarketLevels;
     private int sortColumnIndex = -1;
     private SortOrder sortOrder = SortOrder.None;
     private bool invalidMarketReferenceWarningShown;
@@ -18,7 +18,8 @@ public sealed partial class SymbolDefinitionForm : Form
         InitializeComponent();
         foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
             column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
-        LoadMarketTree();
+        LoadMarketLevels();
+        marketLevel1ComboBox.SelectedIndexChanged += (_, _) => LoadMarketLevel2();
         LoadGrid();
         ShowInvalidMarketReferenceWarning();
         newButton.Click += (_, _) => ClearEditor();
@@ -29,111 +30,57 @@ public sealed partial class SymbolDefinitionForm : Form
         exportButton.Click += (_, _) => ExportExcel();
         closeButton.Click += (_, _) => Close();
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
-        marketTreeView.AfterSelect += (_, e) =>
-        {
-            selectedMarketNodeId = e.Node?.Tag as string ?? e.Node?.Name ?? "";
-        };
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
         symbolSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
     }
 
-    private void LoadMarketTree(string? selectedNodeId = null)
+    private void LoadMarketLevels(string? selectedNodeId = null)
     {
-        marketTreeView.BeginUpdate();
+        loadingMarketLevels = true;
         try
         {
-            marketTreeView.Nodes.Clear();
+            var nodes = MarketStructureStore.Load().Nodes;
+            var roots = nodes.Where(x => string.IsNullOrWhiteSpace(x.ParentId)).OrderBy(x => x.SortOrder).ToList();
+            var selected = nodes.FirstOrDefault(x => string.Equals(x.Id, selectedNodeId, StringComparison.Ordinal));
+            var root = selected;
+            while (root != null && !string.IsNullOrWhiteSpace(root.ParentId))
+                root = nodes.FirstOrDefault(x => string.Equals(x.Id, root.ParentId, StringComparison.Ordinal));
 
-            var data = MarketStructureStore.Load();
-            var roots = data.Nodes
-                .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
-                .OrderBy(x => x.SortOrder)
-                .ToList();
-
-            foreach (var root in roots)
-                marketTreeView.Nodes.Add(CreateMarketTreeNode(root, data.Nodes, selectedNodeId));
-
-            if (string.IsNullOrWhiteSpace(selectedNodeId))
-                marketTreeView.SelectedNode = null;
+            marketLevel1ComboBox.DataSource = null;
+            marketLevel1ComboBox.DisplayMember = nameof(MarketStructureNode.Title);
+            marketLevel1ComboBox.ValueMember = nameof(MarketStructureNode.Id);
+            marketLevel1ComboBox.DataSource = roots;
+            marketLevel1ComboBox.SelectedIndex = -1;
+            if (root != null) marketLevel1ComboBox.SelectedValue = root.Id;
+            LoadMarketLevel2Core(nodes, selected?.Id);
         }
-        finally
-        {
-            marketTreeView.EndUpdate();
-        }
+        finally { loadingMarketLevels = false; }
     }
 
-    private static TreeNode CreateMarketTreeNode(
-        MarketStructureNode item,
-        IReadOnlyList<MarketStructureNode> allNodes,
-        string? selectedNodeId)
+    private void LoadMarketLevel2()
     {
-        var node = new TreeNode(item.Title)
-        {
-            Name = item.Id,
-            Tag = item.Id
-        };
-
-
-        foreach (var child in allNodes
-            .Where(x => string.Equals(x.ParentId, item.Id, StringComparison.Ordinal))
-            .OrderBy(x => x.SortOrder))
-        {
-            node.Nodes.Add(CreateMarketTreeNode(child, allNodes, selectedNodeId));
-        }
-
-        return node;
+        if (loadingMarketLevels) return;
+        LoadMarketLevel2Core(MarketStructureStore.Load().Nodes, null);
     }
 
-    private string GetSelectedMarketNodeId()
+    private void LoadMarketLevel2Core(IReadOnlyList<MarketStructureNode> nodes, string? selectedNodeId)
     {
-        if (!string.IsNullOrWhiteSpace(selectedMarketNodeId))
-            return selectedMarketNodeId;
-
-        var selectedNode = marketTreeView.SelectedNode;
-        if (selectedNode == null)
-            return "";
-
-        return selectedNode.Tag as string ?? selectedNode.Name ?? "";
+        var rootId = marketLevel1ComboBox.SelectedValue as string ?? "";
+        var children = nodes.Where(x => string.Equals(x.ParentId, rootId, StringComparison.Ordinal))
+            .OrderBy(x => x.SortOrder).ToList();
+        marketLevel2ComboBox.DataSource = null;
+        marketLevel2ComboBox.DisplayMember = nameof(MarketStructureNode.Title);
+        marketLevel2ComboBox.ValueMember = nameof(MarketStructureNode.Id);
+        marketLevel2ComboBox.DataSource = children;
+        marketLevel2ComboBox.SelectedIndex = -1;
+        if (!string.IsNullOrWhiteSpace(selectedNodeId) &&
+            children.Any(x => string.Equals(x.Id, selectedNodeId, StringComparison.Ordinal)))
+            marketLevel2ComboBox.SelectedValue = selectedNodeId;
     }
 
-    private void SelectMarketTreeNode(string nodeId)
-    {
-        marketTreeView.SelectedNode = null;
-        selectedMarketNodeId = "";
-
-        nodeId = SymbolDefinitionRules.NormalizeText(nodeId);
-        if (string.IsNullOrWhiteSpace(nodeId))
-            return;
-
-        foreach (TreeNode root in marketTreeView.Nodes)
-        {
-            var found = FindMarketTreeNode(root, nodeId);
-            if (found != null)
-            {
-                marketTreeView.SelectedNode = found;
-                selectedMarketNodeId = found.Tag as string ?? found.Name ?? "";
-                found.EnsureVisible();
-                return;
-            }
-        }
-    }
-
-    private static TreeNode? FindMarketTreeNode(TreeNode node, string nodeId)
-    {
-        var tagId = node.Tag as string;
-        if (string.Equals(tagId, nodeId, StringComparison.Ordinal) ||
-            string.Equals(node.Name, nodeId, StringComparison.Ordinal))
-            return node;
-
-        foreach (TreeNode child in node.Nodes)
-        {
-            var found = FindMarketTreeNode(child, nodeId);
-            if (found != null)
-                return found;
-        }
-
-        return null;
-    }
+    private string GetSelectedMarketNodeId() =>
+        marketLevel2ComboBox.SelectedValue as string ??
+        marketLevel1ComboBox.SelectedValue as string ?? "";
 
     private static bool HasValidMarketPath(
         IReadOnlyList<MarketStructureNode> nodes,
@@ -259,11 +206,9 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
-                int r = symbolsDataGridView.Rows.Add(
-                    rowNumber++,
-                    item.SymbolTitle,
-                    item.Name,
-                    item.Description);
+                var marketPath = GetMarketPath(item);
+                int r = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name,
+                    marketPath.MarketType, marketPath.IndustryFund, item.Description);
 
                 symbolsDataGridView.Rows[r].Tag = item;
             }
@@ -317,11 +262,9 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
-                int rowIndex = symbolsDataGridView.Rows.Add(
-                    rowNumber++,
-                    item.SymbolTitle,
-                    item.Name,
-                    item.Description);
+                var marketPath = GetMarketPath(item);
+                int rowIndex = symbolsDataGridView.Rows.Add(rowNumber++, item.SymbolTitle, item.Name,
+                    marketPath.MarketType, marketPath.IndustryFund, item.Description);
 
                 symbolsDataGridView.Rows[rowIndex].Tag = item;
                 if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
@@ -346,7 +289,9 @@ public sealed partial class SymbolDefinitionForm : Form
     {
         1 => item.SymbolTitle ?? string.Empty,
         2 => item.Name ?? string.Empty,
-        3 => item.Description ?? string.Empty,
+        3 => GetMarketPath(item).MarketType,
+        4 => GetMarketPath(item).IndustryFund,
+        5 => item.Description ?? string.Empty,
         _ => string.Empty
     };
 
@@ -356,7 +301,7 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolTextBox.Text = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
         nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
         descriptionTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Description);
-        SelectMarketTreeNode(x.MarketNodeId);
+        LoadMarketLevels(x.MarketNodeId);
 
     }
 
@@ -367,7 +312,7 @@ public sealed partial class SymbolDefinitionForm : Form
         nameTextBox.Clear();
         descriptionTextBox.Clear();
         LoadGrid();
-        marketTreeView.SelectedNode = null;
+        LoadMarketLevels();
         symbolTextBox.Focus();
     }
 
@@ -383,8 +328,8 @@ public sealed partial class SymbolDefinitionForm : Form
         var marketNodeId = SymbolDefinitionRules.NormalizeText(GetSelectedMarketNodeId());
         if (string.IsNullOrWhiteSpace(marketNodeId))
         {
-            MessageBox.Show(this, "ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            marketTreeView.Focus();
+            MessageBox.Show(this, "گره سطح اول ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            marketLevel1ComboBox.Focus();
             return null;
         }
 
@@ -395,7 +340,7 @@ public sealed partial class SymbolDefinitionForm : Form
         if (marketNode == null || !HasValidMarketPath(marketData.Nodes, marketNode))
         {
             MessageBox.Show(this, "ساختار بازار انتخاب‌شده معتبر نیست. دوباره یک ردیف را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            marketTreeView.Focus();
+            marketLevel1ComboBox.Focus();
             return null;
         }
         return new SymbolDefinition
@@ -806,7 +751,7 @@ public sealed partial class SymbolDefinitionForm : Form
     internal static class ExcelSymbolReader
     {
         private static readonly string[] Headers =
-            { "ردیف", "نماد", "نام", "نوع بازار", "نوع صنعت/صندوق", "توضیحات" };
+            { "ردیف", "نماد", "نام", "گره سطح اول ساختار بازار", "گره سطح دوم ساختار بازار", "توضیحات" };
 
         public static List<SymbolDefinition> Read(
             string path,
@@ -909,7 +854,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
             if (string.IsNullOrWhiteSpace(marketType))
             {
-                error = "ستون «نوع بازار» خالی است.";
+                error = "ستون «گره سطح اول ساختار بازار» خالی است.";
                 return "";
             }
 
@@ -920,7 +865,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
             if (marketNode == null)
             {
-                error = $"نوع بازار «{marketType}» در سطح اول ساختار بازار پیدا نشد.";
+                error = $"گره سطح اول «{marketType}» در ساختار بازار پیدا نشد.";
                 return "";
             }
 
@@ -933,7 +878,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
             if (childNode == null)
             {
-                error = $"نوع صنعت/صندوق «{industryFund}» زیر نوع بازار «{marketType}» پیدا نشد.";
+                error = $"گره سطح دوم «{industryFund}» زیر گره سطح اول «{marketType}» پیدا نشد.";
                 return "";
             }
 
@@ -983,7 +928,7 @@ public sealed partial class SymbolDefinitionForm : Form
     internal static class ExcelSymbolWriter
     {
         private static readonly string[] Headers =
-            { "ردیف", "نماد", "نام", "نوع بازار", "نوع صنعت/صندوق", "توضیحات" };
+            { "ردیف", "نماد", "نام", "گره سطح اول ساختار بازار", "گره سطح دوم ساختار بازار", "توضیحات" };
 
         public static void Write(string path, IEnumerable<SymbolDefinition> items)
         {

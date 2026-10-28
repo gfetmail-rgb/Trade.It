@@ -6,7 +6,8 @@ partial class SymbolDefinitionForm
     private TextBox symbolTextBox = null!;
     private TextBox symbolSearchTextBox = null!;
     private TextBox nameTextBox = null!;
-    private TreeView marketTreeView = null!;
+    private ComboBox marketLevel1ComboBox = null!;
+    private ComboBox marketLevel2ComboBox = null!;
     private TextBox descriptionTextBox = null!;
     private Button newButton = null!;
     private Button saveButton = null!;
@@ -20,6 +21,7 @@ partial class SymbolDefinitionForm
     private Label label10 = null!;
     private Label label30 = null!;
     private Label label11 = null!;
+    private Label label31 = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -43,7 +45,8 @@ partial class SymbolDefinitionForm
         symbolTextBox = new TextBox();
         symbolSearchTextBox = new TextBox();
         nameTextBox = new TextBox();
-        marketTreeView = new TreeView();
+        marketLevel1ComboBox = new ComboBox();
+        marketLevel2ComboBox = new ComboBox();
         descriptionTextBox = new TextBox();
         newButton = new Button();
         saveButton = new Button();
@@ -57,11 +60,14 @@ partial class SymbolDefinitionForm
         rowNumberColumn = new DataGridViewTextBoxColumn();
         symbolTitleColumn = new DataGridViewTextBoxColumn();
         nameColumn = new DataGridViewTextBoxColumn();
+        marketLevel1Column = new DataGridViewTextBoxColumn();
+        marketLevel2Column = new DataGridViewTextBoxColumn();
         descriptionColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label30 = new Label();
         label11 = new Label();
+        label31 = new Label();
         toolTip1 = new ToolTip(components);
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
@@ -89,16 +95,23 @@ partial class SymbolDefinitionForm
         nameTextBox.Size = new Size(302, 29);
         nameTextBox.TabIndex = 1;
         // 
-        // marketTreeView
+        // marketLevel1ComboBox
         // 
-        marketTreeView.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        marketTreeView.HideSelection = false;
-        marketTreeView.Location = new Point(916, 48);
-        marketTreeView.Name = "marketTreeView";
-        marketTreeView.RightToLeft = RightToLeft.Yes;
-        marketTreeView.RightToLeftLayout = true;
-        marketTreeView.Size = new Size(369, 640);
-        marketTreeView.TabIndex = 25;
+        marketLevel1ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        marketLevel1ComboBox.Location = new Point(820, 19);
+        marketLevel1ComboBox.Name = "marketLevel1ComboBox";
+        marketLevel1ComboBox.RightToLeft = RightToLeft.Yes;
+        marketLevel1ComboBox.Size = new Size(210, 30);
+        marketLevel1ComboBox.TabIndex = 6;
+        // 
+        // marketLevel2ComboBox
+        // 
+        marketLevel2ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        marketLevel2ComboBox.Location = new Point(1050, 19);
+        marketLevel2ComboBox.Name = "marketLevel2ComboBox";
+        marketLevel2ComboBox.RightToLeft = RightToLeft.Yes;
+        marketLevel2ComboBox.Size = new Size(230, 30);
+        marketLevel2ComboBox.TabIndex = 7;
         // 
         // descriptionTextBox
         // 
@@ -204,7 +217,7 @@ partial class SymbolDefinitionForm
         dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
         symbolsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, descriptionColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, marketLevel1Column, marketLevel2Column, descriptionColumn });
         dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
         dataGridViewCellStyle9.BackColor = SystemColors.Window;
         dataGridViewCellStyle9.Font = new Font("Tahoma", 9F);
@@ -221,7 +234,7 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.RowHeadersVisible = false;
         symbolsDataGridView.RowHeadersWidth = 62;
         symbolsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        symbolsDataGridView.Size = new Size(900, 473);
+        symbolsDataGridView.Size = new Size(1270, 473);
         symbolsDataGridView.TabIndex = 0;
         // 
         // rowNumberColumn
@@ -256,6 +269,22 @@ partial class SymbolDefinitionForm
         nameColumn.ReadOnly = true;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
+        // marketLevel1Column
+        // 
+        marketLevel1Column.HeaderText = "گره سطح اول ساختار بازار";
+        marketLevel1Column.MinimumWidth = 120;
+        marketLevel1Column.Name = "marketLevel1Column";
+        marketLevel1Column.ReadOnly = true;
+        marketLevel1Column.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
+        // marketLevel2Column
+        // 
+        marketLevel2Column.HeaderText = "گره سطح دوم ساختار بازار";
+        marketLevel2Column.MinimumWidth = 120;
+        marketLevel2Column.Name = "marketLevel2Column";
+        marketLevel2Column.ReadOnly = true;
+        marketLevel2Column.SortMode = DataGridViewColumnSortMode.NotSortable;
+        // 
         // descriptionColumn
         // 
         descriptionColumn.HeaderText = "توضیحات";
@@ -284,13 +313,18 @@ partial class SymbolDefinitionForm
         // 
         // label30
         // 
-        label30.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        label30.Location = new Point(916, 9);
+        label30.Location = new Point(820, 54);
         label30.Name = "label30";
-        label30.Size = new Size(100, 30);
+        label30.Size = new Size(210, 25);
         label30.TabIndex = 19;
-        label30.Text = "ساختار بازار";
+        label30.Text = "گره سطح اول ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
+        label31.Location = new Point(1050, 54);
+        label31.Name = "label31";
+        label31.Size = new Size(230, 25);
+        label31.TabIndex = 22;
+        label31.Text = "گره سطح دوم ساختار بازار";
+        label31.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label11
         // 
@@ -330,7 +364,9 @@ partial class SymbolDefinitionForm
         Controls.Add(label10);
         Controls.Add(label30);
         Controls.Add(label11);
-        Controls.Add(marketTreeView);
+        Controls.Add(marketLevel1ComboBox);
+        Controls.Add(marketLevel2ComboBox);
+        Controls.Add(label31);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);
         Name = "SymbolDefinitionForm";
@@ -347,5 +383,7 @@ partial class SymbolDefinitionForm
     private DataGridViewTextBoxColumn rowNumberColumn;
     private DataGridViewTextBoxColumn symbolTitleColumn;
     private DataGridViewTextBoxColumn nameColumn;
+    private DataGridViewTextBoxColumn marketLevel1Column;
+    private DataGridViewTextBoxColumn marketLevel2Column;
     private DataGridViewTextBoxColumn descriptionColumn;
 }
