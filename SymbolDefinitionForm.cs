@@ -414,13 +414,36 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private void DeleteCurrent()
     {
-        var s = SymbolDefinitionRules.NormalizeText(symbolTextBox.Text);
-        if (string.IsNullOrWhiteSpace(s)) return;
-        if (MessageBox.Show(this, $"آیا نماد «{s}» حذف شود؟", "حذف نماد", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+        // Prefer the symbol attached to the selected data row. This avoids relying
+        // on editor contents, which can be cleared by grid selection events.
+        var selectedItem = symbolsDataGridView.SelectedRows.Count > 0
+            ? symbolsDataGridView.SelectedRows[0].Tag as SymbolDefinition
+            : null;
+        var s = SymbolDefinitionRules.NormalizeText(
+            selectedItem?.SymbolTitle ?? symbolTextBox.Text);
+
+        if (string.IsNullOrWhiteSpace(s))
+            return;
+
         var all = SymbolDefinitionStore.Load();
-        all.RemoveAll(x => string.Equals(x.SymbolTitle.Trim(), s, StringComparison.OrdinalIgnoreCase));
+        var removed = all.RemoveAll(x =>
+            string.Equals(
+                SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                s,
+                StringComparison.OrdinalIgnoreCase));
+
+        if (removed == 0)
+        {
+            MessageBox.Show(this, "نماد انتخاب‌شده در فایل نمادها پیدا نشد.", "حذف نماد",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        if (MessageBox.Show(this, $"آیا نماد «{s}» حذف شود؟", "حذف نماد",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            return;
+
         SymbolDefinitionStore.Save(all);
-        LoadGrid();
         ClearEditor();
     }
 
