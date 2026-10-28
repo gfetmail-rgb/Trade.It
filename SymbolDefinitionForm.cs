@@ -414,8 +414,8 @@ public sealed partial class SymbolDefinitionForm : Form
 
     private void DeleteCurrent()
     {
-        // Prefer the symbol attached to the selected data row. This avoids relying
-        // on editor contents, which can be cleared by grid selection events.
+        // Prefer the symbol attached to the selected data row, including when it is
+        // the only row in the grid. Fall back to the editor when no row is selected.
         var selectedItem = symbolsDataGridView.SelectedRows.Count > 0
             ? symbolsDataGridView.SelectedRows[0].Tag as SymbolDefinition
             : null;
@@ -423,6 +423,10 @@ public sealed partial class SymbolDefinitionForm : Form
             selectedItem?.SymbolTitle ?? symbolTextBox.Text);
 
         if (string.IsNullOrWhiteSpace(s))
+            return;
+
+        if (MessageBox.Show(this, $"آیا نماد «{s}» حذف شود؟", "حذف نماد",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             return;
 
         var all = SymbolDefinitionStore.Load();
@@ -438,10 +442,6 @@ public sealed partial class SymbolDefinitionForm : Form
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
-
-        if (MessageBox.Show(this, $"آیا نماد «{s}» حذف شود؟", "حذف نماد",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-            return;
 
         SymbolDefinitionStore.Save(all);
         ClearEditor();
