@@ -325,30 +325,54 @@ public sealed partial class SymbolDefinitionForm : Form
             symbolTextBox.Focus();
             return null;
         }
-        var marketNodeId = SymbolDefinitionRules.NormalizeText(GetSelectedMarketNodeId());
-        if (string.IsNullOrWhiteSpace(marketNodeId))
+
+        var name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            MessageBox.Show(this, "نام نماد را وارد کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            nameTextBox.Focus();
+            return null;
+        }
+
+        var marketLevel1Id = SymbolDefinitionRules.NormalizeText(marketLevel1ComboBox.SelectedValue as string ?? "");
+        if (string.IsNullOrWhiteSpace(marketLevel1Id))
         {
             MessageBox.Show(this, "گره سطح اول ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketLevel1ComboBox.Focus();
             return null;
         }
 
-        var marketData = MarketStructureStore.Load();
-        var marketNode = marketData.Nodes.FirstOrDefault(x =>
-            string.Equals(x.Id, marketNodeId, StringComparison.Ordinal));
-
-        if (marketNode == null || !HasValidMarketPath(marketData.Nodes, marketNode))
+        var marketLevel2Id = SymbolDefinitionRules.NormalizeText(marketLevel2ComboBox.SelectedValue as string ?? "");
+        if (string.IsNullOrWhiteSpace(marketLevel2Id))
         {
-            MessageBox.Show(this, "ساختار بازار انتخاب‌شده معتبر نیست. دوباره یک ردیف را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "گره سطح دوم ساختار بازار را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            marketLevel2ComboBox.Focus();
+            return null;
+        }
+
+        var marketData = MarketStructureStore.Load();
+        var marketLevel1 = marketData.Nodes.FirstOrDefault(x =>
+            string.Equals(x.Id, marketLevel1Id, StringComparison.Ordinal));
+        var marketLevel2 = marketData.Nodes.FirstOrDefault(x =>
+            string.Equals(x.Id, marketLevel2Id, StringComparison.Ordinal));
+
+        if (marketLevel1 == null ||
+            !string.IsNullOrWhiteSpace(marketLevel1.ParentId) ||
+            marketLevel2 == null ||
+            !string.Equals(marketLevel2.ParentId, marketLevel1.Id, StringComparison.Ordinal) ||
+            !HasValidMarketPath(marketData.Nodes, marketLevel2))
+        {
+            MessageBox.Show(this, "گره‌های سطح اول و دوم ساختار بازار معتبر نیستند. هر دو را دوباره انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             marketLevel1ComboBox.Focus();
             return null;
         }
+
         return new SymbolDefinition
         {
             SymbolTitle = symbol,
-            Name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text),
+            Name = name,
             Description = SymbolDefinitionRules.NormalizeText(descriptionTextBox.Text),
-            MarketNodeId = marketNodeId
+            MarketNodeId = marketLevel2Id
         };
     }
 
