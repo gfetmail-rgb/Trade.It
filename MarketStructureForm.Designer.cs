@@ -44,8 +44,6 @@ partial class MarketStructureForm
         addChildButton = new Button();
         bottomPanel = new Panel();
         closeButton = new Button();
-        label2 = new Label();
-        label1 = new Label();
         tabs.SuspendLayout();
         marketPage.SuspendLayout();
         marketButtons.SuspendLayout();
@@ -192,26 +190,6 @@ partial class MarketStructureForm
         closeButton.Text = "بستن";
         closeButton.UseVisualStyleBackColor = true;
         // 
-        // label2
-        // 
-        label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        label2.ForeColor = Color.Brown;
-        label2.Location = new Point(609, 12);
-        label2.Name = "label2";
-        label2.Size = new Size(823, 34);
-        label2.TabIndex = 7;
-        label2.Text = "اکسل باید فاقد هدر باشد. غیر تکراری ها (نسبت به مقادیر موجود) وارد خواهند شد و تکراری ها وارد نمی شوند";
-        // 
-        // label1
-        // 
-        label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        label1.ForeColor = Color.Brown;
-        label1.Location = new Point(609, 12);
-        label1.Name = "label1";
-        label1.Size = new Size(823, 34);
-        label1.TabIndex = 7;
-        label1.Text = "اکسل باید فاقد هدر باشد. غیر تکراری ها (نسبت به مقادیر موجود) وارد خواهند شد و تکراری ها وارد نمی شوند";
-        // 
         // MarketStructureForm
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
@@ -242,6 +220,4 @@ partial class MarketStructureForm
         button.Text = text;
         button.UseVisualStyleBackColor = true;
     }
-    private Label label2;
-    private Label label1;
 }

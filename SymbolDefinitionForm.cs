@@ -685,15 +685,6 @@ public sealed partial class SymbolDefinitionForm : Form
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public string MarketNodeId { get; set; } = "";
-        public string AssetCategory { get; set; } = "";
-        public string ExchangeTitle { get; set; } = "";
-        public string MarketType { get; set; } = "";
-        public string BoardType { get; set; } = "";
-        public string AssetType { get; set; } = "";
-        public string OtherItem { get; set; } = "";
-        public string FundType { get; set; } = "";
-        public string IndustryGroup { get; set; } = "";
-        public string IndustryGroupOrFundType { get; set; } = "";
     }
 
     public static class SymbolDefinitionStore
@@ -828,15 +819,6 @@ public sealed partial class SymbolDefinitionForm : Form
             x.Name = NormalizeText(x.Name);
             x.Description = NormalizeText(x.Description);
             x.MarketNodeId = NormalizeText(x.MarketNodeId);
-            x.AssetCategory = NormalizeOption(x.AssetCategory);
-            x.ExchangeTitle = NormalizeOption(x.ExchangeTitle);
-            x.MarketType = NormalizeOption(x.MarketType);
-            x.BoardType = NormalizeOption(x.BoardType);
-            x.AssetType = NormalizeOption(x.AssetType);
-            x.OtherItem = NormalizeOption(x.OtherItem);
-            x.FundType = NormalizeOption(x.FundType);
-            x.IndustryGroup = NormalizeOption(x.IndustryGroup);
-            x.IndustryGroupOrFundType = NormalizeOption(x.IndustryGroupOrFundType);
         }
 
         private static string NormalizeOption(string value)
@@ -845,38 +827,7 @@ public sealed partial class SymbolDefinitionForm : Form
             return normalized == EmptyOption ? "" : normalized;
         }
 
-        public static bool IsAllowed(string value, ComboBox.ObjectCollection items, out string standardValue) =>
-            IsAllowed(value, items.Cast<object>(), out standardValue);
 
-        public static bool IsAllowed(string value, IEnumerable<object> items, out string standardValue)
-        {
-            var normalized = NormalizeText(value);
-            if (normalized == EmptyOption) normalized = "";
-            if (string.IsNullOrWhiteSpace(normalized))
-            {
-                standardValue = "";
-                return true;
-            }
-            var match = items
-                .Select(x => NormalizeText(Convert.ToString(x) ?? ""))
-                .FirstOrDefault(x => string.Equals(x, normalized, StringComparison.Ordinal));
-            standardValue = match ?? "";
-            return match != null;
-        }
-
-        public static bool IsAllowed(string value, IReadOnlyCollection<string> allowed, out string standardValue)
-        {
-            var normalized = NormalizeText(value);
-            if (normalized == EmptyOption) normalized = "";
-            if (string.IsNullOrWhiteSpace(normalized))
-            {
-                standardValue = "";
-                return true;
-            }
-            var match = allowed.FirstOrDefault(x => string.Equals(NormalizeText(x), normalized, StringComparison.Ordinal));
-            standardValue = match ?? "";
-            return match != null;
-        }
     }
 
     internal static class ExcelSymbolReader
