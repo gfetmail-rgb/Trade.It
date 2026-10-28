@@ -77,12 +77,14 @@ namespace Trade.It
 
             var retracementGroup = CreateFibonacciLevelGroup(
                 "فیبوناچی دو نقطه‌ای",
+                ChartAppearanceSettings.GetFibonacciRetracementLevels(),
                 ChartAppearanceSettings.FibonacciRetracementLevelsMask,
                 fibonacciRetracementCheckBoxes,
                 new Point(260, 25));
 
             var extensionGroup = CreateFibonacciLevelGroup(
                 "فیبوناچی سه نقطه‌ای",
+                ChartAppearanceSettings.GetAllFibonacciLevels(),
                 ChartAppearanceSettings.FibonacciExtensionLevelsMask,
                 fibonacciExtensionCheckBoxes,
                 new Point(10, 25));
@@ -100,6 +102,7 @@ namespace Trade.It
 
         private static GroupBox CreateFibonacciLevelGroup(
             string title,
+            IReadOnlyList<(float Value, string Text)> levels,
             int mask,
             List<CheckBox> target,
             Point location)
@@ -113,7 +116,6 @@ namespace Trade.It
                 TabStop = false
             };
 
-            var levels = ChartAppearanceSettings.GetAllFibonacciLevels();
             for (var i = 0; i < levels.Count; i++)
             {
                 var row = i / 4;
