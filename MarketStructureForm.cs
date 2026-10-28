@@ -1,4 +1,3 @@
-using ClosedXML.Excel;
 using System.Text.Json;
 
 namespace Trade.It;

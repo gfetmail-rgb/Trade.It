@@ -20,7 +20,6 @@ partial class SymbolDefinitionForm
     private Label label10 = null!;
     private Label label30 = null!;
     private Label label11 = null!;
-    private Label label12 = null!;
 
     protected override void Dispose(bool disposing)
     {
@@ -63,7 +62,6 @@ partial class SymbolDefinitionForm
         label10 = new Label();
         label30 = new Label();
         label11 = new Label();
-        label12 = new Label();
         toolTip1 = new ToolTip(components);
         ((System.ComponentModel.ISupportInitialize)symbolsDataGridView).BeginInit();
         SuspendLayout();
@@ -303,10 +301,6 @@ partial class SymbolDefinitionForm
         label11.Text = "توضیحات";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
-        // label12
-        // 
-        label12.Visible = false;
-        // 
         // toolTip1
         // 
         toolTip1.AutoPopDelay = 5000;
@@ -336,7 +330,6 @@ partial class SymbolDefinitionForm
         Controls.Add(label10);
         Controls.Add(label30);
         Controls.Add(label11);
-        Controls.Add(label12);
         Controls.Add(marketTreeView);
         Font = new Font("Tahoma", 9F);
         MinimumSize = new Size(950, 600);

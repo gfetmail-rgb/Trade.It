@@ -799,8 +799,6 @@ public sealed partial class SymbolDefinitionForm : Form
 
     internal static class SymbolDefinitionRules
     {
-        public const string EmptyOption = "-";
-
         public static string NormalizeText(string value)
         {
             return value
@@ -819,12 +817,6 @@ public sealed partial class SymbolDefinitionForm : Form
             x.Name = NormalizeText(x.Name);
             x.Description = NormalizeText(x.Description);
             x.MarketNodeId = NormalizeText(x.MarketNodeId);
-        }
-
-        private static string NormalizeOption(string value)
-        {
-            var normalized = NormalizeText(value);
-            return normalized == EmptyOption ? "" : normalized;
         }
 
 
