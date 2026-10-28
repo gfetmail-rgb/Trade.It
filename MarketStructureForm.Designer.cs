@@ -5,8 +5,6 @@ partial class MarketStructureForm
     private System.ComponentModel.IContainer? components = null;
     private TabControl tabs;
     private TabPage marketPage;
-    private TabPage categoryPage;
-    private TabPage otherPage;
     private TreeView marketTreeView;
     private FlowLayoutPanel marketButtons;
     private TextBox marketTitleTextBox;
@@ -18,22 +16,6 @@ partial class MarketStructureForm
     private Button deleteButton;
     private Button moveUpButton;
     private Button moveDownButton;
-    private ListBox categoryListBox;
-    private TextBox categoryTextBox;
-    private FlowLayoutPanel categoryButtons;
-    private Button addCategoryButton;
-    private Button renameCategoryButton;
-    private Button deleteCategoryButton;
-    private Button importCategoryButton;
-    private Button exportCategoryButton;
-    private ListBox otherCategoryListBox;
-    private TextBox otherCategoryTextBox;
-    private FlowLayoutPanel otherCategoryButtons;
-    private Button addOtherCategoryButton;
-    private Button renameOtherCategoryButton;
-    private Button deleteOtherCategoryButton;
-    private Button importOtherCategoryButton;
-    private Button exportOtherCategoryButton;
     private Panel bottomPanel;
     private Button closeButton;
 
@@ -60,24 +42,6 @@ partial class MarketStructureForm
         importMarketStructureButton = new Button();
         exportMarketStructureButton = new Button();
         addChildButton = new Button();
-        categoryPage = new TabPage();
-        categoryListBox = new ListBox();
-        categoryTextBox = new TextBox();
-        categoryButtons = new FlowLayoutPanel();
-        exportCategoryButton = new Button();
-        importCategoryButton = new Button();
-        deleteCategoryButton = new Button();
-        renameCategoryButton = new Button();
-        addCategoryButton = new Button();
-        otherPage = new TabPage();
-        otherCategoryListBox = new ListBox();
-        otherCategoryTextBox = new TextBox();
-        otherCategoryButtons = new FlowLayoutPanel();
-        exportOtherCategoryButton = new Button();
-        importOtherCategoryButton = new Button();
-        deleteOtherCategoryButton = new Button();
-        renameOtherCategoryButton = new Button();
-        addOtherCategoryButton = new Button();
         bottomPanel = new Panel();
         closeButton = new Button();
         label2 = new Label();
@@ -85,10 +49,6 @@ partial class MarketStructureForm
         tabs.SuspendLayout();
         marketPage.SuspendLayout();
         marketButtons.SuspendLayout();
-        categoryPage.SuspendLayout();
-        categoryButtons.SuspendLayout();
-        otherPage.SuspendLayout();
-        otherCategoryButtons.SuspendLayout();
         bottomPanel.SuspendLayout();
         SuspendLayout();
         // 
@@ -211,218 +171,6 @@ partial class MarketStructureForm
         addChildButton.Text = "ثبت / افزودن زیرمجموعه";
         addChildButton.UseVisualStyleBackColor = true;
         // 
-        // categoryPage
-        // 
-        categoryPage.Controls.Add(categoryListBox);
-        categoryPage.Controls.Add(categoryTextBox);
-        categoryPage.Controls.Add(categoryButtons);
-        categoryPage.Location = new Point(4, 34);
-        categoryPage.Margin = new Padding(4, 5, 4, 5);
-        categoryPage.Name = "categoryPage";
-        categoryPage.Padding = new Padding(17, 20, 17, 20);
-        categoryPage.Size = new Size(1492, 1085);
-        categoryPage.TabIndex = 1;
-        categoryPage.Text = "انواع دارایی / ابزار";
-        categoryPage.UseVisualStyleBackColor = true;
-        // 
-        // categoryListBox
-        // 
-        categoryListBox.Dock = DockStyle.Fill;
-        categoryListBox.ItemHeight = 25;
-        categoryListBox.Location = new Point(17, 20);
-        categoryListBox.Margin = new Padding(4, 5, 4, 5);
-        categoryListBox.Name = "categoryListBox";
-        categoryListBox.RightToLeft = RightToLeft.Yes;
-        categoryListBox.SelectionMode = SelectionMode.MultiExtended;
-        categoryListBox.Size = new Size(1458, 927);
-        categoryListBox.Sorted = true;
-        categoryListBox.TabIndex = 0;
-        // 
-        // categoryTextBox
-        // 
-        categoryTextBox.BackColor = Color.Bisque;
-        categoryTextBox.Dock = DockStyle.Bottom;
-        categoryTextBox.Location = new Point(17, 947);
-        categoryTextBox.Margin = new Padding(4, 5, 4, 5);
-        categoryTextBox.Name = "categoryTextBox";
-        categoryTextBox.PlaceholderText = "نام نوع دارایی / ابزار";
-        categoryTextBox.Size = new Size(1458, 31);
-        categoryTextBox.TabIndex = 1;
-        // 
-        // categoryButtons
-        // 
-        categoryButtons.Controls.Add(exportCategoryButton);
-        categoryButtons.Controls.Add(importCategoryButton);
-        categoryButtons.Controls.Add(deleteCategoryButton);
-        categoryButtons.Controls.Add(renameCategoryButton);
-        categoryButtons.Controls.Add(addCategoryButton);
-        categoryButtons.Controls.Add(label2);
-        categoryButtons.Dock = DockStyle.Bottom;
-        categoryButtons.FlowDirection = FlowDirection.RightToLeft;
-        categoryButtons.Location = new Point(17, 978);
-        categoryButtons.Margin = new Padding(4, 5, 4, 5);
-        categoryButtons.Name = "categoryButtons";
-        categoryButtons.Padding = new Padding(0, 12, 0, 0);
-        categoryButtons.Size = new Size(1458, 87);
-        categoryButtons.TabIndex = 2;
-        categoryButtons.WrapContents = false;
-        // 
-        // exportCategoryButton
-        // 
-        exportCategoryButton.Location = new Point(4, 17);
-        exportCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        exportCategoryButton.Name = "exportCategoryButton";
-        exportCategoryButton.Size = new Size(125, 38);
-        exportCategoryButton.TabIndex = 0;
-        exportCategoryButton.Text = "خروجی اکسل";
-        exportCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // importCategoryButton
-        // 
-        importCategoryButton.Location = new Point(137, 17);
-        importCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        importCategoryButton.Name = "importCategoryButton";
-        importCategoryButton.Size = new Size(120, 38);
-        importCategoryButton.TabIndex = 1;
-        importCategoryButton.Text = "ورود از اکسل";
-        importCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // deleteCategoryButton
-        // 
-        deleteCategoryButton.Location = new Point(265, 17);
-        deleteCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        deleteCategoryButton.Name = "deleteCategoryButton";
-        deleteCategoryButton.Size = new Size(107, 38);
-        deleteCategoryButton.TabIndex = 2;
-        deleteCategoryButton.Text = "حذف";
-        deleteCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // renameCategoryButton
-        // 
-        renameCategoryButton.Location = new Point(380, 17);
-        renameCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        renameCategoryButton.Name = "renameCategoryButton";
-        renameCategoryButton.Size = new Size(107, 38);
-        renameCategoryButton.TabIndex = 3;
-        renameCategoryButton.Text = "تغییر نام";
-        renameCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // addCategoryButton
-        // 
-        addCategoryButton.Location = new Point(495, 17);
-        addCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        addCategoryButton.Name = "addCategoryButton";
-        addCategoryButton.Size = new Size(107, 38);
-        addCategoryButton.TabIndex = 4;
-        addCategoryButton.Text = "ثبت";
-        addCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // otherPage
-        // 
-        otherPage.Controls.Add(otherCategoryListBox);
-        otherPage.Controls.Add(otherCategoryTextBox);
-        otherPage.Controls.Add(otherCategoryButtons);
-        otherPage.Location = new Point(4, 34);
-        otherPage.Margin = new Padding(4, 5, 4, 5);
-        otherPage.Name = "otherPage";
-        otherPage.Padding = new Padding(17, 20, 17, 20);
-        otherPage.Size = new Size(1492, 1085);
-        otherPage.TabIndex = 2;
-        otherPage.Text = "سایر موارد";
-        otherPage.UseVisualStyleBackColor = true;
-        // 
-        // otherCategoryListBox
-        // 
-        otherCategoryListBox.Dock = DockStyle.Fill;
-        otherCategoryListBox.ItemHeight = 25;
-        otherCategoryListBox.Location = new Point(17, 20);
-        otherCategoryListBox.Margin = new Padding(4, 5, 4, 5);
-        otherCategoryListBox.Name = "otherCategoryListBox";
-        otherCategoryListBox.RightToLeft = RightToLeft.Yes;
-        otherCategoryListBox.SelectionMode = SelectionMode.MultiExtended;
-        otherCategoryListBox.Size = new Size(1458, 927);
-        otherCategoryListBox.Sorted = true;
-        otherCategoryListBox.TabIndex = 0;
-        // 
-        // otherCategoryTextBox
-        // 
-        otherCategoryTextBox.BackColor = Color.Bisque;
-        otherCategoryTextBox.Dock = DockStyle.Bottom;
-        otherCategoryTextBox.Location = new Point(17, 947);
-        otherCategoryTextBox.Margin = new Padding(4, 5, 4, 5);
-        otherCategoryTextBox.Name = "otherCategoryTextBox";
-        otherCategoryTextBox.PlaceholderText = "مقدار سایر موارد";
-        otherCategoryTextBox.Size = new Size(1458, 31);
-        otherCategoryTextBox.TabIndex = 1;
-        // 
-        // otherCategoryButtons
-        // 
-        otherCategoryButtons.Controls.Add(exportOtherCategoryButton);
-        otherCategoryButtons.Controls.Add(importOtherCategoryButton);
-        otherCategoryButtons.Controls.Add(deleteOtherCategoryButton);
-        otherCategoryButtons.Controls.Add(renameOtherCategoryButton);
-        otherCategoryButtons.Controls.Add(addOtherCategoryButton);
-        otherCategoryButtons.Controls.Add(label1);
-        otherCategoryButtons.Dock = DockStyle.Bottom;
-        otherCategoryButtons.FlowDirection = FlowDirection.RightToLeft;
-        otherCategoryButtons.Location = new Point(17, 978);
-        otherCategoryButtons.Margin = new Padding(4, 5, 4, 5);
-        otherCategoryButtons.Name = "otherCategoryButtons";
-        otherCategoryButtons.Padding = new Padding(0, 12, 0, 0);
-        otherCategoryButtons.Size = new Size(1458, 87);
-        otherCategoryButtons.TabIndex = 2;
-        otherCategoryButtons.WrapContents = false;
-        // 
-        // exportOtherCategoryButton
-        // 
-        exportOtherCategoryButton.Location = new Point(4, 17);
-        exportOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        exportOtherCategoryButton.Name = "exportOtherCategoryButton";
-        exportOtherCategoryButton.Size = new Size(124, 38);
-        exportOtherCategoryButton.TabIndex = 0;
-        exportOtherCategoryButton.Text = "خروجی اکسل";
-        exportOtherCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // importOtherCategoryButton
-        // 
-        importOtherCategoryButton.Location = new Point(136, 17);
-        importOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        importOtherCategoryButton.Name = "importOtherCategoryButton";
-        importOtherCategoryButton.Size = new Size(121, 38);
-        importOtherCategoryButton.TabIndex = 1;
-        importOtherCategoryButton.Text = "ورود از اکسل";
-        importOtherCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // deleteOtherCategoryButton
-        // 
-        deleteOtherCategoryButton.Location = new Point(265, 17);
-        deleteOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        deleteOtherCategoryButton.Name = "deleteOtherCategoryButton";
-        deleteOtherCategoryButton.Size = new Size(107, 38);
-        deleteOtherCategoryButton.TabIndex = 2;
-        deleteOtherCategoryButton.Text = "حذف";
-        deleteOtherCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // renameOtherCategoryButton
-        // 
-        renameOtherCategoryButton.Location = new Point(380, 17);
-        renameOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        renameOtherCategoryButton.Name = "renameOtherCategoryButton";
-        renameOtherCategoryButton.Size = new Size(107, 38);
-        renameOtherCategoryButton.TabIndex = 3;
-        renameOtherCategoryButton.Text = "تغییر نام";
-        renameOtherCategoryButton.UseVisualStyleBackColor = true;
-        // 
-        // addOtherCategoryButton
-        // 
-        addOtherCategoryButton.Location = new Point(495, 17);
-        addOtherCategoryButton.Margin = new Padding(4, 5, 4, 5);
-        addOtherCategoryButton.Name = "addOtherCategoryButton";
-        addOtherCategoryButton.Size = new Size(107, 38);
-        addOtherCategoryButton.TabIndex = 4;
-        addOtherCategoryButton.Text = "ثبت";
-        addOtherCategoryButton.UseVisualStyleBackColor = true;
-        // 
         // bottomPanel
         // 
         bottomPanel.Controls.Add(closeButton);
@@ -482,12 +230,6 @@ partial class MarketStructureForm
         marketPage.ResumeLayout(false);
         marketPage.PerformLayout();
         marketButtons.ResumeLayout(false);
-        categoryPage.ResumeLayout(false);
-        categoryPage.PerformLayout();
-        categoryButtons.ResumeLayout(false);
-        otherPage.ResumeLayout(false);
-        otherPage.PerformLayout();
-        otherCategoryButtons.ResumeLayout(false);
         bottomPanel.ResumeLayout(false);
         ResumeLayout(false);
     }

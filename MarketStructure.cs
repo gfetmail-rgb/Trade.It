@@ -13,8 +13,6 @@ public sealed class MarketStructureNode
 public sealed class MarketStructureData
 {
     public List<MarketStructureNode> Nodes { get; set; } = new();
-    public List<string> AssetCategories { get; set; } = new();
-    public List<string> OtherCategories { get; set; } = new();
 }
 
 public static class MarketStructureStore
@@ -62,8 +60,6 @@ public static class MarketStructureStore
     private static void Normalize(MarketStructureData data)
     {
         data.Nodes ??= new();
-        data.AssetCategories ??= new();
-        data.OtherCategories ??= new();
 
         var usedIds = new HashSet<string>(StringComparer.Ordinal);
         var duplicateIds = new HashSet<string>(StringComparer.Ordinal);
@@ -119,17 +115,6 @@ public static class MarketStructureStore
         RecalculateSortOrders(data);
 
 
-        data.AssetCategories = data.AssetCategories
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        data.OtherCategories = data.OtherCategories
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
     }
 
     private static void BreakParentCycles(MarketStructureData data)
@@ -263,17 +248,6 @@ public static class MarketStructureStore
             data,
             commodityFinancial.Id,
             "گواهی سپرده کالایی");
-
-        data.AssetCategories.AddRange(new[]
-        {
-            "سهام",
-            "صندوق سرمایه‌گذاری",
-            "اوراق",
-            "اختیار معامله",
-            "قراردادهای آتی",
-            "گواهی سپرده کالایی",
-            "سایر ابزارهای مالی"
-        });
 
         return data;
     }
