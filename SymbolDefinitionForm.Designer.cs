@@ -98,7 +98,7 @@ partial class SymbolDefinitionForm
         // marketLevel1ComboBox
         // 
         marketLevel1ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketLevel1ComboBox.Location = new Point(820, 19);
+        marketLevel1ComboBox.Location = new Point(820, 38);
         marketLevel1ComboBox.Name = "marketLevel1ComboBox";
         marketLevel1ComboBox.RightToLeft = RightToLeft.Yes;
         marketLevel1ComboBox.Size = new Size(210, 30);
@@ -107,7 +107,7 @@ partial class SymbolDefinitionForm
         // marketLevel2ComboBox
         // 
         marketLevel2ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        marketLevel2ComboBox.Location = new Point(1050, 19);
+        marketLevel2ComboBox.Location = new Point(1050, 38);
         marketLevel2ComboBox.Name = "marketLevel2ComboBox";
         marketLevel2ComboBox.RightToLeft = RightToLeft.Yes;
         marketLevel2ComboBox.Size = new Size(230, 30);
@@ -313,13 +313,13 @@ partial class SymbolDefinitionForm
         // 
         // label30
         // 
-        label30.Location = new Point(820, 54);
+        label30.Location = new Point(820, 9);
         label30.Name = "label30";
         label30.Size = new Size(210, 25);
         label30.TabIndex = 19;
         label30.Text = "گره سطح اول ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
-        label31.Location = new Point(1050, 54);
+        label31.Location = new Point(1050, 9);
         label31.Name = "label31";
         label31.Size = new Size(230, 25);
         label31.TabIndex = 22;
