@@ -7,8 +7,7 @@ partial class SymbolDefinitionForm
     private TextBox symbolSearchTextBox = null!;
     private TextBox nameTextBox = null!;
     private TreeView marketTreeView = null!;
-    private ComboBox assetComboBox = null!;
-    private ComboBox otherItemComboBox = null!;
+    private TextBox descriptionTextBox = null!;
     private Button newButton = null!;
     private Button saveButton = null!;
     private Button deleteButton = null!;
@@ -46,8 +45,7 @@ partial class SymbolDefinitionForm
         symbolSearchTextBox = new TextBox();
         nameTextBox = new TextBox();
         marketTreeView = new TreeView();
-        assetComboBox = new ComboBox();
-        otherItemComboBox = new ComboBox();
+        descriptionTextBox = new TextBox();
         newButton = new Button();
         saveButton = new Button();
         deleteButton = new Button();
@@ -60,11 +58,7 @@ partial class SymbolDefinitionForm
         rowNumberColumn = new DataGridViewTextBoxColumn();
         symbolTitleColumn = new DataGridViewTextBoxColumn();
         nameColumn = new DataGridViewTextBoxColumn();
-        exchangeColumn = new DataGridViewTextBoxColumn();
-        marketColumn = new DataGridViewTextBoxColumn();
-        boardColumn = new DataGridViewTextBoxColumn();
-        assetColumn = new DataGridViewTextBoxColumn();
-        otherItemColumn = new DataGridViewTextBoxColumn();
+        descriptionColumn = new DataGridViewTextBoxColumn();
         label00 = new Label();
         label10 = new Label();
         label30 = new Label();
@@ -108,22 +102,12 @@ partial class SymbolDefinitionForm
         marketTreeView.Size = new Size(369, 640);
         marketTreeView.TabIndex = 25;
         // 
-        // assetComboBox
+        // descriptionTextBox
         // 
-        assetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        assetComboBox.Items.AddRange(new object[] { "سهام نیست", "سهام", "صندوق ETF سهامی", "صندوق ETF کالایی" });
-        assetComboBox.Location = new Point(175, 76);
-        assetComboBox.Name = "assetComboBox";
-        assetComboBox.Size = new Size(201, 30);
-        assetComboBox.TabIndex = 5;
-        // 
-        // otherItemComboBox
-        // 
-        otherItemComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        otherItemComboBox.Location = new Point(493, 76);
-        otherItemComboBox.Name = "otherItemComboBox";
-        otherItemComboBox.Size = new Size(302, 30);
-        otherItemComboBox.TabIndex = 6;
+        descriptionTextBox.Location = new Point(175, 76);
+        descriptionTextBox.Name = "descriptionTextBox";
+        descriptionTextBox.Size = new Size(620, 30);
+        descriptionTextBox.TabIndex = 5;
         // 
         // newButton
         // 
@@ -222,7 +206,7 @@ partial class SymbolDefinitionForm
         dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
         symbolsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
         symbolsDataGridView.ColumnHeadersHeight = 34;
-        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, exchangeColumn, marketColumn, boardColumn, assetColumn, otherItemColumn });
+        symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, descriptionColumn });
         dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
         dataGridViewCellStyle9.BackColor = SystemColors.Window;
         dataGridViewCellStyle9.Font = new Font("Tahoma", 9F);
@@ -274,53 +258,13 @@ partial class SymbolDefinitionForm
         nameColumn.ReadOnly = true;
         nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
-        // exchangeColumn
+        // descriptionColumn
         // 
-        dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
-        exchangeColumn.DefaultCellStyle = dataGridViewCellStyle5;
-        exchangeColumn.HeaderText = "بورس";
-        exchangeColumn.MinimumWidth = 8;
-        exchangeColumn.Name = "exchangeColumn";
-        exchangeColumn.ReadOnly = true;
-        exchangeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // marketColumn
-        // 
-        dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
-        marketColumn.DefaultCellStyle = dataGridViewCellStyle6;
-        marketColumn.HeaderText = "بازار";
-        marketColumn.MinimumWidth = 8;
-        marketColumn.Name = "marketColumn";
-        marketColumn.ReadOnly = true;
-        marketColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // boardColumn
-        // 
-        dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
-        boardColumn.DefaultCellStyle = dataGridViewCellStyle7;
-        boardColumn.HeaderText = "تابلو";
-        boardColumn.MinimumWidth = 8;
-        boardColumn.Name = "boardColumn";
-        boardColumn.ReadOnly = true;
-        boardColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // assetColumn
-        // 
-        dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleRight;
-        assetColumn.DefaultCellStyle = dataGridViewCellStyle8;
-        assetColumn.FillWeight = 80F;
-        assetColumn.HeaderText = "دارایی";
-        assetColumn.MinimumWidth = 8;
-        assetColumn.Name = "assetColumn";
-        assetColumn.ReadOnly = true;
-        assetColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-        // 
-        // otherItemColumn
-        // 
-        otherItemColumn.HeaderText = "سایر موارد";
-        otherItemColumn.MinimumWidth = 8;
-        otherItemColumn.Name = "otherItemColumn";
-        otherItemColumn.ReadOnly = true;
+        descriptionColumn.HeaderText = "توضیحات";
+        descriptionColumn.MinimumWidth = 100;
+        descriptionColumn.Name = "descriptionColumn";
+        descriptionColumn.ReadOnly = true;
+        descriptionColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
         // 
         // label00
         // 
@@ -356,17 +300,12 @@ partial class SymbolDefinitionForm
         label11.Name = "label11";
         label11.Size = new Size(57, 30);
         label11.TabIndex = 21;
-        label11.Text = "دارایی";
+        label11.Text = "توضیحات";
         label11.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label12
         // 
-        label12.Location = new Point(382, 76);
-        label12.Name = "label12";
-        label12.Size = new Size(105, 30);
-        label12.TabIndex = 22;
-        label12.Text = "سایر موارد";
-        label12.TextAlign = ContentAlignment.MiddleRight;
+        label12.Visible = false;
         // 
         // toolTip1
         // 
@@ -382,8 +321,7 @@ partial class SymbolDefinitionForm
         ClientSize = new Size(1293, 700);
         Controls.Add(symbolTextBox);
         Controls.Add(nameTextBox);
-        Controls.Add(assetComboBox);
-        Controls.Add(otherItemComboBox);
+        Controls.Add(descriptionTextBox);
         Controls.Add(newButton);
         Controls.Add(saveButton);
         Controls.Add(deleteButton);
@@ -416,9 +354,5 @@ partial class SymbolDefinitionForm
     private DataGridViewTextBoxColumn rowNumberColumn;
     private DataGridViewTextBoxColumn symbolTitleColumn;
     private DataGridViewTextBoxColumn nameColumn;
-    private DataGridViewTextBoxColumn exchangeColumn;
-    private DataGridViewTextBoxColumn marketColumn;
-    private DataGridViewTextBoxColumn boardColumn;
-    private DataGridViewTextBoxColumn assetColumn;
-    private DataGridViewTextBoxColumn otherItemColumn;
+    private DataGridViewTextBoxColumn descriptionColumn;
 }

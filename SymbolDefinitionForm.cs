@@ -18,7 +18,6 @@ public sealed partial class SymbolDefinitionForm : Form
         InitializeComponent();
         foreach (DataGridViewColumn column in symbolsDataGridView.Columns)
             column.SortMode = column == rowNumberColumn ? DataGridViewColumnSortMode.NotSortable : DataGridViewColumnSortMode.Programmatic;
-        SetComboDefaults();
         LoadMarketTree();
         LoadGrid();
         ShowInvalidMarketReferenceWarning();
@@ -36,21 +35,6 @@ public sealed partial class SymbolDefinitionForm : Form
         };
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
         symbolSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
-    }
-
-    private void SetComboDefaults()
-    {
-        var marketData = MarketStructureStore.Load();
-
-        assetComboBox.Items.Clear();
-        foreach (var category in marketData.AssetCategories)
-            assetComboBox.Items.Add(category);
-        assetComboBox.SelectedIndex = -1;
-
-        otherItemComboBox.Items.Clear();
-        foreach (var item in marketData.OtherCategories)
-            otherItemComboBox.Items.Add(item);
-        otherItemComboBox.SelectedIndex = -1;
     }
 
     private void LoadMarketTree(string? selectedNodeId = null)
@@ -294,17 +278,11 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
-                var marketPath = GetMarketPath(item);
-
                 int r = symbolsDataGridView.Rows.Add(
                     rowNumber++,
                     item.SymbolTitle,
                     item.Name,
-                    marketPath.Exchange,
-                    marketPath.Market,
-                    marketPath.Board,
-                    item.AssetCategory,
-                    item.OtherItem);
+                    item.Description);
 
                 symbolsDataGridView.Rows[r].Tag = item;
             }
@@ -358,17 +336,11 @@ public sealed partial class SymbolDefinitionForm : Form
             int rowNumber = 1;
             foreach (var item in items)
             {
-                var marketPath = GetMarketPath(item);
-
                 int rowIndex = symbolsDataGridView.Rows.Add(
                     rowNumber++,
                     item.SymbolTitle,
                     item.Name,
-                    marketPath.Exchange,
-                    marketPath.Market,
-                    marketPath.Board,
-                    item.AssetCategory,
-                    item.OtherItem);
+                    item.Description);
 
                 symbolsDataGridView.Rows[rowIndex].Tag = item;
                 if (selectedSymbol != null && ReferenceEquals(item, selectedSymbol))
@@ -393,11 +365,7 @@ public sealed partial class SymbolDefinitionForm : Form
     {
         1 => item.SymbolTitle ?? string.Empty,
         2 => item.Name ?? string.Empty,
-        3 => GetMarketPath(item).Exchange,
-        4 => GetMarketPath(item).Market,
-        5 => GetMarketPath(item).Board,
-        6 => item.AssetCategory ?? item.AssetType ?? string.Empty,
-        7 => item.OtherItem ?? string.Empty,
+        3 => item.Description ?? string.Empty,
         _ => string.Empty
     };
 
@@ -406,41 +374,17 @@ public sealed partial class SymbolDefinitionForm : Form
         if (loading || symbolsDataGridView.SelectedRows.Count == 0 || symbolsDataGridView.SelectedRows[0].Tag is not SymbolDefinition x) return;
         symbolTextBox.Text = SymbolDefinitionRules.NormalizeText(x.SymbolTitle);
         nameTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Name);
-        SelectComboValue(assetComboBox, string.IsNullOrWhiteSpace(x.AssetCategory) ? x.AssetType : x.AssetCategory);
-        SelectComboValue(otherItemComboBox, x.OtherItem);
+        descriptionTextBox.Text = SymbolDefinitionRules.NormalizeText(x.Description);
         SelectMarketTreeNode(x.MarketNodeId);
 
     }
-
-    private static void SelectComboValue(ComboBox comboBox, string value)
-    {
-        var normalized = SymbolDefinitionRules.NormalizeText(value);
-        if (normalized == SymbolDefinitionRules.EmptyOption) normalized = "";
-        if (string.IsNullOrWhiteSpace(normalized))
-        {
-            comboBox.SelectedIndex = -1;
-            return;
-        }
-        for (int i = 0; i < comboBox.Items.Count; i++)
-        {
-            if (string.Equals(SymbolDefinitionRules.NormalizeText(Convert.ToString(comboBox.Items[i]) ?? ""), normalized, StringComparison.Ordinal))
-            {
-                comboBox.SelectedIndex = i;
-                return;
-            }
-        }
-        comboBox.SelectedIndex = -1;
-    }
-
-    private static string[] ComboValues(ComboBox comboBox) =>
-        comboBox.Items.Cast<object>().Select(x => SymbolDefinitionRules.NormalizeText(Convert.ToString(x) ?? "")).ToArray();
 
     private void ClearEditor()
     {
         symbolsDataGridView.ClearSelection();
         symbolTextBox.Clear();
         nameTextBox.Clear();
-        SetComboDefaults();
+        descriptionTextBox.Clear();
         LoadGrid();
         marketTreeView.SelectedNode = null;
         symbolTextBox.Focus();
@@ -473,26 +417,12 @@ public sealed partial class SymbolDefinitionForm : Form
             marketTreeView.Focus();
             return null;
         }
-        if (!SymbolDefinitionRules.IsAllowed(assetComboBox.Text, assetComboBox.Items, out var asset))
-        {
-            MessageBox.Show(this, "نوع دارایی را انتخاب کنید.", "تعریف نمادها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            assetComboBox.Focus();
-            return null;
-        }
         return new SymbolDefinition
         {
             SymbolTitle = symbol,
             Name = SymbolDefinitionRules.NormalizeText(nameTextBox.Text),
-            MarketNodeId = marketNodeId,
-            ExchangeTitle = "",
-            MarketType = "",
-            BoardType = "",
-            AssetType = asset,
-            AssetCategory = asset,
-            OtherItem = SymbolDefinitionRules.NormalizeText(otherItemComboBox.Text),
-            FundType = "",
-            IndustryGroup = "",
-            IndustryGroupOrFundType = ""
+            Description = SymbolDefinitionRules.NormalizeText(descriptionTextBox.Text),
+            MarketNodeId = marketNodeId
         };
     }
 
@@ -525,16 +455,8 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             existing.SymbolTitle = item.SymbolTitle;
             existing.Name = item.Name;
+            existing.Description = item.Description;
             existing.MarketNodeId = item.MarketNodeId;
-            existing.ExchangeTitle = item.ExchangeTitle;
-            existing.MarketType = item.MarketType;
-            existing.BoardType = item.BoardType;
-            existing.AssetType = item.AssetType;
-            existing.AssetCategory = item.AssetCategory;
-            existing.OtherItem = item.OtherItem;
-            existing.FundType = item.FundType;
-            existing.IndustryGroup = item.IndustryGroup;
-            existing.IndustryGroupOrFundType = "";
         }
         SymbolDefinitionStore.Save(all);
         LoadGrid(item.SymbolTitle);
@@ -630,8 +552,6 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             var imported = ExcelSymbolReader.Read(
                 d.FileName,
-                ComboValues(assetComboBox),
-                ComboValues(otherItemComboBox),
                 out var invalidRows,
                 out var invalidDetails,
                 out var allInvalidDetails);
@@ -763,6 +683,7 @@ public sealed partial class SymbolDefinitionForm : Form
     {
         public string SymbolTitle { get; set; } = "";
         public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
         public string MarketNodeId { get; set; } = "";
         public string AssetCategory { get; set; } = "";
         public string ExchangeTitle { get; set; } = "";
@@ -905,6 +826,7 @@ public sealed partial class SymbolDefinitionForm : Form
         {
             x.SymbolTitle = NormalizeText(x.SymbolTitle);
             x.Name = NormalizeText(x.Name);
+            x.Description = NormalizeText(x.Description);
             x.MarketNodeId = NormalizeText(x.MarketNodeId);
             x.AssetCategory = NormalizeOption(x.AssetCategory);
             x.ExchangeTitle = NormalizeOption(x.ExchangeTitle);
@@ -959,12 +881,10 @@ public sealed partial class SymbolDefinitionForm : Form
 
     internal static class ExcelSymbolReader
     {
-        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی", "سایر موارد" };
+        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "توضیحات" };
 
         public static List<SymbolDefinition> Read(
             string path,
-            IReadOnlyCollection<string> assets,
-            IReadOnlyCollection<string> otherItems,
             out int invalidRows,
             out string invalidDetails,
             out string allInvalidDetails)
@@ -996,7 +916,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 foreach (var expected in Headers)
                     if (HeaderMatches(normalized, expected)) indexByHeader[expected] = pair.Key;
             }
-            foreach (var h in Headers.Take(6)) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
+            foreach (var h in Headers.Take(5)) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
             var result = new List<SymbolDefinition>();
             int excelRow = 1;
             foreach (var xmlRow in rows.Skip(1))
@@ -1017,17 +937,9 @@ public sealed partial class SymbolDefinitionForm : Form
                 var exchange = V(Headers[2]);
                 var market = V(Headers[3]);
                 var board = V(Headers[4]);
-                var asset = V(Headers[5]);
-                var otherItem = V(Headers[6]);
+                var description = V(Headers[5]);
 
                 var errors = new List<string>();
-
-                if (!SymbolDefinitionRules.IsAllowed(asset, assets, out var standardAsset))
-                    errors.Add($"نوع دارایی «{asset}»");
-
-                if (!SymbolDefinitionRules.IsAllowed(otherItem, otherItems, out var standardOtherItem))
-                    errors.Add($"سایر موارد «{otherItem}»");
-
                 var marketNodeId = ResolveMarketNodeId(exchange, market, board, out var marketError);
                 if (marketNodeId == "")
                     errors.Add(marketError);
@@ -1043,16 +955,8 @@ public sealed partial class SymbolDefinitionForm : Form
                 {
                     SymbolTitle = symbol,
                     Name = V(Headers[1]),
-                    MarketNodeId = marketNodeId,
-                    ExchangeTitle = exchange,
-                    MarketType = market,
-                    BoardType = board,
-                    AssetType = standardAsset,
-                    AssetCategory = standardAsset,
-                    OtherItem = standardOtherItem,
-                    FundType = "",
-                    IndustryGroup = "",
-                    IndustryGroupOrFundType = ""
+                    Description = description,
+                    MarketNodeId = marketNodeId
                 });
             }
             var allDetailsText = details.Count == 0 ? "" : string.Join(Environment.NewLine, details);
@@ -1181,7 +1085,7 @@ public sealed partial class SymbolDefinitionForm : Form
     internal static class ExcelSymbolWriter
     {
         private static readonly string[] Headers =
-            { "نماد", "نام", "بورس", "بازار", "تابلو", "دارایی" };
+            { "نماد", "نام", "بورس", "بازار", "تابلو", "توضیحات" };
 
         public static void Write(string path, IEnumerable<SymbolDefinition> items)
         {
@@ -1245,8 +1149,7 @@ public sealed partial class SymbolDefinitionForm : Form
                     marketPath.Exchange,
                     marketPath.Market,
                     marketPath.Board,
-                    x.AssetCategory ?? x.AssetType,
-                    x.OtherItem
+                    x.Description
                 };
 
                 sheetData.Add(new XElement(ns + "row",
