@@ -155,45 +155,26 @@ public sealed partial class SymbolDefinitionForm : Form
         return false;
     }
 
-    private static (string Exchange, string Market, string Board) GetMarketPath(SymbolDefinition item)
+    private static (string MarketType, string IndustryFund) GetMarketPath(SymbolDefinition item)
     {
         var nodeId = SymbolDefinitionRules.NormalizeText(item.MarketNodeId);
         if (string.IsNullOrWhiteSpace(nodeId))
-            return ("", "", "");
+            return ("", "");
 
         var data = MarketStructureStore.Load();
         var byId = data.Nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
 
         if (!byId.TryGetValue(nodeId, out var node))
-            return ("", "", "");
+            return ("", "");
 
-        var path = new List<string>();
-        var visited = new HashSet<string>(StringComparer.Ordinal);
-        var reachedRoot = false;
+        if (string.IsNullOrWhiteSpace(node.ParentId))
+            return (node.Title, "");
 
-        while (node != null && visited.Add(node.Id))
-        {
-            path.Add(node.Title);
+        if (!byId.TryGetValue(node.ParentId, out var parent) ||
+            !string.IsNullOrWhiteSpace(parent.ParentId))
+            return ("", "");
 
-            if (string.IsNullOrWhiteSpace(node.ParentId))
-            {
-                reachedRoot = true;
-                break;
-            }
-
-            if (!byId.TryGetValue(node.ParentId, out node!))
-                break;
-        }
-
-        if (!reachedRoot)
-            return ("", "", "");
-
-        path.Reverse();
-
-        return (
-            path.Count > 0 ? path[0] : "",
-            path.Count > 1 ? path[1] : "",
-            path.Count > 2 ? path[2] : "");
+        return (parent.Title, node.Title);
     }
 
     private void ShowInvalidMarketReferenceWarning()
@@ -824,7 +805,8 @@ public sealed partial class SymbolDefinitionForm : Form
 
     internal static class ExcelSymbolReader
     {
-        private static readonly string[] Headers = { "نماد", "نام", "بورس", "بازار", "تابلو", "توضیحات" };
+        private static readonly string[] Headers =
+            { "ردیف", "نماد", "نام", "نوع بازار", "نوع صنعت/صندوق", "توضیحات" };
 
         public static List<SymbolDefinition> Read(
             string path,
@@ -859,7 +841,9 @@ public sealed partial class SymbolDefinitionForm : Form
                 foreach (var expected in Headers)
                     if (HeaderMatches(normalized, expected)) indexByHeader[expected] = pair.Key;
             }
-            foreach (var h in Headers.Take(5)) if (!indexByHeader.ContainsKey(h)) throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
+            foreach (var h in Headers)
+                if (!indexByHeader.ContainsKey(h))
+                    throw new InvalidDataException($"ستون «{h}» در فایل پیدا نشد.");
             var result = new List<SymbolDefinition>();
             int excelRow = 1;
             foreach (var xmlRow in rows.Skip(1))
@@ -869,7 +853,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 string V(string h) => indexByHeader.TryGetValue(h, out var column) && cells.TryGetValue(column, out var value)
                     ? SymbolDefinitionRules.NormalizeText(value)
                     : "";
-                var symbol = V(Headers[0]);
+                var symbol = V(Headers[1]);
                 if (string.IsNullOrWhiteSpace(symbol))
                 {
                     invalidRows++;
@@ -877,13 +861,14 @@ public sealed partial class SymbolDefinitionForm : Form
                     continue;
                 }
 
-                var exchange = V(Headers[2]);
-                var market = V(Headers[3]);
-                var board = V(Headers[4]);
+                // Column 0 is the Excel row number and is intentionally not used as an ID.
+                var name = V(Headers[2]);
+                var marketType = V(Headers[3]);
+                var industryFund = V(Headers[4]);
                 var description = V(Headers[5]);
 
                 var errors = new List<string>();
-                var marketNodeId = ResolveMarketNodeId(exchange, market, board, out var marketError);
+                var marketNodeId = ResolveMarketNodeId(marketType, industryFund, out var marketError);
                 if (marketNodeId == "")
                     errors.Add(marketError);
 
@@ -897,7 +882,7 @@ public sealed partial class SymbolDefinitionForm : Form
                 result.Add(new SymbolDefinition
                 {
                     SymbolTitle = symbol,
-                    Name = V(Headers[1]),
+                    Name = name,
                     Description = description,
                     MarketNodeId = marketNodeId
                 });
@@ -914,75 +899,45 @@ public sealed partial class SymbolDefinitionForm : Form
 
         private static bool HeaderMatches(string actual, string expected) => actual == SymbolDefinitionRules.NormalizeText(expected) || actual.Replace(" ", "") == SymbolDefinitionRules.NormalizeText(expected).Replace(" ", "");
         private static string ResolveMarketNodeId(
-            string exchange,
-            string market,
-            string board,
+            string marketType,
+            string industryFund,
             out string error)
         {
             error = "";
-            exchange = SymbolDefinitionRules.NormalizeText(exchange);
-            market = SymbolDefinitionRules.NormalizeText(market);
-            board = SymbolDefinitionRules.NormalizeText(board);
+            marketType = SymbolDefinitionRules.NormalizeText(marketType);
+            industryFund = SymbolDefinitionRules.NormalizeText(industryFund);
 
-            if (string.IsNullOrWhiteSpace(exchange))
+            if (string.IsNullOrWhiteSpace(marketType))
             {
-                error = "عنوان بورس خالی است.";
-                return "";
-            }
-
-            if (string.IsNullOrWhiteSpace(market) && string.IsNullOrWhiteSpace(board))
-            {
-                error = "ساختار بازار خالی است.";
+                error = "ستون «نوع بازار» خالی است.";
                 return "";
             }
 
             var data = MarketStructureStore.Load();
-            var roots = data.Nodes
-                .Where(x => string.IsNullOrWhiteSpace(x.ParentId))
-                .ToList();
+            var marketNode = data.Nodes.FirstOrDefault(x =>
+                string.IsNullOrWhiteSpace(x.ParentId) &&
+                string.Equals(x.Title, marketType, StringComparison.OrdinalIgnoreCase));
 
-            var exchangeNode = roots.FirstOrDefault(x =>
-                string.Equals(x.Title, exchange, StringComparison.OrdinalIgnoreCase));
-
-            if (exchangeNode == null)
+            if (marketNode == null)
             {
-                error = $"بورس «{exchange}» در ساختار بازار پیدا نشد.";
+                error = $"نوع بازار «{marketType}» در سطح اول ساختار بازار پیدا نشد.";
                 return "";
             }
 
-            var currentParentId = exchangeNode.Id;
+            if (string.IsNullOrWhiteSpace(industryFund))
+                return marketNode.Id;
 
-            if (!string.IsNullOrWhiteSpace(market))
+            var childNode = data.Nodes.FirstOrDefault(x =>
+                string.Equals(x.ParentId, marketNode.Id, StringComparison.Ordinal) &&
+                string.Equals(x.Title, industryFund, StringComparison.OrdinalIgnoreCase));
+
+            if (childNode == null)
             {
-                var marketNode = data.Nodes.FirstOrDefault(x =>
-                    string.Equals(x.ParentId, currentParentId, StringComparison.Ordinal) &&
-                    string.Equals(x.Title, market, StringComparison.OrdinalIgnoreCase));
-
-                if (marketNode == null)
-                {
-                    error = $"بازار «{market}» زیر «{exchange}» پیدا نشد.";
-                    return "";
-                }
-
-                currentParentId = marketNode.Id;
+                error = $"نوع صنعت/صندوق «{industryFund}» زیر نوع بازار «{marketType}» پیدا نشد.";
+                return "";
             }
 
-            if (!string.IsNullOrWhiteSpace(board))
-            {
-                var boardNode = data.Nodes.FirstOrDefault(x =>
-                    string.Equals(x.ParentId, currentParentId, StringComparison.Ordinal) &&
-                    string.Equals(x.Title, board, StringComparison.OrdinalIgnoreCase));
-
-                if (boardNode == null)
-                {
-                    error = $"تابلو/زیرشاخه «{board}» زیر «{market}» پیدا نشد.";
-                    return "";
-                }
-
-                currentParentId = boardNode.Id;
-            }
-
-            return currentParentId;
+            return childNode.Id;
         }
 
 
@@ -1028,7 +983,7 @@ public sealed partial class SymbolDefinitionForm : Form
     internal static class ExcelSymbolWriter
     {
         private static readonly string[] Headers =
-            { "نماد", "نام", "بورس", "بازار", "تابلو", "توضیحات" };
+            { "ردیف", "نماد", "نام", "نوع بازار", "نوع صنعت/صندوق", "توضیحات" };
 
         public static void Write(string path, IEnumerable<SymbolDefinition> items)
         {
@@ -1087,11 +1042,11 @@ public sealed partial class SymbolDefinitionForm : Form
 
                 var values = new[]
                 {
+                    (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture),
                     x.SymbolTitle,
                     x.Name,
-                    marketPath.Exchange,
-                    marketPath.Market,
-                    marketPath.Board,
+                    marketPath.MarketType,
+                    marketPath.IndustryFund,
                     x.Description
                 };
 
