@@ -95,8 +95,6 @@ partial class MarketStructureForm
         // tabs
         // 
         tabs.Controls.Add(marketPage);
-        tabs.Controls.Add(categoryPage);
-        tabs.Controls.Add(otherPage);
         tabs.Dock = DockStyle.Fill;
         tabs.Location = new Point(0, 0);
         tabs.Margin = new Padding(4, 5, 4, 5);
@@ -134,11 +132,13 @@ partial class MarketStructureForm
         // 
         marketTitleTextBox.BackColor = Color.Bisque;
         marketTitleTextBox.Dock = DockStyle.Bottom;
-        marketTitleTextBox.Location = new Point(11, 954);
+        marketTitleTextBox.Location = new Point(11, 930);
         marketTitleTextBox.Margin = new Padding(4, 5, 4, 5);
         marketTitleTextBox.Name = "marketTitleTextBox";
-        marketTitleTextBox.PlaceholderText = "نام بازار / زیرمجموعه";
-        marketTitleTextBox.Size = new Size(1470, 31);
+        marketTitleTextBox.PlaceholderText = "نام‌ها را از Excel در خط‌های جداگانه بچسبانید؛ بازار سطح اول را انتخاب کنید و «ثبت / افزودن زیرمجموعه» را بزنید.";
+        marketTitleTextBox.Multiline = true;
+        marketTitleTextBox.ScrollBars = ScrollBars.Vertical;
+        marketTitleTextBox.Size = new Size(1470, 55);
         marketTitleTextBox.TabIndex = 1;
         // 
         // marketButtons

@@ -103,6 +103,19 @@ public static class MarketStructureStore
 
         BreakParentCycles(data);
 
+        // The market taxonomy has exactly two levels. Flatten legacy deeper nodes
+        // beneath their level-one ancestor so older JSON files remain loadable.
+        var byIdForDepth = data.Nodes.ToDictionary(x => x.Id, StringComparer.Ordinal);
+        foreach (var node in data.Nodes)
+        {
+            if (string.IsNullOrWhiteSpace(node.ParentId) ||
+                !byIdForDepth.TryGetValue(node.ParentId, out var parent) ||
+                string.IsNullOrWhiteSpace(parent.ParentId))
+                continue;
+
+            node.ParentId = parent.ParentId;
+        }
+
         RecalculateSortOrders(data);
 
 

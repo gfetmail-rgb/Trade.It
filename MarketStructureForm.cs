@@ -50,14 +50,11 @@ public sealed partial class MarketStructureForm : Form
 
     private void MarketTitleTextBox_KeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.KeyCode != Keys.Enter)
+        // Enter adds another line; Ctrl+Enter submits a batch of children.
+        if (e.KeyCode != Keys.Enter || !e.Control)
             return;
 
-        if (SelectedNode == null)
-            AddRootNode();
-        else
-            AddChild();
-
+        AddChild();
         e.SuppressKeyPress = true;
         e.Handled = true;
     }
@@ -210,30 +207,62 @@ public sealed partial class MarketStructureForm : Form
     private void AddChild()
     {
         var parent = SelectedNode;
-        var title = marketTitleTextBox.Text.Trim();
-
-        if (parent == null || string.IsNullOrWhiteSpace(title))
-            return;
-
-        if (data.Nodes.Any(x =>
-            x.ParentId == parent.Id &&
-            string.Equals(x.Title, title, StringComparison.OrdinalIgnoreCase)))
+        if (parent == null)
         {
-            MessageBox.Show(this, "این زیرمجموعه قبلاً وجود دارد.", "تعریف بازارها",
+            MessageBox.Show(this, "ابتدا یک بازار سطح اول را انتخاب کنید.", "تعریف بازارها",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
-        var node = new MarketStructureNode
+        if (!string.IsNullOrWhiteSpace(parent.ParentId))
         {
-            ParentId = parent.Id,
-            Title = title,
-            SortOrder = data.Nodes.Count(x => x.ParentId == parent.Id)
-        };
+            MessageBox.Show(this, "زیرمجموعه فقط برای گره‌های سطح اول قابل ثبت است.", "تعریف بازارها",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
 
-        data.Nodes.Add(node);
+        var titles = marketTitleTextBox.Text
+            .Replace("\r", "")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (titles.Count == 0)
+            return;
+
+        var existingTitles = data.Nodes
+            .Where(x => x.ParentId == parent.Id)
+            .Select(x => x.Title)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var added = new List<MarketStructureNode>();
+        foreach (var title in titles)
+        {
+            if (!existingTitles.Add(title))
+                continue;
+
+            var node = new MarketStructureNode
+            {
+                ParentId = parent.Id,
+                Title = title,
+                SortOrder = data.Nodes.Count(x => x.ParentId == parent.Id)
+            };
+            data.Nodes.Add(node);
+            added.Add(node);
+        }
+
+        if (added.Count == 0)
+        {
+            MessageBox.Show(this, "همه موارد واردشده قبلاً زیر این بازار ثبت شده‌اند.", "تعریف بازارها",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
         MarketStructureStore.Save(data);
-        RebuildTree(node.Id);
+        RebuildTree(added[0].Id);
+        marketTitleTextBox.Clear();
+        MessageBox.Show(this, $"تعداد {added.Count} زیرمجموعه ثبت شد.", "تعریف بازارها",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void RenameNode()
