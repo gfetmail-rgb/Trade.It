@@ -641,7 +641,9 @@ namespace Trade.It
             var priceDifference = price2 - price1;
             var priceSign = priceDifference > 0 ? "+" : string.Empty;
             var percentSign = percent > 0 ? "+" : string.Empty;
-            var text = $"{priceSign}{priceDifference:N0}   |   {percentSign}{percent:N2}%   |   {candleCount:N0}";
+            var priceDecimalPlaces = GetPriceDecimalPlaces(points);
+            var formattedPriceDifference = FormatPrice(priceDifference, priceDecimalPlaces);
+            var text = $"{priceSign}{formattedPriceDifference}   |   {percentSign}{percent:N2}%   |   {candleCount:N0}";
             using var font = new Font(SystemFonts.DefaultFont.FontFamily, 9f);
             var size = g.MeasureString(text, font);
             var x = Math.Min(b.X + 10f, plot.Right - size.Width - 10f);
