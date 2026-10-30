@@ -132,6 +132,7 @@ namespace Trade.It
             stocksDataGridView.CurrentCellDirtyStateChanged += StocksDataGridView_CurrentCellDirtyStateChanged;
             stocksDataGridView.KeyDown += StocksDataGridView_KeyDownForChartNavigation;
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
+            stocksDataGridView.CellToolTipTextNeeded += StocksDataGridView_CellToolTipTextNeeded;
             Load += MainForm_Portfolios_Load;
             fullScreenChartButton.Click += FullScreenChartButton_Click;
 
@@ -1058,6 +1059,65 @@ namespace Trade.It
             var symbol = Convert.ToString(targetCell.Value)?.Trim();
             if (!string.IsNullOrWhiteSpace(symbol))
                 ShowSymbolChart(symbol);
+        }
+
+        private void StocksDataGridView_CellToolTipTextNeeded(object? sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        {
+            if (e.RowIndex < 0 ||
+                e.ColumnIndex != symbolColumn.Index ||
+                e.RowIndex >= stocksDataGridView.Rows.Count)
+            {
+                return;
+            }
+
+            var symbol = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(
+                Convert.ToString(stocksDataGridView.Rows[e.RowIndex].Cells[symbolColumn.Index].Value) ?? "");
+
+            const string missing = "-";
+            var fullName = missing;
+            var level1Title = missing;
+            var level2Title = missing;
+
+            if (!string.IsNullOrWhiteSpace(symbol))
+            {
+                var definition = SymbolDefinitionForm.SymbolDefinitionStore.Load()
+                    .FirstOrDefault(x => string.Equals(
+                        SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                        symbol,
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (definition != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(definition.Name))
+                        fullName = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Name);
+
+                    var marketData = MarketStructureStore.Load();
+                    var nodesById = marketData.Nodes
+                        .Where(x => !string.IsNullOrWhiteSpace(x.Id))
+                        .GroupBy(x => x.Id, StringComparer.Ordinal)
+                        .ToDictionary(x => x.Key, x => x.First(), StringComparer.Ordinal);
+
+                    var nodeId = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.MarketNodeId);
+                    if (!string.IsNullOrWhiteSpace(nodeId) && nodesById.TryGetValue(nodeId, out var node))
+                    {
+                        if (string.IsNullOrWhiteSpace(node.ParentId))
+                        {
+                            level1Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                        }
+                        else if (nodesById.TryGetValue(node.ParentId, out var parent))
+                        {
+                            level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                            level1Title = string.IsNullOrWhiteSpace(parent.Title) ? missing : parent.Title;
+                        }
+                        else
+                        {
+                            level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                        }
+                    }
+                }
+            }
+
+            e.ToolTipText = $"نام کامل: {fullName}{Environment.NewLine}گره اول ساختار: {level1Title}{Environment.NewLine}گره دوم ساختار: {level2Title}";
         }
 
         private void StocksDataGridView_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
