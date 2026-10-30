@@ -42,6 +42,9 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            // Ensure cell tooltips are enabled so CellToolTipTextNeeded is displayed.
+            stocksDataGridView.ShowCellToolTips = true;
+
             marketFilterTreeView.BeforeCheck += MarketFilterTreeView_BeforeCheck;
             marketFilterTreeView.NodeMouseClick += MarketFilterTreeView_NodeMouseClick;
             marketFilterTreeView.AfterCheck += MarketFilterTreeView_AfterCheck;
