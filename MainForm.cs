@@ -136,6 +136,7 @@ namespace Trade.It
             stocksDataGridView.KeyDown += StocksDataGridView_KeyDownForChartNavigation;
             stocksDataGridView.CellValueChanged += StocksDataGridView_CellValueChanged;
             stocksDataGridView.CellToolTipTextNeeded += StocksDataGridView_CellToolTipTextNeeded;
+            stocksDataGridView.CellMouseEnter += StocksDataGridView_CellMouseEnter;
             Load += MainForm_Portfolios_Load;
             fullScreenChartButton.Click += FullScreenChartButton_Click;
 
@@ -1064,67 +1065,93 @@ namespace Trade.It
                 ShowSymbolChart(symbol);
         }
 
-        private void StocksDataGridView_CellToolTipTextNeeded(object? sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        private void StocksDataGridView_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 ||
-                e.ColumnIndex != symbolColumn.Index ||
+            if (e.RowIndex < 0 || e.ColumnIndex != symbolColumn.Index ||
                 e.RowIndex >= stocksDataGridView.Rows.Count)
             {
                 return;
             }
 
-            var symbol = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(
-                Convert.ToString(stocksDataGridView.Rows[e.RowIndex].Cells[symbolColumn.Index].Value) ?? "");
+            // Assign the tooltip directly to the cell as well as supporting
+            // CellToolTipTextNeeded, so it is available through both WinForms paths.
+            stocksDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText =
+                BuildSymbolToolTipText(e.RowIndex);
+        }
 
+        private void StocksDataGridView_CellToolTipTextNeeded(object? sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != symbolColumn.Index ||
+                e.RowIndex >= stocksDataGridView.Rows.Count)
+            {
+                return;
+            }
+
+            e.ToolTipText = BuildSymbolToolTipText(e.RowIndex);
+        }
+
+        private string BuildSymbolToolTipText(int rowIndex)
+        {
             const string missing = "-";
             var fullName = missing;
             var level1Title = missing;
             var level2Title = missing;
             var description = missing;
 
-            if (!string.IsNullOrWhiteSpace(symbol))
+            try
             {
-                var definition = SymbolDefinitionForm.SymbolDefinitionStore.Load()
-                    .FirstOrDefault(x => string.Equals(
-                        SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
-                        symbol,
-                        StringComparison.OrdinalIgnoreCase));
+                var symbol = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(
+                    Convert.ToString(stocksDataGridView.Rows[rowIndex].Cells[symbolColumn.Index].Value) ?? "");
 
-                if (definition != null)
+                if (!string.IsNullOrWhiteSpace(symbol))
                 {
-                    if (!string.IsNullOrWhiteSpace(definition.Name))
-                        fullName = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Name);
+                    var definition = SymbolDefinitionForm.SymbolDefinitionStore.Load()
+                        .FirstOrDefault(x => string.Equals(
+                            SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                            symbol,
+                            StringComparison.OrdinalIgnoreCase));
 
-                    if (!string.IsNullOrWhiteSpace(definition.Description))
-                        description = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Description);
-
-                    var marketData = MarketStructureStore.Load();
-                    var nodesById = marketData.Nodes
-                        .Where(x => !string.IsNullOrWhiteSpace(x.Id))
-                        .GroupBy(x => x.Id, StringComparer.Ordinal)
-                        .ToDictionary(x => x.Key, x => x.First(), StringComparer.Ordinal);
-
-                    var nodeId = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.MarketNodeId);
-                    if (!string.IsNullOrWhiteSpace(nodeId) && nodesById.TryGetValue(nodeId, out var node))
+                    if (definition != null)
                     {
-                        if (string.IsNullOrWhiteSpace(node.ParentId))
+                        if (!string.IsNullOrWhiteSpace(definition.Name))
+                            fullName = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Name);
+
+                        if (!string.IsNullOrWhiteSpace(definition.Description))
+                            description = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Description);
+
+                        var marketData = MarketStructureStore.Load();
+                        var nodesById = marketData.Nodes
+                            .Where(x => !string.IsNullOrWhiteSpace(x.Id))
+                            .GroupBy(x => x.Id, StringComparer.Ordinal)
+                            .ToDictionary(x => x.Key, x => x.First(), StringComparer.Ordinal);
+
+                        var nodeId = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.MarketNodeId);
+                        if (!string.IsNullOrWhiteSpace(nodeId) && nodesById.TryGetValue(nodeId, out var node))
                         {
-                            level1Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
-                        }
-                        else if (nodesById.TryGetValue(node.ParentId, out var parent))
-                        {
-                            level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
-                            level1Title = string.IsNullOrWhiteSpace(parent.Title) ? missing : parent.Title;
-                        }
-                        else
-                        {
-                            level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                            if (string.IsNullOrWhiteSpace(node.ParentId))
+                            {
+                                level1Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                            }
+                            else if (nodesById.TryGetValue(node.ParentId, out var parent))
+                            {
+                                level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                                level1Title = string.IsNullOrWhiteSpace(parent.Title) ? missing : parent.Title;
+                            }
+                            else
+                            {
+                                level2Title = string.IsNullOrWhiteSpace(node.Title) ? missing : node.Title;
+                            }
                         }
                     }
                 }
             }
+            catch
+            {
+                // A missing or unreadable definitions file must not prevent
+                // the grid from showing a tooltip.
+            }
 
-            e.ToolTipText = $"{fullName}{Environment.NewLine}{level1Title}{Environment.NewLine}{level2Title}{Environment.NewLine}{description}";
+            return $"{fullName}{Environment.NewLine}{level1Title}{Environment.NewLine}{level2Title}{Environment.NewLine}{description}";
         }
 
         private void StocksDataGridView_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
