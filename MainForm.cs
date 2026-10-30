@@ -1077,6 +1077,7 @@ namespace Trade.It
             var fullName = missing;
             var level1Title = missing;
             var level2Title = missing;
+            var description = missing;
 
             if (!string.IsNullOrWhiteSpace(symbol))
             {
@@ -1090,6 +1091,9 @@ namespace Trade.It
                 {
                     if (!string.IsNullOrWhiteSpace(definition.Name))
                         fullName = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Name);
+
+                    if (!string.IsNullOrWhiteSpace(definition.Description))
+                        description = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(definition.Description);
 
                     var marketData = MarketStructureStore.Load();
                     var nodesById = marketData.Nodes
@@ -1117,7 +1121,7 @@ namespace Trade.It
                 }
             }
 
-            e.ToolTipText = $"نام کامل: {fullName}{Environment.NewLine}گره اول ساختار: {level1Title}{Environment.NewLine}گره دوم ساختار: {level2Title}";
+            e.ToolTipText = $"{fullName}{Environment.NewLine}{level1Title}{Environment.NewLine}{level2Title}{Environment.NewLine}{description}";
         }
 
         private void StocksDataGridView_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
