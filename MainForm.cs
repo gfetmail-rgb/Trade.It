@@ -499,7 +499,12 @@ namespace Trade.It
                 comparisonFirstComboBox1, comparisonOperatorComboBox1, comparisonSecondComboBox1,
                 comparisonFirstComboBox2, comparisonOperatorComboBox2, comparisonSecondComboBox2,
                 comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3,
-                ohlcChangeFieldComboBox, ohlcChangeDirectionComboBox
+                ohlcChangeFieldComboBox, ohlcChangeDirectionComboBox,
+                comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1,
+                comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2,
+                comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3,
+                comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1,
+                comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2
             };
 
             foreach (var comboBox in filterCombos)
@@ -621,6 +626,8 @@ namespace Trade.It
             refreshButton.Click += TradingStatusRefreshChanged;
             nameComboBox.SelectedIndexChanged += NameFilterChanged;
             nameTextBox.TextChanged += NameFilterChanged;
+            clearFiltersButton2.Click += ClearFiltersButton_Click;
+            filterApplyButton2.Click += FilterApplyButton_Click;
             volumeRatioTextBox.TextChanged += AdditionalFilterChanged;
             volumeRatioOperatorComboBox.SelectedIndexChanged += AdditionalFilterChanged;
             textBox1.TextChanged += AdditionalFilterChanged;
@@ -1368,7 +1375,7 @@ namespace Trade.It
 
         private void FilterTabSelected(object? sender, EventArgs e)
         {
-            if (controlTabControl.SelectedTab == tabPage2)
+            if (controlTabControl.SelectedTab == tabPage2 || controlTabControl.SelectedTab == tabPageFilters2)
             {
                 // Switching tabs must not rewrite the visible market-tree checks.
                 // Applied selections are captured when the user confirms market filters;
@@ -1393,6 +1400,7 @@ namespace Trade.It
                 statusPositiveRadio.Checked = false;
                 statusNegativeRadio.Checked = false;
                 ResetFilterControls(tabPage2);
+                ResetFilterControls(tabPageFilters2);
                 statusAllRadio.Checked = true;
                 nameComboBox.SelectedIndex = -1;
 
@@ -1533,7 +1541,10 @@ namespace Trade.It
             {
                 (First: comparisonFirstComboBox1, Operator: comparisonOperatorComboBox2, Second: comparisonSecondComboBox1, FirstOffset: comparisonFirstTextBox2, SecondOffset: comparisonSecondTextBox2, GroupEnabled: comparisonGroup7.Enabled, Label: "فیلتر مقایسه ۱"),
                 (First: comparisonFirstComboBox2, Operator: comparisonOperatorComboBox1, Second: comparisonSecondComboBox2, FirstOffset: comparisonFirstTextBox1, SecondOffset: comparisonSecondTextBox1, GroupEnabled: comparisonGroup8.Enabled, Label: "فیلتر مقایسه ۲"),
-                (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, GroupEnabled: groupBox3.Enabled, Label: "فیلتر مقایسه ۳")
+                (First: comparisonFirstComboBox3, Operator: comparisonOperatorComboBox3, Second: comparisonSecondComboBox3, FirstOffset: comparisonFirstTextBox3, SecondOffset: comparisonSecondTextBox3, GroupEnabled: groupBox3.Enabled, Label: "فیلتر مقایسه ۳"),
+                (First: comparison2FirstComboBox1, Operator: comparison2OperatorComboBox1, Second: comparison2SecondComboBox1, FirstOffset: comparison2FirstOffsetTextBox1, SecondOffset: comparison2SecondOffsetTextBox1, GroupEnabled: comparison2Group1.Enabled, Label: "فیلتر مقایسه ۴"),
+                (First: comparison2FirstComboBox2, Operator: comparison2OperatorComboBox2, Second: comparison2SecondComboBox2, FirstOffset: comparison2FirstOffsetTextBox2, SecondOffset: comparison2SecondOffsetTextBox2, GroupEnabled: comparison2Group2.Enabled, Label: "فیلتر مقایسه ۵"),
+                (First: comparison2FirstComboBox3, Operator: comparison2OperatorComboBox3, Second: comparison2SecondComboBox3, FirstOffset: comparison2FirstOffsetTextBox3, SecondOffset: comparison2SecondOffsetTextBox3, GroupEnabled: comparison2Group3.Enabled, Label: "فیلتر مقایسه ۶")
             };
 
             foreach (var filter in comparisons)
@@ -1561,6 +1572,31 @@ namespace Trade.It
                     AddError($"{filter.Label}: تعداد روزِ قیمت دوم وارد نشده است.", filter.SecondOffset);
                 else if (!TryReadNonNegativeInteger(filter.SecondOffset, out _))
                     AddError($"{filter.Label}: تعداد روزِ قیمت دوم باید عدد صحیح صفر یا بزرگ‌تر باشد.", filter.SecondOffset);
+            }
+
+            var rangeComparisons = new[]
+            {
+                (First: comparisonRangeFirstComboBox1, Operator: comparisonRangeOperatorComboBox1, Second: comparisonRangeSecondComboBox1, Offset: comparisonRangeOffsetTextBox1, GroupEnabled: comparisonRangeGroup1.Enabled, Label: "مقایسه قیمت بازه ۱"),
+                (First: comparisonRangeFirstComboBox2, Operator: comparisonRangeOperatorComboBox2, Second: comparisonRangeSecondComboBox2, Offset: comparisonRangeOffsetTextBox2, GroupEnabled: comparisonRangeGroup2.Enabled, Label: "مقایسه قیمت بازه ۲")
+            };
+            foreach (var filter in rangeComparisons)
+            {
+                if (!filter.GroupEnabled) continue;
+                var active = HasComparisonSelection(filter.First) || HasComparisonSelection(filter.Operator) ||
+                    HasComparisonSelection(filter.Second) || HasValue(filter.Offset);
+                if (!active) continue;
+                if (!HasComparisonSelection(filter.First))
+                    AddError($"{filter.Label}: قیمت اول انتخاب نشده است.", filter.First);
+                if (!HasComparisonSelection(filter.Operator))
+                    AddError($"{filter.Label}: عملگر مقایسه انتخاب نشده است.", filter.Operator);
+                else if (!IsValidOperator(filter.Operator))
+                    AddError($"{filter.Label}: عملگر مقایسه معتبر نیست.", filter.Operator);
+                if (!HasComparisonSelection(filter.Second))
+                    AddError($"{filter.Label}: قیمت دوم انتخاب نشده است.", filter.Second);
+                if (!HasValue(filter.Offset))
+                    AddError($"{filter.Label}: تعداد کندل قبل وارد نشده است.", filter.Offset);
+                else if (!TryReadNonNegativeInteger(filter.Offset, out _))
+                    AddError($"{filter.Label}: تعداد کندل قبل باید عدد صحیح صفر یا بزرگ‌تر باشد.", filter.Offset);
             }
 
             // Percentage-change filter.
@@ -1678,13 +1714,21 @@ namespace Trade.It
             comparisonGroup7.Enabled = filtersEnabled;
             comparisonGroup8.Enabled = filtersEnabled;
             groupBox3.Enabled = filtersEnabled;
+            comparison2Group1.Enabled = filtersEnabled;
+            comparison2Group2.Enabled = filtersEnabled;
+            comparison2Group3.Enabled = filtersEnabled;
+            comparisonRangeGroup1.Enabled = filtersEnabled;
+            comparisonRangeGroup2.Enabled = filtersEnabled;
             ohlcChangeFilterGroup.Enabled = filtersEnabled;
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
             filterApplyButton.Enabled = hasStocks;
+            filterApplyButton2.Text = filtersApplied ? "خاموش" : "تایید";
+            filterApplyButton2.Enabled = hasStocks;
 
             // «پاک کردن» فقط زمانی مجاز است که فیلترها خاموش باشند.
             clearFiltersButton.Enabled = hasStocks && !filtersApplied;
+            clearFiltersButton2.Enabled = hasStocks && !filtersApplied;
 
             if (!hasDate)
             {
@@ -1799,6 +1843,11 @@ namespace Trade.It
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
             if (IsOhlcChangeFilterActive())
             {
                 var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
@@ -1886,6 +1935,8 @@ namespace Trade.It
 
             if (filterCountLabel != null)
                 filterCountLabel.Text = text;
+            if (filterCountLabel2 != null)
+                filterCountLabel2.Text = text;
 
             if (marketCountLabel != null)
                 marketCountLabel.Text = text;
@@ -2323,7 +2374,10 @@ namespace Trade.It
             {
                 (comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2),
       (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
-      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
+      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3),
+      (comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1),
+      (comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2),
+      (comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3)
             };
             foreach (var filter in filters)
             {
@@ -2341,7 +2395,10 @@ namespace Trade.It
             {
                 (comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2),
       (comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1),
-      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3)
+      (comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3),
+      (comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1),
+      (comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2),
+      (comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3)
             };
             foreach (var filter in filters)
             {
@@ -2350,6 +2407,17 @@ namespace Trade.It
                 filter.Item3.SelectedIndexChanged += ComparisonFilterChanged;
                 filter.Item4.TextChanged += ComparisonFilterChanged;
                 filter.Item5.TextChanged += ComparisonFilterChanged;
+            }
+            foreach (var range in new[]
+            {
+                (comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1),
+                (comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2)
+            })
+            {
+                range.Item1.SelectedIndexChanged += ComparisonFilterChanged;
+                range.Item2.SelectedIndexChanged += ComparisonFilterChanged;
+                range.Item3.SelectedIndexChanged += ComparisonFilterChanged;
+                range.Item4.TextChanged += ComparisonFilterChanged;
             }
             nameComboBox.SelectedIndexChanged += ComparisonBaseFilterChanged;
             nameTextBox.TextChanged += ComparisonBaseFilterChanged;
@@ -2389,6 +2457,11 @@ namespace Trade.It
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
             filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts();
@@ -2418,15 +2491,42 @@ namespace Trade.It
         private bool HasAnyActiveComparisonFilter() =>
             IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2) ||
             IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
-            IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+            IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3) ||
+            IsComparisonFilterActive(comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1) ||
+            IsComparisonFilterActive(comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2) ||
+            IsComparisonFilterActive(comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3) ||
+            IsComparisonRangeFilterActive(comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1) ||
+            IsComparisonRangeFilterActive(comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
 
         private static bool IsComparisonFilterActive(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox) =>
             TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out _, out _, out _, out _, out _);
+
+        private static bool IsComparisonRangeFilterActive(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox offsetTextBox) =>
+            firstFieldComboBox.SelectedItem != null && operatorComboBox.SelectedItem != null && secondFieldComboBox.SelectedItem != null &&
+            int.TryParse(NormalizeTradingDigits(offsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var offset) && offset >= 0;
 
         private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
         {
             if (!TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out var firstField, out var op, out var secondField, out var firstOffset, out var relativeOffset)) return symbols;
             return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));
+        }
+
+        private IEnumerable<string> ApplyComparisonRangeFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox offsetTextBox)
+        {
+            if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null)
+                return symbols;
+            if (!int.TryParse(NormalizeTradingDigits(offsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var offset) || offset < 0)
+                return symbols;
+
+            var firstField = NormalizeComparisonField(firstFieldComboBox.SelectedItem.ToString());
+            var secondField = NormalizeComparisonField(secondFieldComboBox.SelectedItem.ToString());
+            var op = operatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(firstField) || string.IsNullOrWhiteSpace(secondField) || string.IsNullOrWhiteSpace(op))
+                return symbols;
+
+            return symbols.Where(symbol =>
+                TryGetComparisonValues(definition, symbol, firstField, secondField, 0, offset, out var left, out var right) &&
+                CompareComparisonOperator(left, right, op));
         }
 
         private static bool TryGetComparisonSettings(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox, out string firstField, out string op, out string secondField, out int firstOffset, out int relativeOffset)
