@@ -1906,52 +1906,22 @@ namespace Trade.It
                 return symbols;
 
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
-            var source = symbols.ToList();
             var calculated = new List<(string Symbol, double Ratio)>();
-            var notCalculatedSymbols = new List<string>();
 
-            foreach (var symbol in source)
+            foreach (var symbol in symbols)
             {
                 if (TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
                     calculated.Add((symbol, ratio));
-                else
-                    notCalculatedSymbols.Add(symbol);
             }
 
             // Use one consistent tolerance for all three operators so >, < and =
             // form a disjoint partition of every ratio that could be calculated.
             var tolerance = 1e-10 * Math.Max(1.0, Math.Abs(threshold));
-            var greaterCount = calculated.Count(x => x.Ratio > threshold + tolerance);
-            var lessCount = calculated.Count(x => x.Ratio < threshold - tolerance);
-            var equalCount = calculated.Count - greaterCount - lessCount;
 
-            var matchingRatios = calculated
+            return calculated
                 .Where(x => MatchesVolumeRatioOperator(x.Ratio, threshold, tolerance, op))
+                .Select(x => x.Symbol)
                 .ToList();
-            var result = matchingRatios.Select(x => x.Symbol).ToList();
-            var matchingRatioDetails = string.Join(
-                "، ",
-                matchingRatios.Take(25).Select(x =>
-                    $"{x.Symbol}: {x.Ratio.ToString("0.####", CultureInfo.InvariantCulture)}"));
-
-            MessageBox.Show(
-                this,
-                $"کل نمادهای ورودی: {source.Count}\n" +
-                $"نسبت حجم قابل محاسبه: {calculated.Count}\n" +
-                $"بزرگ‌تر از آستانه: {greaterCount}\n" +
-                $"کوچک‌تر از آستانه: {lessCount}\n" +
-                $"مساوی آستانه (با تلورانس عددی): {equalCount}\n" +
-                $"غیرقابل محاسبه و حذف‌شده: {notCalculatedSymbols.Count}\n" +
-                (notCalculatedSymbols.Count > 0
-                    ? $"نام نمادهای غیرقابل محاسبه: {string.Join("، ", notCalculatedSymbols)}\n"
-                    : string.Empty) +
-                $"نتیجه عملگر انتخاب‌شده: {result.Count}\n" +
-                $"نسبت نمادهای پذیرفته‌شده (حداکثر ۲۵ مورد):\n{matchingRatioDetails}",
-                "گزارش فیلتر نسبت حجم",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-
-            return result;
         }
 
         private static bool MatchesVolumeRatioOperator(double ratio, double threshold, double tolerance, string op)
