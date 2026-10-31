@@ -32,8 +32,20 @@ namespace Trade.It
             SetColorButton(lineColorButton, indicator.LineColor);
             SetColorButton(backgroundColorButton, indicator.BackgroundColor);
 
+            // رنگ زمینه فقط برای کانال دونچیان معنی دارد؛ برای اندیکاتورهای تک‌خطی نمایش داده نشود.
+            if (indicator.Type != ChartIndicatorType.DonchianChannel)
+            {
+                backgroundColorLabel.Visible = false;
+                backgroundColorButton.Visible = false;
+                okButton.Location = new Point(okButton.Left, 130);
+                defaultButton.Location = new Point(defaultButton.Left, 130);
+                cancelButton.Location = new Point(cancelButton.Left, 130);
+                ClientSize = new Size(ClientSize.Width, 185);
+            }
+
             lineColorButton.Click += (_, _) => PickColor(lineColorButton);
-            backgroundColorButton.Click += (_, _) => PickColor(backgroundColorButton);
+            if (indicator.Type == ChartIndicatorType.DonchianChannel)
+                backgroundColorButton.Click += (_, _) => PickColor(backgroundColorButton);
             okButton.Click += (_, _) => DialogResult = DialogResult.OK;
             cancelButton.Click += (_, _) => DialogResult = DialogResult.Cancel;
             defaultButton.Click += (_, _) => ApplyDefaults();
