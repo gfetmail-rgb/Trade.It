@@ -1492,6 +1492,8 @@ namespace Trade.It
                     title = $"MA({indicator.Period})";
                 else if (indicator.Type == ChartIndicatorType.ExponentialMovingAverage)
                     title = $"EMA({indicator.Period})";
+                else if (indicator.Type == ChartIndicatorType.DonchianChannel)
+                    title = $"Donchian({indicator.Period})";
                 else if (indicator.Type == ChartIndicatorType.Ichimoku)
                     title = $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})";
                 if (title == null) continue;
