@@ -365,8 +365,16 @@ namespace Trade.It
             // مالک پنجرهٔ تأیید باید فرم میزبان چارت فعال باشد تا
             // پنجرهٔ تأیید پشت پنجرهٔ چارت یا پنجرهٔ تمام‌صفحه پنهان نماند.
             var owner = chart.FindForm();
-            if (owner == null || !owner.Visible)
+            if (owner == null || !owner.Visible || owner.IsDisposed)
                 owner = this;
+
+            // دیالوگ تأیید باید جلوی چارت فعال ظاهر شود؛ در غیر این صورت
+            // کلیک روی چارت صدای Ding می‌دهد و به‌نظر می‌رسد برنامه قفل کرده است.
+            if (owner.Visible && !owner.IsDisposed)
+            {
+                owner.BringToFront();
+                owner.Activate();
+            }
 
             var result = MessageBox.Show(
                 owner,
