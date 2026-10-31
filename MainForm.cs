@@ -2528,7 +2528,7 @@ namespace Trade.It
         {
             if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null)
                 return symbols;
-            if (!int.TryParse(NormalizeTradingDigits(offsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var offset) || offset < 0)
+            if (!int.TryParse(NormalizeTradingDigits(offsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var offset) || offset <= 0)
                 return symbols;
 
             var firstField = NormalizeComparisonField(firstFieldComboBox.SelectedItem.ToString());
@@ -2538,8 +2538,49 @@ namespace Trade.It
                 return symbols;
 
             return symbols.Where(symbol =>
-                TryGetComparisonValues(definition, symbol, firstField, secondField, 0, offset, out var left, out var right) &&
-                CompareComparisonOperator(left, right, op));
+            {
+                var firstColumn = GetMappingColumn(definition, firstField);
+                var secondColumn = GetMappingColumn(definition, secondField);
+                if (firstColumn <= 0 || secondColumn <= 0 ||
+                    string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                    return false;
+
+                List<string[]> rows;
+                try
+                {
+                    rows = ReadOrderedSymbolRows(definition, symbol);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                // Files are ordered oldest to newest. Offset 0 is the latest candle;
+                // compare its first-field value against the second-field value of
+                // every preceding candle from 1 through the configured offset.
+                if (rows.Count <= offset)
+                    return false;
+
+                var latestRow = rows[^1];
+                if (firstColumn > latestRow.Length ||
+                    !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
+                    !double.IsFinite(latestValue))
+                    return false;
+
+                for (var candleOffset = 1; candleOffset <= offset; candleOffset++)
+                {
+                    var row = rows[rows.Count - 1 - candleOffset];
+                    if (secondColumn > row.Length ||
+                        !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
+                        !double.IsFinite(rangeValue) ||
+                        !CompareComparisonOperator(latestValue, rangeValue, op))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
         }
 
         private static bool TryGetComparisonSettings(ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox, out string firstField, out string op, out string secondField, out int firstOffset, out int relativeOffset)
