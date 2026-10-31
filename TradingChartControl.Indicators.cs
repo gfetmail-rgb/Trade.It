@@ -138,6 +138,150 @@ namespace Trade.It
         private double[]? vwapCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
+
+        private bool IsPriceOverlayIndicator(ChartIndicator indicator) =>
+            indicator.Type == ChartIndicatorType.MovingAverage ||
+            indicator.Type == ChartIndicatorType.ExponentialMovingAverage ||
+            indicator.Type == ChartIndicatorType.DonchianChannel ||
+            indicator.Type == ChartIndicatorType.Ichimoku ||
+            indicator.Type == ChartIndicatorType.BollingerBands ||
+            indicator.Type == ChartIndicatorType.VolumeWeightedAveragePrice;
+
+        private string GetPriceOverlayIndicatorTitle(ChartIndicator indicator) =>
+            indicator.Type switch
+            {
+                ChartIndicatorType.MovingAverage => $"MA({indicator.Period})",
+                ChartIndicatorType.ExponentialMovingAverage => $"EMA({indicator.Period})",
+                ChartIndicatorType.DonchianChannel => $"Donchian({indicator.Period})",
+                ChartIndicatorType.Ichimoku => $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})",
+                ChartIndicatorType.BollingerBands => $"BB({indicator.Period},{indicator.BollingerStdDev:0.##})",
+                ChartIndicatorType.VolumeWeightedAveragePrice => "VWAP",
+                _ => string.Empty
+            };
+
+        private Color GetPriceOverlayIndicatorTitleColor(ChartIndicator indicator) =>
+            indicator.Type switch
+            {
+                ChartIndicatorType.BollingerBands => indicator.BollingerMiddleColor,
+                ChartIndicatorType.VolumeWeightedAveragePrice => indicator.VwapLineColor,
+                _ => indicator.LineColor
+            };
+
+        private void SyncPriceIndicatorButtons()
+        {
+            var plot = GetPlotRectangle();
+            var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            try
+            {
+                var items = indicators
+                    .Where(IsPriceOverlayIndicator)
+                    .Select(indicator => new
+                    {
+                        Indicator = indicator,
+                        Title = GetPriceOverlayIndicatorTitle(indicator)
+                    })
+                    .OrderBy(item => item.Title, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var buttons = Controls.OfType<Button>()
+                    .Where(button => button.Tag is ChartIndicator)
+                    .ToList();
+
+                var rebuild = buttons.Count != items.Count;
+                if (!rebuild)
+                {
+                    for (var i = 0; i < items.Count; i++)
+                    {
+                        if (!ReferenceEquals(buttons[i].Tag, items[i].Indicator) ||
+                            buttons[i].Text != items[i].Title)
+                        {
+                            rebuild = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (rebuild)
+                {
+                    foreach (var button in buttons)
+                    {
+                        Controls.Remove(button);
+                        button.Dispose();
+                    }
+
+                    buttons.Clear();
+                    foreach (var item in items)
+                    {
+                        var indicator = item.Indicator;
+                        var button = new Button
+                        {
+                            Text = item.Title,
+                            Tag = indicator,
+                            Font = (Font)font.Clone(),
+                            Height = 21,
+                            Width = 100,
+                            AutoSize = false,
+                            TabStop = false,
+                            FlatStyle = FlatStyle.Flat,
+                            UseVisualStyleBackColor = false,
+                            TextAlign = ContentAlignment.MiddleCenter,
+                            Padding = new Padding(3, 0, 3, 0),
+                            Margin = Padding.Empty
+                        };
+                        button.FlatAppearance.BorderSize = 1;
+                        button.Click += (_, _) =>
+                        {
+                            if (!indicators.Contains(indicator))
+                                return;
+
+                            indicator.IsVisible = !indicator.IsVisible;
+                            UpdatePriceIndicatorButtonStyle(button, indicator);
+                            Invalidate();
+                        };
+                        Controls.Add(button);
+                        buttons.Add(button);
+                    }
+                }
+
+                buttons = Controls.OfType<Button>()
+                    .Where(button => button.Tag is ChartIndicator)
+                    .OrderBy(button => GetPriceOverlayIndicatorTitle((ChartIndicator)button.Tag!),
+                        StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var y = plot.Top + 2;
+                foreach (var button in buttons)
+                {
+                    var indicator = (ChartIndicator)button.Tag!;
+                    button.Text = GetPriceOverlayIndicatorTitle(indicator);
+                    button.Font = (Font)font.Clone();
+                    var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
+                    button.Width = Math.Clamp(textWidth + 16, 72, 210);
+                    button.Height = 21;
+                    button.Location = new Point(Math.Max(plot.Left + 2, plot.Right - button.Width - 3), y);
+                    button.BringToFront();
+                    UpdatePriceIndicatorButtonStyle(button, indicator);
+                    y += button.Height + 2;
+                }
+            }
+            finally
+            {
+                font.Dispose();
+            }
+        }
+
+        private void UpdatePriceIndicatorButtonStyle(Button button, ChartIndicator indicator)
+        {
+            var titleColor = GetPriceOverlayIndicatorTitleColor(indicator);
+            button.ForeColor = titleColor;
+            button.BackColor = indicator.IsVisible
+                ? (BackColor == Color.Transparent ? Color.White : BackColor)
+                : Color.FromArgb(232, 232, 232);
+            button.FlatAppearance.BorderColor = indicator.IsVisible
+                ? Color.FromArgb(160, titleColor)
+                : Color.DarkGray;
+        }
+
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
         internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
@@ -1109,9 +1253,6 @@ namespace Trade.It
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[0]!, middlePen, indicator.ShowBollingerMiddle);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[1]!, upperPen, indicator.ShowBollingerUpper);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[2]!, lowerPen, indicator.ShowBollingerLower);
-            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            using var brush = new SolidBrush(indicator.BollingerMiddleColor);
-            g.DrawString($"BB({indicator.Period},{indicator.BollingerStdDev:0.##})", font, brush, plot.Left + 4f, plot.Top + 4f);
         }
 
         private void DrawSeries(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, double[] values, Pen pen, bool show)
@@ -1242,8 +1383,6 @@ namespace Trade.It
                 previous = current;
             }
 
-            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            DrawIndicatorPanelTitle(g, plot, "VWAP", titleFont, indicator.VwapLineColor);
         }
 
         private void DrawIchimoku(
