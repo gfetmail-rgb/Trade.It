@@ -187,7 +187,18 @@ namespace Trade.It
 
         private void IndicatorContextMenuStrip_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            indicatorContextChart = indicatorContextMenuStrip.SourceControl as TradingChartControl;
+            var source = indicatorContextMenuStrip.SourceControl;
+            if (source is Button button && button.Tag is ChartIndicator indicatorFromButton &&
+                button.Parent is TradingChartControl buttonChart)
+            {
+                indicatorContextChart = buttonChart;
+                buttonChart.SelectIndicator(indicatorFromButton);
+            }
+            else
+            {
+                indicatorContextChart = source as TradingChartControl;
+            }
+
             e.Cancel = indicatorContextChart == null ||
                        indicatorContextChart.SelectedIndicatorIndex < 0 ||
                        indicatorContextChart.SelectedIndicatorIndex >= indicatorContextChart.Indicators.Count;
