@@ -679,9 +679,8 @@ namespace Trade.It
 
             period = Math.Clamp(period, 2, points.Count);
 
-            // Transparent is not supported as TradingChartControl.BackColor.
-            // If an older indicator instance contains Transparent, keep the
-            // chart's current background instead of assigning an invalid value.
+            // Transparent is not useful as a channel fill color.
+            // If an older indicator instance contains Transparent, use the current chart background as fallback.
             if (backgroundColor == Color.Transparent)
                 backgroundColor = BackColor == Color.Transparent
                     ? Color.White
