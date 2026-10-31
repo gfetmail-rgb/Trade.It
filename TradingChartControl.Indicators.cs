@@ -229,6 +229,8 @@ namespace Trade.It
                             Margin = Padding.Empty
                         };
                         button.FlatAppearance.BorderSize = 1;
+                        // از همان منوی تنظیمات/حذف چارت برای کلیک راست روی دکمه نیز استفاده شود.
+                        button.ContextMenuStrip = ContextMenuStrip;
                         button.Click += (_, _) =>
                         {
                             if (!indicators.Contains(indicator))
