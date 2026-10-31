@@ -14,7 +14,8 @@ namespace Trade.It
         AverageDirectionalIndex,
         BollingerBands,
         OnBalanceVolume,
-        VolumeWeightedAveragePrice
+        VolumeWeightedAveragePrice,
+        DonchianChannel
     }
 
     internal sealed class ChartIndicator
@@ -213,6 +214,19 @@ namespace Trade.It
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        public void AddDonchianChannel(int period = 20)
+        {
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.DonchianChannel,
+                Period = Math.Clamp(period, 2, Math.Max(2, points.Count)),
+                LineColor = Color.FromArgb(50, 160, 80)
+            });
+            selectedIndicatorIndex = indicators.Count - 1;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void AddBollingerBands(int period = 20, double standardDeviation = 2.0)
@@ -1743,6 +1757,35 @@ namespace Trade.It
 
             for (var i = firstAdx + 1; i < points.Count; i++)
                 adx[i] = ((adx[i - 1] * (period - 1)) + dx[i]) / period;
+        }
+
+        private void CalculateDonchianChannel(int period, out double[] upper, out double[] lower)
+        {
+            upper = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            lower = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            period = Math.Clamp(period, 2, Math.Max(2, points.Count));
+
+            // The channel at candle i is calculated from the preceding N candles,
+            // excluding candle i itself. This makes breakouts comparable to the
+            // prior range and avoids including the breakout candle in its own channel.
+            for (var i = period; i < points.Count; i++)
+            {
+                var highest = double.NegativeInfinity;
+                var lowest = double.PositiveInfinity;
+                for (var j = i - period; j < i; j++)
+                {
+                    if (double.IsFinite(points[j].High))
+                        highest = Math.Max(highest, points[j].High);
+                    if (double.IsFinite(points[j].Low))
+                        lowest = Math.Min(lowest, points[j].Low);
+                }
+
+                if (double.IsFinite(highest) && double.IsFinite(lowest))
+                {
+                    upper[i] = highest;
+                    lower[i] = lowest;
+                }
+            }
         }
 
         private void EnsureBollingerCache(ChartIndicator indicator)
