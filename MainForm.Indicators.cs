@@ -362,16 +362,30 @@ namespace Trade.It
             if (chart == null || chart.Indicators.Count == 0)
                 return;
 
-            // این فرمان از منوی فرم اصلی اجرا می‌شود؛ مالک دیالوگ را صریحاً
-            // خود MainForm قرار می‌دهیم تا وابسته به فرم/تب میزبان چارت نباشد.
-            // مالکیت به فرم شناور یا فرزند می‌تواند دیالوگ را پشت پنجره فعال پنهان کند.
-            var result = MessageBox.Show(
-                this,
-                "همه اندیکاتورهای چارت فعال حذف شوند؟",
-                "حذف همه اندیکاتورها",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button2);
+            // در حالت تمام‌صفحه، MainForm روی TopMost قرار می‌گیرد. موقتاً این
+            // وضعیت را خاموش می‌کنیم تا پنجره تأیید بتواند در پیش‌زمینه نمایش داده شود.
+            // پس از بسته‌شدن دیالوگ، وضعیت قبلی دقیقاً بازگردانده می‌شود.
+            var wasTopMost = TopMost;
+            DialogResult result;
+
+            try
+            {
+                if (chartFullScreen)
+                    TopMost = false;
+
+                result = MessageBox.Show(
+                    this,
+                    "همه اندیکاتورهای چارت فعال حذف شوند؟",
+                    "حذف همه اندیکاتورها",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+            }
+            finally
+            {
+                if (chartFullScreen)
+                    TopMost = wasTopMost;
+            }
 
             if (result == DialogResult.Yes)
                 chart.RemoveAllIndicators();
