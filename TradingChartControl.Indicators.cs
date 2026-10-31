@@ -711,8 +711,8 @@ namespace Trade.It
 
                 if (indicator.Type == ChartIndicatorType.DonchianChannel)
                 {
-                    CalculateDonchianChannel(indicator.Period, out var upper, out var lower);
-                    foreach (var seriesValues in new[] { upper, lower })
+                    CalculateDonchianChannel(indicator.Period, out var upper, out var lower, out var middle);
+                    foreach (var seriesValues in new[] { upper, lower, middle })
                     {
                         PointF? previousPoint = null;
                         for (var i = 0; i < displayedCount; i++)
@@ -1093,6 +1093,9 @@ namespace Trade.It
             using var pen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, pen, true);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, pen, true);
+            using var middlePen = new Pen(Color.FromArgb(150, 150, 150), Math.Max(1f, LineAppearanceSettings.ChartLineWidth));
+            middlePen.DashPattern = new[] { 4f, 3f };
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, middle, middlePen, true);
 
         }
 
@@ -1807,10 +1810,11 @@ namespace Trade.It
                 adx[i] = ((adx[i - 1] * (period - 1)) + dx[i]) / period;
         }
 
-        private void CalculateDonchianChannel(int period, out double[] upper, out double[] lower)
+        private void CalculateDonchianChannel(int period, out double[] upper, out double[] lower, out double[] middle)
         {
             upper = Enumerable.Repeat(double.NaN, points.Count).ToArray();
             lower = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            middle = Enumerable.Repeat(double.NaN, points.Count).ToArray();
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
 
             // The channel at candle i is calculated from the preceding N candles,
@@ -1832,6 +1836,7 @@ namespace Trade.It
                 {
                     upper[i] = highest;
                     lower[i] = lowest;
+                    middle[i] = (highest + lowest) / 2.0;
                 }
             }
         }
