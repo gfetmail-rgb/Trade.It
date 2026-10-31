@@ -170,7 +170,7 @@ namespace Trade.It
         private void SyncPriceIndicatorButtons()
         {
             var plot = GetPlotRectangle();
-            var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            var font = new Font(Font.FontFamily, Math.Max(9f, Font.Size), FontStyle.Bold);
             try
             {
                 var items = indicators
@@ -183,8 +183,12 @@ namespace Trade.It
                     .OrderBy(item => item.Title, StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
+                // Keep the control order deterministic. BringToFront changes the
+                // Controls collection order, so compare buttons in indicator-title order.
                 var buttons = Controls.OfType<Button>()
                     .Where(button => button.Tag is ChartIndicator)
+                    .OrderBy(button => GetPriceOverlayIndicatorTitle((ChartIndicator)button.Tag!),
+                        StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
                 var rebuild = buttons.Count != items.Count;
@@ -218,7 +222,7 @@ namespace Trade.It
                             Text = item.Title,
                             Tag = indicator,
                             Font = (Font)font.Clone(),
-                            Height = 21,
+                            Height = 28,
                             Width = 100,
                             AutoSize = false,
                             TabStop = false,
@@ -261,12 +265,12 @@ namespace Trade.It
                         button.Font = (Font)font.Clone();
                     }
                     var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
-                    button.Width = Math.Clamp(textWidth + 16, 72, 210);
-                    button.Height = 21;
+                    button.Width = Math.Clamp(textWidth + 20, 90, 320);
+                    button.Height = 28;
                     button.Location = new Point(Math.Max(plot.Left + 2, plot.Right - button.Width - 3), y);
                     button.BringToFront();
                     UpdatePriceIndicatorButtonStyle(button, indicator);
-                    y += button.Height + 2;
+                    y += button.Height + 3;
                 }
             }
             finally
