@@ -1315,6 +1315,7 @@ namespace Trade.It
                 return false;
 
             using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var graphics = CreateGraphics();
             var titles = new List<(ChartIndicator Indicator, string Title)>();
             foreach (var indicator in indicators)
             {
@@ -1336,14 +1337,12 @@ namespace Trade.It
             var y = plot.Top + 1f;
             foreach (var item in titles.OrderBy(x => x.Title, StringComparer.OrdinalIgnoreCase))
             {
-                var size = titleFont.GetHeight() > 0
-                    ? TextRenderer.MeasureText(item.Title, titleFont)
-                    : Size.Empty;
-                var bounds = new Rectangle(
-                    (int)Math.Round(plot.Right - size.Width - 4f),
-                    (int)Math.Round(y),
-                    size.Width + 4,
-                    size.Height + 1);
+                var size = graphics.MeasureString(item.Title, titleFont);
+                var bounds = new RectangleF(
+                    plot.Right - size.Width - 4f,
+                    y,
+                    size.Width + 4f,
+                    size.Height + 1f);
                 if (bounds.Contains(location))
                 {
                     item.Indicator.IsVisible = !item.Indicator.IsVisible;
