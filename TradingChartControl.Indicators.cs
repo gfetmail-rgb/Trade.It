@@ -695,7 +695,6 @@ namespace Trade.It
                 InvalidateAtrCache();
             if (indicator.Type == ChartIndicatorType.AverageDirectionalIndex)
                 InvalidateAdxCache();
-            BackColor = backgroundColor;
             selectedIndicatorIndex = index;
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
