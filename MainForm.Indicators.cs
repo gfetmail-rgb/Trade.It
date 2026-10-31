@@ -351,8 +351,14 @@ namespace Trade.It
             if (chart == null || chart.Indicators.Count == 0)
                 return;
 
+            // مالک پنجرهٔ تأیید باید فرم میزبان چارت فعال باشد تا
+            // پنجرهٔ تأیید پشت پنجرهٔ چارت یا پنجرهٔ تمام‌صفحه پنهان نماند.
+            var owner = chart.FindForm();
+            if (owner == null || !owner.Visible)
+                owner = this;
+
             var result = MessageBox.Show(
-                this,
+                owner,
                 "همه اندیکاتورهای چارت فعال حذف شوند؟",
                 "حذف همه اندیکاتورها",
                 MessageBoxButtons.YesNo,
