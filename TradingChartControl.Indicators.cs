@@ -1249,13 +1249,37 @@ namespace Trade.It
         private void DrawDonchianChannel(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
         {
             CalculateDonchianChannel(indicator.Period, out var upper, out var lower, out var middle);
+
+            // رنگ زمینهٔ دونچیان فقط داخل محدودهٔ کانال رسم می‌شود و به زمینهٔ چارت دست نمی‌زند.
+            var upperPoints = new List<PointF>();
+            var lowerPoints = new List<PointF>();
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= upper.Length ||
+                    double.IsNaN(upper[absoluteIndex]) || double.IsInfinity(upper[absoluteIndex]) ||
+                    double.IsNaN(lower[absoluteIndex]) || double.IsInfinity(lower[absoluteIndex]))
+                    continue;
+
+                var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                upperPoints.Add(new PointF(x, (float)PriceToScreen(upper[absoluteIndex], plot, min, max)));
+                lowerPoints.Add(new PointF(x, (float)PriceToScreen(lower[absoluteIndex], plot, min, max)));
+            }
+
+            if (upperPoints.Count > 1 && lowerPoints.Count == upperPoints.Count)
+            {
+                var polygon = upperPoints.Concat(lowerPoints.AsEnumerable().Reverse()).ToArray();
+                using var fill = new SolidBrush(Color.FromArgb(45, indicator.BackgroundColor.R,
+                    indicator.BackgroundColor.G, indicator.BackgroundColor.B));
+                g.FillPolygon(fill, polygon);
+            }
+
             using var pen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, pen, true);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, pen, true);
             using var middlePen = new Pen(Color.FromArgb(150, 150, 150), Math.Max(1f, LineAppearanceSettings.ChartLineWidth));
             middlePen.DashPattern = new[] { 4f, 3f };
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, middle, middlePen, true);
-
         }
 
         private void DrawBollinger(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
