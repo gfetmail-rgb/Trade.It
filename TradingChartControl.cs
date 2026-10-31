@@ -1309,61 +1309,9 @@ namespace Trade.It
             }
         }
 
-        private bool TryTogglePriceIndicatorTitle(Point location)
-        {
-            if (points.Count == 0 || indicators.Count == 0)
-                return false;
-
-            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            using var graphics = CreateGraphics();
-            var titles = new List<(ChartIndicator Indicator, string Title)>();
-            foreach (var indicator in indicators)
-            {
-                string? title = null;
-                if (indicator.Type == ChartIndicatorType.MovingAverage)
-                    title = $"MA({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.ExponentialMovingAverage)
-                    title = $"EMA({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.DonchianChannel)
-                    title = $"Donchian({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.Ichimoku)
-                    title = $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})";
-
-                if (title != null)
-                    titles.Add((indicator, title));
-            }
-
-            var plot = GetPlotRectangle();
-            var y = plot.Top + 1f;
-            foreach (var item in titles.OrderBy(x => x.Title, StringComparer.OrdinalIgnoreCase))
-            {
-                var size = graphics.MeasureString(item.Title, titleFont);
-                var bounds = new RectangleF(
-                    plot.Right - size.Width - 4f,
-                    y,
-                    size.Width + 4f,
-                    size.Height + 1f);
-                if (bounds.Contains(location))
-                {
-                    item.Indicator.IsVisible = !item.Indicator.IsVisible;
-                    return true;
-                }
-
-                y += size.Height + 1f;
-            }
-
-            return false;
-        }
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (e.Button == MouseButtons.Left && TryTogglePriceIndicatorTitle(e.Location))
-            {
-                Focus();
-                Invalidate();
-                return;
-            }
             if (e.Button == MouseButtons.Right)
             {
                 var indicatorIndex = HitTestIndicator(e.Location);
