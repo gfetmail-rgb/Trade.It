@@ -8,6 +8,7 @@ namespace Trade.It
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            SyncPriceIndicatorButtons();
             e.Graphics.Clear(BackColor);
             base.OnPaint(e);
             if (points.Count == 0)
@@ -142,7 +143,6 @@ namespace Trade.It
                 e.Graphics.DrawLine(crosshairPen, plot.Left, crosshairPoint.Y, plot.Right, crosshairPoint.Y);
             }
 
-            RenderPriceIndicatorTitles(e.Graphics, plot, min, max, visible.Count, step, initialOffset);
             e.Graphics.Restore(chartState);
 
             var panelVisible = visible.Take(displayedCount).ToList();
@@ -1476,41 +1476,6 @@ namespace Trade.It
                 if (previous.HasValue)
                     g.DrawLine(pen, previous.Value, current);
                 previous = current;
-            }
-        }
-
-        private void RenderPriceIndicatorTitles(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset)
-        {
-            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-
-            var titles = new List<(string Title, Color Color)>();
-            foreach (var indicator in indicators)
-            {
-                string? title = null;
-                var color = indicator.LineColor;
-
-                if (indicator.Type == ChartIndicatorType.MovingAverage)
-                    title = $"MA({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.ExponentialMovingAverage)
-                    title = $"EMA({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.DonchianChannel)
-                    title = $"Donchian({indicator.Period})";
-                else if (indicator.Type == ChartIndicatorType.Ichimoku)
-                    title = $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})";
-
-                if (title != null)
-                    titles.Add((title, color));
-            }
-
-            // مرتب‌سازی الفبایی و نمایش هر عنوان در ردیف مستقل در گوشهٔ بالا-راست.
-            var y = plot.Top + 1f;
-            foreach (var item in titles.OrderBy(x => x.Title, StringComparer.OrdinalIgnoreCase))
-            {
-                var size = g.MeasureString(item.Title, titleFont);
-                var x = plot.Right - size.Width - 4f;
-                using var brush = new SolidBrush(item.Color);
-                g.DrawString(item.Title, titleFont, brush, x, y);
-                y += size.Height + 1f;
             }
         }
 
