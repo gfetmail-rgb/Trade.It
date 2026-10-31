@@ -362,16 +362,15 @@ namespace Trade.It
             if (chart == null || chart.Indicators.Count == 0)
                 return;
 
-            // در حالت تمام‌صفحه، MainForm روی TopMost قرار می‌گیرد. موقتاً این
-            // وضعیت را خاموش می‌کنیم تا پنجره تأیید بتواند در پیش‌زمینه نمایش داده شود.
+            // قبل از نمایش دیالوگ، TopMost را موقتاً خاموش می‌کنیم؛
+            // ممکن است وضعیت پنجره با حالت تمام‌صفحه همگام نباشد.
             // پس از بسته‌شدن دیالوگ، وضعیت قبلی دقیقاً بازگردانده می‌شود.
             var wasTopMost = TopMost;
             DialogResult result;
 
             try
             {
-                if (chartFullScreen)
-                    TopMost = false;
+                TopMost = false;
 
                 result = MessageBox.Show(
                     this,
@@ -383,8 +382,7 @@ namespace Trade.It
             }
             finally
             {
-                if (chartFullScreen)
-                    TopMost = wasTopMost;
+                TopMost = wasTopMost;
             }
 
             if (result == DialogResult.Yes)
