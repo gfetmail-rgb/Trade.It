@@ -256,9 +256,7 @@ namespace Trade.It
                     button.Text = GetPriceOverlayIndicatorTitle(indicator);
                     if (!button.Font.Equals(font))
                     {
-                        var previousFont = button.Font;
                         button.Font = (Font)font.Clone();
-                        previousFont.Dispose();
                     }
                     var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
                     button.Width = Math.Clamp(textWidth + 16, 72, 210);
