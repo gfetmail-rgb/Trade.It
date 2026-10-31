@@ -1087,6 +1087,18 @@ namespace Trade.It
             return Math.Sqrt(Math.Pow(p.X - x, 2) + Math.Pow(p.Y - y, 2));
         }
 
+        private void DrawDonchianChannel(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
+        {
+            CalculateDonchianChannel(indicator.Period, out var upper, out var lower);
+            using var pen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, pen, true);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, pen, true);
+
+            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            using var brush = new SolidBrush(indicator.LineColor);
+            g.DrawString($"Donchian({indicator.Period})", font, brush, plot.Left + 4f, plot.Top + 4f);
+        }
+
         private void DrawBollinger(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
         {
             var arrays = new[] { bollingerMiddleCache, bollingerUpperCache, bollingerLowerCache };
@@ -1131,6 +1143,12 @@ namespace Trade.It
             {
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume)
                     continue;
+
+                if (indicator.Type == ChartIndicatorType.DonchianChannel)
+                {
+                    DrawDonchianChannel(g, plot, min, max, displayedCount, step, initialOffset, indicator);
+                    continue;
+                }
 
                 if (indicator.Type == ChartIndicatorType.BollingerBands)
                 {
