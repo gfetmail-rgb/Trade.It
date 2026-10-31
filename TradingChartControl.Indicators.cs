@@ -1339,14 +1339,7 @@ namespace Trade.It
                 if (linePoints.Count > 1)
                     g.DrawLines(pen, linePoints.ToArray());
 
-                var label = indicator.Type == ChartIndicatorType.MovingAverage ? $"MA({indicator.Period})" : $"EMA({indicator.Period})";
-                if (linePoints.Count > 0)
-                {
-                    using var labelFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-                    using var labelBrush = new SolidBrush(pen.Color);
-                    var p = linePoints[^1];
-                    g.DrawString(label, labelFont, labelBrush, p.X + 4f, Math.Clamp(p.Y - 10f, plot.Top, plot.Bottom - 14f));
-                }
+
             }
         }
 
