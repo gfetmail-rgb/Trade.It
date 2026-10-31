@@ -254,7 +254,12 @@ namespace Trade.It
                 {
                     var indicator = (ChartIndicator)button.Tag!;
                     button.Text = GetPriceOverlayIndicatorTitle(indicator);
-                    button.Font = (Font)font.Clone();
+                    if (!button.Font.Equals(font))
+                    {
+                        var previousFont = button.Font;
+                        button.Font = (Font)font.Clone();
+                        previousFont.Dispose();
+                    }
                     var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
                     button.Width = Math.Clamp(textWidth + 16, 72, 210);
                     button.Height = 21;
