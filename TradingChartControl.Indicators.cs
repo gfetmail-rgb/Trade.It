@@ -709,6 +709,39 @@ namespace Trade.It
                     continue;
                 }
 
+                if (indicator.Type == ChartIndicatorType.DonchianChannel)
+                {
+                    CalculateDonchianChannel(indicator.Period, out var upper, out var lower);
+                    foreach (var seriesValues in new[] { upper, lower })
+                    {
+                        PointF? previousPoint = null;
+                        for (var i = 0; i < displayedCount; i++)
+                        {
+                            var absoluteIndex = firstIndex + i;
+                            if (absoluteIndex < 0 || absoluteIndex >= seriesValues.Length || !double.IsFinite(seriesValues[absoluteIndex]))
+                            {
+                                previousPoint = null;
+                                continue;
+                            }
+
+                            var current = new PointF(
+                                (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset),
+                                (float)PriceToScreen(seriesValues[absoluteIndex], plot, min, max));
+                            if (previousPoint.HasValue)
+                            {
+                                var distance = DistanceToIndicatorSegment(location, previousPoint.Value, current);
+                                if (distance < bestDistance)
+                                {
+                                    bestDistance = distance;
+                                    bestIndex = indicatorIndex;
+                                }
+                            }
+                            previousPoint = current;
+                        }
+                    }
+                    continue;
+                }
+
                 if (indicator.Type == ChartIndicatorType.BollingerBands)
                 {
                     EnsureBollingerCache(indicator);
