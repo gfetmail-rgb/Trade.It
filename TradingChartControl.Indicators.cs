@@ -298,6 +298,16 @@ namespace Trade.It
         internal bool HasVwapIndicator => indicators.Any(x => x.Type == ChartIndicatorType.VolumeWeightedAveragePrice);
         public int SelectedIndicatorIndex => selectedIndicatorIndex;
 
+        internal bool SelectIndicator(ChartIndicator indicator)
+        {
+            var index = indicators.IndexOf(indicator);
+            if (index < 0)
+                return false;
+
+            selectedIndicatorIndex = index;
+            return true;
+        }
+
         public void AddMovingAverage(int period = 20)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
