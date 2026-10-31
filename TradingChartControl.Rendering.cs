@@ -1482,12 +1482,13 @@ namespace Trade.It
         private void RenderPriceIndicatorTitles(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset)
         {
             using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            var xRight = (float)plot.Right;
-            var y = plot.Top + 1f;
+
+            var titles = new List<(string Title, Color Color)>();
             foreach (var indicator in indicators)
             {
                 string? title = null;
-                Color color = indicator.LineColor;
+                var color = indicator.LineColor;
+
                 if (indicator.Type == ChartIndicatorType.MovingAverage)
                     title = $"MA({indicator.Period})";
                 else if (indicator.Type == ChartIndicatorType.ExponentialMovingAverage)
@@ -1496,11 +1497,20 @@ namespace Trade.It
                     title = $"Donchian({indicator.Period})";
                 else if (indicator.Type == ChartIndicatorType.Ichimoku)
                     title = $"Ichimoku({indicator.IchimokuTenkanPeriod},{indicator.IchimokuKijunPeriod},{indicator.IchimokuSpanBPeriod},{indicator.IchimokuDisplacement})";
-                if (title == null) continue;
-                var size = g.MeasureString(title, titleFont);
-                xRight -= size.Width + 4f;
-                using var brush = new SolidBrush(color);
-                g.DrawString(title, titleFont, brush, xRight, y);
+
+                if (title != null)
+                    titles.Add((title, color));
+            }
+
+            // مرتب‌سازی الفبایی و نمایش هر عنوان در ردیف مستقل در گوشهٔ بالا-راست.
+            var y = plot.Top + 1f;
+            foreach (var item in titles.OrderBy(x => x.Title, StringComparer.OrdinalIgnoreCase))
+            {
+                var size = g.MeasureString(item.Title, titleFont);
+                var x = plot.Right - size.Width - 4f;
+                using var brush = new SolidBrush(item.Color);
+                g.DrawString(item.Title, titleFont, brush, x, y);
+                y += size.Height + 1f;
             }
         }
 
