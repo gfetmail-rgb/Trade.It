@@ -37,10 +37,6 @@ namespace Trade.It
             {
                 backgroundColorLabel.Visible = false;
                 backgroundColorButton.Visible = false;
-                okButton.Location = new Point(okButton.Left, 130);
-                defaultButton.Location = new Point(defaultButton.Left, 130);
-                cancelButton.Location = new Point(cancelButton.Left, 130);
-                ClientSize = new Size(ClientSize.Width, 185);
             }
 
             lineColorButton.Click += (_, _) => PickColor(lineColorButton);
