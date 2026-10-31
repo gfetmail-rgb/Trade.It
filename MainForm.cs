@@ -1603,8 +1603,8 @@ namespace Trade.It
                     AddError($"{filter.Label}: قیمت دوم انتخاب نشده است.", filter.Second);
                 if (!HasValue(filter.Offset))
                     AddError($"{filter.Label}: تعداد کندل قبل وارد نشده است.", filter.Offset);
-                else if (!TryReadNonNegativeInteger(filter.Offset, out _))
-                    AddError($"{filter.Label}: تعداد کندل قبل باید عدد صحیح صفر یا بزرگ‌تر باشد.", filter.Offset);
+                else if (!int.TryParse(NormalizeTradingDigits(filter.Offset.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var rangeOffset) || rangeOffset <= 0)
+                    AddError($"{filter.Label}: تعداد کندل قبل باید عدد صحیح بزرگ‌تر از صفر باشد.", filter.Offset);
             }
             }
 
