@@ -362,22 +362,11 @@ namespace Trade.It
             if (chart == null || chart.Indicators.Count == 0)
                 return;
 
-            // مالک پنجرهٔ تأیید باید فرم میزبان چارت فعال باشد تا
-            // پنجرهٔ تأیید پشت پنجرهٔ چارت یا پنجرهٔ تمام‌صفحه پنهان نماند.
-            var owner = chart.FindForm();
-            if (owner == null || !owner.Visible || owner.IsDisposed)
-                owner = this;
-
-            // دیالوگ تأیید باید جلوی چارت فعال ظاهر شود؛ در غیر این صورت
-            // کلیک روی چارت صدای Ding می‌دهد و به‌نظر می‌رسد برنامه قفل کرده است.
-            if (owner.Visible && !owner.IsDisposed)
-            {
-                owner.BringToFront();
-                owner.Activate();
-            }
-
+            // این فرمان از منوی فرم اصلی اجرا می‌شود؛ مالک دیالوگ را صریحاً
+            // خود MainForm قرار می‌دهیم تا وابسته به فرم/تب میزبان چارت نباشد.
+            // مالکیت به فرم شناور یا فرزند می‌تواند دیالوگ را پشت پنجره فعال پنهان کند.
             var result = MessageBox.Show(
-                owner,
+                this,
                 "همه اندیکاتورهای چارت فعال حذف شوند؟",
                 "حذف همه اندیکاتورها",
                 MessageBoxButtons.YesNo,
