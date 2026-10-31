@@ -22,6 +22,7 @@ namespace Trade.It
     {
         public ChartIndicatorType Type { get; init; }
         public int Period { get; set; }
+        public bool IsVisible { get; set; } = true;
         public Color LineColor { get; set; } = Color.FromArgb(30, 100, 220);
         public Color BackgroundColor { get; set; } = Color.White;
         public bool ShowTenkan { get; set; } = true;
@@ -1141,6 +1142,9 @@ namespace Trade.It
 
             foreach (var indicator in indicators)
             {
+                if (!indicator.IsVisible)
+                    continue;
+
                 if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume)
                     continue;
 
