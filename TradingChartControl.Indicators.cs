@@ -1094,9 +1094,6 @@ namespace Trade.It
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, pen, true);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, pen, true);
 
-            using var font = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
-            using var brush = new SolidBrush(indicator.LineColor);
-            g.DrawString($"Donchian({indicator.Period})", font, brush, plot.Left + 4f, plot.Top + 4f);
         }
 
         private void DrawBollinger(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
