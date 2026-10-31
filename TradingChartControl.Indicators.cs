@@ -753,8 +753,23 @@ namespace Trade.It
 
         public void RemoveAllIndicators()
         {
+            if (indicators.Count == 0)
+                return;
+
             indicators.Clear();
             selectedIndicatorIndex = -1;
+
+            // پاک‌سازی Cacheهای محاسباتی اندیکاتورهای حذف‌شده.
+            InvalidateIchimokuCache();
+            InvalidateMacdCache();
+            InvalidateStochasticCache();
+            InvalidateStochasticRsiCache();
+            InvalidateAtrCache();
+            InvalidateAdxCache();
+            InvalidateBollingerCache();
+            InvalidateObvCache();
+            InvalidateVwapCache();
+
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1283,13 +1298,65 @@ namespace Trade.It
 
         private void DrawBollinger(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
         {
-            var arrays = new[] { bollingerMiddleCache, bollingerUpperCache, bollingerLowerCache };
+            var middle = bollingerMiddleCache!;
+            var upper = bollingerUpperCache!;
+            var lower = bollingerLowerCache!;
+
+            // رنگ‌های انتخاب‌شده برای باند بالا و پایین، رنگ سطح داخلی باندها هستند؛
+            // رنگ خطوط مرزی مستقل می‌ماند تا انتخاب رنگ، خط را به‌جای زمینه تغییر ندهد.
+            DrawBollingerFill(g, plot, min, max, displayedCount, step, initialOffset,
+                upper, middle, indicator.BollingerUpperColor, indicator.ShowBollingerUpper);
+            DrawBollingerFill(g, plot, min, max, displayedCount, step, initialOffset,
+                middle, lower, indicator.BollingerLowerColor, indicator.ShowBollingerLower);
+
             using var middlePen = new Pen(indicator.BollingerMiddleColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
-            using var upperPen = new Pen(indicator.BollingerUpperColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
-            using var lowerPen = new Pen(indicator.BollingerLowerColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
-            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[0]!, middlePen, indicator.ShowBollingerMiddle);
-            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[1]!, upperPen, indicator.ShowBollingerUpper);
-            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, arrays[2]!, lowerPen, indicator.ShowBollingerLower);
+            using var upperPen = new Pen(Color.FromArgb(50, 160, 80), Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            using var lowerPen = new Pen(Color.FromArgb(220, 80, 80), Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, middle, middlePen, indicator.ShowBollingerMiddle);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, upperPen, indicator.ShowBollingerUpper);
+            DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, lowerPen, indicator.ShowBollingerLower);
+        }
+
+        private void DrawBollingerFill(Graphics g, Rectangle plot, double min, double max, int displayedCount,
+            double step, double initialOffset, double[] firstSeries, double[] secondSeries, Color color, bool show)
+        {
+            if (!show)
+                return;
+
+            var firstSegment = new List<PointF>();
+            var secondSegment = new List<PointF>();
+
+            void FillSegment()
+            {
+                if (firstSegment.Count >= 2 && firstSegment.Count == secondSegment.Count)
+                {
+                    var polygon = firstSegment.Concat(secondSegment.AsEnumerable().Reverse()).ToArray();
+                    using var brush = new SolidBrush(Color.FromArgb(45, color.R, color.G, color.B));
+                    g.FillPolygon(brush, polygon);
+                }
+
+                firstSegment.Clear();
+                secondSegment.Clear();
+            }
+
+            for (var i = 0; i < displayedCount; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= firstSeries.Length ||
+                    absoluteIndex >= secondSeries.Length ||
+                    !double.IsFinite(firstSeries[absoluteIndex]) ||
+                    !double.IsFinite(secondSeries[absoluteIndex]))
+                {
+                    FillSegment();
+                    continue;
+                }
+
+                var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                firstSegment.Add(new PointF(x, (float)PriceToScreen(firstSeries[absoluteIndex], plot, min, max)));
+                secondSegment.Add(new PointF(x, (float)PriceToScreen(secondSeries[absoluteIndex], plot, min, max)));
+            }
+
+            FillSegment();
         }
 
         private void DrawSeries(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, double[] values, Pen pen, bool show)
