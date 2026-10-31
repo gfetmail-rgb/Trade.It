@@ -18,6 +18,7 @@ namespace Trade.It
             indicatorBollingerMenuItem.Click += (_, _) => AddBollingerToActiveChart();
             indicatorObvMenuItem.Click += (_, _) => AddObvToActiveChart();
             indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
+            indicatorDonchianMenuItem.Click += (_, _) => AddDonchianToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -119,6 +120,19 @@ namespace Trade.It
                 return;
             }
             chart.AddOnBalanceVolume();
+        }
+
+        private void AddDonchianToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddDonchianChannel(20);
         }
 
         private void AddVwapToActiveChart()
