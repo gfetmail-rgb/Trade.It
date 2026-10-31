@@ -1089,7 +1089,7 @@ namespace Trade.It
 
         private void DrawDonchianChannel(Graphics g, Rectangle plot, double min, double max, int displayedCount, double step, double initialOffset, ChartIndicator indicator)
         {
-            CalculateDonchianChannel(indicator.Period, out var upper, out var lower);
+            CalculateDonchianChannel(indicator.Period, out var upper, out var lower, out var middle);
             using var pen = new Pen(indicator.LineColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, upper, pen, true);
             DrawSeries(g, plot, min, max, displayedCount, step, initialOffset, lower, pen, true);
