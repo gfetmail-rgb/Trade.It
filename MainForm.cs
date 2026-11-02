@@ -2613,7 +2613,7 @@ namespace Trade.It
                 var latestRow = rows[^1];
                 if (firstColumn > latestRow.Length ||
                     !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
-                    !double.IsFinite(latestValue) || latestValue <= 0)
+                    !double.IsFinite(latestValue))
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2624,7 +2624,7 @@ namespace Trade.It
                     var row = rows[rows.Count - 1 - candleOffset];
                     if (secondColumn > row.Length ||
                         !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
-                        !double.IsFinite(rangeValue) || rangeValue <= 0)
+                        !double.IsFinite(rangeValue))
                     {
                         invalidComparisonPriceSymbols++;
                         return false;
