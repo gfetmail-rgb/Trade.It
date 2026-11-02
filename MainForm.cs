@@ -29,6 +29,9 @@ namespace Trade.It
         private bool filtersApplied;
         private bool filters2Applied;
         private int latestTradeDateLoadVersion;
+        private int invalidVolumeRatioSymbols;
+        private int invalidComparisonPriceSymbols;
+        private int invalidPercentChangeSymbols;
         private Button filterApplyButton;
         private TextBox textBox1;
 
@@ -1829,6 +1832,10 @@ namespace Trade.It
                 return;
             }
 
+            invalidVolumeRatioSymbols = 0;
+            invalidComparisonPriceSymbols = 0;
+            invalidPercentChangeSymbols = 0;
+
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -1857,8 +1864,16 @@ namespace Trade.It
                     var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();
                     var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();
                     var op = GetOhlcChangeOperator();
-                    if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && !string.IsNullOrWhiteSpace(op))
-                        filtered = filtered.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op));
+                    if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
+                        filtered = filtered.Where(symbol =>
+                        {
+                            if (!TryGetOhlcChange(definition, symbol, field, n, out var changePercent))
+                            {
+                                invalidPercentChangeSymbols++;
+                                return false;
+                            }
+                            return CompareNumeric(changePercent, percent, op);
+                        });
                 }
             }
 
@@ -1891,9 +1906,25 @@ namespace Trade.It
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
+
+            ShowFilterDataWarnings();
         }
 
-                private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
+        private void ShowFilterDataWarnings()
+        {
+            var warnings = new List<string>();
+            if (invalidVolumeRatioSymbols > 0)
+                warnings.Add($"• فیلتر نسبت حجم: {ToPersianDigits(invalidVolumeRatioSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن تاریخچه حجم از نتیجه حذف شد.");
+            if (invalidComparisonPriceSymbols > 0)
+                warnings.Add($"• فیلترهای مقایسه قیمت: {ToPersianDigits(invalidComparisonPriceSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
+            if (invalidPercentChangeSymbols > 0)
+                warnings.Add($"• فیلتر تغییر درصد قیمت: {ToPersianDigits(invalidPercentChangeSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
+
+            if (warnings.Count > 0)
+                MessageBox.Show(this, "برخی نمادها به دلیل کافی یا معتبر نبودن داده‌ها قابل ارزیابی نبودند و از نتایج حذف شدند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
         {
             var phrase = NormalizeSymbolName(nameTextBox.Text);
             if (string.IsNullOrWhiteSpace(phrase))
@@ -1976,6 +2007,8 @@ namespace Trade.It
             {
                 if (TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
                     calculated.Add((symbol, ratio));
+                else
+                    invalidVolumeRatioSymbols++;
             }
 
             // Use one consistent tolerance for all three operators so >, < and =
@@ -2022,28 +2055,29 @@ namespace Trade.It
                 return false;
             }
 
-            // Use up to n available rows before the latest row. A short history
-            // must not disqualify a symbol if at least one prior volume is usable.
-            if (rows.Count < 2)
+            // The ratio is valid only when the latest candle and all n preceding
+            // candles have valid volumes. Never silently shorten the averaging window.
+            if (n <= 0 || rows.Count - 1 < n)
                 return false;
 
-            if (volumeColumn > rows[^1].Length || !TryParseTradingNumber(rows[^1][volumeColumn - 1], out var latestVolume))
+            if (volumeColumn > rows[^1].Length ||
+                !TryParseTradingNumber(rows[^1][volumeColumn - 1], out var latestVolume) ||
+                !double.IsFinite(latestVolume) || latestVolume < 0)
                 return false;
 
-            var availablePriorRows = Math.Min(n, rows.Count - 1);
-            var priorVolumes = new List<double>(availablePriorRows);
-            for (var offset = availablePriorRows; offset >= 1; offset--)
+            var priorVolumes = new List<double>(n);
+            for (var offset = n; offset >= 1; offset--)
             {
                 var row = rows[rows.Count - 1 - offset];
-                if (volumeColumn <= row.Length &&
-                    TryParseTradingNumber(row[volumeColumn - 1], out var volume) &&
-                    double.IsFinite(volume))
-                {
-                    priorVolumes.Add(volume);
-                }
+                if (volumeColumn > row.Length ||
+                    !TryParseTradingNumber(row[volumeColumn - 1], out var volume) ||
+                    !double.IsFinite(volume) || volume < 0)
+                    return false;
+
+                priorVolumes.Add(volume);
             }
 
-            if (priorVolumes.Count == 0 || !double.IsFinite(latestVolume))
+            if (priorVolumes.Count != n)
                 return false;
 
             var average = priorVolumes.Average();
@@ -2521,7 +2555,15 @@ namespace Trade.It
         private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
         {
             if (!TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out var firstField, out var op, out var secondField, out var firstOffset, out var relativeOffset)) return symbols;
-            return symbols.Where(symbol => TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right) && CompareComparisonOperator(left, right, op));
+            return symbols.Where(symbol =>
+            {
+                if (!TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right))
+                {
+                    invalidComparisonPriceSymbols++;
+                    return false;
+                }
+                return CompareComparisonOperator(left, right, op);
+            });
         }
 
         private IEnumerable<string> ApplyComparisonRangeFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox offsetTextBox)
@@ -2543,7 +2585,10 @@ namespace Trade.It
                 var secondColumn = GetMappingColumn(definition, secondField);
                 if (firstColumn <= 0 || secondColumn <= 0 ||
                     string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
+                {
+                    invalidComparisonPriceSymbols++;
                     return false;
+                }
 
                 List<string[]> rows;
                 try
@@ -2552,6 +2597,7 @@ namespace Trade.It
                 }
                 catch
                 {
+                    invalidComparisonPriceSymbols++;
                     return false;
                 }
 
@@ -2559,24 +2605,32 @@ namespace Trade.It
                 // compare its first-field value against the second-field value of
                 // every preceding candle from 1 through the configured offset.
                 if (rows.Count <= offset)
+                {
+                    invalidComparisonPriceSymbols++;
                     return false;
+                }
 
                 var latestRow = rows[^1];
                 if (firstColumn > latestRow.Length ||
                     !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
                     !double.IsFinite(latestValue))
+                {
+                    invalidComparisonPriceSymbols++;
                     return false;
+                }
 
                 for (var candleOffset = 1; candleOffset <= offset; candleOffset++)
                 {
                     var row = rows[rows.Count - 1 - candleOffset];
                     if (secondColumn > row.Length ||
                         !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
-                        !double.IsFinite(rangeValue) ||
-                        !CompareComparisonOperator(latestValue, rangeValue, op))
+                        !double.IsFinite(rangeValue))
                     {
+                        invalidComparisonPriceSymbols++;
                         return false;
                     }
+                    if (!CompareComparisonOperator(latestValue, rangeValue, op))
+                        return false;
                 }
 
                 return true;
