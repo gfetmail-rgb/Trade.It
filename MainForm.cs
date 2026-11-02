@@ -2613,7 +2613,7 @@ namespace Trade.It
                 var latestRow = rows[^1];
                 if (firstColumn > latestRow.Length ||
                     !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
-                    !double.IsFinite(latestValue))
+                    !double.IsFinite(latestValue) || latestValue <= 0)
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2624,7 +2624,7 @@ namespace Trade.It
                     var row = rows[rows.Count - 1 - candleOffset];
                     if (secondColumn > row.Length ||
                         !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
-                        !double.IsFinite(rangeValue))
+                        !double.IsFinite(rangeValue) || rangeValue <= 0)
                     {
                         invalidComparisonPriceSymbols++;
                         return false;
@@ -2691,7 +2691,9 @@ namespace Trade.It
                 !TryParseTradingNumber(secondRow[secondColumn - 1], out right))
                 return false;
 
-            return double.IsFinite(left) && double.IsFinite(right);
+            // OHLC prices must be finite and strictly positive. Zero/negative
+            // values are invalid source data, not valid comparison values.
+            return double.IsFinite(left) && double.IsFinite(right) && left > 0 && right > 0;
         }
 
         private static bool CompareComparisonOperator(double left, double right, string op) => op.Trim() switch
@@ -2822,7 +2824,7 @@ namespace Trade.It
             if (column > latestRow.Length || column > previousRow.Length ||
                 !TryParseTradingNumber(latestRow[column - 1], out var latest) ||
                 !TryParseTradingNumber(previousRow[column - 1], out var previous) ||
-                previous == 0 || !double.IsFinite(latest) || !double.IsFinite(previous))
+                latest <= 0 || previous <= 0 || !double.IsFinite(latest) || !double.IsFinite(previous))
                 return false;
 
             changePercent = (latest - previous) / Math.Abs(previous) * 100.0;
