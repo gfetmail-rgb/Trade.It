@@ -34,6 +34,7 @@ namespace Trade.It
         private int invalidPercentChangeSymbols;
         private bool collectingFilterDiagnostics;
         private int filterDiagnosticsThreadId;
+        private bool chronologicalFiltersSkipped;
         private readonly Dictionary<string, (int InvalidDateRows, int DuplicateDateRows)> dateDataIssuesBySymbol = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> unknownTradeStatusSymbols = new(StringComparer.OrdinalIgnoreCase);
         private Button filterApplyButton;
@@ -1852,6 +1853,26 @@ namespace Trade.It
 
             var hasDate = HasDateColumn(definition);
             var hasVolume = HasVolumeColumn(definition);
+            chronologicalFiltersSkipped = !hasDate &&
+                ((filtersApplied &&
+                    (!statusAllRadio.Checked ||
+                     !string.IsNullOrWhiteSpace(volumeRatioTextBox.Text) ||
+                     !string.IsNullOrWhiteSpace(textBox1.Text) ||
+                     volumeRatioOperatorComboBox.SelectedIndex > 0 ||
+                     !string.IsNullOrWhiteSpace(pastDaysTextBox.Text) ||
+                     pastDaysStatusComboBox.SelectedIndex > 0 ||
+                     IsComparisonFilterActive(comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2) ||
+                     IsComparisonFilterActive(comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1) ||
+                     IsComparisonFilterActive(comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3) ||
+                     IsOhlcChangeFilterActive())) ||
+                 (filters2Applied &&
+                    (IsComparisonFilterActive(comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1) ||
+                     IsComparisonFilterActive(comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2) ||
+                     IsComparisonFilterActive(comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3) ||
+                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1) ||
+                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2) ||
+                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3) ||
+                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4)));
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -1965,6 +1986,8 @@ namespace Trade.It
         private void ShowFilterDataWarnings()
         {
             var warnings = new List<string>();
+            if (chronologicalFiltersSkipped)
+                warnings.Add("• فیلترهای وابسته به تاریخ و ترتیب کندل به دلیل نبود ستون تاریخ در سبد جاری اجرا نشدند. مقادیر انتخاب‌شده حفظ شده‌اند و با انتخاب سبد دارای تاریخ دوباره قابل اجرا خواهند بود.");
             if (invalidVolumeRatioSymbols > 0)
                 warnings.Add($"• فیلتر نسبت حجم: {ToPersianDigits(invalidVolumeRatioSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن تاریخچه حجم از نتیجه حذف شد.");
             if (invalidComparisonPriceSymbols > 0)
