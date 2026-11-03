@@ -1849,8 +1849,6 @@ namespace Trade.It
             invalidPercentChangeSymbols = 0;
             dateDataIssuesBySymbol.Clear();
             unknownTradeStatusSymbols.Clear();
-            filterDiagnosticsThreadId = Environment.CurrentManagedThreadId;
-            collectingFilterDiagnostics = true;
 
             var hasDate = HasDateColumn(definition);
             var hasVolume = HasVolumeColumn(definition);
@@ -1859,6 +1857,9 @@ namespace Trade.It
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
             IEnumerable<string> filtered = symbols;
+
+            filterDiagnosticsThreadId = Environment.CurrentManagedThreadId;
+            collectingFilterDiagnostics = true;
 
             if (filtersApplied)
             {
