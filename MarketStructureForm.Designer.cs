@@ -169,6 +169,33 @@ partial class MarketStructureForm
         addChildButton.Text = "ثبت / افزودن زیرمجموعه";
         addChildButton.UseVisualStyleBackColor = true;
         // 
+        // addRootButton
+        // 
+        addRootButton.Margin = new Padding(4, 5, 4, 5);
+        addRootButton.Name = "addRootButton";
+        addRootButton.Size = new Size(160, 38);
+        addRootButton.TabIndex = 5;
+        addRootButton.Text = "افزودن بازار سطح اول";
+        addRootButton.UseVisualStyleBackColor = true;
+        // 
+        // importMarketStructureButton
+        // 
+        importMarketStructureButton.Margin = new Padding(4, 5, 4, 5);
+        importMarketStructureButton.Name = "importMarketStructureButton";
+        importMarketStructureButton.Size = new Size(125, 38);
+        importMarketStructureButton.TabIndex = 6;
+        importMarketStructureButton.Text = "ورود از JSON";
+        importMarketStructureButton.UseVisualStyleBackColor = true;
+        // 
+        // exportMarketStructureButton
+        // 
+        exportMarketStructureButton.Margin = new Padding(4, 5, 4, 5);
+        exportMarketStructureButton.Name = "exportMarketStructureButton";
+        exportMarketStructureButton.Size = new Size(135, 38);
+        exportMarketStructureButton.TabIndex = 7;
+        exportMarketStructureButton.Text = "خروجی به JSON";
+        exportMarketStructureButton.UseVisualStyleBackColor = true;
+        // 
         // bottomPanel
         // 
         bottomPanel.Controls.Add(closeButton);
