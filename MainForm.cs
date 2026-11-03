@@ -32,6 +32,9 @@ namespace Trade.It
         private int invalidVolumeRatioSymbols;
         private int invalidComparisonPriceSymbols;
         private int invalidPercentChangeSymbols;
+        private bool collectingFilterDiagnostics;
+        private readonly Dictionary<string, (int InvalidDateRows, int DuplicateDateRows)> dateDataIssuesBySymbol = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> unknownTradeStatusSymbols = new(StringComparer.OrdinalIgnoreCase);
         private Button filterApplyButton;
         private TextBox textBox1;
 
@@ -639,7 +642,6 @@ namespace Trade.It
             textBox1.TextChanged += AdditionalFilterChanged;
             pastDaysTextBox.TextChanged += AdditionalFilterChanged;
             pastDaysStatusComboBox.SelectedIndexChanged += AdditionalFilterChanged;
-            clearFiltersButton.Click += ClearFiltersButton_Click;
             controlTabControl.SelectedIndexChanged += FilterTabSelected;
             UpdateFilterControlAvailability();
         }
@@ -772,6 +774,7 @@ namespace Trade.It
                 displayedPortfolioName = null;
                 volumeColumn.Visible = false;
                 UpdateSelectionControls();
+                UpdateFilterControlAvailability();
                 return;
             }
 
@@ -783,7 +786,12 @@ namespace Trade.It
             try
             {
                 PopulateStocksGrid(definition);
+                // فیلترهای تأییدشده باید برای سبد جدید دوباره محاسبه شوند.
+                if (filtersApplied || filters2Applied)
+                    ApplyTradingStatusFilterWithWaitCursor();
+
                 UpdateFilterCounts();
+                UpdateFilterControlAvailability();
             }
             finally
             {
@@ -1718,14 +1726,16 @@ namespace Trade.It
             volumeColumn.Visible = HasVolumeColumn(definition);
 
             var filtersEnabled = hasStocks && !filtersApplied;
-            var filters2Enabled = hasStocks && !filters2Applied;
+            var filters2Enabled = hasStocks && hasDate && !filters2Applied;
+
+            // همه فیلترهای مبتنی بر ترتیب کندل یا سابقه زمانی به تاریخ معتبر نیاز دارند.
             tradingStatusGroup.Enabled = filtersEnabled && hasDate;
             pastDaysGroup.Enabled = filtersEnabled && hasDate;
-            volumeRatioGroup.Enabled = filtersEnabled && hasVolume;
+            volumeRatioGroup.Enabled = filtersEnabled && hasDate && hasVolume;
             nameFilterGroup.Enabled = filtersEnabled;
-            comparisonGroup7.Enabled = filtersEnabled;
-            comparisonGroup8.Enabled = filtersEnabled;
-            groupBox3.Enabled = filtersEnabled;
+            comparisonGroup7.Enabled = filtersEnabled && hasDate;
+            comparisonGroup8.Enabled = filtersEnabled && hasDate;
+            groupBox3.Enabled = filtersEnabled && hasDate;
             comparison2Group1.Enabled = filters2Enabled;
             comparison2Group2.Enabled = filters2Enabled;
             comparison2Group3.Enabled = filters2Enabled;
@@ -1733,16 +1743,15 @@ namespace Trade.It
             comparisonRangeGroup2.Enabled = filters2Enabled;
             comparisonRangeGroup3.Enabled = filters2Enabled;
             comparisonRangeGroup4.Enabled = filters2Enabled;
-            ohlcChangeFilterGroup.Enabled = filtersEnabled;
+            ohlcChangeFilterGroup.Enabled = filtersEnabled && hasDate;
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
             filterApplyButton.Enabled = hasStocks;
             filterApplyButton2.Text = filters2Applied ? "خاموش" : "تایید";
-            filterApplyButton2.Enabled = hasStocks;
+            filterApplyButton2.Enabled = hasStocks && (hasDate || filters2Applied);
 
-            // «پاک کردن» فقط زمانی مجاز است که فیلترها خاموش باشند.
             clearFiltersButton.Enabled = hasStocks && !filtersApplied;
-            clearFiltersButton2.Enabled = hasStocks && !filters2Applied;
+            clearFiltersButton2.Enabled = hasStocks && hasDate && !filters2Applied;
 
             if (!hasDate)
             {
@@ -1841,7 +1850,12 @@ namespace Trade.It
             invalidVolumeRatioSymbols = 0;
             invalidComparisonPriceSymbols = 0;
             invalidPercentChangeSymbols = 0;
+            dateDataIssuesBySymbol.Clear();
+            unknownTradeStatusSymbols.Clear();
+            collectingFilterDiagnostics = true;
 
+            var hasDate = HasDateColumn(definition);
+            var hasVolume = HasVolumeColumn(definition);
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -1850,51 +1864,59 @@ namespace Trade.It
 
             if (filtersApplied)
             {
-                if (HasDateColumn(definition) && !statusAllRadio.Checked)
+                if (hasDate && !statusAllRadio.Checked)
                 {
-                    var todaySymbols = GetSymbolsTradedOnDate(definition, symbols, DateTime.Today.Date);
                     var showTraded = statusPositiveRadio.Checked;
-                    filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
+                    filtered = ApplyTradeStatusFilter(filtered, definition, DateTime.Today.Date, DateTime.Today.Date, showTraded);
                 }
 
                 filtered = ApplyNameFilter(filtered);
-                filtered = ApplyVolumeRatioFilter(filtered, definition);
-                filtered = ApplyPastDaysFilter(filtered, definition);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
 
-                if (IsOhlcChangeFilterActive())
+                if (hasDate && hasVolume)
+                    filtered = ApplyVolumeRatioFilter(filtered, definition);
+
+                if (hasDate)
                 {
-                    var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
-                    var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();
-                    var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();
-                    var op = GetOhlcChangeOperator();
-                    if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
-                        filtered = filtered.Where(symbol =>
-                        {
-                            if (!TryGetOhlcChange(definition, symbol, field, n, out var changePercent))
+                    filtered = ApplyPastDaysFilter(filtered, definition);
+                    filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
+                    filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+                    filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+
+                    if (IsOhlcChangeFilterActive())
+                    {
+                        var field = NormalizeOhlcChangeField(ohlcChangeFieldComboBox.SelectedItem?.ToString());
+                        var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();
+                        var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();
+                        var op = GetOhlcChangeOperator();
+                        if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
+                            filtered = filtered.Where(symbol =>
                             {
-                                invalidPercentChangeSymbols++;
-                                return false;
-                            }
-                            return CompareNumeric(changePercent, percent, op);
-                        });
+                                if (!TryGetOhlcChange(definition, symbol, field, n, out var changePercent))
+                                {
+                                    invalidPercentChangeSymbols++;
+                                    return false;
+                                }
+                                return CompareNumeric(changePercent, percent, op);
+                            });
+                    }
                 }
             }
 
-            if (filters2Applied)
+            // تب دوم نیز فقط شامل مقایسه‌های مبتنی بر ترتیب کندل است.
+            if (filters2Applied && hasDate)
             {
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
                 filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
                 filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             }
 
             var result = filtered.ToList();
+            collectingFilterDiagnostics = false;
+
             internalPortfolioUpdate = true;
             try
             {
@@ -1918,6 +1940,21 @@ namespace Trade.It
             ShowFilterDataWarnings();
         }
 
+        private IEnumerable<string> ApplyTradeStatusFilter(IEnumerable<string> symbols, PortfolioDefinition definition, DateTime fromDate, DateTime toDate, bool showTraded)
+        {
+            return symbols.Where(symbol =>
+            {
+                var status = GetTradeStatusInDateRange(definition, symbol, fromDate, toDate);
+                if (status == TradeScanStatus.Unknown)
+                {
+                    unknownTradeStatusSymbols.Add(symbol);
+                    return false;
+                }
+
+                return showTraded == (status == TradeScanStatus.Traded);
+            });
+        }
+
         private void ShowFilterDataWarnings()
         {
             var warnings = new List<string>();
@@ -1928,8 +1965,26 @@ namespace Trade.It
             if (invalidPercentChangeSymbols > 0)
                 warnings.Add($"• فیلتر تغییر درصد قیمت: {ToPersianDigits(invalidPercentChangeSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
 
+            var affectedDateSymbols = dateDataIssuesBySymbol.Count(x => x.Value.InvalidDateRows > 0 || x.Value.DuplicateDateRows > 0);
+            var invalidDateRows = dateDataIssuesBySymbol.Values.Sum(x => x.InvalidDateRows);
+            var duplicateDateRows = dateDataIssuesBySymbol.Values.Sum(x => x.DuplicateDateRows);
+            var removedDateRows = invalidDateRows + duplicateDateRows;
+            if (removedDateRows > 0)
+            {
+                warnings.Add(
+                    "توجه: در داده‌های تاریخی تعدادی از ردیف‌ها دارای تاریخ نامعتبر یا تکراری بودند. " +
+                    "ردیف‌های نامعتبر حذف شدند و از هر تاریخ تکراری، آخرین ردیف فایل حفظ شد؛ " +
+                    "سایر داده‌ها بر اساس تاریخ مرتب شدند.\n" +
+                    $"تعداد نمادهای دارای داده نامعتبر: {ToPersianDigits(affectedDateSymbols.ToString())}\n" +
+                    $"تعداد ردیف‌های حذف‌شده: {ToPersianDigits(removedDateRows.ToString())} " +
+                    $"(تاریخ نامعتبر: {ToPersianDigits(invalidDateRows.ToString())}، تکراری: {ToPersianDigits(duplicateDateRows.ToString())})");
+            }
+
+            if (unknownTradeStatusSymbols.Count > 0)
+                warnings.Add($"• وضعیت معامله {ToPersianDigits(unknownTradeStatusSymbols.Count.ToString())} نماد به دلیل نبود داده معتبر یا خطای خواندن فایل قابل تشخیص نبود؛ این نمادها از نتیجه فیلتر سابقه معامله حذف شدند.");
+
             if (warnings.Count > 0)
-                MessageBox.Show(this, "برخی نمادها به دلیل کافی یا معتبر نبودن داده‌ها قابل ارزیابی نبودند و از نتایج حذف شدند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "برخی نمادها یا ردیف‌ها به دلیل کافی یا معتبر نبودن داده‌ها قابل ارزیابی نبودند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
