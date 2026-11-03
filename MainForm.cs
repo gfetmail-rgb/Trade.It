@@ -2151,145 +2151,101 @@ namespace Trade.It
             return double.IsFinite(ratio);
         }
 
+        private enum TradeScanStatus
+        {
+            Unknown,
+            NotTraded,
+            Traded
+        }
+
         private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
         {
-            if (!HasDateColumn(definition)) return symbols;
+            if (!HasDateColumn(definition))
+                return symbols;
+
             var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();
-            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0) return symbols;
-            if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null) return symbols;
+            if (!int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) || n < 0)
+                return symbols;
+            if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null)
+                return symbols;
 
             var fromDate = DateTime.Today.Date.AddDays(-n);
             var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var showTraded = !IsNegativePastDaysOption(op);
-            return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date));
+            return ApplyTradeStatusFilter(symbols, definition, fromDate, DateTime.Today.Date, showTraded);
         }
 
-        private bool HasTradeInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)
+        private TradeScanStatus GetTradeStatusInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)
         {
-            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
+            if (!HasDateColumn(definition) ||
+                string.IsNullOrWhiteSpace(definition.DataPath) ||
+                !Directory.Exists(definition.DataPath))
+                return TradeScanStatus.Unknown;
+
             var dateColumn = GetMappingColumn(definition, "تاریخ");
-            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-            if (dateColumn <= 0) return false;
-            var symbolColumn = GetMappingColumn(definition, "نماد");
+            if (dateColumn <= 0)
+                dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            if (dateColumn <= 0)
+                return TradeScanStatus.Unknown;
+
+            List<string[]> rows;
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol))
-                    if (FileContainsDateRange(definition, file, symbol, symbolColumn, dateColumn, fromDate, toDate)) return true;
+                rows = ReadOrderedSymbolRows(definition, symbol);
             }
-            catch { }
-            return false;
-        }
-
-        private bool FileContainsDateRange(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn, DateTime fromDate, DateTime toDate)
-        {
-            var firstLine = true;
-            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+            catch
             {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var row = SplitTradingDataLine(line, definition.Separator);
-                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile &&
-                    (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
-                if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date)) continue;
-                if (date.Date >= fromDate && date.Date <= toDate) return true;
+                return TradeScanStatus.Unknown;
             }
-            return false;
+
+            // فایل خالی، مفقود یا فاقد حتی یک تاریخ معتبر، «بدون معامله» نیست.
+            if (rows.Count == 0)
+                return TradeScanStatus.Unknown;
+
+            var volumeColumn = GetMappingColumn(definition, "حجم");
+            var invalidVolumeInRange = false;
+
+            foreach (var row in rows)
+            {
+                if (dateColumn > row.Length ||
+                    !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                    continue;
+
+                if (date.Date < fromDate.Date || date.Date > toDate.Date)
+                    continue;
+
+                // اگر ستون حجم وجود ندارد، وجود ردیف تاریخ‌دار معیار معامله است.
+                // در غیر این صورت فقط حجم مثبت نشان‌دهنده انجام معامله است.
+                if (volumeColumn <= 0)
+                    return TradeScanStatus.Traded;
+
+                if (volumeColumn > row.Length ||
+                    !TryParseTradingNumber(row[volumeColumn - 1], out var volume) ||
+                    !double.IsFinite(volume) || volume < 0)
+                {
+                    invalidVolumeInRange = true;
+                    continue;
+                }
+
+                if (volume > 0)
+                    return TradeScanStatus.Traded;
+            }
+
+            if (invalidVolumeInRange)
+                return TradeScanStatus.Unknown;
+
+            if (dateDataIssuesBySymbol.TryGetValue(symbol, out var issues) && issues.InvalidDateRows > 0)
+                return TradeScanStatus.Unknown;
+
+            return TradeScanStatus.NotTraded;
         }
 
         private static bool IsNegativePastDaysOption(string value)
         {
             var normalized = NormalizeSymbolName(value);
-            return normalized.Contains("نداشته", StringComparison.OrdinalIgnoreCase) || normalized.Contains("خیر", StringComparison.OrdinalIgnoreCase) || normalized.Contains("عدم", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool HasTradeOnDate(PortfolioDefinition definition, string symbol, DateTime targetDate)
-        {
-            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
-            var dateColumn = GetMappingColumn(definition, "تاریخ");
-            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-            if (dateColumn <= 0) return false;
-            var symbolColumn = GetMappingColumn(definition, "نماد");
-            try
-            {
-                foreach (var file in GetSymbolFiles(definition, symbol))
-                    if (FileContainsDate(definition, file, symbol, symbolColumn, dateColumn, targetDate)) return true;
-            }
-            catch { }
-            return false;
-        }
-
-        private bool FileContainsDate(PortfolioDefinition definition, string filePath, string symbol, int symbolColumn, int dateColumn, DateTime targetDate)
-        {
-            var firstLine = true;
-            foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
-            {
-                if (string.IsNullOrWhiteSpace(line)) continue;
-                var row = SplitTradingDataLine(line, definition.Separator);
-                if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                firstLine = false;
-                if (definition.SymbolSource == SymbolSource.InsideFile &&
-                    (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))) continue;
-                if (dateColumn <= row.Length && TryParseSourceDate(row[dateColumn - 1], definition, out var date) && date.Date == targetDate) return true;
-            }
-            return false;
-        }
-
-        private HashSet<string> GetSymbolsTradedOnDate(PortfolioDefinition definition, IEnumerable<string> symbols, DateTime targetDate)
-        {
-            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
-                return result;
-
-            var dateColumn = GetMappingColumn(definition, "تاریخ");
-            if (dateColumn <= 0) dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
-            if (dateColumn <= 0) return result;
-
-            var wanted = new HashSet<string>(symbols.Where(s => !string.IsNullOrWhiteSpace(s)), StringComparer.OrdinalIgnoreCase);
-            if (wanted.Count == 0) return result;
-
-            var symbolColumn = GetMappingColumn(definition, "نماد");
-            var extension = definition.FileType?.Trim().ToUpperInvariant() switch { "CSV" => ".csv", "PRN" => ".prn", _ => ".txt" };
-
-            try
-            {
-                foreach (var file in Directory.EnumerateFiles(definition.DataPath, "*" + extension, SearchOption.TopDirectoryOnly))
-                {
-                    if (result.Count == wanted.Count) break;
-
-                    var fileSymbol = Path.GetFileNameWithoutExtension(file);
-                    if (definition.SymbolSource == SymbolSource.FileName && !wanted.Contains(fileSymbol))
-                        continue;
-
-                    var firstLine = true;
-                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
-                    {
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-                        var row = SplitTradingDataLine(line, definition.Separator);
-                        if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                        firstLine = false;
-
-                        if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date) || date.Date != targetDate)
-                            continue;
-
-                        var symbol = definition.SymbolSource == SymbolSource.FileName
-                            ? fileSymbol
-                            : (symbolColumn > 0 && symbolColumn <= row.Length ? row[symbolColumn - 1].Trim() : string.Empty);
-                        if (wanted.Contains(symbol))
-                            result.Add(symbol);
-                    }
-                }
-            }
-            catch { }
-
-            return result;
-        }
-
-        private bool HasTradeOnToday(PortfolioDefinition definition, string symbol) => HasTradeOnDate(definition, symbol, DateTime.Today.Date);
-
-        private static DateTime? ParseTradingDate(string value, PortfolioDefinition definition)
-        {
-            return TryParseSourceDate(value, definition, out var date) ? date : null;
+            return normalized.Contains("نداشته", StringComparison.OrdinalIgnoreCase) ||
+                   normalized.Contains("خیر", StringComparison.OrdinalIgnoreCase) ||
+                   normalized.Contains("عدم", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool TryParseSourceDate(string value, PortfolioDefinition definition, out DateTime date)
@@ -2385,59 +2341,74 @@ namespace Trade.It
         // one symbol's rows are spread across multiple files.
         private List<string[]> ReadOrderedSymbolRows(PortfolioDefinition definition, string symbol)
         {
+            // بدون ستون تاریخ، ترتیب زمانی کندل‌ها قابل اثبات نیست؛ بنابراین
+            // هیچ فیلتر مبتنی بر offset نباید از ترتیب فیزیکی فایل استفاده کند.
+            if (!HasDateColumn(definition))
+                return new List<string[]>();
+
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var dateColumn = GetMappingColumn(definition, "تاریخ");
             if (dateColumn <= 0)
                 dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+            if (dateColumn <= 0)
+                return new List<string[]>();
 
-            var collected = new List<(DateTime Date, long Sequence, string[] Row)>();
-            var filesContainingSymbolRows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var rowsByDate = new Dictionary<DateTime, (long Sequence, string[] Row)>();
             long sequence = 0;
+            var invalidDateRows = 0;
+            var duplicateDateRows = 0;
 
-            foreach (var file in GetSymbolFiles(definition, symbol))
+            try
             {
-                var firstLine = true;
-                foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+                foreach (var file in GetSymbolFiles(definition, symbol))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
-
-                    var row = SplitTradingDataLine(line, definition.Separator);
-                    if (firstLine && definition.HasHeader)
+                    var firstLine = true;
+                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
                     {
-                        firstLine = false;
-                        continue;
-                    }
-                    firstLine = false;
-
-                    if (definition.SymbolSource == SymbolSource.InsideFile &&
-                        (symbolColumn <= 0 || symbolColumn > row.Length ||
-                         !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
-                        continue;
-
-                    filesContainingSymbolRows.Add(file);
-                    if (dateColumn > 0)
-                    {
-                        if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                        if (string.IsNullOrWhiteSpace(line))
                             continue;
-                        collected.Add((date.Date, sequence++, row));
-                    }
-                    else
-                    {
-                        collected.Add((DateTime.MinValue, sequence++, row));
+
+                        var row = SplitTradingDataLine(line, definition.Separator);
+                        if (firstLine && definition.HasHeader)
+                        {
+                            firstLine = false;
+                            continue;
+                        }
+                        firstLine = false;
+
+                        if (definition.SymbolSource == SymbolSource.InsideFile &&
+                            (symbolColumn <= 0 || symbolColumn > row.Length ||
+                             !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                            continue;
+
+                        if (dateColumn > row.Length ||
+                            !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                        {
+                            invalidDateRows++;
+                            continue;
+                        }
+
+                        var dateKey = date.Date;
+                        if (rowsByDate.ContainsKey(dateKey))
+                            duplicateDateRows++;
+
+                        // با پیمایش فایل‌ها و ردیف‌ها به ترتیب منبع، انتساب مجدد
+                        // آخرین ردیف فایل را برای هر تاریخ نگه می‌دارد.
+                        rowsByDate[dateKey] = (sequence++, row);
                     }
                 }
             }
+            finally
+            {
+                if (collectingFilterDiagnostics)
+                    dateDataIssuesBySymbol[symbol] = (invalidDateRows, duplicateDateRows);
+            }
 
-            // Without dates, chronology across separate inside-file data sources
-            // cannot be inferred safely. Do not let arbitrary file order silently
-            // produce incorrect candle offsets.
-            if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
-                return new List<string[]>();
-
-            return dateColumn > 0
-                ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
-                : collected.OrderBy(x => x.Sequence).Select(x => x.Row).ToList();
+            return rowsByDate
+                .OrderBy(x => x.Key)
+                .ThenBy(x => x.Value.Sequence)
+                .Select(x => x.Value.Row)
+                .ToList();
         }
 
         private static int GetMappingColumn(PortfolioDefinition definition, string field)
@@ -2682,7 +2653,7 @@ namespace Trade.It
                 var latestRow = rows[^1];
                 if (firstColumn > latestRow.Length ||
                     !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
-                    !double.IsFinite(latestValue))
+                    !double.IsFinite(latestValue) || latestValue <= 0)
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2693,7 +2664,7 @@ namespace Trade.It
                     var row = rows[rows.Count - 1 - candleOffset];
                     if (secondColumn > row.Length ||
                         !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
-                        !double.IsFinite(rangeValue))
+                        !double.IsFinite(rangeValue) || rangeValue <= 0)
                     {
                         invalidComparisonPriceSymbols++;
                         return false;
