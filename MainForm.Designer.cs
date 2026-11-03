@@ -1570,7 +1570,7 @@
             multiWordOrGroup.Name = "multiWordOrGroup";
             multiWordOrGroup.Size = new Size(371, 76);
             multiWordOrGroup.TabStop = false;
-            multiWordOrGroup.Text = "جستجوی چندکلمه‌ای (OR) - وجود حداقل یک کلمه";
+            multiWordOrGroup.Text = "جستجوی چندکلمه‌ای OR";
             multiWordOrTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             multiWordOrTextBox.Location = new Point(12, 32);
             multiWordOrTextBox.Name = "multiWordOrTextBox";
@@ -1584,7 +1584,7 @@
             multiWordAndGroup.Name = "multiWordAndGroup";
             multiWordAndGroup.Size = new Size(371, 76);
             multiWordAndGroup.TabStop = false;
-            multiWordAndGroup.Text = "جستجوی چندکلمه‌ای (AND) - وجود تمام کلمات";
+            multiWordAndGroup.Text = "جستجوی چندکلمه‌ای AND";
             multiWordAndTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             multiWordAndTextBox.Location = new Point(12, 32);
             multiWordAndTextBox.Name = "multiWordAndTextBox";
