@@ -1755,12 +1755,6 @@ namespace Trade.It
 
             clearFiltersButton.Enabled = hasStocks && !filtersApplied;
             clearFiltersButton2.Enabled = hasStocks && hasDate && !filters2Applied;
-
-            if (!hasDate)
-            {
-                statusAllRadio.Checked = true;
-                pastDaysStatusComboBox.SelectedIndex = -1;
-            }
         }
 
         private string GetLatestTradeDateText(PortfolioDefinition definition, string symbol)
