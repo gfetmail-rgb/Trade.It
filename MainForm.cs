@@ -1912,9 +1912,16 @@ namespace Trade.It
                 filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             }
 
-            var result = filtered.ToList();
-            collectingFilterDiagnostics = false;
-            filterDiagnosticsThreadId = 0;
+            List<string> result;
+            try
+            {
+                result = filtered.ToList();
+            }
+            finally
+            {
+                collectingFilterDiagnostics = false;
+                filterDiagnosticsThreadId = 0;
+            }
 
             internalPortfolioUpdate = true;
             try
