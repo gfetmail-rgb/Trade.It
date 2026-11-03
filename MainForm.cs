@@ -33,6 +33,7 @@ namespace Trade.It
         private int invalidComparisonPriceSymbols;
         private int invalidPercentChangeSymbols;
         private bool collectingFilterDiagnostics;
+        private int filterDiagnosticsThreadId;
         private readonly Dictionary<string, (int InvalidDateRows, int DuplicateDateRows)> dateDataIssuesBySymbol = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> unknownTradeStatusSymbols = new(StringComparer.OrdinalIgnoreCase);
         private Button filterApplyButton;
