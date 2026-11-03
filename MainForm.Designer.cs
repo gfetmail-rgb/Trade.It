@@ -43,6 +43,10 @@
         private System.Windows.Forms.TabPage stocksTabPage;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPageFilters2;
+        private GroupBox multiWordOrGroup;
+        private TextBox multiWordOrTextBox;
+        private GroupBox multiWordAndGroup;
+        private TextBox multiWordAndTextBox;
         private System.Windows.Forms.TabPage marketsTabPage;
         private GroupBox comparison2Group1;
         private ComboBox comparison2FirstComboBox1;
@@ -258,6 +262,10 @@
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
             tabPageFilters2 = new TabPage();
+            multiWordOrGroup = new GroupBox();
+            multiWordOrTextBox = new TextBox();
+            multiWordAndGroup = new GroupBox();
+            multiWordAndTextBox = new TextBox();
             comparison2Group1 = new GroupBox();
             comparison2FirstComboBox1 = new ComboBox();
             comparison2OperatorComboBox1 = new ComboBox();
@@ -1544,6 +1552,8 @@
             tabPageFilters2.Controls.Add(comparison2Group3);
             tabPageFilters2.Controls.Add(comparison2Group2);
             tabPageFilters2.Controls.Add(comparison2Group1);
+            tabPageFilters2.Controls.Add(multiWordAndGroup);
+            tabPageFilters2.Controls.Add(multiWordOrGroup);
             tabPageFilters2.AutoScroll = true;
             tabPageFilters2.Location = new Point(4, 34);
             tabPageFilters2.Name = "tabPageFilters2";
@@ -1552,7 +1562,35 @@
             tabPageFilters2.Size = new Size(387, 911);
             tabPageFilters2.TabIndex = 2;
             tabPageFilters2.Text = "فیلترها2";
-
+            // 
+            // multiWordOrGroup
+            // 
+            multiWordOrGroup.Controls.Add(multiWordOrTextBox);
+            multiWordOrGroup.Dock = DockStyle.Top;
+            multiWordOrGroup.Name = "multiWordOrGroup";
+            multiWordOrGroup.Size = new Size(371, 76);
+            multiWordOrGroup.TabStop = false;
+            multiWordOrGroup.Text = "جستجوی چندکلمه‌ای (OR) - وجود حداقل یک کلمه";
+            multiWordOrTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            multiWordOrTextBox.Location = new Point(12, 32);
+            multiWordOrTextBox.Name = "multiWordOrTextBox";
+            multiWordOrTextBox.Size = new Size(340, 31);
+            multiWordOrTextBox.TabIndex = 0;
+            // 
+            // multiWordAndGroup
+            // 
+            multiWordAndGroup.Controls.Add(multiWordAndTextBox);
+            multiWordAndGroup.Dock = DockStyle.Top;
+            multiWordAndGroup.Name = "multiWordAndGroup";
+            multiWordAndGroup.Size = new Size(371, 76);
+            multiWordAndGroup.TabStop = false;
+            multiWordAndGroup.Text = "جستجوی چندکلمه‌ای (AND) - وجود تمام کلمات";
+            multiWordAndTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            multiWordAndTextBox.Location = new Point(12, 32);
+            multiWordAndTextBox.Name = "multiWordAndTextBox";
+            multiWordAndTextBox.Size = new Size(340, 31);
+            multiWordAndTextBox.TabIndex = 0;
+            // 
             // comparison2Group1
             comparison2Group1.Controls.Add(comparison2FirstComboBox1);
             comparison2Group1.Controls.Add(comparison2OperatorComboBox1);
@@ -2531,6 +2569,10 @@
             comparisonRangeGroup4.PerformLayout();
             tabPageFilters2.ResumeLayout(false);
             tabPageFilters2.PerformLayout();
+            multiWordOrGroup.ResumeLayout(false);
+            multiWordOrGroup.PerformLayout();
+            multiWordAndGroup.ResumeLayout(false);
+            multiWordAndGroup.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ohlcChangeFilterGroup.ResumeLayout(false);
