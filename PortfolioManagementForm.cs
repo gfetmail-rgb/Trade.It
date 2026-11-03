@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Runtime.InteropServices;
 
 namespace Trade.It
 {
@@ -7,6 +8,29 @@ namespace Trade.It
     {
         private readonly Dictionary<string, string> portfolioFiles = new(StringComparer.OrdinalIgnoreCase);
         private bool internalUpdate;
+
+        private const int DwmwaNonclientRtlLayout = 6;
+
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        private static extern int DwmSetWindowAttribute(
+            IntPtr hwnd,
+            int attribute,
+            ref int attributeValue,
+            int attributeSize);
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+
+            // Mirror only the non-client area (title bar and caption buttons).
+            // The form's client controls and their positions remain unchanged.
+            int enabled = 1;
+            _ = DwmSetWindowAttribute(
+                Handle,
+                DwmwaNonclientRtlLayout,
+                ref enabled,
+                sizeof(int));
+        }
 
         public PortfolioManagementForm()
         {
