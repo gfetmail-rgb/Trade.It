@@ -1807,6 +1807,21 @@ namespace Trade.It
             return ToPersianDigits(value);
         }
 
+        private static DateTime GetMarketToday()
+        {
+            // تاریخ فیلترهای «امروز» و «روزهای اخیر» باید بر اساس ساعت بازار تهران باشد،
+            // نه منطقه زمانی رایانه‌ای که ممکن است خارج از ایران تنظیم شده باشد.
+            try
+            {
+                var tehranTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
+                return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tehranTimeZone).Date;
+            }
+            catch
+            {
+                return DateTime.Today;
+            }
+        }
+
         private static bool HasDateColumn(PortfolioDefinition? definition)
         {
             if (definition == null || definition.NoDateTime)
@@ -1887,7 +1902,7 @@ namespace Trade.It
                 if (hasDate && !statusAllRadio.Checked)
                 {
                     var showTraded = statusPositiveRadio.Checked;
-                    filtered = ApplyTradeStatusFilter(filtered, definition, DateTime.Today.Date, DateTime.Today.Date, showTraded);
+                    filtered = ApplyTradeStatusFilter(filtered, definition, GetMarketToday(), GetMarketToday(), showTraded);
                 }
 
                 filtered = ApplyNameFilter(filtered);
@@ -2199,10 +2214,11 @@ namespace Trade.It
             if (pastDaysStatusComboBox.SelectedIndex < 0 || pastDaysStatusComboBox.SelectedItem == null)
                 return symbols;
 
-            var fromDate = DateTime.Today.Date.AddDays(-n);
+            var marketToday = GetMarketToday();
+            var fromDate = marketToday.AddDays(-n);
             var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var showTraded = !IsNegativePastDaysOption(op);
-            return ApplyTradeStatusFilter(symbols, definition, fromDate, DateTime.Today.Date, showTraded);
+            return ApplyTradeStatusFilter(symbols, definition, fromDate, marketToday, showTraded);
         }
 
         private TradeScanStatus GetTradeStatusInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)
