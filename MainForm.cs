@@ -1601,9 +1601,6 @@ namespace Trade.It
 
             if (validateSecondTab)
             {
-                // Multi-word name searches are plain text; whitespace separates terms.
-                // Empty input disables the corresponding search and needs no validation.
-
             var rangeComparisons = new[]
             {
                 (First: comparisonRangeFirstComboBox1, Operator: comparisonRangeOperatorComboBox1, Second: comparisonRangeSecondComboBox1, Offset: comparisonRangeOffsetTextBox1, GroupEnabled: comparisonRangeGroup1.Enabled, Label: "مقایسه قیمت بازه ۱"),
@@ -1935,8 +1932,7 @@ namespace Trade.It
             // تب دوم نیز فقط شامل مقایسه‌های مبتنی بر ترتیب کندل است.
             if (filters2Applied)
             {
-                filtered = ApplyMultiWordNameFilter(filtered, multiWordOrTextBox.Text, requireAllTerms: false);
-                filtered = ApplyMultiWordNameFilter(filtered, multiWordAndTextBox.Text, requireAllTerms: true);
+                filtered = ApplyMultiWordNameFilters(filtered, multiWordOrTextBox.Text, multiWordAndTextBox.Text);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
@@ -2040,15 +2036,19 @@ namespace Trade.It
             return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
         }
 
-        private IEnumerable<string> ApplyMultiWordNameFilter(IEnumerable<string> symbols, string input, bool requireAllTerms)
+        private IEnumerable<string> ApplyMultiWordNameFilters(IEnumerable<string> symbols, string orInput, string andInput)
         {
-            var terms = NormalizeSymbolName(input)
-                .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Where(term => !string.IsNullOrWhiteSpace(term))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToArray();
+            static string[] ParseTerms(string input) =>
+                NormalizeSymbolName(input)
+                    .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Where(term => !string.IsNullOrWhiteSpace(term))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
 
-            if (terms.Length == 0)
+            var orTerms = ParseTerms(orInput);
+            var andTerms = ParseTerms(andInput);
+
+            if (orTerms.Length == 0 && andTerms.Length == 0)
                 return symbols;
 
             Dictionary<string, string> fullNamesBySymbol;
@@ -2077,9 +2077,14 @@ namespace Trade.It
                 fullNamesBySymbol.TryGetValue(normalizedSymbol, out var fullName);
                 var searchableText = NormalizeSymbolName($"{normalizedSymbol} {fullName}");
 
-                return requireAllTerms
-                    ? terms.All(term => searchableText.Contains(term, StringComparison.OrdinalIgnoreCase))
-                    : terms.Any(term => searchableText.Contains(term, StringComparison.OrdinalIgnoreCase));
+                var matchesOr = orTerms.Length == 0 ||
+                    orTerms.Any(term => searchableText.Contains(term, StringComparison.OrdinalIgnoreCase));
+                var matchesAnd = andTerms.All(term =>
+                    searchableText.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+                // The two search groups are combined with AND; terms inside each
+                // group follow that group's OR/AND rule.
+                return matchesOr && matchesAnd;
             });
         }
 
