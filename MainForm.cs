@@ -644,6 +644,8 @@ namespace Trade.It
             textBox1.TextChanged += AdditionalFilterChanged;
             pastDaysTextBox.TextChanged += AdditionalFilterChanged;
             pastDaysStatusComboBox.SelectedIndexChanged += AdditionalFilterChanged;
+            multiWordOrTextBox.TextChanged += AdditionalFilterChanged;
+            multiWordAndTextBox.TextChanged += AdditionalFilterChanged;
             controlTabControl.SelectedIndexChanged += FilterTabSelected;
             UpdateFilterControlAvailability();
         }
@@ -1599,6 +1601,9 @@ namespace Trade.It
 
             if (validateSecondTab)
             {
+                // Multi-word name searches are plain text; whitespace separates terms.
+                // Empty input disables the corresponding search and needs no validation.
+
             var rangeComparisons = new[]
             {
                 (First: comparisonRangeFirstComboBox1, Operator: comparisonRangeOperatorComboBox1, Second: comparisonRangeSecondComboBox1, Offset: comparisonRangeOffsetTextBox1, GroupEnabled: comparisonRangeGroup1.Enabled, Label: "مقایسه قیمت بازه ۱"),
@@ -1749,6 +1754,8 @@ namespace Trade.It
             comparisonRangeGroup2.Enabled = filters2Enabled;
             comparisonRangeGroup3.Enabled = filters2Enabled;
             comparisonRangeGroup4.Enabled = filters2Enabled;
+            multiWordOrGroup.Enabled = filters2Enabled;
+            multiWordAndGroup.Enabled = filters2Enabled;
             ohlcChangeFilterGroup.Enabled = filtersEnabled;
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
@@ -1928,6 +1935,8 @@ namespace Trade.It
             // تب دوم نیز فقط شامل مقایسه‌های مبتنی بر ترتیب کندل است.
             if (filters2Applied)
             {
+                filtered = ApplyMultiWordNameFilter(filtered, multiWordOrTextBox.Text, requireAllTerms: false);
+                filtered = ApplyMultiWordNameFilter(filtered, multiWordAndTextBox.Text, requireAllTerms: true);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
                 filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
@@ -2029,6 +2038,49 @@ namespace Trade.It
             if (mode < 0)
                 return symbols;
             return symbols.Where(symbol => MatchesNameFilter(symbol, phrase, mode));
+        }
+
+        private IEnumerable<string> ApplyMultiWordNameFilter(IEnumerable<string> symbols, string input, bool requireAllTerms)
+        {
+            var terms = NormalizeSymbolName(input)
+                .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(term => !string.IsNullOrWhiteSpace(term))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (terms.Length == 0)
+                return symbols;
+
+            Dictionary<string, string> fullNamesBySymbol;
+            try
+            {
+                fullNamesBySymbol = SymbolDefinitionForm.SymbolDefinitionStore.Load()
+                    .Where(item => !string.IsNullOrWhiteSpace(item.SymbolTitle))
+                    .GroupBy(
+                        item => NormalizeSymbolName(item.SymbolTitle),
+                        StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(
+                        group => group.Key,
+                        group => NormalizeSymbolName(group.First().Name ?? string.Empty),
+                        StringComparer.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                // If symbol definitions cannot be read, retain symbol-code search
+                // rather than interrupting the portfolio filter operation.
+                fullNamesBySymbol = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            return symbols.Where(symbol =>
+            {
+                var normalizedSymbol = NormalizeSymbolName(symbol);
+                fullNamesBySymbol.TryGetValue(normalizedSymbol, out var fullName);
+                var searchableText = NormalizeSymbolName($"{normalizedSymbol} {fullName}");
+
+                return requireAllTerms
+                    ? terms.All(term => searchableText.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    : terms.Any(term => searchableText.Contains(term, StringComparison.OrdinalIgnoreCase));
+            });
         }
 
         private static bool MatchesNameFilter(string symbol, string phrase, int mode)
