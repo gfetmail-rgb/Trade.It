@@ -1855,6 +1855,7 @@ namespace Trade.It
             invalidPercentChangeSymbols = 0;
             dateDataIssuesBySymbol.Clear();
             unknownTradeStatusSymbols.Clear();
+            filterDiagnosticsThreadId = Environment.CurrentManagedThreadId;
             collectingFilterDiagnostics = true;
 
             var hasDate = HasDateColumn(definition);
@@ -1919,6 +1920,7 @@ namespace Trade.It
 
             var result = filtered.ToList();
             collectingFilterDiagnostics = false;
+            filterDiagnosticsThreadId = 0;
 
             internalPortfolioUpdate = true;
             try
@@ -2403,7 +2405,7 @@ namespace Trade.It
             }
             finally
             {
-                if (collectingFilterDiagnostics)
+                if (collectingFilterDiagnostics && Environment.CurrentManagedThreadId == filterDiagnosticsThreadId)
                     dateDataIssuesBySymbol[symbol] = (invalidDateRows, duplicateDateRows);
             }
 
