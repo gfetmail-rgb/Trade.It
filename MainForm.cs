@@ -1902,7 +1902,8 @@ namespace Trade.It
                 if (hasDate && !statusAllRadio.Checked)
                 {
                     var showTraded = statusPositiveRadio.Checked;
-                    filtered = ApplyTradeStatusFilter(filtered, definition, GetMarketToday(), GetMarketToday(), showTraded);
+                    var marketToday = GetMarketToday();
+                    filtered = ApplyTradeStatusFilter(filtered, definition, marketToday, marketToday, showTraded);
                 }
 
                 filtered = ApplyNameFilter(filtered);
