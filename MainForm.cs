@@ -1887,7 +1887,7 @@ namespace Trade.It
                      IsComparisonRangeFilterActive(comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1) ||
                      IsComparisonRangeFilterActive(comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2) ||
                      IsComparisonRangeFilterActive(comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3) ||
-                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4)));
+                     IsComparisonRangeFilterActive(comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4))));
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
