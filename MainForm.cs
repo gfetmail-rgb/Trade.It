@@ -662,6 +662,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 UpdateSelectionControls();
+                UpdateFilterControlAvailability();
                 return;
             }
 
@@ -717,6 +718,7 @@ namespace Trade.It
             stocksDataGridView.Rows.Clear();
             displayedPortfolioName = null;
             UpdateSelectionControls();
+            UpdateFilterControlAvailability();
         }
 
         private void LoadPortfoliosIntoGrid()
