@@ -35,6 +35,7 @@ namespace Trade.It
         private double panStartVerticalPanOffset;
         private double panStartVerticalRange;
         private double panStartHorizontalOffset;
+        private double panStartChartPanCompensation;
         private float panStartTestAnchorScreenX;
         private bool horizontalAxisDrag;
         private Point horizontalAxisStartPoint;
@@ -1467,6 +1468,7 @@ namespace Trade.It
                 panStartFirstIndex = firstIndex;
                 panStartVerticalPanOffset = verticalPanOffset;
                 panStartHorizontalOffset = horizontalPanOffset;
+                panStartChartPanCompensation = chartPanCompensation;
                 panStartTestAnchorScreenX = testAnchorScreenX;
                 var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
                 var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
@@ -1674,7 +1676,11 @@ namespace Trade.It
                 // Offset باقی‌مانده از Drag قبلی نیز باید در تعیین تعداد کندل‌های
                 // جابه‌جا شده لحاظ شود. در غیر این صورت خطای زیرکندلی هر Drag
                 // به Offset قبلی اضافه می‌شود و پس از چند رفت‌وبرگشت انباشته خواهد شد.
-                var totalHorizontalShift = panStartHorizontalOffset + dx;
+                // جبران فاصلهٔ خالی سمت راست، بخشی از جابه‌جایی کاربر نیست.
+                // آن را از Offset شروع Drag جدا می‌کنیم تا در اولین حرکت ماوس
+                // به جابه‌جایی کندل‌ها تبدیل نشود.
+                var totalHorizontalShift =
+                    panStartHorizontalOffset - panStartChartPanCompensation + dx;
                 var indexDelta = (int)Math.Round(-totalHorizontalShift / step);
                 firstIndex = Math.Clamp(
                     panStartFirstIndex + indexDelta,
@@ -1685,8 +1691,8 @@ namespace Trade.It
                 // باقیمانده پیکسلی نگه داشته می‌شود. در مرز داده‌ها این باقیمانده
                 // اجازه می‌دهد فضای خالی قابل پیمایش باشد.
                 var actualIndexDelta = firstIndex - panStartFirstIndex;
-                horizontalPanOffset = (float)(
-                    totalHorizontalShift + actualIndexDelta * step);
+                horizontalPanOffset = chartPanCompensation +
+                    totalHorizontalShift + actualIndexDelta * step;
 
                 if (testMode && testStartSelected)
                     testAnchorScreenX = panStartTestAnchorScreenX + dx;
