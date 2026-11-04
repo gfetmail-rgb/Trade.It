@@ -1670,18 +1670,23 @@ namespace Trade.It
                 var dx = e.X - panStartPoint.X;
                 var dy = e.Y - panStartPoint.Y;
                 var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
-                var indexDelta = (int)Math.Round(-dx / step);
+
+                // Offset باقی‌مانده از Drag قبلی نیز باید در تعیین تعداد کندل‌های
+                // جابه‌جا شده لحاظ شود. در غیر این صورت خطای زیرکندلی هر Drag
+                // به Offset قبلی اضافه می‌شود و پس از چند رفت‌وبرگشت انباشته خواهد شد.
+                var totalHorizontalShift = panStartHorizontalOffset + dx;
+                var indexDelta = (int)Math.Round(-totalHorizontalShift / step);
                 firstIndex = Math.Clamp(
                     panStartFirstIndex + indexDelta,
                     0,
                     Math.Max(0, points.Count - visibleCount));
 
-                // تا وقتی کندل کافی در تاریخچه وجود دارد، جابه‌جایی با firstIndex
-                // انجام می‌شود. پس از رسیدن به ابتدا/انتهای داده، باقیمانده حرکت
-                // به Offset پیکسلی منتقل می‌شود تا فضای خالی قابل پیمایش باشد.
+                // جابه‌جایی واقعیِ کندل‌ها از جابه‌جایی کل کم می‌شود؛ فقط
+                // باقیمانده پیکسلی نگه داشته می‌شود. در مرز داده‌ها این باقیمانده
+                // اجازه می‌دهد فضای خالی قابل پیمایش باشد.
                 var actualIndexDelta = firstIndex - panStartFirstIndex;
                 horizontalPanOffset = (float)(
-                    panStartHorizontalOffset + dx + actualIndexDelta * step);
+                    totalHorizontalShift + actualIndexDelta * step);
 
                 if (testMode && testStartSelected)
                     testAnchorScreenX = panStartTestAnchorScreenX + dx;
