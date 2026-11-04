@@ -789,6 +789,7 @@ namespace Trade.It
                 return;
 
             testEndIndex = nextEnd;
+            testAnchorIndex = testEndIndex;
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
@@ -827,6 +828,15 @@ namespace Trade.It
             testEndIndex = endIndex;
             testStartSelected = true;
             testAnchorIndex = endIndex;
+
+            // اگر مرجع از چارت دیگری همگام شده باشد و هنوز نقطه لنگر صفحه‌ای
+            // تعیین نشده باشد، آن را داخل Plot و با فضای خالی در سمت راست قرار می‌دهیم.
+            if (testAnchorScreenX <= 0f)
+            {
+                var plot = GetPlotRectangle();
+                testAnchorScreenX = plot.Left + plot.Width * 0.75f;
+            }
+
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
@@ -862,17 +872,29 @@ namespace Trade.It
             if (!testMode || testEndIndex < 0 || points.Count == 0)
                 return;
 
-            // در Test Mode، کندل آخرِ قابل مشاهده باید در همان موقعیت
-            // افقی بماند و با هر Step فقط پنجره‌ی داده یک کندل جابه‌جا شود.
-            // بنابراین با حرکت به راست، firstIndex هم به همان اندازه جلو می‌رود
-            // و کندل‌های قبلی به سمت چپ کشیده می‌شوند.
-            var count = Math.Max(1, visibleCount);
-            var desiredFirst = testEndIndex - count + 1;
+            var count = Math.Clamp(visibleCount, 1, points.Count);
+            var plot = GetPlotRectangle();
+            var step = Math.Max(1.0, plot.Width / (double)count);
+            var initialOffset = -plot.Width * 0.25;
+
+            // کندل مرجع باید در همان مختصات صفحه‌ای که کاربر انتخاب کرده
+            // باقی بماند؛ لازم نیست به لبه راست Plot منتقل شود.
+            var relativeIndex =
+                (testAnchorScreenX - plot.Left - initialOffset) / step - 0.5;
+            var desiredFirst = (int)Math.Round(testEndIndex - relativeIndex);
 
             firstIndex = Math.Clamp(
                 desiredFirst,
                 0,
                 Math.Max(0, points.Count - count));
+
+            // firstIndex فقط عدد صحیح کندل را جابه‌جا می‌کند؛ این Offset
+            // اختلاف زیرکندلی را جبران می‌کند تا مختصات مرجع دقیقاً حفظ شود.
+            horizontalPanOffset = (float)(
+                testAnchorScreenX -
+                (plot.Left + step * (testEndIndex - firstIndex + 0.5) + initialOffset));
+
+            testAnchorIndex = testEndIndex;
         }
 
         private void SetTestEndFromMouse(Point location)
@@ -1647,7 +1669,21 @@ namespace Trade.It
                 var dy = e.Y - panStartPoint.Y;
                 var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
                 var indexDelta = (int)Math.Round(-dx / step);
-                firstIndex = Math.Clamp(panStartFirstIndex + indexDelta, 0, Math.Max(0, points.Count - visibleCount));
+                firstIndex = Math.Clamp(
+                    panStartFirstIndex + indexDelta,
+                    0,
+                    Math.Max(0, points.Count - visibleCount));
+
+                // تا وقتی کندل کافی در تاریخچه وجود دارد، جابه‌جایی با firstIndex
+                // انجام می‌شود. پس از رسیدن به ابتدا/انتهای داده، باقیمانده حرکت
+                // به Offset پیکسلی منتقل می‌شود تا فضای خالی قابل پیمایش باشد.
+                var actualIndexDelta = firstIndex - panStartFirstIndex;
+                horizontalPanOffset = (float)(
+                    panStartHorizontalOffset + dx + actualIndexDelta * step);
+
+                if (testMode && testStartSelected)
+                    testAnchorScreenX += dx;
+
                 var requestedVerticalPanOffset =
                     panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
 
@@ -1656,10 +1692,6 @@ namespace Trade.It
                 // و توسط Clip بریده/پنهان شود؛ درست مانند حرکت از پایین.
                 verticalPanOffset = requestedVerticalPanOffset;
 
-                // firstIndex جابه‌جایی افقی کندل‌ها را کنترل می‌کند.
-                // نباید dx دوباره به مختصات صفحه اضافه شود؛ این کار باعث
-                // خروج چارت از محدوده Plot و بریده شدن آن توسط Clip می‌شد.
-                horizontalPanOffset = panStartHorizontalOffset;
                 Invalidate();
                 NotifyViewChanged();
             }
