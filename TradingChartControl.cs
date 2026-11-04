@@ -35,6 +35,7 @@ namespace Trade.It
         private double panStartVerticalPanOffset;
         private double panStartVerticalRange;
         private double panStartHorizontalOffset;
+        private float panStartTestAnchorScreenX;
         private bool horizontalAxisDrag;
         private Point horizontalAxisStartPoint;
         private int horizontalAxisStartVisibleCount;
@@ -1466,6 +1467,7 @@ namespace Trade.It
                 panStartFirstIndex = firstIndex;
                 panStartVerticalPanOffset = verticalPanOffset;
                 panStartHorizontalOffset = horizontalPanOffset;
+                panStartTestAnchorScreenX = testAnchorScreenX;
                 var endIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
                 var visible = points.Skip(firstIndex).Take(endIndex - firstIndex).ToList();
                 panStartVerticalRange = visible.Count > 0
@@ -1682,7 +1684,7 @@ namespace Trade.It
                     panStartHorizontalOffset + dx + actualIndexDelta * step);
 
                 if (testMode && testStartSelected)
-                    testAnchorScreenX += dx;
+                    testAnchorScreenX = panStartTestAnchorScreenX + dx;
 
                 var requestedVerticalPanOffset =
                     panStartVerticalPanOffset + dy / Math.Max(1.0, GetPlotRectangle().Height) * panStartVerticalRange;
