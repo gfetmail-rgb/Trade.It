@@ -182,93 +182,34 @@ namespace Trade.It
                         Title = GetPriceOverlayIndicatorTitle(indicator)
                     })
                     .OrderBy(item => item.Title, StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-                // Keep the control order deterministic. BringToFront changes the
-                // Controls collection order, so compare buttons in indicator-title order.
-                var buttons = Controls.OfType<Button>()
-                    .Where(button => button.Tag is ChartIndicator)
-                    .OrderBy(button => GetPriceOverlayIndicatorTitle((ChartIndicator)button.Tag!),
-                        StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-                var rebuild = buttons.Count != items.Count;
-                if (!rebuild)
-                {
-                    for (var i = 0; i < items.Count; i++)
-                    {
-                        if (!ReferenceEquals(buttons[i].Tag, items[i].Indicator) ||
-                            buttons[i].Text != items[i].Title)
-                        {
-                            rebuild = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (rebuild)
-                {
-                    foreach (var button in buttons)
-                    {
-                        Controls.Remove(button);
-                        button.Dispose();
-                    }
-
-                    buttons.Clear();
-                    foreach (var item in items)
-                    {
-                        var indicator = item.Indicator;
-                        var button = new Button
-                        {
-                            Text = item.Title,
-                            Tag = indicator,
-                            Font = (Font)font.Clone(),
-                            Height = buttonHeight,
-                            Width = 100,
-                            AutoSize = false,
-                            TabStop = false,
-                            FlatStyle = FlatStyle.Flat,
-                            UseVisualStyleBackColor = false,
-                            TextAlign = ContentAlignment.MiddleCenter,
-                            Padding = new Padding(3, 0, 3, 0),
-                            Margin = Padding.Empty
-                        };
-                        button.FlatAppearance.BorderSize = 1;
-                        // از همان منوی تنظیمات/حذف چارت برای کلیک راست روی دکمه نیز استفاده شود.
-                        button.ContextMenuStrip = ContextMenuStrip;
-                        button.Click += (_, _) =>
-                        {
-                            if (!indicators.Contains(indicator))
-                                return;
-
-                            indicator.IsVisible = !indicator.IsVisible;
-                            UpdatePriceIndicatorButtonStyle(button, indicator);
-                            Invalidate();
-                        };
-                        Controls.Add(button);
-                        buttons.Add(button);
-                    }
-                }
-
-                buttons = Controls.OfType<Button>()
-                    .Where(button => button.Tag is ChartIndicator)
-                    .OrderBy(button => GetPriceOverlayIndicatorTitle((ChartIndicator)button.Tag!),
-                        StringComparer.OrdinalIgnoreCase)
+                    .Take(priceIndicatorButtons.Length)
                     .ToList();
 
                 var y = plot.Top + 2;
-                foreach (var button in buttons)
+                for (var i = 0; i < priceIndicatorButtons.Length; i++)
                 {
-                    var indicator = (ChartIndicator)button.Tag!;
-                    button.Text = GetPriceOverlayIndicatorTitle(indicator);
-                    if (!button.Font.Equals(font))
+                    var button = priceIndicatorButtons[i];
+                    if (i >= items.Count)
                     {
-                        button.Font = (Font)font.Clone();
+                        button.Tag = null;
+                        button.Text = string.Empty;
+                        button.Visible = false;
+                        continue;
                     }
+
+                    var item = items[i];
+                    var indicator = item.Indicator;
+                    button.Tag = indicator;
+                    button.Text = item.Title;
+                    if (!button.Font.Equals(font))
+                        button.Font = (Font)font.Clone();
+
                     var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
                     button.Width = Math.Clamp(textWidth + 20, 90, 320);
                     button.Height = buttonHeight;
                     button.Location = new Point(Math.Max(plot.Left + 2, plot.Right - button.Width - 3), y);
+                    button.ContextMenuStrip = ContextMenuStrip;
+                    button.Visible = true;
                     button.BringToFront();
                     UpdatePriceIndicatorButtonStyle(button, indicator);
                     y += button.Height + 3;
@@ -278,6 +219,17 @@ namespace Trade.It
             {
                 font.Dispose();
             }
+        }
+
+        private void PriceIndicatorButton_Click(object? sender, EventArgs e)
+        {
+            if (sender is not Button button || button.Tag is not ChartIndicator indicator ||
+                !indicators.Contains(indicator))
+                return;
+
+            indicator.IsVisible = !indicator.IsVisible;
+            UpdatePriceIndicatorButtonStyle(button, indicator);
+            Invalidate();
         }
 
         private void UpdatePriceIndicatorButtonStyle(Button button, ChartIndicator indicator)
