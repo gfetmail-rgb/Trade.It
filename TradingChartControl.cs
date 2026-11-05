@@ -967,24 +967,41 @@ namespace Trade.It
             NotifyViewChanged();
         }
 
-        public void ZoomX(double factor)
+        public void ZoomX(double factor, int? anchorScreenX = null)
         {
             if (points.Count < 2) return;
+
             var oldCount = Math.Max(2, visibleCount);
             var newCount = Math.Clamp((int)Math.Round(oldCount * factor), 2, points.Count);
             if (newCount == oldCount) return;
+
+            var plot = GetPlotRectangle();
+            var initialOffset = -plot.Width * 0.25;
+            var anchorX = anchorScreenX ?? (plot.Left + plot.Width / 2);
+            var oldStep = plot.Width / (double)oldCount;
+            var anchorRelativeIndex =
+                (anchorX - plot.Left - initialOffset - horizontalPanOffset) / oldStep - 0.5;
+            var anchorAbsoluteIndex = firstIndex + anchorRelativeIndex;
+
             visibleCount = newCount;
 
             if (testMode && testStartSelected)
             {
-                // در حالت تست، زوم باید کندل مرجع را در لبهٔ راست نگه دارد؛
-                // مبنای محاسبه، انتهای دادهٔ مجاز تست است نه انتهای کل تاریخچه.
+                // در حالت تست، کندل مرجع آزمون لنگر زوم باقی می‌ماند.
                 KeepTestAnchorFixed();
             }
             else
             {
-                // رفتار زوم در حالت عادی بدون تغییر می‌ماند.
-                firstIndex = Math.Max(0, points.Count - newCount);
+                // کندلی که زیر مکان‌نمای ماوس قرار دارد، پس از زوم نیز
+                // در همان مختصات افقی باقی می‌ماند.
+                var newStep = plot.Width / (double)newCount;
+                var newAnchorRelativeIndex =
+                    (anchorX - plot.Left - initialOffset - horizontalPanOffset) / newStep - 0.5;
+
+                firstIndex = Math.Clamp(
+                    (int)Math.Round(anchorAbsoluteIndex - newAnchorRelativeIndex),
+                    0,
+                    Math.Max(0, points.Count - newCount));
             }
 
             crosshairIndex = -1;
@@ -1317,7 +1334,7 @@ namespace Trade.It
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            ZoomX(e.Delta > 0 ? 0.80 : 1.25);
+            ZoomX(e.Delta > 0 ? 0.80 : 1.25, e.X);
         }
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
