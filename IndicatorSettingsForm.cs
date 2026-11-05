@@ -23,7 +23,7 @@ namespace Trade.It
                         : "تنظیمات EMA";
 
             indicatorType = indicator.Type;
-            defaultPeriod = indicator.Type == ChartIndicatorType.AverageTrueRange ? 14 : 20;
+            defaultPeriod = indicator.Type == ChartIndicatorType.AverageTrueRange ? 13 : 21;
 
             periodNumeric.Minimum = 2;
             periodNumeric.Maximum = Math.Max(2, maxPeriod);
