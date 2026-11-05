@@ -1646,7 +1646,7 @@ namespace Trade.It
 
             MessageBox.Show(
                 this,
-                "فیلترها اعمال نشدند. موارد زیر را اصلاح کنید:\n\n" + string.Join(Environment.NewLine, errors),
+                "خطاهای فیلتر:\n\n" + string.Join(Environment.NewLine, errors),
                 "اعتبارسنجی فیلترها",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
@@ -1929,7 +1929,7 @@ namespace Trade.It
                 warnings.Add($"• فیلتر تغییر درصد قیمت: {ToPersianDigits(invalidPercentChangeSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
 
             if (warnings.Count > 0)
-                MessageBox.Show(this, "برخی نمادها به دلیل کافی یا معتبر نبودن داده‌ها قابل ارزیابی نبودند و از نتایج حذف شدند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "نمادهای زیر به‌دلیل داده ناکافی یا نامعتبر ارزیابی نشدند و حذف شدند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
