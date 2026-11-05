@@ -10,7 +10,6 @@ namespace Trade.It
         private bool navigationRunning;
         private List<string> navigationSymbols = new();
         private int navigationIndex = -1;
-        private TabPage? navigationTabPage;
 
         private void InitializeSettingsRuntime()
         {
@@ -156,11 +155,8 @@ namespace Trade.It
                 if (!chart.CrosshairVisible)
                     chart.ToggleCrosshair();
 
-                if (navigationTabPage == null || navigationTabPage.IsDisposed || !chartTabControl.TabPages.Contains(navigationTabPage))
-                {
-                    navigationTabPage = new TabPage("__AUTO_SCROLL__") { RightToLeft = RightToLeft.Yes };
+                if (!chartTabControl.TabPages.Contains(navigationTabPage))
                     chartTabControl.TabPages.Add(navigationTabPage);
-                }
 
                 navigationTabPage.Controls.Clear();
                 navigationTabPage.Controls.Add(chart);
