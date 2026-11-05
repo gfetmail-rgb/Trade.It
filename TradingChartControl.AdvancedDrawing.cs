@@ -546,19 +546,10 @@ namespace Trade.It
 
         private string? PromptAdvancedText()
         {
-            using var form = new Form { Width = 360, Height = 150, FormBorderStyle = FormBorderStyle.FixedDialog, StartPosition = FormStartPosition.CenterScreen, MinimizeBox = false, MaximizeBox = false, RightToLeft = RightToLeft.Yes, RightToLeftLayout = true, Text = "درج متن" };
-            using var textBox = new TextBox { Dock = DockStyle.Top, Multiline = false };
-            using var ok = new Button { Text = "تأیید", DialogResult = DialogResult.OK, Width = 80, Height = 30 };
-            using var cancel = new Button { Text = "لغو", DialogResult = DialogResult.Cancel, Width = 80, Height = 30 };
-            var buttons = new FlowLayoutPanel { Dock = DockStyle.Bottom, Height = 45, FlowDirection = FlowDirection.LeftToRight, RightToLeft = RightToLeft.Yes };
-            buttons.Controls.Add(ok);
-            buttons.Controls.Add(cancel);
-            form.Controls.Add(textBox);
-            form.Controls.Add(buttons);
-            form.AcceptButton = ok;
-            form.CancelButton = cancel;
-            form.Shown += (_, _) => textBox.Focus();
-            return form.ShowDialog() == DialogResult.OK ? textBox.Text : null;
+            using var form = new AdvancedTextPromptForm();
+            return form.ShowDialog(FindForm()) == DialogResult.OK
+                ? form.InputText
+                : null;
         }
     }
 }
