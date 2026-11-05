@@ -53,6 +53,40 @@ namespace Trade.It
         private System.Windows.Forms.ComboBox gridLineStyleCombo;
         private System.Windows.Forms.Label gridLineWidthLabel;
         private System.Windows.Forms.Label gridLineStyleLabel;
+
+        private System.Windows.Forms.GroupBox fibonacciLevelsGroupBox;
+        private System.Windows.Forms.GroupBox fibonacciRetracementGroupBox;
+        private System.Windows.Forms.GroupBox fibonacciExtensionGroupBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel0CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel1CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel2CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel3CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel4CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel5CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel6CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel7CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel8CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel9CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel10CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel11CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel12CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel13CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciRetracementLevel14CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel0CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel1CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel2CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel3CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel4CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel5CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel6CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel7CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel8CheckBox;
+        private System.Windows.Forms.CheckBox fibonacciExtensionLevel9CheckBox;
+        private System.Windows.Forms.Button fibonacciRetracementSelectAllButton;
+        private System.Windows.Forms.Button fibonacciRetracementClearAllButton;
+        private System.Windows.Forms.Button fibonacciExtensionSelectAllButton;
+        private System.Windows.Forms.Button fibonacciExtensionClearAllButton;
+
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
 
@@ -115,6 +149,40 @@ namespace Trade.It
             gridLineStyleCombo = new ComboBox();
             okButton = new Button();
             cancelButton = new Button();
+
+            fibonacciLevelsGroupBox = new GroupBox();
+            fibonacciRetracementGroupBox = new GroupBox();
+            fibonacciExtensionGroupBox = new GroupBox();
+            fibonacciRetracementLevel0CheckBox = new CheckBox();
+            fibonacciRetracementLevel1CheckBox = new CheckBox();
+            fibonacciRetracementLevel2CheckBox = new CheckBox();
+            fibonacciRetracementLevel3CheckBox = new CheckBox();
+            fibonacciRetracementLevel4CheckBox = new CheckBox();
+            fibonacciRetracementLevel5CheckBox = new CheckBox();
+            fibonacciRetracementLevel6CheckBox = new CheckBox();
+            fibonacciRetracementLevel7CheckBox = new CheckBox();
+            fibonacciRetracementLevel8CheckBox = new CheckBox();
+            fibonacciRetracementLevel9CheckBox = new CheckBox();
+            fibonacciRetracementLevel10CheckBox = new CheckBox();
+            fibonacciRetracementLevel11CheckBox = new CheckBox();
+            fibonacciRetracementLevel12CheckBox = new CheckBox();
+            fibonacciRetracementLevel13CheckBox = new CheckBox();
+            fibonacciRetracementLevel14CheckBox = new CheckBox();
+            fibonacciExtensionLevel0CheckBox = new CheckBox();
+            fibonacciExtensionLevel1CheckBox = new CheckBox();
+            fibonacciExtensionLevel2CheckBox = new CheckBox();
+            fibonacciExtensionLevel3CheckBox = new CheckBox();
+            fibonacciExtensionLevel4CheckBox = new CheckBox();
+            fibonacciExtensionLevel5CheckBox = new CheckBox();
+            fibonacciExtensionLevel6CheckBox = new CheckBox();
+            fibonacciExtensionLevel7CheckBox = new CheckBox();
+            fibonacciExtensionLevel8CheckBox = new CheckBox();
+            fibonacciExtensionLevel9CheckBox = new CheckBox();
+            fibonacciRetracementSelectAllButton = new Button();
+            fibonacciRetracementClearAllButton = new Button();
+            fibonacciExtensionSelectAllButton = new Button();
+            fibonacciExtensionClearAllButton = new Button();
+
             chartDisplayGroupBox.SuspendLayout();
             chartMarginGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)initialVisibleCandleCountNumeric).BeginInit();
@@ -123,6 +191,9 @@ namespace Trade.It
             drawingColorsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)drawingLineWidthNumeric).BeginInit();
             crosshairGridGroupBox.SuspendLayout();
+            fibonacciLevelsGroupBox.SuspendLayout();
+            fibonacciRetracementGroupBox.SuspendLayout();
+            fibonacciExtensionGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)crosshairLineWidthNumeric).BeginInit();
             ((System.ComponentModel.ISupportInitialize)gridLineWidthNumeric).BeginInit();
             SuspendLayout();
@@ -507,6 +578,422 @@ namespace Trade.It
             drawingLineStyleLabel.Size = new Size(67, 25);
             drawingLineStyleLabel.TabIndex = 16;
             drawingLineStyleLabel.Text = "استایل:";
+
+            // 
+            // fibonacciLevelsGroupBox
+            // 
+            fibonacciLevelsGroupBox.Controls.Add(fibonacciRetracementGroupBox);
+            fibonacciLevelsGroupBox.Controls.Add(fibonacciExtensionGroupBox);
+            fibonacciLevelsGroupBox.Location = new Point(790, 420);
+            fibonacciLevelsGroupBox.Name = "fibonacciLevelsGroupBox";
+            fibonacciLevelsGroupBox.RightToLeft = RightToLeft.Yes;
+            fibonacciLevelsGroupBox.Size = new Size(520, 540);
+            fibonacciLevelsGroupBox.TabIndex = 3;
+            fibonacciLevelsGroupBox.TabStop = false;
+            fibonacciLevelsGroupBox.Text = "سطوح فیبوناچی";
+            // 
+            // fibonacciRetracementGroupBox
+            // 
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementSelectAllButton);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementClearAllButton);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel0CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel1CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel2CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel3CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel4CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel5CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel6CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel7CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel8CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel9CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel10CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel11CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel12CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel13CheckBox);
+            fibonacciRetracementGroupBox.Controls.Add(fibonacciRetracementLevel14CheckBox);
+            fibonacciRetracementGroupBox.Location = new Point(260, 25);
+            fibonacciRetracementGroupBox.Name = "fibonacciRetracementGroupBox";
+            fibonacciRetracementGroupBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementGroupBox.Size = new Size(250, 505);
+            fibonacciRetracementGroupBox.TabIndex = 0;
+            fibonacciRetracementGroupBox.TabStop = false;
+            fibonacciRetracementGroupBox.Text = "فیبوناچی دو نقطه‌ای";
+            // 
+            // fibonacciExtensionGroupBox
+            // 
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionSelectAllButton);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionClearAllButton);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel0CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel1CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel2CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel3CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel4CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel5CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel6CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel7CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel8CheckBox);
+            fibonacciExtensionGroupBox.Controls.Add(fibonacciExtensionLevel9CheckBox);
+            fibonacciExtensionGroupBox.Location = new Point(10, 25);
+            fibonacciExtensionGroupBox.Name = "fibonacciExtensionGroupBox";
+            fibonacciExtensionGroupBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionGroupBox.Size = new Size(250, 505);
+            fibonacciExtensionGroupBox.TabIndex = 1;
+            fibonacciExtensionGroupBox.TabStop = false;
+            fibonacciExtensionGroupBox.Text = "فیبوناچی سه نقطه‌ای";
+
+            // 
+            // fibonacciRetracementLevel0CheckBox
+            // 
+            fibonacciRetracementLevel0CheckBox.AutoSize = false;
+            fibonacciRetracementLevel0CheckBox.Location = new Point(18, 34);
+            fibonacciRetracementLevel0CheckBox.Name = "fibonacciRetracementLevel0CheckBox";
+            fibonacciRetracementLevel0CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel0CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel0CheckBox.TabIndex = 0;
+            fibonacciRetracementLevel0CheckBox.Text = "0%";
+            fibonacciRetracementLevel0CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel0CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel1CheckBox
+            // 
+            fibonacciRetracementLevel1CheckBox.AutoSize = false;
+            fibonacciRetracementLevel1CheckBox.Location = new Point(18, 63);
+            fibonacciRetracementLevel1CheckBox.Name = "fibonacciRetracementLevel1CheckBox";
+            fibonacciRetracementLevel1CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel1CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel1CheckBox.TabIndex = 1;
+            fibonacciRetracementLevel1CheckBox.Text = "38.2%";
+            fibonacciRetracementLevel1CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel1CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel2CheckBox
+            // 
+            fibonacciRetracementLevel2CheckBox.AutoSize = false;
+            fibonacciRetracementLevel2CheckBox.Location = new Point(18, 92);
+            fibonacciRetracementLevel2CheckBox.Name = "fibonacciRetracementLevel2CheckBox";
+            fibonacciRetracementLevel2CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel2CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel2CheckBox.TabIndex = 2;
+            fibonacciRetracementLevel2CheckBox.Text = "50%";
+            fibonacciRetracementLevel2CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel2CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel3CheckBox
+            // 
+            fibonacciRetracementLevel3CheckBox.AutoSize = false;
+            fibonacciRetracementLevel3CheckBox.Location = new Point(18, 121);
+            fibonacciRetracementLevel3CheckBox.Name = "fibonacciRetracementLevel3CheckBox";
+            fibonacciRetracementLevel3CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel3CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel3CheckBox.TabIndex = 3;
+            fibonacciRetracementLevel3CheckBox.Text = "61.8%";
+            fibonacciRetracementLevel3CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel3CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel4CheckBox
+            // 
+            fibonacciRetracementLevel4CheckBox.AutoSize = false;
+            fibonacciRetracementLevel4CheckBox.Location = new Point(18, 150);
+            fibonacciRetracementLevel4CheckBox.Name = "fibonacciRetracementLevel4CheckBox";
+            fibonacciRetracementLevel4CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel4CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel4CheckBox.TabIndex = 4;
+            fibonacciRetracementLevel4CheckBox.Text = "78.6%";
+            fibonacciRetracementLevel4CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel4CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel5CheckBox
+            // 
+            fibonacciRetracementLevel5CheckBox.AutoSize = false;
+            fibonacciRetracementLevel5CheckBox.Location = new Point(18, 179);
+            fibonacciRetracementLevel5CheckBox.Name = "fibonacciRetracementLevel5CheckBox";
+            fibonacciRetracementLevel5CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel5CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel5CheckBox.TabIndex = 5;
+            fibonacciRetracementLevel5CheckBox.Text = "100%";
+            fibonacciRetracementLevel5CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel5CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel6CheckBox
+            // 
+            fibonacciRetracementLevel6CheckBox.AutoSize = false;
+            fibonacciRetracementLevel6CheckBox.Location = new Point(18, 208);
+            fibonacciRetracementLevel6CheckBox.Name = "fibonacciRetracementLevel6CheckBox";
+            fibonacciRetracementLevel6CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel6CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel6CheckBox.TabIndex = 6;
+            fibonacciRetracementLevel6CheckBox.Text = "127.2%";
+            fibonacciRetracementLevel6CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel6CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel7CheckBox
+            // 
+            fibonacciRetracementLevel7CheckBox.AutoSize = false;
+            fibonacciRetracementLevel7CheckBox.Location = new Point(18, 237);
+            fibonacciRetracementLevel7CheckBox.Name = "fibonacciRetracementLevel7CheckBox";
+            fibonacciRetracementLevel7CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel7CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel7CheckBox.TabIndex = 7;
+            fibonacciRetracementLevel7CheckBox.Text = "161.8%";
+            fibonacciRetracementLevel7CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel7CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel8CheckBox
+            // 
+            fibonacciRetracementLevel8CheckBox.AutoSize = false;
+            fibonacciRetracementLevel8CheckBox.Location = new Point(18, 266);
+            fibonacciRetracementLevel8CheckBox.Name = "fibonacciRetracementLevel8CheckBox";
+            fibonacciRetracementLevel8CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel8CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel8CheckBox.TabIndex = 8;
+            fibonacciRetracementLevel8CheckBox.Text = "200%";
+            fibonacciRetracementLevel8CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel8CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel9CheckBox
+            // 
+            fibonacciRetracementLevel9CheckBox.AutoSize = false;
+            fibonacciRetracementLevel9CheckBox.Location = new Point(18, 295);
+            fibonacciRetracementLevel9CheckBox.Name = "fibonacciRetracementLevel9CheckBox";
+            fibonacciRetracementLevel9CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel9CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel9CheckBox.TabIndex = 9;
+            fibonacciRetracementLevel9CheckBox.Text = "261.8%";
+            fibonacciRetracementLevel9CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel9CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel10CheckBox
+            // 
+            fibonacciRetracementLevel10CheckBox.AutoSize = false;
+            fibonacciRetracementLevel10CheckBox.Location = new Point(18, 324);
+            fibonacciRetracementLevel10CheckBox.Name = "fibonacciRetracementLevel10CheckBox";
+            fibonacciRetracementLevel10CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel10CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel10CheckBox.TabIndex = 10;
+            fibonacciRetracementLevel10CheckBox.Text = "250%";
+            fibonacciRetracementLevel10CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel10CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel11CheckBox
+            // 
+            fibonacciRetracementLevel11CheckBox.AutoSize = false;
+            fibonacciRetracementLevel11CheckBox.Location = new Point(18, 353);
+            fibonacciRetracementLevel11CheckBox.Name = "fibonacciRetracementLevel11CheckBox";
+            fibonacciRetracementLevel11CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel11CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel11CheckBox.TabIndex = 11;
+            fibonacciRetracementLevel11CheckBox.Text = "300%";
+            fibonacciRetracementLevel11CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel11CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel12CheckBox
+            // 
+            fibonacciRetracementLevel12CheckBox.AutoSize = false;
+            fibonacciRetracementLevel12CheckBox.Location = new Point(18, 382);
+            fibonacciRetracementLevel12CheckBox.Name = "fibonacciRetracementLevel12CheckBox";
+            fibonacciRetracementLevel12CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel12CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel12CheckBox.TabIndex = 12;
+            fibonacciRetracementLevel12CheckBox.Text = "350%";
+            fibonacciRetracementLevel12CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel12CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel13CheckBox
+            // 
+            fibonacciRetracementLevel13CheckBox.AutoSize = false;
+            fibonacciRetracementLevel13CheckBox.Location = new Point(18, 411);
+            fibonacciRetracementLevel13CheckBox.Name = "fibonacciRetracementLevel13CheckBox";
+            fibonacciRetracementLevel13CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel13CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel13CheckBox.TabIndex = 13;
+            fibonacciRetracementLevel13CheckBox.Text = "450%";
+            fibonacciRetracementLevel13CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel13CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciRetracementLevel14CheckBox
+            // 
+            fibonacciRetracementLevel14CheckBox.AutoSize = false;
+            fibonacciRetracementLevel14CheckBox.Location = new Point(18, 440);
+            fibonacciRetracementLevel14CheckBox.Name = "fibonacciRetracementLevel14CheckBox";
+            fibonacciRetracementLevel14CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciRetracementLevel14CheckBox.Size = new Size(210, 27);
+            fibonacciRetracementLevel14CheckBox.TabIndex = 14;
+            fibonacciRetracementLevel14CheckBox.Text = "500%";
+            fibonacciRetracementLevel14CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciRetracementLevel14CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel0CheckBox
+            // 
+            fibonacciExtensionLevel0CheckBox.AutoSize = false;
+            fibonacciExtensionLevel0CheckBox.Location = new Point(18, 34);
+            fibonacciExtensionLevel0CheckBox.Name = "fibonacciExtensionLevel0CheckBox";
+            fibonacciExtensionLevel0CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel0CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel0CheckBox.TabIndex = 0;
+            fibonacciExtensionLevel0CheckBox.Text = "0%";
+            fibonacciExtensionLevel0CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel0CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel1CheckBox
+            // 
+            fibonacciExtensionLevel1CheckBox.AutoSize = false;
+            fibonacciExtensionLevel1CheckBox.Location = new Point(18, 63);
+            fibonacciExtensionLevel1CheckBox.Name = "fibonacciExtensionLevel1CheckBox";
+            fibonacciExtensionLevel1CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel1CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel1CheckBox.TabIndex = 1;
+            fibonacciExtensionLevel1CheckBox.Text = "38.2%";
+            fibonacciExtensionLevel1CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel1CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel2CheckBox
+            // 
+            fibonacciExtensionLevel2CheckBox.AutoSize = false;
+            fibonacciExtensionLevel2CheckBox.Location = new Point(18, 92);
+            fibonacciExtensionLevel2CheckBox.Name = "fibonacciExtensionLevel2CheckBox";
+            fibonacciExtensionLevel2CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel2CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel2CheckBox.TabIndex = 2;
+            fibonacciExtensionLevel2CheckBox.Text = "50%";
+            fibonacciExtensionLevel2CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel2CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel3CheckBox
+            // 
+            fibonacciExtensionLevel3CheckBox.AutoSize = false;
+            fibonacciExtensionLevel3CheckBox.Location = new Point(18, 121);
+            fibonacciExtensionLevel3CheckBox.Name = "fibonacciExtensionLevel3CheckBox";
+            fibonacciExtensionLevel3CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel3CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel3CheckBox.TabIndex = 3;
+            fibonacciExtensionLevel3CheckBox.Text = "61.8%";
+            fibonacciExtensionLevel3CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel3CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel4CheckBox
+            // 
+            fibonacciExtensionLevel4CheckBox.AutoSize = false;
+            fibonacciExtensionLevel4CheckBox.Location = new Point(18, 150);
+            fibonacciExtensionLevel4CheckBox.Name = "fibonacciExtensionLevel4CheckBox";
+            fibonacciExtensionLevel4CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel4CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel4CheckBox.TabIndex = 4;
+            fibonacciExtensionLevel4CheckBox.Text = "78.6%";
+            fibonacciExtensionLevel4CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel4CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel5CheckBox
+            // 
+            fibonacciExtensionLevel5CheckBox.AutoSize = false;
+            fibonacciExtensionLevel5CheckBox.Location = new Point(18, 179);
+            fibonacciExtensionLevel5CheckBox.Name = "fibonacciExtensionLevel5CheckBox";
+            fibonacciExtensionLevel5CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel5CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel5CheckBox.TabIndex = 5;
+            fibonacciExtensionLevel5CheckBox.Text = "100%";
+            fibonacciExtensionLevel5CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel5CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel6CheckBox
+            // 
+            fibonacciExtensionLevel6CheckBox.AutoSize = false;
+            fibonacciExtensionLevel6CheckBox.Location = new Point(18, 208);
+            fibonacciExtensionLevel6CheckBox.Name = "fibonacciExtensionLevel6CheckBox";
+            fibonacciExtensionLevel6CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel6CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel6CheckBox.TabIndex = 6;
+            fibonacciExtensionLevel6CheckBox.Text = "127.2%";
+            fibonacciExtensionLevel6CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel6CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel7CheckBox
+            // 
+            fibonacciExtensionLevel7CheckBox.AutoSize = false;
+            fibonacciExtensionLevel7CheckBox.Location = new Point(18, 237);
+            fibonacciExtensionLevel7CheckBox.Name = "fibonacciExtensionLevel7CheckBox";
+            fibonacciExtensionLevel7CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel7CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel7CheckBox.TabIndex = 7;
+            fibonacciExtensionLevel7CheckBox.Text = "161.8%";
+            fibonacciExtensionLevel7CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel7CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel8CheckBox
+            // 
+            fibonacciExtensionLevel8CheckBox.AutoSize = false;
+            fibonacciExtensionLevel8CheckBox.Location = new Point(18, 266);
+            fibonacciExtensionLevel8CheckBox.Name = "fibonacciExtensionLevel8CheckBox";
+            fibonacciExtensionLevel8CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel8CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel8CheckBox.TabIndex = 8;
+            fibonacciExtensionLevel8CheckBox.Text = "200%";
+            fibonacciExtensionLevel8CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel8CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // fibonacciExtensionLevel9CheckBox
+            // 
+            fibonacciExtensionLevel9CheckBox.AutoSize = false;
+            fibonacciExtensionLevel9CheckBox.Location = new Point(18, 295);
+            fibonacciExtensionLevel9CheckBox.Name = "fibonacciExtensionLevel9CheckBox";
+            fibonacciExtensionLevel9CheckBox.RightToLeft = RightToLeft.Yes;
+            fibonacciExtensionLevel9CheckBox.Size = new Size(210, 27);
+            fibonacciExtensionLevel9CheckBox.TabIndex = 9;
+            fibonacciExtensionLevel9CheckBox.Text = "261.8%";
+            fibonacciExtensionLevel9CheckBox.TextAlign = ContentAlignment.MiddleRight;
+            fibonacciExtensionLevel9CheckBox.UseVisualStyleBackColor = true;
+
+            // 
+            // Fibonacci level buttons
+            // 
+            fibonacciRetracementSelectAllButton.Location = new Point(135, 466);
+            fibonacciRetracementSelectAllButton.Name = "fibonacciRetracementSelectAllButton";
+            fibonacciRetracementSelectAllButton.Size = new Size(90, 30);
+            fibonacciRetracementSelectAllButton.TabIndex = 20;
+            fibonacciRetracementSelectAllButton.Text = "انتخاب همه";
+            fibonacciRetracementSelectAllButton.UseVisualStyleBackColor = true;
+            fibonacciRetracementClearAllButton.Location = new Point(35, 466);
+            fibonacciRetracementClearAllButton.Name = "fibonacciRetracementClearAllButton";
+            fibonacciRetracementClearAllButton.Size = new Size(90, 30);
+            fibonacciRetracementClearAllButton.TabIndex = 21;
+            fibonacciRetracementClearAllButton.Text = "حذف همه";
+            fibonacciRetracementClearAllButton.UseVisualStyleBackColor = true;
+            fibonacciExtensionSelectAllButton.Location = new Point(135, 466);
+            fibonacciExtensionSelectAllButton.Name = "fibonacciExtensionSelectAllButton";
+            fibonacciExtensionSelectAllButton.Size = new Size(90, 30);
+            fibonacciExtensionSelectAllButton.TabIndex = 20;
+            fibonacciExtensionSelectAllButton.Text = "انتخاب همه";
+            fibonacciExtensionSelectAllButton.UseVisualStyleBackColor = true;
+            fibonacciExtensionClearAllButton.Location = new Point(35, 466);
+            fibonacciExtensionClearAllButton.Name = "fibonacciExtensionClearAllButton";
+            fibonacciExtensionClearAllButton.Size = new Size(90, 30);
+            fibonacciExtensionClearAllButton.TabIndex = 21;
+            fibonacciExtensionClearAllButton.Text = "حذف همه";
+            fibonacciExtensionClearAllButton.UseVisualStyleBackColor = true;
+
             // 
             // crosshairGridGroupBox
             // 
@@ -520,7 +1007,7 @@ namespace Trade.It
             crosshairGridGroupBox.Controls.Add(gridLineWidthNumeric);
             crosshairGridGroupBox.Controls.Add(gridLineStyleLabel);
             crosshairGridGroupBox.Controls.Add(gridLineStyleCombo);
-            crosshairGridGroupBox.Location = new Point(16, 702);
+            crosshairGridGroupBox.Location = new Point(16, 980);
             crosshairGridGroupBox.Name = "crosshairGridGroupBox";
             crosshairGridGroupBox.RightToLeft = RightToLeft.Yes;
             crosshairGridGroupBox.Size = new Size(760, 160);
@@ -630,7 +1117,7 @@ namespace Trade.It
             // 
             // okButton
             // 
-            okButton.Location = new Point(276, 878);
+            okButton.Location = new Point(535, 1160);
             okButton.Name = "okButton";
             okButton.Size = new Size(98, 43);
             okButton.TabIndex = 0;
@@ -639,7 +1126,7 @@ namespace Trade.It
             // 
             // cancelButton
             // 
-            cancelButton.Location = new Point(389, 878);
+            cancelButton.Location = new Point(648, 1160);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(98, 43);
             cancelButton.TabIndex = 1;
@@ -652,11 +1139,12 @@ namespace Trade.It
             AutoScaleDimensions = new SizeF(11F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
-            ClientSize = new Size(792, 937);
+            ClientSize = new Size(1325, 1220);
             Controls.Add(okButton);
             Controls.Add(cancelButton);
             Controls.Add(crosshairGridGroupBox);
             Controls.Add(drawingColorsGroupBox);
+            Controls.Add(fibonacciLevelsGroupBox);
             Controls.Add(chartColorsGroupBox);
             Controls.Add(chartMarginGroupBox);
             Controls.Add(chartDisplayGroupBox);
@@ -681,19 +1169,14 @@ namespace Trade.It
             drawingColorsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)drawingLineWidthNumeric).EndInit();
             crosshairGridGroupBox.ResumeLayout(false);
+            fibonacciLevelsGroupBox.ResumeLayout(false);
+            fibonacciRetracementGroupBox.ResumeLayout(false);
+            fibonacciExtensionGroupBox.ResumeLayout(false);
             crosshairGridGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)crosshairLineWidthNumeric).EndInit();
             ((System.ComponentModel.ISupportInitialize)gridLineWidthNumeric).EndInit();
             ResumeLayout(false);
         }
 
-        private static void ConfigureDrawingButton(Button button, string text, int x, int y)
-        {
-            button.Location = new Point(x, y);
-            button.Name = button.Name;
-            button.Size = new Size(175, 36);
-            button.Text = text;
-            button.UseVisualStyleBackColor = false;
-        }
     }
 }
