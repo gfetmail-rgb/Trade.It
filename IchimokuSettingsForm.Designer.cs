@@ -143,6 +143,8 @@ namespace Trade.It
             tenkanColorButton.Size = new Size(125, 34);
             tenkanColorButton.Text = "انتخاب رنگ";
             tenkanColorButton.UseVisualStyleBackColor = false;
+            tenkanColorButton.BackColor = Color.FromArgb(220, 80, 80);
+            tenkanColorButton.ForeColor = Color.White;
 
             // Kijun-sen
             kijunCheckBox.AutoSize = true;
@@ -157,6 +159,8 @@ namespace Trade.It
             kijunColorButton.Size = new Size(125, 34);
             kijunColorButton.Text = "انتخاب رنگ";
             kijunColorButton.UseVisualStyleBackColor = false;
+            kijunColorButton.BackColor = Color.FromArgb(80, 100, 220);
+            kijunColorButton.ForeColor = Color.White;
 
             // Senkou Span A
             spanACheckBox.AutoSize = true;
@@ -171,6 +175,8 @@ namespace Trade.It
             spanAColorButton.Size = new Size(125, 34);
             spanAColorButton.Text = "انتخاب رنگ";
             spanAColorButton.UseVisualStyleBackColor = false;
+            spanAColorButton.BackColor = Color.FromArgb(50, 150, 80);
+            spanAColorButton.ForeColor = Color.White;
 
             // Senkou Span B
             spanBCheckBox.AutoSize = true;
@@ -185,6 +191,8 @@ namespace Trade.It
             spanBColorButton.Size = new Size(125, 34);
             spanBColorButton.Text = "انتخاب رنگ";
             spanBColorButton.UseVisualStyleBackColor = false;
+            spanBColorButton.BackColor = Color.FromArgb(180, 100, 60);
+            spanBColorButton.ForeColor = Color.White;
 
             // Chikou Span
             chikouCheckBox.AutoSize = true;
@@ -199,6 +207,8 @@ namespace Trade.It
             chikouColorButton.Size = new Size(125, 34);
             chikouColorButton.Text = "انتخاب رنگ";
             chikouColorButton.UseVisualStyleBackColor = false;
+            chikouColorButton.BackColor = Color.FromArgb(150, 80, 180);
+            chikouColorButton.ForeColor = Color.White;
 
             // Bullish cloud
             bullishCloudCheckBox.AutoSize = true;
@@ -213,6 +223,8 @@ namespace Trade.It
             bullishCloudColorButton.Size = new Size(125, 34);
             bullishCloudColorButton.Text = "انتخاب رنگ";
             bullishCloudColorButton.UseVisualStyleBackColor = false;
+            bullishCloudColorButton.BackColor = Color.FromArgb(130, 200, 130);
+            bullishCloudColorButton.ForeColor = Color.Black;
 
             // Bearish cloud
             bearishCloudCheckBox.AutoSize = true;
@@ -227,6 +239,8 @@ namespace Trade.It
             bearishCloudColorButton.Size = new Size(125, 34);
             bearishCloudColorButton.Text = "انتخاب رنگ";
             bearishCloudColorButton.UseVisualStyleBackColor = false;
+            bearishCloudColorButton.BackColor = Color.FromArgb(230, 150, 150);
+            bearishCloudColorButton.ForeColor = Color.Black;
 
             // Default button
             defaultButton.Location = new Point(80, 480);
