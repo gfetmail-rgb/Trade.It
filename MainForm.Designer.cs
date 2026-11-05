@@ -492,7 +492,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorRsiMenuItem, indicatorMacdMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorAtrMenuItem, indicatorAdxMenuItem, indicatorBollingerMenuItem, indicatorObvMenuItem, indicatorVwapMenuItem, indicatorDonchianMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, new ToolStripSeparator(), indicatorBollingerMenuItem, indicatorDonchianMenuItem, new ToolStripSeparator(), indicatorRsiMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorMacdMenuItem, new ToolStripSeparator(), indicatorAtrMenuItem, indicatorAdxMenuItem, new ToolStripSeparator(), indicatorObvMenuItem, indicatorVwapMenuItem, new ToolStripSeparator(), indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
