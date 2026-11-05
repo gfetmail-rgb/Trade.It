@@ -977,7 +977,8 @@ namespace Trade.It
 
             var plot = GetPlotRectangle();
             var initialOffset = -plot.Width * 0.25;
-            var anchorX = anchorScreenX ?? (plot.Left + plot.Width / 2);
+            // تمام روش‌های زوم در حالت عادی حول لبه راست Plot انجام می‌شوند.
+            var anchorX = anchorScreenX ?? plot.Right;
             var oldStep = plot.Width / (double)oldCount;
             var anchorRelativeIndex =
                 (anchorX - plot.Left - initialOffset - horizontalPanOffset) / oldStep - 0.5;
@@ -992,8 +993,7 @@ namespace Trade.It
             }
             else
             {
-                // کندلی که زیر مکان‌نمای ماوس قرار دارد، پس از زوم نیز
-                // در همان مختصات افقی باقی می‌ماند.
+                // کندل واقع در لبه راست Plot پس از زوم در همان مختصات می‌ماند.
                 var newStep = plot.Width / (double)newCount;
                 var newAnchorRelativeIndex =
                     (anchorX - plot.Left - initialOffset - horizontalPanOffset) / newStep - 0.5;
@@ -1334,7 +1334,7 @@ namespace Trade.It
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            ZoomX(e.Delta > 0 ? 0.80 : 1.25, e.X);
+            ZoomX(e.Delta > 0 ? 0.80 : 1.25, GetPlotRectangle().Right);
         }
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
@@ -1439,9 +1439,10 @@ namespace Trade.It
 
                 var axisStep = plot.Width / (double)Math.Max(2, visibleCount);
                 var axisInitialOffset = -plot.Width * 0.25;
-                var axisRelativeX =
-                    (e.X - plotLeft - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
-                horizontalAxisCenterIndex = firstIndex + axisRelativeX;
+                var rightEdgeRelativeIndex =
+                    (plot.Right - plotLeft - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
+                // لنگر زوم محور افقی همیشه آخرین نقطه در لبه راست Plot است.
+                horizontalAxisCenterIndex = firstIndex + rightEdgeRelativeIndex;
 
                 Capture = true;
                 Cursor = Cursors.SizeWE;
@@ -1650,21 +1651,18 @@ namespace Trade.It
                 }
                 else
                 {
-                    // محور افقی فقط زوم است؛ نقطه‌ای که ماوس هنگام شروع
-                    // Drag روی محور گرفته، لنگر زوم است. در نتیجه با حرکت ماوس
-                    // فقط تعداد کندل‌ها تغییر می‌کند و آن نقطه روی همان مختصات
-                    // صفحه باقی می‌ماند؛ هیچ Pan افقی انجام نمی‌شود.
+                    // محور افقی فقط زوم است؛ لبه راست Plot لنگر ثابت است.
+                    // با تغییر تعداد کندل‌ها، فقط سمت چپ نمودار باز یا بسته می‌شود.
                     visibleCount = newCount;
 
                     var zoomPlot = GetPlotRectangle();
                     var zoomStep = zoomPlot.Width / (double)Math.Max(2, newCount);
                     var zoomInitialOffset = -zoomPlot.Width * 0.25;
 
-                    // لنگر همان نقطه‌ای است که Drag روی محور شروع شده است.
-                    // نباید با حرکت بعدی ماوس، لنگر دوباره محاسبه شود؛
-                    // وگرنه نمودار به‌جای زوم حول نقطه شروع، جابه‌جا می‌شود.
+                    // مختصات کندل لنگر در لبه راست Plot با شروع Drag ثبت شده
+                    // و در تمام طول Drag ثابت می‌ماند.
                     var anchorRelativeIndex =
-                        (horizontalAxisStartPoint.X - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
+                        (zoomPlot.Right - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
                         / zoomStep - 0.5;
 
                     firstIndex = Math.Clamp(
