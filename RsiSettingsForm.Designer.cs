@@ -54,6 +54,8 @@ namespace Trade.It
 
             rsiLineColorButton.Location = new Point(105, 66);
             rsiLineColorButton.Size = new Size(125, 36);
+            rsiLineColorButton.BackColor = Color.FromArgb(30, 100, 220);
+            rsiLineColorButton.ForeColor = Color.White;
             rsiLineColorButton.Text = "انتخاب رنگ";
             rsiLineColorButton.UseVisualStyleBackColor = false;
 
@@ -64,6 +66,8 @@ namespace Trade.It
 
             rsi30ColorButton.Location = new Point(105, 116);
             rsi30ColorButton.Size = new Size(125, 36);
+            rsi30ColorButton.BackColor = Color.FromArgb(150, 150, 150);
+            rsi30ColorButton.ForeColor = Color.Black;
             rsi30ColorButton.Text = "انتخاب رنگ";
             rsi30ColorButton.UseVisualStyleBackColor = false;
 
@@ -74,6 +78,8 @@ namespace Trade.It
 
             rsi70ColorButton.Location = new Point(105, 166);
             rsi70ColorButton.Size = new Size(125, 36);
+            rsi70ColorButton.BackColor = Color.FromArgb(150, 150, 150);
+            rsi70ColorButton.ForeColor = Color.Black;
             rsi70ColorButton.Text = "انتخاب رنگ";
             rsi70ColorButton.UseVisualStyleBackColor = false;
 
