@@ -43,10 +43,46 @@ namespace Trade.It
             periodNumeric.Size = new Size(125, 33);
             periodNumeric.TextAlign = HorizontalAlignment.Center;
 
-            ConfigureRow(adxLineCheckBox, adxLineColorButton, "خط ADX", 62);
-            ConfigureRow(adxPlusDiCheckBox, adxPlusDiColorButton, "+DI", 102);
-            ConfigureRow(adxMinusDiCheckBox, adxMinusDiColorButton, "-DI", 142);
-            ConfigureRow(adx25CheckBox, adx25ColorButton, "خط 25", 182);
+            adxLineCheckBox.AutoSize = true;
+            adxLineCheckBox.Location = new Point(280, 66);
+            adxLineCheckBox.Size = new Size(110, 29);
+            adxLineCheckBox.Text = "خط ADX";
+            adxLineColorButton.Location = new Point(120, 62);
+            adxLineColorButton.Size = new Size(125, 34);
+            adxLineColorButton.BackColor = Color.FromArgb(30, 100, 220);
+            adxLineColorButton.ForeColor = Color.White;
+            adxLineColorButton.Text = "انتخاب رنگ";
+            adxLineColorButton.UseVisualStyleBackColor = false;
+            adxPlusDiCheckBox.AutoSize = true;
+            adxPlusDiCheckBox.Location = new Point(280, 106);
+            adxPlusDiCheckBox.Size = new Size(110, 29);
+            adxPlusDiCheckBox.Text = "+DI";
+            adxPlusDiColorButton.Location = new Point(120, 102);
+            adxPlusDiColorButton.Size = new Size(125, 34);
+            adxPlusDiColorButton.BackColor = Color.FromArgb(50, 160, 80);
+            adxPlusDiColorButton.ForeColor = Color.White;
+            adxPlusDiColorButton.Text = "انتخاب رنگ";
+            adxPlusDiColorButton.UseVisualStyleBackColor = false;
+            adxMinusDiCheckBox.AutoSize = true;
+            adxMinusDiCheckBox.Location = new Point(280, 146);
+            adxMinusDiCheckBox.Size = new Size(110, 29);
+            adxMinusDiCheckBox.Text = "-DI";
+            adxMinusDiColorButton.Location = new Point(120, 142);
+            adxMinusDiColorButton.Size = new Size(125, 34);
+            adxMinusDiColorButton.BackColor = Color.FromArgb(220, 80, 80);
+            adxMinusDiColorButton.ForeColor = Color.White;
+            adxMinusDiColorButton.Text = "انتخاب رنگ";
+            adxMinusDiColorButton.UseVisualStyleBackColor = false;
+            adx25CheckBox.AutoSize = true;
+            adx25CheckBox.Location = new Point(280, 186);
+            adx25CheckBox.Size = new Size(110, 29);
+            adx25CheckBox.Text = "خط 25";
+            adx25ColorButton.Location = new Point(120, 182);
+            adx25ColorButton.Size = new Size(125, 34);
+            adx25ColorButton.BackColor = Color.FromArgb(150, 150, 150);
+            adx25ColorButton.ForeColor = Color.Black;
+            adx25ColorButton.Text = "انتخاب رنگ";
+            adx25ColorButton.UseVisualStyleBackColor = false;
 
             okButton.Text = "تأیید";
             okButton.DialogResult = DialogResult.OK;
@@ -93,16 +129,5 @@ namespace Trade.It
             PerformLayout();
         }
 
-        private static void ConfigureRow(CheckBox checkBox, Button colorButton, string text, int y)
-        {
-            checkBox.AutoSize = true;
-            checkBox.Location = new Point(280, y + 4);
-            checkBox.Size = new Size(110, 29);
-            checkBox.Text = text;
-            colorButton.Location = new Point(120, y);
-            colorButton.Size = new Size(125, 34);
-            colorButton.Text = "انتخاب رنگ";
-            colorButton.UseVisualStyleBackColor = false;
-        }
     }
 }
