@@ -1132,6 +1132,35 @@ namespace Trade.It
             fibonacciExtensionLevel9CheckBox.Text = "261.8%";
             fibonacciExtensionLevel9CheckBox.TextAlign = ContentAlignment.MiddleRight;
             fibonacciExtensionLevel9CheckBox.UseVisualStyleBackColor = true;
+            // Designer-time layout for the drawing-tool color buttons.
+            drawingColorsGroupBox.RightToLeft = RightToLeft.No;
+            crosshairGridGroupBox.RightToLeft = RightToLeft.No;
+
+            SetDesignerButton(trendLineColorButton, "خط روند", 565, 30, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(trendChannelColorButton, "کانال روند", 375, 30, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(horizontalDoubleArrowColorButton, "خط افقی دو سر", 185, 30, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(verticalDoubleArrowColorButton, "خط عمودی دو سر", 0, 30, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(horizontalRayColorButton, "نیم‌خط افقی", 565, 76, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(trendLineWithArrowColorButton, "خط روند با فلش", 375, 76, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(rectangleColorButton, "مستطیل", 185, 76, Color.FromArgb(30, 90, 160));
+            SetDesignerButton(fibonacciRetracementColorButton, "فیبوناچی اصلاحی", 0, 76, Color.FromArgb(45, 105, 170));
+            SetDesignerButton(textLabelColorButton, "برچسب متن", 565, 122, Color.FromArgb(45, 105, 170));
+            SetDesignerButton(pitchforkColorButton, "چنگال", 375, 122, Color.FromArgb(155, 80, 45));
+            SetDesignerButton(fibonacciExtensionColorButton, "فیبوناچی اکستنشن", 185, 122, Color.FromArgb(155, 80, 45));
+            SetDesignerButton(measureColorButton, "اندازه‌گیری", 0, 122, Color.FromArgb(155, 80, 45));
+
+            crosshairColorButton.Location = new Point(570, 28);
+            crosshairColorButton.BackColor = Color.FromArgb(120, 120, 120);
+            crosshairColorButton.ForeColor = Color.White;
+            crosshairColorButton.UseVisualStyleBackColor = false;
+
+            gridColorButton.Location = new Point(570, 112);
+            gridColorButton.BackColor = Color.FromArgb(225, 225, 225);
+            gridColorButton.ForeColor = Color.Black;
+            gridColorButton.UseVisualStyleBackColor = false;
+
+            chartRightEmptyPercentHintLabel.Visible = false;
+
             // 
             // SettingsForm
             // 
