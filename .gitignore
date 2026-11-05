@@ -5,3 +5,7 @@ obj/
 *.suo
 *.log
 builddiag.txt
+/AdxSettingsForm.resx
+/IchimokuSettingsForm.resx
+/StochasticRsiSettingsForm.resx
+/BollingerSettingsForm.resx
