@@ -135,6 +135,8 @@ namespace Trade.It
 
         public TradingChartControl()
         {
+            InitializeComponent();
+
             DoubleBuffered = true;
             BackColor = Color.White;
             ForeColor = Color.Black;
@@ -142,6 +144,14 @@ namespace Trade.It
             MinimumSize = new Size(200, 150);
             SetStyle(ControlStyles.Selectable, true);
             TabStop = true;
+
+            noDateAxisLabel.BackColor = LineAppearanceSettings.CrosshairColor;
+            if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
+                noDateAxisLabel.Visible = false;
+
+            noDateAxisLabel.MouseDown += NoDateAxisLabel_MouseDown;
+            MouseMove += NoDateAxis_MouseMove;
+            Resize += NoDateAxis_Resize;
         }
 
         public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null)
