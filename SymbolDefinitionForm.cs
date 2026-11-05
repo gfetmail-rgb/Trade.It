@@ -559,8 +559,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
                 MessageBox.Show(
                     this,
-                    $"فایل فعلی نمادها شامل {existingDuplicates.Count} نماد تکراری است و قبل از ورود Excel باید اصلاح شود.{Environment.NewLine}{Environment.NewLine}" +
-                    $"نمادهای تکراری: {preview}",
+                    $"در فهرست فعلی {existingDuplicates.Count} نماد تکراری وجود دارد. ابتدا اصلاح کنید:{Environment.NewLine}{preview}",
                     "ورود از Excel",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -585,9 +584,7 @@ public sealed partial class SymbolDefinitionForm : Form
 
                 MessageBox.Show(
                     this,
-                    $"در فایل Excel، {importedDuplicates.Count} نماد بیش از یک بار آمده است.{Environment.NewLine}{Environment.NewLine}" +
-                    $"نمادهای تکراری: {preview}{Environment.NewLine}{Environment.NewLine}" +
-                    "برای جلوگیری از ثبت یا به‌روزرسانی مبهم، ورود انجام نشد.",
+                    $"در فایل Excel، {importedDuplicates.Count} نماد تکراری است؛ ورود انجام نشد:{Environment.NewLine}{preview}",
                     "ورود از Excel",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
