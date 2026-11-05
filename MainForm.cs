@@ -46,6 +46,9 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
+                chartTabControl.TabPages.Remove(navigationTabPage);
+
             // Ensure cell tooltips are enabled so CellToolTipTextNeeded is displayed.
             stocksDataGridView.ShowCellToolTips = true;
 
