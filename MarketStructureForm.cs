@@ -263,8 +263,7 @@ public sealed partial class MarketStructureForm : Form
 
             MessageBox.Show(
                 this,
-                $"این گره یا یکی از زیرمجموعه‌های آن به {assignedSymbols.Count} نماد اختصاص داده شده است و حذف آن مجاز نیست.{Environment.NewLine}{Environment.NewLine}" +
-                $"نمادها: {preview}",
+                $"این گره به {assignedSymbols.Count} نماد اختصاص دارد و قابل حذف نیست:{Environment.NewLine}{preview}",
                 "حذف ساختار بازار",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
