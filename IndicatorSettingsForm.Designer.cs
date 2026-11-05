@@ -54,6 +54,8 @@ namespace Trade.It
             lineColorButton.Location = new Point(105, 72);
             lineColorButton.Name = "lineColorButton";
             lineColorButton.Size = new Size(130, 36);
+            lineColorButton.BackColor = Color.FromArgb(30, 100, 220);
+            lineColorButton.ForeColor = Color.White;
             lineColorButton.Text = "انتخاب رنگ";
             lineColorButton.UseVisualStyleBackColor = false;
 
@@ -66,6 +68,8 @@ namespace Trade.It
             backgroundColorButton.Location = new Point(105, 122);
             backgroundColorButton.Name = "backgroundColorButton";
             backgroundColorButton.Size = new Size(130, 36);
+            backgroundColorButton.BackColor = Color.White;
+            backgroundColorButton.ForeColor = Color.Black;
             backgroundColorButton.Text = "انتخاب رنگ";
             backgroundColorButton.UseVisualStyleBackColor = false;
 
