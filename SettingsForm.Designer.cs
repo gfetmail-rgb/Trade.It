@@ -333,6 +333,9 @@ namespace Trade.It
             // 
             risingColorButton.Location = new Point(570, 28);
             risingColorButton.Name = "risingColorButton";
+            risingColorButton.BackColor = Color.FromArgb(35, 150, 80);
+            risingColorButton.ForeColor = Color.White;
+            risingColorButton.UseVisualStyleBackColor = false;
             risingColorButton.Size = new Size(175, 50);
             risingColorButton.TabIndex = 0;
             risingColorButton.Text = "رنگ کندل و میله صعودی";
@@ -342,6 +345,9 @@ namespace Trade.It
             // 
             fallingColorButton.Location = new Point(380, 28);
             fallingColorButton.Name = "fallingColorButton";
+            fallingColorButton.BackColor = Color.FromArgb(205, 70, 70);
+            fallingColorButton.ForeColor = Color.White;
+            fallingColorButton.UseVisualStyleBackColor = false;
             fallingColorButton.Size = new Size(175, 50);
             fallingColorButton.TabIndex = 1;
             fallingColorButton.Text = "رنگ کندل و میله نزولی";
@@ -351,6 +357,9 @@ namespace Trade.It
             // 
             lineColorButton.Location = new Point(190, 28);
             lineColorButton.Name = "lineColorButton";
+            lineColorButton.BackColor = Color.FromArgb(35, 90, 160);
+            lineColorButton.ForeColor = Color.White;
+            lineColorButton.UseVisualStyleBackColor = false;
             lineColorButton.Size = new Size(175, 50);
             lineColorButton.TabIndex = 2;
             lineColorButton.Text = "رنگ چارت خطی";
@@ -437,6 +446,9 @@ namespace Trade.It
             // 
             trendLineColorButton.Location = new Point(625, 51);
             trendLineColorButton.Name = "trendLineColorButton";
+            trendLineColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            trendLineColorButton.ForeColor = Color.White;
+            trendLineColorButton.UseVisualStyleBackColor = false;
             trendLineColorButton.Size = new Size(115, 45);
             trendLineColorButton.TabIndex = 0;
             trendLineColorButton.Text = "خط روند";
@@ -445,6 +457,9 @@ namespace Trade.It
             // 
             trendChannelColorButton.Location = new Point(504, 51);
             trendChannelColorButton.Name = "trendChannelColorButton";
+            trendChannelColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            trendChannelColorButton.ForeColor = Color.White;
+            trendChannelColorButton.UseVisualStyleBackColor = false;
             trendChannelColorButton.Size = new Size(115, 45);
             trendChannelColorButton.TabIndex = 1;
             trendChannelColorButton.Text = "کانال";
@@ -453,6 +468,9 @@ namespace Trade.It
             // 
             horizontalDoubleArrowColorButton.Location = new Point(383, 51);
             horizontalDoubleArrowColorButton.Name = "horizontalDoubleArrowColorButton";
+            horizontalDoubleArrowColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            horizontalDoubleArrowColorButton.ForeColor = Color.White;
+            horizontalDoubleArrowColorButton.UseVisualStyleBackColor = false;
             horizontalDoubleArrowColorButton.Size = new Size(115, 45);
             horizontalDoubleArrowColorButton.TabIndex = 2;
             horizontalDoubleArrowColorButton.Text = "خط افق";
@@ -461,6 +479,9 @@ namespace Trade.It
             // 
             verticalDoubleArrowColorButton.Location = new Point(264, 51);
             verticalDoubleArrowColorButton.Name = "verticalDoubleArrowColorButton";
+            verticalDoubleArrowColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            verticalDoubleArrowColorButton.ForeColor = Color.White;
+            verticalDoubleArrowColorButton.UseVisualStyleBackColor = false;
             verticalDoubleArrowColorButton.Size = new Size(115, 45);
             verticalDoubleArrowColorButton.TabIndex = 3;
             verticalDoubleArrowColorButton.Text = "خط عمود";
@@ -469,6 +490,9 @@ namespace Trade.It
             // 
             horizontalRayColorButton.Location = new Point(143, 51);
             horizontalRayColorButton.Name = "horizontalRayColorButton";
+            horizontalRayColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            horizontalRayColorButton.ForeColor = Color.White;
+            horizontalRayColorButton.UseVisualStyleBackColor = false;
             horizontalRayColorButton.Size = new Size(115, 45);
             horizontalRayColorButton.TabIndex = 4;
             horizontalRayColorButton.Text = "نیم خط";
@@ -477,6 +501,9 @@ namespace Trade.It
             // 
             trendLineWithArrowColorButton.Location = new Point(20, 51);
             trendLineWithArrowColorButton.Name = "trendLineWithArrowColorButton";
+            trendLineWithArrowColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            trendLineWithArrowColorButton.ForeColor = Color.White;
+            trendLineWithArrowColorButton.UseVisualStyleBackColor = false;
             trendLineWithArrowColorButton.Size = new Size(115, 45);
             trendLineWithArrowColorButton.TabIndex = 5;
             trendLineWithArrowColorButton.Text = "فلش";
@@ -485,6 +512,9 @@ namespace Trade.It
             // 
             rectangleColorButton.Location = new Point(625, 112);
             rectangleColorButton.Name = "rectangleColorButton";
+            rectangleColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            rectangleColorButton.ForeColor = Color.White;
+            rectangleColorButton.UseVisualStyleBackColor = false;
             rectangleColorButton.Size = new Size(115, 46);
             rectangleColorButton.TabIndex = 6;
             rectangleColorButton.Text = "مستطیل";
@@ -493,6 +523,9 @@ namespace Trade.It
             // 
             fibonacciRetracementColorButton.Location = new Point(504, 112);
             fibonacciRetracementColorButton.Name = "fibonacciRetracementColorButton";
+            fibonacciRetracementColorButton.BackColor = Color.FromArgb(45, 105, 170);
+            fibonacciRetracementColorButton.ForeColor = Color.White;
+            fibonacciRetracementColorButton.UseVisualStyleBackColor = false;
             fibonacciRetracementColorButton.Size = new Size(115, 47);
             fibonacciRetracementColorButton.TabIndex = 7;
             fibonacciRetracementColorButton.Text = " R فیبو";
@@ -501,6 +534,9 @@ namespace Trade.It
             // 
             textLabelColorButton.Location = new Point(383, 111);
             textLabelColorButton.Name = "textLabelColorButton";
+            textLabelColorButton.BackColor = Color.FromArgb(45, 105, 170);
+            textLabelColorButton.ForeColor = Color.White;
+            textLabelColorButton.UseVisualStyleBackColor = false;
             textLabelColorButton.Size = new Size(115, 47);
             textLabelColorButton.TabIndex = 8;
             textLabelColorButton.Text = "متن";
@@ -509,6 +545,9 @@ namespace Trade.It
             // 
             pitchforkColorButton.Location = new Point(264, 111);
             pitchforkColorButton.Name = "pitchforkColorButton";
+            pitchforkColorButton.BackColor = Color.FromArgb(155, 80, 45);
+            pitchforkColorButton.ForeColor = Color.White;
+            pitchforkColorButton.UseVisualStyleBackColor = false;
             pitchforkColorButton.Size = new Size(116, 47);
             pitchforkColorButton.TabIndex = 9;
             pitchforkColorButton.Text = "چنگال";
@@ -517,6 +556,9 @@ namespace Trade.It
             // 
             fibonacciExtensionColorButton.Location = new Point(143, 111);
             fibonacciExtensionColorButton.Name = "fibonacciExtensionColorButton";
+            fibonacciExtensionColorButton.BackColor = Color.FromArgb(155, 80, 45);
+            fibonacciExtensionColorButton.ForeColor = Color.White;
+            fibonacciExtensionColorButton.UseVisualStyleBackColor = false;
             fibonacciExtensionColorButton.Size = new Size(115, 47);
             fibonacciExtensionColorButton.TabIndex = 10;
             fibonacciExtensionColorButton.Text = "X فیبو";
@@ -525,6 +567,9 @@ namespace Trade.It
             // 
             measureColorButton.Location = new Point(20, 111);
             measureColorButton.Name = "measureColorButton";
+            measureColorButton.BackColor = Color.FromArgb(155, 80, 45);
+            measureColorButton.ForeColor = Color.White;
+            measureColorButton.UseVisualStyleBackColor = false;
             measureColorButton.Size = new Size(115, 47);
             measureColorButton.TabIndex = 11;
             measureColorButton.Text = "خط کش";
@@ -969,25 +1014,25 @@ namespace Trade.It
             // 
             // Fibonacci level buttons
             // 
-            fibonacciRetracementSelectAllButton.Location = new Point(135, 466);
+            fibonacciRetracementSelectAllButton.Location = new Point(135, 470);
             fibonacciRetracementSelectAllButton.Name = "fibonacciRetracementSelectAllButton";
             fibonacciRetracementSelectAllButton.Size = new Size(90, 30);
             fibonacciRetracementSelectAllButton.TabIndex = 20;
             fibonacciRetracementSelectAllButton.Text = "انتخاب همه";
             fibonacciRetracementSelectAllButton.UseVisualStyleBackColor = true;
-            fibonacciRetracementClearAllButton.Location = new Point(35, 466);
+            fibonacciRetracementClearAllButton.Location = new Point(35, 470);
             fibonacciRetracementClearAllButton.Name = "fibonacciRetracementClearAllButton";
             fibonacciRetracementClearAllButton.Size = new Size(90, 30);
             fibonacciRetracementClearAllButton.TabIndex = 21;
             fibonacciRetracementClearAllButton.Text = "حذف همه";
             fibonacciRetracementClearAllButton.UseVisualStyleBackColor = true;
-            fibonacciExtensionSelectAllButton.Location = new Point(135, 466);
+            fibonacciExtensionSelectAllButton.Location = new Point(135, 470);
             fibonacciExtensionSelectAllButton.Name = "fibonacciExtensionSelectAllButton";
             fibonacciExtensionSelectAllButton.Size = new Size(90, 30);
             fibonacciExtensionSelectAllButton.TabIndex = 20;
             fibonacciExtensionSelectAllButton.Text = "انتخاب همه";
             fibonacciExtensionSelectAllButton.UseVisualStyleBackColor = true;
-            fibonacciExtensionClearAllButton.Location = new Point(35, 466);
+            fibonacciExtensionClearAllButton.Location = new Point(35, 470);
             fibonacciExtensionClearAllButton.Name = "fibonacciExtensionClearAllButton";
             fibonacciExtensionClearAllButton.Size = new Size(90, 30);
             fibonacciExtensionClearAllButton.TabIndex = 21;
@@ -1019,6 +1064,9 @@ namespace Trade.It
             // 
             crosshairColorButton.Location = new Point(570, 46);
             crosshairColorButton.Name = "crosshairColorButton";
+            crosshairColorButton.BackColor = Color.FromArgb(120, 120, 120);
+            crosshairColorButton.ForeColor = Color.White;
+            crosshairColorButton.UseVisualStyleBackColor = false;
             crosshairColorButton.Size = new Size(175, 34);
             crosshairColorButton.TabIndex = 0;
             crosshairColorButton.Text = "رنگ کراس";
@@ -1069,6 +1117,9 @@ namespace Trade.It
             // 
             gridColorButton.Location = new Point(570, 106);
             gridColorButton.Name = "gridColorButton";
+            gridColorButton.BackColor = Color.FromArgb(225, 225, 225);
+            gridColorButton.ForeColor = Color.Black;
+            gridColorButton.UseVisualStyleBackColor = false;
             gridColorButton.Size = new Size(175, 34);
             gridColorButton.TabIndex = 5;
             gridColorButton.Text = "رنگ گرید";
