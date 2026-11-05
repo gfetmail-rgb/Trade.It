@@ -25,11 +25,11 @@ namespace Trade.It
         public bool IsVisible { get; set; } = true;
         public Color LineColor { get; set; } = Color.FromArgb(30, 100, 220);
         public Color BackgroundColor { get; set; } = Color.White;
-        public bool ShowTenkan { get; set; } = true;
+        public bool ShowTenkan { get; set; } = false;
         public bool ShowKijun { get; set; } = true;
         public bool ShowSpanA { get; set; } = true;
         public bool ShowSpanB { get; set; } = true;
-        public bool ShowChikou { get; set; } = true;
+        public bool ShowChikou { get; set; } = false;
         public bool ShowBullishCloud { get; set; } = true;
         public bool ShowBearishCloud { get; set; } = true;
         public Color TenkanColor { get; set; } = Color.FromArgb(220, 80, 80);
@@ -69,9 +69,9 @@ namespace Trade.It
         public Color StochasticDColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color Stochastic20Color { get; set; } = Color.FromArgb(150, 150, 150);
         public Color Stochastic80Color { get; set; } = Color.FromArgb(150, 150, 150);
-        public int StochasticPeriod { get; set; } = 14;
-        public int StochasticKPeriod { get; set; } = 3;
-        public int StochasticDPeriod { get; set; } = 3;
+        public int StochasticPeriod { get; set; } = 13;
+        public int StochasticKPeriod { get; set; } = 8;
+        public int StochasticDPeriod { get; set; } = 5;
         public bool ShowStochasticRsiK { get; set; } = true;
         public bool ShowStochasticRsiD { get; set; } = true;
         public bool ShowStochasticRsi20 { get; set; } = true;
@@ -101,10 +101,10 @@ namespace Trade.It
         public Color AdxPlusDiColor { get; set; } = Color.FromArgb(50, 160, 80);
         public Color AdxMinusDiColor { get; set; } = Color.FromArgb(220, 80, 80);
         public Color Adx25Color { get; set; } = Color.FromArgb(150, 150, 150);
-        public int StochasticRsiRsiPeriod { get; set; } = 14;
-        public int StochasticRsiPeriod { get; set; } = 14;
-        public int StochasticRsiKPeriod { get; set; } = 3;
-        public int StochasticRsiDPeriod { get; set; } = 3;
+        public int StochasticRsiRsiPeriod { get; set; } = 21;
+        public int StochasticRsiPeriod { get; set; } = 13;
+        public int StochasticRsiKPeriod { get; set; } = 8;
+        public int StochasticRsiDPeriod { get; set; } = 5;
     }
 
     internal sealed partial class TradingChartControl
@@ -312,7 +312,7 @@ namespace Trade.It
             return true;
         }
 
-        public void AddMovingAverage(int period = 20)
+        public void AddMovingAverage(int period = 21)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
             indicators.Add(new ChartIndicator
@@ -324,7 +324,7 @@ namespace Trade.It
             Invalidate();
         }
 
-        public void AddExponentialMovingAverage(int period = 20)
+        public void AddExponentialMovingAverage(int period = 21)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
             indicators.Add(new ChartIndicator
@@ -336,7 +336,7 @@ namespace Trade.It
             Invalidate();
         }
 
-        public void AddRelativeStrengthIndex(int period = 14)
+        public void AddRelativeStrengthIndex(int period = 13)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
             indicators.Add(new ChartIndicator
@@ -380,7 +380,7 @@ namespace Trade.It
             return true;
         }
 
-        public void AddDonchianChannel(int period = 20)
+        public void AddDonchianChannel(int period = 21)
         {
             indicators.Add(new ChartIndicator
             {
@@ -393,7 +393,7 @@ namespace Trade.It
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void AddBollingerBands(int period = 20, double standardDeviation = 2.0)
+        public void AddBollingerBands(int period = 21, double standardDeviation = 2.0)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
             indicators.Add(new ChartIndicator
@@ -462,7 +462,7 @@ namespace Trade.It
             return true;
         }
 
-        public void AddAverageTrueRange(int period = 14)
+        public void AddAverageTrueRange(int period = 13)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count));
             indicators.Add(new ChartIndicator
@@ -477,7 +477,7 @@ namespace Trade.It
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void AddAverageDirectionalIndex(int period = 14)
+        public void AddAverageDirectionalIndex(int period = 13)
         {
             period = Math.Clamp(period, 2, Math.Max(2, points.Count - 1));
             indicators.Add(new ChartIndicator
@@ -530,7 +530,7 @@ namespace Trade.It
 
         public void AddStochastic()
         {
-            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.Stochastic, Period = 14 });
+            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.Stochastic, Period = 13 });
             InvalidateStochasticCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -550,7 +550,7 @@ namespace Trade.It
 
         public void AddStochasticRelativeStrengthIndex()
         {
-            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.StochasticRelativeStrengthIndex, Period = 14 });
+            indicators.Add(new ChartIndicator { Type = ChartIndicatorType.StochasticRelativeStrengthIndex, Period = 21 });
             InvalidateStochasticRsiCache();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
