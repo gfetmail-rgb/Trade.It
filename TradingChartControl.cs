@@ -147,7 +147,11 @@ namespace Trade.It
 
             noDateAxisLabel.BackColor = LineAppearanceSettings.CrosshairColor;
             if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
+            {
                 noDateAxisLabel.Visible = false;
+                foreach (var button in priceIndicatorButtons)
+                    button.Visible = false;
+            }
 
             noDateAxisLabel.MouseDown += NoDateAxisLabel_MouseDown;
             MouseMove += NoDateAxis_MouseMove;
