@@ -6,6 +6,8 @@ namespace Trade.It
 
         private void InitializeIndicatorMenuRuntime()
         {
+            indicatorBollingerMenuItem.Text = "Bollinger Bands";
+            indicatorDonchianMenuItem.Text = "Donchian Channel";
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
             indicatorEmaMenuItem.Click += (_, _) => AddExponentialMovingAverageToActiveChart();
             indicatorIchimokuMenuItem.Click += (_, _) => AddIchimokuToActiveChart();
