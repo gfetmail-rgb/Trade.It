@@ -41,7 +41,7 @@ namespace Trade.It
 
         private void ApplyDefaults()
         {
-            periodNumeric.Value = Math.Min(14, periodNumeric.Maximum);
+            periodNumeric.Value = Math.Min(13, periodNumeric.Maximum);
             adxLineCheckBox.Checked = true;
             adxPlusDiCheckBox.Checked = true;
             adxMinusDiCheckBox.Checked = true;
