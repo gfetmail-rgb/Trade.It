@@ -1207,5 +1207,16 @@ namespace Trade.It
             ResumeLayout(false);
         }
 
+        private static void SetDesignerButton(Button button, string text, int x, int y, Color color)
+        {
+            button.Location = new Point(x, y);
+            button.Size = new Size(175, 36);
+            button.Text = text;
+            button.BackColor = color;
+            button.ForeColor = color.GetBrightness() < 0.5f ? Color.White : Color.Black;
+            button.RightToLeft = RightToLeft.Yes;
+            button.UseVisualStyleBackColor = false;
+        }
+
     }
 }
