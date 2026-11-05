@@ -78,8 +78,8 @@ namespace Trade.It
             displacementNumeric.Value = Math.Min(26, displacementNumeric.Maximum);
             tenkanCheckBox.Checked = false;
             kijunCheckBox.Checked = true;
-            spanACheckBox.Checked = true;
-            spanBCheckBox.Checked = true;
+            spanACheckBox.Checked = false;
+            spanBCheckBox.Checked = false;
             chikouCheckBox.Checked = false;
             bullishCloudCheckBox.Checked = true;
             bearishCloudCheckBox.Checked = true;
