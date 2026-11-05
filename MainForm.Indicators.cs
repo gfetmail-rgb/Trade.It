@@ -36,7 +36,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddMovingAverage(20);
+            chart.AddMovingAverage(21);
         }
 
         private void AddIchimokuToActiveChart()
@@ -62,7 +62,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddRelativeStrengthIndex(14);
+            chart.AddRelativeStrengthIndex(13);
         }
 
         private void AddStochasticToActiveChart()
@@ -97,7 +97,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddAverageTrueRange(14);
+            chart.AddAverageTrueRange(13);
         }
 
         private void AddBollingerToActiveChart()
@@ -108,7 +108,7 @@ namespace Trade.It
                 MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            chart.AddBollingerBands(20, 2.0);
+            chart.AddBollingerBands(21, 2.0);
         }
 
         private void AddObvToActiveChart()
@@ -132,7 +132,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddDonchianChannel(20);
+            chart.AddDonchianChannel(21);
         }
 
         private void AddVwapToActiveChart()
@@ -156,7 +156,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddAverageDirectionalIndex(14);
+            chart.AddAverageDirectionalIndex(13);
         }
 
         private void AddMacdToActiveChart()
@@ -182,7 +182,7 @@ namespace Trade.It
                 return;
             }
 
-            chart.AddExponentialMovingAverage(20);
+            chart.AddExponentialMovingAverage(21);
         }
 
         private void IndicatorContextMenuStrip_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
