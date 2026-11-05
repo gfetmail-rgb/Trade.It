@@ -22,10 +22,10 @@ namespace Trade.It
         }
         private void ApplyDefaults()
         {
-            rsiPeriodNumeric.Value = Math.Min(14, rsiPeriodNumeric.Maximum);
-            stochasticPeriodNumeric.Value = Math.Min(14, stochasticPeriodNumeric.Maximum);
-            kPeriodNumeric.Value = Math.Min(3, kPeriodNumeric.Maximum);
-            dPeriodNumeric.Value = Math.Min(3, dPeriodNumeric.Maximum);
+            rsiPeriodNumeric.Value = Math.Min(21, rsiPeriodNumeric.Maximum);
+            stochasticPeriodNumeric.Value = Math.Min(13, stochasticPeriodNumeric.Maximum);
+            kPeriodNumeric.Value = Math.Min(8, kPeriodNumeric.Maximum);
+            dPeriodNumeric.Value = Math.Min(5, dPeriodNumeric.Maximum);
             showKCheckBox.Checked = true;
             showDCheckBox.Checked = true;
             show20CheckBox.Checked = true;
