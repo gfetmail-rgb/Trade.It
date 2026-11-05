@@ -76,11 +76,11 @@ namespace Trade.It
             kijunPeriodNumeric.Value = Math.Min(26, kijunPeriodNumeric.Maximum);
             spanBPeriodNumeric.Value = Math.Min(52, spanBPeriodNumeric.Maximum);
             displacementNumeric.Value = Math.Min(26, displacementNumeric.Maximum);
-            tenkanCheckBox.Checked = true;
+            tenkanCheckBox.Checked = false;
             kijunCheckBox.Checked = true;
             spanACheckBox.Checked = true;
             spanBCheckBox.Checked = true;
-            chikouCheckBox.Checked = true;
+            chikouCheckBox.Checked = false;
             bullishCloudCheckBox.Checked = true;
             bearishCloudCheckBox.Checked = true;
             SetColorButton(tenkanColorButton, Color.FromArgb(220, 80, 80));
