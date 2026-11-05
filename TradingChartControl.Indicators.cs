@@ -1307,13 +1307,6 @@ namespace Trade.It
             var upper = bollingerUpperCache!;
             var lower = bollingerLowerCache!;
 
-            // رنگ‌های انتخاب‌شده برای باند بالا و پایین، رنگ سطح داخلی باندها هستند؛
-            // رنگ خطوط مرزی مستقل می‌ماند تا انتخاب رنگ، خط را به‌جای زمینه تغییر ندهد.
-            DrawBollingerFill(g, plot, min, max, displayedCount, step, initialOffset,
-                upper, middle, indicator.BollingerUpperColor, indicator.ShowBollingerUpper);
-            DrawBollingerFill(g, plot, min, max, displayedCount, step, initialOffset,
-                middle, lower, indicator.BollingerLowerColor, indicator.ShowBollingerLower);
-
             using var middlePen = new Pen(indicator.BollingerMiddleColor, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             using var upperPen = new Pen(Color.FromArgb(50, 160, 80), Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             using var lowerPen = new Pen(Color.FromArgb(220, 80, 80), Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
