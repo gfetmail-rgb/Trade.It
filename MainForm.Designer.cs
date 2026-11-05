@@ -150,6 +150,7 @@
         private System.Windows.Forms.Button drawMeasureButton;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
+        private System.Windows.Forms.TabPage navigationTabPage;
         private System.Windows.Forms.Panel chartInfoPanel;
         private System.Windows.Forms.Label chartInfoLabel;
         private System.Windows.Forms.Label chartPlaceholderLabel;
@@ -387,6 +388,7 @@
             chartPanel = new Panel();
             chartTabControl = new TabControl();
             chartTabPage = new TabPage();
+            navigationTabPage = new TabPage();
             chartInfoPanel = new Panel();
             chartInfoLabel = new Label();
             chartPlaceholderLabel = new Label();
@@ -2005,12 +2007,24 @@
             // chartTabControl
             // 
             chartTabControl.Controls.Add(chartTabPage);
+            chartTabControl.Controls.Add(navigationTabPage);
             chartTabControl.Dock = DockStyle.Fill;
             chartTabControl.Location = new Point(0, 88);
             chartTabControl.Name = "chartTabControl";
             chartTabControl.SelectedIndex = 0;
             chartTabControl.Size = new Size(1227, 859);
             chartTabControl.TabIndex = 0;
+            // 
+            // navigationTabPage
+            // 
+            navigationTabPage.Location = new Point(4, 34);
+            navigationTabPage.Name = "navigationTabPage";
+            navigationTabPage.Padding = new Padding(3);
+            navigationTabPage.RightToLeft = RightToLeft.Yes;
+            navigationTabPage.Size = new Size(1219, 821);
+            navigationTabPage.TabIndex = 1;
+            navigationTabPage.Text = "پیمایش خودکار";
+            navigationTabPage.UseVisualStyleBackColor = true;
             // 
             // chartTabPage
             // 
