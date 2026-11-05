@@ -11,7 +11,6 @@ namespace Trade.It
     public partial class SettingsForm : Form
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
-        private GroupBox? fibonacciLevelsGroupBox;
 
         public ChartDisplayMode ChartDisplayMode
         {
@@ -64,96 +63,51 @@ namespace Trade.It
 
         private void InitializeFibonacciLevelControls()
         {
-            // فیبوناچی‌ها در ستون مستقل کنار بخش ابزارهای رسم قرار می‌گیرند
-            // تا ارتفاع فرم بی‌دلیل زیاد نشود.
-            fibonacciLevelsGroupBox = new GroupBox
+            fibonacciRetracementCheckBoxes.AddRange(new CheckBox[]
             {
-                Text = "سطوح فیبوناچی",
-                RightToLeft = RightToLeft.Yes,
-                Location = new Point(790, 420),
-                Size = new Size(520, 267),
-                TabStop = false
-            };
-
-            var retracementGroup = CreateFibonacciLevelGroup(
-                "فیبوناچی دو نقطه‌ای",
-                ChartAppearanceSettings.GetFibonacciRetracementLevels(),
-                ChartAppearanceSettings.FibonacciRetracementLevelsMask,
-                fibonacciRetracementCheckBoxes,
-                new Point(260, 25));
-
-            var extensionGroup = CreateFibonacciLevelGroup(
-                "فیبوناچی سه نقطه‌ای",
-                ChartAppearanceSettings.GetAllFibonacciLevels(),
-                ChartAppearanceSettings.FibonacciExtensionLevelsMask,
-                fibonacciExtensionCheckBoxes,
-                new Point(10, 25));
-
-            fibonacciLevelsGroupBox.Controls.Add(retracementGroup);
-            fibonacciLevelsGroupBox.Controls.Add(extensionGroup);
-            Controls.Add(fibonacciLevelsGroupBox);
-            fibonacciLevelsGroupBox.BringToFront();
-
-            crosshairGridGroupBox.Location = new Point(16, 702);
-            okButton.Location = new Point(535, 878);
-            cancelButton.Location = new Point(648, 878);
-            ClientSize = new Size(1325, 937);
-        }
-
-        private static GroupBox CreateFibonacciLevelGroup(
-            string title,
-            IReadOnlyList<(float Value, string Text)> levels,
-            int mask,
-            List<CheckBox> target,
-            Point location)
-        {
-            var group = new GroupBox
+                fibonacciRetracementLevel0CheckBox,
+                fibonacciRetracementLevel1CheckBox,
+                fibonacciRetracementLevel2CheckBox,
+                fibonacciRetracementLevel3CheckBox,
+                fibonacciRetracementLevel4CheckBox,
+                fibonacciRetracementLevel5CheckBox,
+                fibonacciRetracementLevel6CheckBox,
+                fibonacciRetracementLevel7CheckBox,
+                fibonacciRetracementLevel8CheckBox,
+                fibonacciRetracementLevel9CheckBox,
+                fibonacciRetracementLevel10CheckBox,
+                fibonacciRetracementLevel11CheckBox,
+                fibonacciRetracementLevel12CheckBox,
+                fibonacciRetracementLevel13CheckBox,
+                fibonacciRetracementLevel14CheckBox
+            });
+            fibonacciExtensionCheckBoxes.AddRange(new CheckBox[]
             {
-                Text = title,
-                RightToLeft = RightToLeft.Yes,
-                Location = location,
-                Size = new Size(250, 235),
-                TabStop = false
-            };
+                fibonacciExtensionLevel0CheckBox,
+                fibonacciExtensionLevel1CheckBox,
+                fibonacciExtensionLevel2CheckBox,
+                fibonacciExtensionLevel3CheckBox,
+                fibonacciExtensionLevel4CheckBox,
+                fibonacciExtensionLevel5CheckBox,
+                fibonacciExtensionLevel6CheckBox,
+                fibonacciExtensionLevel7CheckBox,
+                fibonacciExtensionLevel8CheckBox,
+                fibonacciExtensionLevel9CheckBox
+            });
 
-            for (var i = 0; i < levels.Count; i++)
-            {
-                var row = i / 4;
-                var column = i % 4;
-                var checkBox = new CheckBox
-                {
-                    AutoSize = false,
-                    Text = levels[i].Text,
-                    RightToLeft = RightToLeft.Yes,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    Location = new Point(185 - column * 60, 35 + row * 42),
-                    Size = new Size(65, 28),
-                    Checked = (mask & (1 << i)) != 0,
-                    TabIndex = i
-                };
-                target.Add(checkBox);
-                group.Controls.Add(checkBox);
-            }
+            var retracementMask = ChartAppearanceSettings.FibonacciRetracementLevelsMask;
+            var extensionMask = ChartAppearanceSettings.FibonacciExtensionLevelsMask;
 
-            var selectAllButton = new Button
-            {
-                Text = "انتخاب همه",
-                Location = new Point(145, 190),
-                Size = new Size(75, 30)
-            };
-            var clearAllButton = new Button
-            {
-                Text = "حذف همه",
-                Location = new Point(55, 190),
-                Size = new Size(75, 30)
-            };
+            for (var i = 0; i < fibonacciRetracementCheckBoxes.Count; i++)
+                fibonacciRetracementCheckBoxes[i].Checked = (retracementMask & (1 << i)) != 0;
 
-            selectAllButton.Click += (_, _) => target.ForEach(x => x.Checked = true);
-            clearAllButton.Click += (_, _) => target.ForEach(x => x.Checked = false);
-            group.Controls.Add(selectAllButton);
-            group.Controls.Add(clearAllButton);
+            for (var i = 0; i < fibonacciExtensionCheckBoxes.Count; i++)
+                fibonacciExtensionCheckBoxes[i].Checked = (extensionMask & (1 << i)) != 0;
 
-            return group;
+            fibonacciRetracementSelectAllButton.Click += (_, _) => fibonacciRetracementCheckBoxes.ForEach(x => x.Checked = true);
+            fibonacciRetracementClearAllButton.Click += (_, _) => fibonacciRetracementCheckBoxes.ForEach(x => x.Checked = false);
+            fibonacciExtensionSelectAllButton.Click += (_, _) => fibonacciExtensionCheckBoxes.ForEach(x => x.Checked = true);
+            fibonacciExtensionClearAllButton.Click += (_, _) => fibonacciExtensionCheckBoxes.ForEach(x => x.Checked = false);
         }
 
         private static int GetSelectedFibonacciLevelsMask(List<CheckBox> checkBoxes)
