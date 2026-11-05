@@ -18,7 +18,6 @@ namespace Trade.It
         // آخرین تنظیمات عمومی پنل حجم؛ برای چارت‌های جدید استفاده می‌شود.
         private bool lastVolumePanelVisible = true;
         private double lastVolumePanelRatio = 0.11;
-        private string? lastChartDataLoadError;
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
@@ -819,17 +818,6 @@ namespace Trade.It
                 var points = LoadChartData(definition, symbol);
                 if (points.Count == 0)
                 {
-                    var diagnostic = string.IsNullOrWhiteSpace(lastChartDataLoadError)
-                        ? "lastChartDataLoadError خالی است."
-                        : lastChartDataLoadError;
-
-                    MessageBox.Show(
-                        this,
-                        $"نماد: {symbol}{Environment.NewLine}{diagnostic}",
-                        "تشخیص بارگذاری چارت",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
                     chartInfoLabel.Text = $"داده قابل رسم برای «{symbol}» پیدا نشد.";
                     chartPlaceholderLabel.Visible = true;
                     return;
@@ -1305,7 +1293,6 @@ namespace Trade.It
             if (definition == null || string.IsNullOrWhiteSpace(symbol) ||
                 string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
             {
-                lastChartDataLoadError = $"مسیر داده نامعتبر است: [{definition?.DataPath}]";
                 return result;
             }
 
@@ -1323,8 +1310,6 @@ namespace Trade.It
 
             if (openColumn <= 0 || highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0)
             {
-                lastChartDataLoadError =
-                    $"نگاشت OHLC ناقص است: Open={openColumn}, High={highColumn}, Low={lowColumn}, Close={closeColumn}.";
                 return result;
             }
 
@@ -1401,20 +1386,11 @@ namespace Trade.It
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                lastChartDataLoadError = $"خطا هنگام خواندن داده: {ex.Message}";
                 return new List<TradingChartPoint>();
             }
 
-            if (result.Count == 0)
-            {
-                var diagnosticFiles = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
-                lastChartDataLoadError =
-                    $"Files={diagnosticFiles.Count} [{string.Join(" | ", diagnosticFiles.Select(Path.GetFileName))}]; " +
-                    $"Mappings: Date={dateColumn}, Time={timeColumn}, Open={openColumn}, High={highColumn}, Low={lowColumn}, Close={closeColumn}, Volume={volumeColumn}, Symbol={symbolColumn}; " +
-                    $"Separator=[{definition.Separator}]; HasHeader={definition.HasHeader}; SymbolSource={definition.SymbolSource}; Calendar={definition.Calendar}; NoDateTime={definition.NoDateTime}";
-            }
 
             return result
                 .OrderBy(x => x.Date)
