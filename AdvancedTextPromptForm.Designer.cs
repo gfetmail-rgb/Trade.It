@@ -42,7 +42,6 @@ namespace Trade.It
             buttonsPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
             buttonsPanel.Location = new System.Drawing.Point(0, 105);
             buttonsPanel.Name = "buttonsPanel";
-            buttonsPanel.Padding = new System.Windows.Forms.Padding(5);
             buttonsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             buttonsPanel.Size = new System.Drawing.Size(360, 45);
             buttonsPanel.TabIndex = 1;
@@ -71,7 +70,7 @@ namespace Trade.It
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = cancelButton;
-            ClientSize = new System.Drawing.Size(360, 150);
+            Size = new System.Drawing.Size(360, 150);
             Controls.Add(textBox);
             Controls.Add(buttonsPanel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
