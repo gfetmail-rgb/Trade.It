@@ -9,11 +9,81 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Remove="SymbolDefinitionForm.GridDisplay.resx" />
+		<EmbeddedResource Remove="SymbolDefinitionForm.GridDisplay.resx" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="SymbolDefinitionForm.GridDisplay.resx" />
+		<None Update="SymbolDefinitionForm.GridDisplay.resx">
+			<DependentUpon>SymbolDefinitionForm.GridDisplay.cs</DependentUpon>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="MainForm.ChartTabs.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.ChartToolbarStateFixes.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.Charts.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.FullScreen.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.Indicators.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.KeyboardNavigation.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.Printing.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.Settings.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.UiFixes.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+
+		<Compile Update="TradingChartControl.AdvancedDrawing.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.ExtraDrawingTools.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.Fixes.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.Indicators.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.InitialView.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.NoDateAxis.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.Rendering.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.Support.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.TopMargin.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.VerticalFit.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="TradingChartControl.Volume.cs">
+			<DependentUpon>TradingChartControl.cs</DependentUpon>
+		</Compile>
+
+		<Compile Update="SymbolDefinitionForm.GridDisplay.cs">
+			<DependentUpon>SymbolDefinitionForm.cs</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
