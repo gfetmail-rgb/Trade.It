@@ -21,9 +21,9 @@ namespace Trade.It
         }
         private void ApplyDefaults()
         {
-            periodNumeric.Value = Math.Min(14, periodNumeric.Maximum);
-            kPeriodNumeric.Value = Math.Min(3, kPeriodNumeric.Maximum);
-            dPeriodNumeric.Value = Math.Min(3, dPeriodNumeric.Maximum);
+            periodNumeric.Value = Math.Min(13, periodNumeric.Maximum);
+            kPeriodNumeric.Value = Math.Min(8, kPeriodNumeric.Maximum);
+            dPeriodNumeric.Value = Math.Min(5, dPeriodNumeric.Maximum);
             showKCheckBox.Checked = true;
             showDCheckBox.Checked = true;
             show20CheckBox.Checked = true;
