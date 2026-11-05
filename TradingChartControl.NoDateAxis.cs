@@ -2,53 +2,7 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
-        private static readonly bool noDateAxisFixInitialized = InitializeNoDateAxisFix();
-        private static readonly HashSet<TradingChartControl> noDateAxisFixControls = new();
-        private Label? noDateAxisLabel;
 
-        private static bool InitializeNoDateAxisFix()
-        {
-            Application.Idle += AttachNoDateAxisFixes;
-            return true;
-        }
-
-        private static void AttachNoDateAxisFixes(object? sender, EventArgs e)
-        {
-            foreach (Form form in Application.OpenForms)
-                AttachNoDateAxisFixes(form);
-        }
-
-        private static void AttachNoDateAxisFixes(Control parent)
-        {
-            foreach (Control control in parent.Controls)
-            {
-                if (control is TradingChartControl chart && noDateAxisFixControls.Add(chart))
-                {
-                    chart.noDateAxisLabel = new Label
-                    {
-                        AutoSize = false,
-                        BackColor = LineAppearanceSettings.CrosshairColor,
-                        ForeColor = Color.White,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        Visible = false,
-                        TabStop = false,
-                        BorderStyle = BorderStyle.None
-                    };
-                    chart.noDateAxisLabel.MouseDown += (_, args) =>
-                    {
-                        if (args.Button == MouseButtons.Left && chart.ExtraDrawingActive)
-                            chart.CancelExtraDrawing();
-                    };
-                    chart.Controls.Add(chart.noDateAxisLabel);
-                    chart.noDateAxisLabel.BringToFront();
-                    chart.MouseMove += chart.NoDateAxis_MouseMove;
-                    chart.Resize += chart.NoDateAxis_Resize;
-                }
-
-                if (control.HasChildren)
-                    AttachNoDateAxisFixes(control);
-            }
-        }
 
         private void NoDateAxis_MouseMove(object? sender, MouseEventArgs e)
         {
