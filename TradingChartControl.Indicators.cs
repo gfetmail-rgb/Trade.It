@@ -171,6 +171,7 @@ namespace Trade.It
         {
             var plot = GetPlotRectangle();
             var font = new Font(Font.FontFamily, Math.Max(9f, Font.Size), FontStyle.Bold);
+            var buttonHeight = Math.Max(34, font.Height + 12);
             try
             {
                 var items = indicators
@@ -222,7 +223,7 @@ namespace Trade.It
                             Text = item.Title,
                             Tag = indicator,
                             Font = (Font)font.Clone(),
-                            Height = 28,
+                            Height = buttonHeight,
                             Width = 100,
                             AutoSize = false,
                             TabStop = false,
@@ -266,7 +267,7 @@ namespace Trade.It
                     }
                     var textWidth = TextRenderer.MeasureText(button.Text, button.Font).Width;
                     button.Width = Math.Clamp(textWidth + 20, 90, 320);
-                    button.Height = 28;
+                    button.Height = buttonHeight;
                     button.Location = new Point(Math.Max(plot.Left + 2, plot.Right - button.Width - 3), y);
                     button.BringToFront();
                     UpdatePriceIndicatorButtonStyle(button, indicator);
