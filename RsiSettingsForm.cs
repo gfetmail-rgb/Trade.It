@@ -38,7 +38,7 @@ namespace Trade.It
 
         private void ApplyDefaults()
         {
-            periodNumeric.Value = Math.Min(14, periodNumeric.Maximum);
+            periodNumeric.Value = Math.Min(13, periodNumeric.Maximum);
             rsiLineCheckBox.Checked = true;
             rsi30CheckBox.Checked = true;
             rsi70CheckBox.Checked = true;
