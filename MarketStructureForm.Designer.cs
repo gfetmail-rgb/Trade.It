@@ -6,18 +6,7 @@ partial class MarketStructureForm
     private TabControl tabs;
     private TabPage marketPage;
     private TreeView marketTreeView;
-    private FlowLayoutPanel marketButtons;
     private TextBox marketTitleTextBox;
-    private Button addRootButton;
-    private Button importMarketStructureButton;
-    private Button exportMarketStructureButton;
-    private Button addChildButton;
-    private Button renameButton;
-    private Button deleteButton;
-    private Button moveUpButton;
-    private Button moveDownButton;
-    private Panel bottomPanel;
-    private Button closeButton;
 
     protected override void Dispose(bool disposing)
     {
@@ -33,21 +22,17 @@ partial class MarketStructureForm
         marketPage = new TabPage();
         marketTreeView = new TreeView();
         marketTitleTextBox = new TextBox();
-        marketButtons = new FlowLayoutPanel();
+        closeButton = new Button();
+        addChildButton = new Button();
+        exportMarketStructureButton = new Button();
         moveDownButton = new Button();
         moveUpButton = new Button();
         deleteButton = new Button();
         renameButton = new Button();
         addRootButton = new Button();
         importMarketStructureButton = new Button();
-        exportMarketStructureButton = new Button();
-        addChildButton = new Button();
-        bottomPanel = new Panel();
-        closeButton = new Button();
         tabs.SuspendLayout();
         marketPage.SuspendLayout();
-        marketButtons.SuspendLayout();
-        bottomPanel.SuspendLayout();
         SuspendLayout();
         // 
         // tabs
@@ -58,19 +43,27 @@ partial class MarketStructureForm
         tabs.Margin = new Padding(4, 5, 4, 5);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
-        tabs.Size = new Size(1500, 1123);
+        tabs.Size = new Size(1500, 823);
         tabs.TabIndex = 0;
         // 
         // marketPage
         // 
+        marketPage.Controls.Add(closeButton);
+        marketPage.Controls.Add(addChildButton);
+        marketPage.Controls.Add(exportMarketStructureButton);
+        marketPage.Controls.Add(moveDownButton);
+        marketPage.Controls.Add(moveUpButton);
+        marketPage.Controls.Add(deleteButton);
+        marketPage.Controls.Add(renameButton);
+        marketPage.Controls.Add(addRootButton);
+        marketPage.Controls.Add(importMarketStructureButton);
         marketPage.Controls.Add(marketTreeView);
         marketPage.Controls.Add(marketTitleTextBox);
-        marketPage.Controls.Add(marketButtons);
         marketPage.Location = new Point(4, 34);
         marketPage.Margin = new Padding(4, 5, 4, 5);
         marketPage.Name = "marketPage";
         marketPage.Padding = new Padding(11, 13, 11, 13);
-        marketPage.Size = new Size(1492, 1085);
+        marketPage.Size = new Size(1492, 785);
         marketPage.TabIndex = 0;
         marketPage.Text = "ساختار بازارها";
         marketPage.UseVisualStyleBackColor = true;
@@ -83,120 +76,110 @@ partial class MarketStructureForm
         marketTreeView.Margin = new Padding(4, 5, 4, 5);
         marketTreeView.Name = "marketTreeView";
         marketTreeView.RightToLeft = RightToLeft.Yes;
-        marketTreeView.Size = new Size(1470, 941);
+        marketTreeView.Size = new Size(1470, 709);
         marketTreeView.TabIndex = 0;
         // 
         // marketTitleTextBox
         // 
         marketTitleTextBox.BackColor = Color.Bisque;
         marketTitleTextBox.Dock = DockStyle.Bottom;
-        marketTitleTextBox.Location = new Point(11, 930);
+        marketTitleTextBox.Location = new Point(11, 722);
         marketTitleTextBox.Margin = new Padding(4, 5, 4, 5);
-        marketTitleTextBox.Name = "marketTitleTextBox";
-        marketTitleTextBox.PlaceholderText = "نام‌ها را از Excel در خط‌های جداگانه بچسبانید؛ بازار سطح اول را انتخاب کنید و «ثبت / افزودن زیرمجموعه» را بزنید.";
         marketTitleTextBox.Multiline = true;
-        marketTitleTextBox.ScrollBars = ScrollBars.Vertical;
-        marketTitleTextBox.Size = new Size(1470, 55);
+        marketTitleTextBox.Name = "marketTitleTextBox";
+        marketTitleTextBox.Size = new Size(1470, 50);
         marketTitleTextBox.TabIndex = 1;
         // 
-        // marketButtons
+        // closeButton
         // 
-        marketButtons.Controls.Add(moveDownButton);
-        marketButtons.Controls.Add(moveUpButton);
-        marketButtons.Controls.Add(deleteButton);
-        marketButtons.Controls.Add(renameButton);
-        marketButtons.Controls.Add(addChildButton);
-        marketButtons.Controls.Add(addRootButton);
-        marketButtons.Controls.Add(importMarketStructureButton);
-        marketButtons.Controls.Add(exportMarketStructureButton);
-        marketButtons.Dock = DockStyle.Bottom;
-        marketButtons.FlowDirection = FlowDirection.RightToLeft;
-        marketButtons.Location = new Point(11, 985);
-        marketButtons.Margin = new Padding(4, 5, 4, 5);
-        marketButtons.Name = "marketButtons";
-        marketButtons.Padding = new Padding(0, 12, 0, 0);
-        marketButtons.Size = new Size(1470, 87);
-        marketButtons.TabIndex = 2;
-        marketButtons.WrapContents = false;
+        closeButton.Location = new Point(184, 728);
+        closeButton.Margin = new Padding(4, 5, 4, 5);
+        closeButton.Name = "closeButton";
+        closeButton.Size = new Size(102, 38);
+        closeButton.TabIndex = 8;
+        closeButton.Text = "بستن";
+        closeButton.UseVisualStyleBackColor = true;
+        // 
+        // addChildButton
+        // 
+        addChildButton.Location = new Point(294, 728);
+        addChildButton.Margin = new Padding(4, 5, 4, 5);
+        addChildButton.Name = "addChildButton";
+        addChildButton.Size = new Size(128, 38);
+        addChildButton.TabIndex = 13;
+        addChildButton.Text = "ثبت / افزودن زیرمجموعه";
+        addChildButton.UseVisualStyleBackColor = true;
+        // 
+        // exportMarketStructureButton
+        // 
+        exportMarketStructureButton.Location = new Point(429, 726);
+        exportMarketStructureButton.Name = "exportMarketStructureButton";
+        exportMarketStructureButton.Size = new Size(125, 40);
+        exportMarketStructureButton.TabIndex = 16;
+        exportMarketStructureButton.Text = "خروجی اکسل";
         // 
         // moveDownButton
         // 
-        moveDownButton.Location = new Point(4, 17);
+        moveDownButton.Location = new Point(561, 728);
         moveDownButton.Margin = new Padding(4, 5, 4, 5);
         moveDownButton.Name = "moveDownButton";
         moveDownButton.Size = new Size(130, 38);
-        moveDownButton.TabIndex = 0;
+        moveDownButton.TabIndex = 9;
         moveDownButton.Text = "انتقال به پایین";
         moveDownButton.UseVisualStyleBackColor = true;
         // 
         // moveUpButton
         // 
-        moveUpButton.Location = new Point(142, 17);
+        moveUpButton.Location = new Point(699, 728);
         moveUpButton.Margin = new Padding(4, 5, 4, 5);
         moveUpButton.Name = "moveUpButton";
         moveUpButton.Size = new Size(129, 38);
-        moveUpButton.TabIndex = 1;
+        moveUpButton.TabIndex = 10;
         moveUpButton.Text = "انتقال به بالا";
         moveUpButton.UseVisualStyleBackColor = true;
         // 
         // deleteButton
         // 
-        deleteButton.Location = new Point(279, 17);
+        deleteButton.Location = new Point(836, 728);
         deleteButton.Margin = new Padding(4, 5, 4, 5);
         deleteButton.Name = "deleteButton";
         deleteButton.Size = new Size(107, 38);
-        deleteButton.TabIndex = 2;
+        deleteButton.TabIndex = 11;
         deleteButton.Text = "حذف";
         deleteButton.UseVisualStyleBackColor = true;
         // 
         // renameButton
         // 
-        renameButton.Location = new Point(394, 17);
+        renameButton.Location = new Point(951, 728);
         renameButton.Margin = new Padding(4, 5, 4, 5);
         renameButton.Name = "renameButton";
         renameButton.Size = new Size(107, 38);
-        renameButton.TabIndex = 3;
+        renameButton.TabIndex = 12;
         renameButton.Text = "تغییر نام";
         renameButton.UseVisualStyleBackColor = true;
         // 
-        // addChildButton
+        // addRootButton
         // 
-        addChildButton.Location = new Point(509, 17);
-        addChildButton.Margin = new Padding(4, 5, 4, 5);
-        addChildButton.Name = "addChildButton";
-        addChildButton.Size = new Size(128, 38);
-        addChildButton.TabIndex = 4;
-        addChildButton.Text = "ثبت / افزودن زیرمجموعه";
-        addChildButton.UseVisualStyleBackColor = true;
+        addRootButton.Location = new Point(1065, 726);
+        addRootButton.Name = "addRootButton";
+        addRootButton.Size = new Size(102, 40);
+        addRootButton.TabIndex = 14;
+        addRootButton.Text = "گره جدید";
         // 
-        // bottomPanel
+        // importMarketStructureButton
         // 
-        bottomPanel.Controls.Add(closeButton);
-        bottomPanel.Dock = DockStyle.Bottom;
-        bottomPanel.Location = new Point(0, 1123);
-        bottomPanel.Margin = new Padding(4, 5, 4, 5);
-        bottomPanel.Name = "bottomPanel";
-        bottomPanel.Size = new Size(1500, 44);
-        bottomPanel.TabIndex = 1;
-        // 
-        // closeButton
-        // 
-        closeButton.Dock = DockStyle.Right;
-        closeButton.Location = new Point(1420, 0);
-        closeButton.Margin = new Padding(4, 5, 4, 5);
-        closeButton.Name = "closeButton";
-        closeButton.Size = new Size(80, 44);
-        closeButton.TabIndex = 0;
-        closeButton.Text = "بستن";
-        closeButton.UseVisualStyleBackColor = true;
+        importMarketStructureButton.Location = new Point(1173, 726);
+        importMarketStructureButton.Name = "importMarketStructureButton";
+        importMarketStructureButton.Size = new Size(118, 40);
+        importMarketStructureButton.TabIndex = 15;
+        importMarketStructureButton.Text = "ورودی اکسل";
         // 
         // MarketStructureForm
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1500, 1167);
+        ClientSize = new Size(1500, 823);
         Controls.Add(tabs);
-        Controls.Add(bottomPanel);
         Margin = new Padding(4, 5, 4, 5);
         MinimumSize = new Size(1205, 879);
         Name = "MarketStructureForm";
@@ -207,8 +190,6 @@ partial class MarketStructureForm
         tabs.ResumeLayout(false);
         marketPage.ResumeLayout(false);
         marketPage.PerformLayout();
-        marketButtons.ResumeLayout(false);
-        bottomPanel.ResumeLayout(false);
         ResumeLayout(false);
     }
 
@@ -220,4 +201,13 @@ partial class MarketStructureForm
         button.Text = text;
         button.UseVisualStyleBackColor = true;
     }
+    private Button closeButton;
+    private Button addChildButton;
+    private Button exportMarketStructureButton;
+    private Button moveDownButton;
+    private Button moveUpButton;
+    private Button deleteButton;
+    private Button renameButton;
+    private Button addRootButton;
+    private Button importMarketStructureButton;
 }

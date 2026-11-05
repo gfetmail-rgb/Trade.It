@@ -34,14 +34,10 @@ partial class SymbolDefinitionForm
         components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SymbolDefinitionForm));
         DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
         symbolTextBox = new TextBox();
         symbolSearchTextBox = new TextBox();
         nameTextBox = new TextBox();
@@ -117,7 +113,7 @@ partial class SymbolDefinitionForm
         // 
         descriptionTextBox.Location = new Point(175, 76);
         descriptionTextBox.Name = "descriptionTextBox";
-        descriptionTextBox.Size = new Size(620, 30);
+        descriptionTextBox.Size = new Size(620, 29);
         descriptionTextBox.TabIndex = 5;
         // 
         // newButton
@@ -218,14 +214,14 @@ partial class SymbolDefinitionForm
         symbolsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
         symbolsDataGridView.ColumnHeadersHeight = 34;
         symbolsDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowNumberColumn, symbolTitleColumn, nameColumn, marketLevel1Column, marketLevel2Column, descriptionColumn });
-        dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleRight;
-        dataGridViewCellStyle9.BackColor = SystemColors.Window;
-        dataGridViewCellStyle9.Font = new Font("Tahoma", 9F);
-        dataGridViewCellStyle9.ForeColor = SystemColors.ControlText;
-        dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-        dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-        dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
-        symbolsDataGridView.DefaultCellStyle = dataGridViewCellStyle9;
+        dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleRight;
+        dataGridViewCellStyle5.BackColor = SystemColors.Window;
+        dataGridViewCellStyle5.Font = new Font("Tahoma", 9F);
+        dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
+        dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+        symbolsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
         symbolsDataGridView.Location = new Point(10, 212);
         symbolsDataGridView.MultiSelect = false;
         symbolsDataGridView.Name = "symbolsDataGridView";
@@ -319,12 +315,6 @@ partial class SymbolDefinitionForm
         label30.TabIndex = 19;
         label30.Text = "گره سطح اول ساختار بازار";
         label30.TextAlign = ContentAlignment.MiddleRight;
-        label31.Location = new Point(1050, 9);
-        label31.Name = "label31";
-        label31.Size = new Size(230, 25);
-        label31.TabIndex = 22;
-        label31.Text = "گره سطح دوم ساختار بازار";
-        label31.TextAlign = ContentAlignment.MiddleRight;
         // 
         // label11
         // 
@@ -334,6 +324,15 @@ partial class SymbolDefinitionForm
         label11.TabIndex = 21;
         label11.Text = "توضیحات";
         label11.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // label31
+        // 
+        label31.Location = new Point(1036, 9);
+        label31.Name = "label31";
+        label31.Size = new Size(230, 25);
+        label31.TabIndex = 22;
+        label31.Text = "گره سطح دوم ساختار بازار";
+        label31.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // toolTip1
         // 

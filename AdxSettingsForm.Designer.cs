@@ -30,100 +30,175 @@ namespace Trade.It
             okButton = new Button();
             defaultButton = new Button();
             cancelButton = new Button();
-
             ((System.ComponentModel.ISupportInitialize)periodNumeric).BeginInit();
             SuspendLayout();
-
+            // 
+            // periodLabel
+            // 
             periodLabel.AutoSize = true;
-            periodLabel.Location = new Point(300, 22);
-            periodLabel.Size = new Size(70, 25);
+            periodLabel.Location = new Point(13, 30);
+            periodLabel.Margin = new Padding(4, 0, 4, 0);
+            periodLabel.Name = "periodLabel";
+            periodLabel.Size = new Size(49, 25);
+            periodLabel.TabIndex = 0;
             periodLabel.Text = "دوره:";
-
-            periodNumeric.Location = new Point(150, 17);
-            periodNumeric.Size = new Size(125, 33);
+            // 
+            // periodNumeric
+            // 
+            periodNumeric.Location = new Point(70, 30);
+            periodNumeric.Margin = new Padding(4, 5, 4, 5);
+            periodNumeric.Name = "periodNumeric";
+            periodNumeric.Size = new Size(95, 31);
+            periodNumeric.TabIndex = 1;
             periodNumeric.TextAlign = HorizontalAlignment.Center;
-
+            // 
+            // adxLineCheckBox
+            // 
             adxLineCheckBox.AutoSize = true;
-            adxLineCheckBox.Location = new Point(280, 66);
-            adxLineCheckBox.Size = new Size(110, 29);
+            adxLineCheckBox.Location = new Point(186, 98);
+            adxLineCheckBox.Margin = new Padding(4, 5, 4, 5);
+            adxLineCheckBox.Name = "adxLineCheckBox";
+            adxLineCheckBox.Size = new Size(104, 29);
+            adxLineCheckBox.TabIndex = 2;
             adxLineCheckBox.Text = "خط ADX";
-            adxLineColorButton.Location = new Point(120, 62);
-            adxLineColorButton.Size = new Size(125, 34);
+            // 
+            // adxPlusDiCheckBox
+            // 
+            adxPlusDiCheckBox.AutoSize = true;
+            adxPlusDiCheckBox.Location = new Point(186, 165);
+            adxPlusDiCheckBox.Margin = new Padding(4, 5, 4, 5);
+            adxPlusDiCheckBox.Name = "adxPlusDiCheckBox";
+            adxPlusDiCheckBox.Size = new Size(68, 29);
+            adxPlusDiCheckBox.TabIndex = 4;
+            adxPlusDiCheckBox.Text = "+DI";
+            // 
+            // adxMinusDiCheckBox
+            // 
+            adxMinusDiCheckBox.AutoSize = true;
+            adxMinusDiCheckBox.Location = new Point(186, 231);
+            adxMinusDiCheckBox.Margin = new Padding(4, 5, 4, 5);
+            adxMinusDiCheckBox.Name = "adxMinusDiCheckBox";
+            adxMinusDiCheckBox.Size = new Size(63, 29);
+            adxMinusDiCheckBox.TabIndex = 6;
+            adxMinusDiCheckBox.Text = "-DI";
+            // 
+            // adx25CheckBox
+            // 
+            adx25CheckBox.AutoSize = true;
+            adx25CheckBox.Location = new Point(186, 298);
+            adx25CheckBox.Margin = new Padding(4, 5, 4, 5);
+            adx25CheckBox.Name = "adx25CheckBox";
+            adx25CheckBox.Size = new Size(87, 29);
+            adx25CheckBox.TabIndex = 8;
+            adx25CheckBox.Text = "خط 25";
+            // 
+            // adxLineColorButton
+            // 
             adxLineColorButton.BackColor = Color.FromArgb(30, 100, 220);
             adxLineColorButton.ForeColor = Color.White;
+            adxLineColorButton.Location = new Point(27, 82);
+            adxLineColorButton.Margin = new Padding(4, 5, 4, 5);
+            adxLineColorButton.Name = "adxLineColorButton";
+            adxLineColorButton.Size = new Size(138, 57);
+            adxLineColorButton.TabIndex = 3;
             adxLineColorButton.Text = "انتخاب رنگ";
             adxLineColorButton.UseVisualStyleBackColor = false;
-            adxPlusDiCheckBox.AutoSize = true;
-            adxPlusDiCheckBox.Location = new Point(280, 106);
-            adxPlusDiCheckBox.Size = new Size(110, 29);
-            adxPlusDiCheckBox.Text = "+DI";
-            adxPlusDiColorButton.Location = new Point(120, 102);
-            adxPlusDiColorButton.Size = new Size(125, 34);
+            // 
+            // adxPlusDiColorButton
+            // 
             adxPlusDiColorButton.BackColor = Color.FromArgb(50, 160, 80);
             adxPlusDiColorButton.ForeColor = Color.White;
+            adxPlusDiColorButton.Location = new Point(27, 149);
+            adxPlusDiColorButton.Margin = new Padding(4, 5, 4, 5);
+            adxPlusDiColorButton.Name = "adxPlusDiColorButton";
+            adxPlusDiColorButton.Size = new Size(138, 57);
+            adxPlusDiColorButton.TabIndex = 5;
             adxPlusDiColorButton.Text = "انتخاب رنگ";
             adxPlusDiColorButton.UseVisualStyleBackColor = false;
-            adxMinusDiCheckBox.AutoSize = true;
-            adxMinusDiCheckBox.Location = new Point(280, 146);
-            adxMinusDiCheckBox.Size = new Size(110, 29);
-            adxMinusDiCheckBox.Text = "-DI";
-            adxMinusDiColorButton.Location = new Point(120, 142);
-            adxMinusDiColorButton.Size = new Size(125, 34);
+            // 
+            // adxMinusDiColorButton
+            // 
             adxMinusDiColorButton.BackColor = Color.FromArgb(220, 80, 80);
             adxMinusDiColorButton.ForeColor = Color.White;
+            adxMinusDiColorButton.Location = new Point(27, 216);
+            adxMinusDiColorButton.Margin = new Padding(4, 5, 4, 5);
+            adxMinusDiColorButton.Name = "adxMinusDiColorButton";
+            adxMinusDiColorButton.Size = new Size(138, 57);
+            adxMinusDiColorButton.TabIndex = 7;
             adxMinusDiColorButton.Text = "انتخاب رنگ";
             adxMinusDiColorButton.UseVisualStyleBackColor = false;
-            adx25CheckBox.AutoSize = true;
-            adx25CheckBox.Location = new Point(280, 186);
-            adx25CheckBox.Size = new Size(110, 29);
-            adx25CheckBox.Text = "خط 25";
-            adx25ColorButton.Location = new Point(120, 182);
-            adx25ColorButton.Size = new Size(125, 34);
+            // 
+            // adx25ColorButton
+            // 
             adx25ColorButton.BackColor = Color.FromArgb(150, 150, 150);
             adx25ColorButton.ForeColor = Color.Black;
+            adx25ColorButton.Location = new Point(27, 282);
+            adx25ColorButton.Margin = new Padding(4, 5, 4, 5);
+            adx25ColorButton.Name = "adx25ColorButton";
+            adx25ColorButton.Size = new Size(138, 57);
+            adx25ColorButton.TabIndex = 9;
             adx25ColorButton.Text = "انتخاب رنگ";
             adx25ColorButton.UseVisualStyleBackColor = false;
-
-            okButton.Text = "تأیید";
+            // 
+            // okButton
+            // 
             okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(300, 235);
-            okButton.Size = new Size(100, 36);
-
-            cancelButton.Text = "انصراف";
-            cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(190, 235);
-            cancelButton.Size = new Size(100, 36);
-
+            okButton.Location = new Point(13, 392);
+            okButton.Margin = new Padding(4, 5, 4, 5);
+            okButton.Name = "okButton";
+            okButton.Size = new Size(109, 45);
+            okButton.TabIndex = 11;
+            okButton.Text = "تأیید";
+            // 
+            // defaultButton
+            // 
+            defaultButton.Location = new Point(130, 392);
+            defaultButton.Margin = new Padding(4, 5, 4, 5);
             defaultButton.Name = "defaultButton";
+            defaultButton.Size = new Size(109, 45);
+            defaultButton.TabIndex = 10;
             defaultButton.Text = "پیش‌فرض";
-            defaultButton.Location = new Point(80, 235);
-            defaultButton.Size = new Size(100, 36);
-
+            // 
+            // cancelButton
+            // 
+            cancelButton.DialogResult = DialogResult.Cancel;
+            cancelButton.Location = new Point(247, 392);
+            cancelButton.Margin = new Padding(4, 5, 4, 5);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new Size(109, 45);
+            cancelButton.TabIndex = 12;
+            cancelButton.Text = "انصراف";
+            // 
+            // AdxSettingsForm
+            // 
             AcceptButton = okButton;
-            CancelButton = cancelButton;
-            Controls.AddRange(new Control[]
-            {
-                periodLabel, periodNumeric,
-                adxLineCheckBox, adxLineColorButton,
-                adxPlusDiCheckBox, adxPlusDiColorButton,
-                adxMinusDiCheckBox, adxMinusDiColorButton,
-                adx25CheckBox, adx25ColorButton,
-                defaultButton, okButton, cancelButton
-            });
-
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(400, 290);
+            CancelButton = cancelButton;
+            ClientSize = new Size(370, 442);
+            Controls.Add(periodLabel);
+            Controls.Add(periodNumeric);
+            Controls.Add(adxLineCheckBox);
+            Controls.Add(adxLineColorButton);
+            Controls.Add(adxPlusDiCheckBox);
+            Controls.Add(adxPlusDiColorButton);
+            Controls.Add(adxMinusDiCheckBox);
+            Controls.Add(adxMinusDiColorButton);
+            Controls.Add(adx25CheckBox);
+            Controls.Add(adx25ColorButton);
+            Controls.Add(defaultButton);
+            Controls.Add(okButton);
+            Controls.Add(cancelButton);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(4, 5, 4, 5);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AdxSettingsForm";
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "تنظیمات ADX";
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
             ShowInTaskbar = false;
-
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "تنظیمات ADX";
             ((System.ComponentModel.ISupportInitialize)periodNumeric).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -4,7 +4,6 @@ namespace Trade.It
     {
         private System.ComponentModel.IContainer? components = null;
         private System.Windows.Forms.TextBox textBox = null!;
-        private System.Windows.Forms.FlowLayoutPanel buttonsPanel = null!;
         private System.Windows.Forms.Button okButton = null!;
         private System.Windows.Forms.Button cancelButton = null!;
 
@@ -18,48 +17,38 @@ namespace Trade.It
 
         private void InitializeComponent()
         {
-            textBox = new System.Windows.Forms.TextBox();
-            buttonsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            okButton = new System.Windows.Forms.Button();
-            cancelButton = new System.Windows.Forms.Button();
-            buttonsPanel.SuspendLayout();
+            textBox = new TextBox();
+            okButton = new Button();
+            cancelButton = new Button();
             SuspendLayout();
             // 
             // textBox
             // 
-            textBox.Dock = System.Windows.Forms.DockStyle.Top;
-            textBox.Location = new System.Drawing.Point(0, 0);
-            textBox.Multiline = false;
+            textBox.Dock = DockStyle.Top;
+            textBox.Location = new Point(0, 0);
+            textBox.Margin = new Padding(4, 5, 4, 5);
             textBox.Name = "textBox";
-            textBox.Size = new System.Drawing.Size(360, 23);
+            textBox.Size = new Size(483, 31);
             textBox.TabIndex = 0;
-            // 
-            // buttonsPanel
-            // 
-            buttonsPanel.Controls.Add(okButton);
-            buttonsPanel.Controls.Add(cancelButton);
-            buttonsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            buttonsPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            buttonsPanel.Location = new System.Drawing.Point(0, 105);
-            buttonsPanel.Name = "buttonsPanel";
-            buttonsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            buttonsPanel.Size = new System.Drawing.Size(360, 45);
-            buttonsPanel.TabIndex = 1;
             // 
             // okButton
             // 
-            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.DialogResult = DialogResult.OK;
+            okButton.Location = new Point(139, 56);
+            okButton.Margin = new Padding(4, 5, 4, 5);
             okButton.Name = "okButton";
-            okButton.Size = new System.Drawing.Size(80, 30);
+            okButton.Size = new Size(90, 36);
             okButton.TabIndex = 0;
             okButton.Text = "تأیید";
             okButton.UseVisualStyleBackColor = true;
             // 
             // cancelButton
             // 
-            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.DialogResult = DialogResult.Cancel;
+            cancelButton.Location = new Point(237, 56);
+            cancelButton.Margin = new Padding(4, 5, 4, 5);
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new System.Drawing.Size(80, 30);
+            cancelButton.Size = new Size(90, 36);
             cancelButton.TabIndex = 1;
             cancelButton.Text = "لغو";
             cancelButton.UseVisualStyleBackColor = true;
@@ -67,21 +56,22 @@ namespace Trade.It
             // AdvancedTextPromptForm
             // 
             AcceptButton = okButton;
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
-            Size = new System.Drawing.Size(360, 150);
+            ClientSize = new Size(483, 103);
+            Controls.Add(okButton);
             Controls.Add(textBox);
-            Controls.Add(buttonsPanel);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Controls.Add(cancelButton);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(4, 5, 4, 5);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AdvancedTextPromptForm";
-            RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "درج متن";
-            buttonsPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

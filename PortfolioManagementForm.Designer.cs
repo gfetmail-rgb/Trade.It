@@ -126,7 +126,8 @@ namespace Trade.It
             // 
             // reloadButton
             // 
-            reloadButton.Location = new Point(728, 947);
+            reloadButton.Anchor = AnchorStyles.Bottom;
+            reloadButton.Location = new Point(717, 916);
             reloadButton.Name = "reloadButton";
             reloadButton.Size = new Size(110, 41);
             reloadButton.TabIndex = 1;
@@ -338,17 +339,17 @@ namespace Trade.It
             portfoliosListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             portfoliosListBox.IntegralHeight = false;
             portfoliosListBox.ItemHeight = 28;
-            portfoliosListBox.Location = new Point(996, 49);
+            portfoliosListBox.Location = new Point(920, 49);
             portfoliosListBox.Name = "portfoliosListBox";
-            portfoliosListBox.Size = new Size(366, 269);
+            portfoliosListBox.Size = new Size(442, 216);
             portfoliosListBox.TabIndex = 26;
             // 
             // deletePortfoliosButton
             // 
             deletePortfoliosButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deletePortfoliosButton.Location = new Point(905, 142);
+            deletePortfoliosButton.Location = new Point(1250, 271);
             deletePortfoliosButton.Name = "deletePortfoliosButton";
-            deletePortfoliosButton.Size = new Size(72, 69);
+            deletePortfoliosButton.Size = new Size(112, 44);
             deletePortfoliosButton.TabIndex = 27;
             deletePortfoliosButton.Text = "حذف سبد";
             // 
@@ -369,14 +370,14 @@ namespace Trade.It
             symbolsGrid.BackgroundColor = SystemColors.Window;
             symbolsGrid.ColumnHeadersHeight = 34;
             symbolsGrid.Columns.AddRange(new DataGridViewColumn[] { symbolRowColumn, symbolNameColumn });
-            symbolsGrid.Location = new Point(102, 390);
+            symbolsGrid.Location = new Point(20, 390);
             symbolsGrid.Name = "symbolsGrid";
             symbolsGrid.ReadOnly = true;
             symbolsGrid.RightToLeft = RightToLeft.Yes;
             symbolsGrid.RowHeadersVisible = false;
             symbolsGrid.RowHeadersWidth = 62;
             symbolsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            symbolsGrid.Size = new Size(1286, 250);
+            symbolsGrid.Size = new Size(1368, 186);
             symbolsGrid.TabIndex = 29;
             // 
             // symbolRowColumn
@@ -398,9 +399,9 @@ namespace Trade.It
             // deleteSymbolsButton
             // 
             deleteSymbolsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteSymbolsButton.Location = new Point(23, 476);
+            deleteSymbolsButton.Location = new Point(1281, 582);
             deleteSymbolsButton.Name = "deleteSymbolsButton";
-            deleteSymbolsButton.Size = new Size(64, 74);
+            deleteSymbolsButton.Size = new Size(107, 45);
             deleteSymbolsButton.TabIndex = 30;
             deleteSymbolsButton.Text = "حذف نماد";
             // 
@@ -408,17 +409,17 @@ namespace Trade.It
             // 
             statusLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             statusLabel.Font = new Font("Segoe UI", 9F);
-            statusLabel.Location = new Point(1054, 319);
+            statusLabel.Location = new Point(920, 278);
             statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(294, 34);
+            statusLabel.Size = new Size(267, 34);
             statusLabel.TabIndex = 31;
             statusLabel.Text = "هیچ سبدی انتخاب نشده است.";
             statusLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // closeButton
             // 
-            closeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            closeButton.Location = new Point(579, 947);
+            closeButton.Anchor = AnchorStyles.Bottom;
+            closeButton.Location = new Point(568, 916);
             closeButton.Name = "closeButton";
             closeButton.Size = new Size(125, 41);
             closeButton.TabIndex = 32;
@@ -427,7 +428,7 @@ namespace Trade.It
             // previewGroup
             // 
             previewGroup.Controls.Add(previewGrid);
-            previewGroup.Location = new Point(20, 650);
+            previewGroup.Location = new Point(20, 642);
             previewGroup.Name = "previewGroup";
             previewGroup.Size = new Size(1368, 270);
             previewGroup.TabIndex = 34;
@@ -648,8 +649,9 @@ namespace Trade.It
             // 
             // PortfolioManagementForm
             // 
-            ClientSize = new Size(1400, 1000);
+            ClientSize = new Size(1400, 964);
             Controls.Add(groupBox1);
+            Controls.Add(deleteSymbolsButton);
             Controls.Add(reloadButton);
             Controls.Add(portfoliosListBox);
             Controls.Add(existingTitleLabel);
@@ -657,7 +659,6 @@ namespace Trade.It
             Controls.Add(symbolsTitleLabel);
             Controls.Add(symbolsGrid);
             Controls.Add(previewGroup);
-            Controls.Add(deleteSymbolsButton);
             Controls.Add(statusLabel);
             Controls.Add(closeButton);
             Font = new Font("Segoe UI", 10F);
