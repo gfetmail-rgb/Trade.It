@@ -4,6 +4,12 @@ namespace Trade.It
     {
 
 
+        private void NoDateAxisLabel_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && ExtraDrawingActive)
+                CancelExtraDrawing();
+        }
+
         private void NoDateAxis_MouseMove(object? sender, MouseEventArgs e)
         {
             UpdateNoDateAxisLabel();
