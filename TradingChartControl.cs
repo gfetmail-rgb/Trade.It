@@ -1647,7 +1647,7 @@ namespace Trade.It
                     // نباید با حرکت بعدی ماوس، لنگر دوباره محاسبه شود؛
                     // وگرنه نمودار به‌جای زوم حول نقطه شروع، جابه‌جا می‌شود.
                     var anchorRelativeIndex =
-                        (horizontalAxisStartPoint.X - zoomPlot.Left - zoomInitialOffset)
+                        (horizontalAxisStartPoint.X - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
                         / zoomStep - 0.5;
 
                     firstIndex = Math.Clamp(
@@ -1655,7 +1655,9 @@ namespace Trade.It
                         0,
                         Math.Max(0, points.Count - newCount));
 
-                    horizontalPanOffset = 0;
+                    // Offset افقی و جبران فاصلهٔ راست باید هنگام زوم حفظ شوند.
+                    // صفر کردن این مقدار، chartPanCompensation را از وضعیت واقعی
+                    // رسم جدا می‌کند و در حرکت بعدی باعث پرش نمودار می‌شود.
                 }
 
                 crosshairIndex = -1;
