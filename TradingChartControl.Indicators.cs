@@ -27,8 +27,8 @@ namespace Trade.It
         public Color BackgroundColor { get; set; } = Color.White;
         public bool ShowTenkan { get; set; } = false;
         public bool ShowKijun { get; set; } = true;
-        public bool ShowSpanA { get; set; } = true;
-        public bool ShowSpanB { get; set; } = true;
+        public bool ShowSpanA { get; set; } = false;
+        public bool ShowSpanB { get; set; } = false;
         public bool ShowChikou { get; set; } = false;
         public bool ShowBullishCloud { get; set; } = true;
         public bool ShowBearishCloud { get; set; } = true;
