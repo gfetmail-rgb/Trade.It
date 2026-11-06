@@ -1876,6 +1876,7 @@ namespace Trade.It
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
+            var filterContext = new FilterRunContext(symbol => ReadOrderedSymbolRows(definition, symbol));
             IEnumerable<string> filtered = symbols;
 
             if (filtersApplied)
@@ -1888,11 +1889,11 @@ namespace Trade.It
                 }
 
                 filtered = ApplyNameFilter(filtered);
-                filtered = ApplyVolumeRatioFilter(filtered, definition);
-                filtered = ApplyPastDaysFilter(filtered, definition);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
-                filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+                filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
+                filtered = ApplyPastDaysFilter(filtered, definition, filterContext);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
 
                 if (IsOhlcChangeFilterActive())
                 {
@@ -1903,7 +1904,7 @@ namespace Trade.It
                     if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
                         filtered = filtered.Where(symbol =>
                         {
-                            if (!TryGetOhlcChange(definition, symbol, field, n, out var changePercent))
+                            if (!TryGetOhlcChange(definition, symbol, field, n, filterContext, out var changePercent))
                             {
                                 invalidPercentChangeSymbols++;
                                 return false;
@@ -1915,13 +1916,13 @@ namespace Trade.It
 
             if (filters2Applied)
             {
-                filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
-                filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
-                filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
-                filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
-                filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
+                filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             }
 
             var result = filtered.ToList();
@@ -2024,7 +2025,7 @@ namespace Trade.It
                 marketCountLabel.Text = text;
         }
 
-        private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
+        private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext)
         {
             // Do not bypass an active volume-ratio filter when the volume column is missing.
             // TryGetLatestVolumeRatio will reject each symbol and the post-filter warning will report them.
@@ -2043,7 +2044,7 @@ namespace Trade.It
 
             foreach (var symbol in symbols)
             {
-                if (TryGetLatestVolumeRatio(definition, symbol, n, out var ratio))
+                if (TryGetLatestVolumeRatio(definition, symbol, n, filterContext, out var ratio))
                     calculated.Add((symbol, ratio));
                 else
                     invalidVolumeRatioSymbols++;
@@ -2076,7 +2077,7 @@ namespace Trade.It
             };
         }
 
-        private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, out double ratio)
+        private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, FilterRunContext filterContext, out double ratio)
         {
             ratio = 0;
             var volumeColumn = GetMappingColumn(definition, "حجم");
@@ -2086,7 +2087,7 @@ namespace Trade.It
             List<string[]> rows;
             try
             {
-                rows = ReadOrderedSymbolRows(definition, symbol);
+                rows = filterContext.GetRows(symbol);
             }
             catch
             {
@@ -2126,7 +2127,7 @@ namespace Trade.It
             return double.IsFinite(ratio);
         }
 
-        private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition)
+        private IEnumerable<string> ApplyPastDaysFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext)
         {
             if (!HasDateColumn(definition)) return symbols;
             var nText = NormalizeTradingDigits(pastDaysTextBox.Text).Trim();
@@ -2136,10 +2137,10 @@ namespace Trade.It
             var fromDate = DateTime.Today.Date.AddDays(-n);
             var op = pastDaysStatusComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var showTraded = !IsNegativePastDaysOption(op);
-            return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date));
+            return symbols.Where(symbol => showTraded == HasTradeInDateRange(definition, symbol, fromDate, DateTime.Today.Date, filterContext));
         }
 
-        private bool HasTradeInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate)
+        private bool HasTradeInDateRange(PortfolioDefinition definition, string symbol, DateTime fromDate, DateTime toDate, FilterRunContext filterContext)
         {
             if (!HasDateColumn(definition) || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath)) return false;
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -2148,8 +2149,14 @@ namespace Trade.It
             var symbolColumn = GetMappingColumn(definition, "نماد");
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol))
-                    if (FileContainsDateRange(definition, file, symbol, symbolColumn, dateColumn, fromDate, toDate)) return true;
+                var rows = filterContext.GetRows(symbol);
+                foreach (var row in rows)
+                {
+                    if (dateColumn > row.Length) continue;
+                    if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) &&
+                        date.Date >= fromDate && date.Date <= toDate)
+                        return true;
+                }
             }
             catch { }
             return false;
@@ -2538,19 +2545,20 @@ namespace Trade.It
         private void ApplyComparisonFiltersToGrid()
         {
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
+            var filterContext = new FilterRunContext(symbol => ReadOrderedSymbolRows(definition, symbol));
             IEnumerable<string> filtered = (definition.Symbols ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
-            filtered = ApplyComparisonFilter(filtered, definition, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
-            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
-            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
-            filtered = ApplyComparisonFilter(filtered, definition, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox3, comparisonOperatorComboBox3, comparisonSecondComboBox3, comparisonFirstTextBox3, comparisonSecondTextBox3);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox1, comparison2OperatorComboBox1, comparison2SecondComboBox1, comparison2FirstOffsetTextBox1, comparison2SecondOffsetTextBox1);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox2, comparison2OperatorComboBox2, comparison2SecondComboBox2, comparison2FirstOffsetTextBox2, comparison2SecondOffsetTextBox2);
+            filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
+            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             var result = filtered.ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts();
@@ -2596,12 +2604,12 @@ namespace Trade.It
             firstFieldComboBox.SelectedItem != null && operatorComboBox.SelectedItem != null && secondFieldComboBox.SelectedItem != null &&
             int.TryParse(NormalizeTradingDigits(offsetTextBox.Text).Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var offset) && offset >= 0;
 
-        private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
+        private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
         {
             if (!TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out var firstField, out var op, out var secondField, out var firstOffset, out var relativeOffset)) return symbols;
             return symbols.Where(symbol =>
             {
-                if (!TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, out var left, out var right))
+                if (!TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, filterContext, out var left, out var right))
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2610,7 +2618,7 @@ namespace Trade.It
             });
         }
 
-        private IEnumerable<string> ApplyComparisonRangeFilter(IEnumerable<string> symbols, PortfolioDefinition definition, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox offsetTextBox)
+        private IEnumerable<string> ApplyComparisonRangeFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox offsetTextBox)
         {
             if (firstFieldComboBox.SelectedItem == null || operatorComboBox.SelectedItem == null || secondFieldComboBox.SelectedItem == null)
                 return symbols;
@@ -2637,7 +2645,7 @@ namespace Trade.It
                 List<string[]> rows;
                 try
                 {
-                    rows = ReadOrderedSymbolRows(definition, symbol);
+                    rows = filterContext.GetRows(symbol);
                 }
                 catch
                 {
@@ -2703,7 +2711,7 @@ namespace Trade.It
                     _ => string.Empty
         };
 
-        private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, out double left, out double right)
+        private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, FilterRunContext filterContext, out double left, out double right)
         {
             left = 0;
             right = 0;
@@ -2715,7 +2723,7 @@ namespace Trade.It
             List<string[]> rows;
             try
             {
-                rows = ReadOrderedSymbolRows(definition, symbol);
+                rows = filterContext.GetRows(symbol);
             }
             catch
             {
@@ -2816,7 +2824,8 @@ namespace Trade.It
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
-            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();
+            var filterContext = new FilterRunContext(symbol => ReadOrderedSymbolRows(definition, symbol));
+            var result = symbols.Where(symbol => TryGetOhlcChange(definition, symbol, field, n, filterContext, out var changePercent) && CompareNumeric(changePercent, percent, op)).ToList();
             var totalCount = (definition.Symbols ?? new List<string>()).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
             UpdateFilterCounts();
             internalPortfolioUpdate = true;
@@ -2842,7 +2851,7 @@ namespace Trade.It
             }
         }
 
-        private bool TryGetOhlcChange(PortfolioDefinition definition, string symbol, string field, int n, out double changePercent)
+        private bool TryGetOhlcChange(PortfolioDefinition definition, string symbol, string field, int n, FilterRunContext filterContext, out double changePercent)
         {
             changePercent = 0;
             var column = GetMappingColumn(definition, field);
@@ -2852,7 +2861,7 @@ namespace Trade.It
             List<string[]> rows;
             try
             {
-                rows = ReadOrderedSymbolRows(definition, symbol);
+                rows = filterContext.GetRows(symbol);
             }
             catch
             {
