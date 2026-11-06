@@ -21,17 +21,13 @@ namespace Trade.It
         private sealed class FilterRunContext
         {
             private readonly Func<string, List<string[]>> _reader;
-            private readonly Action<TimeSpan, TimeSpan>? _readMetrics;
 
             private readonly Dictionary<string, Lazy<List<string[]>>> _cache =
                 new(StringComparer.OrdinalIgnoreCase);
 
-            public FilterRunContext(
-                Func<string, List<string[]>> reader,
-                Action<TimeSpan, TimeSpan>? readMetrics = null)
+            public FilterRunContext(Func<string, List<string[]>> reader)
             {
                 _reader = reader ?? throw new ArgumentNullException(nameof(reader));
-                _readMetrics = readMetrics;
             }
 
             public List<string[]> GetRows(string symbol)
@@ -1890,12 +1886,7 @@ namespace Trade.It
                     {
                         historyFileReadTime += fileRead;
                         historyParseTime += parse;
-                    }),
-                (fileRead, parse) =>
-                {
-                    historyFileReadTime += fileRead;
-                    historyParseTime += parse;
-                });
+                    }));
             IEnumerable<string> filtered = symbols;
             var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
             var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
