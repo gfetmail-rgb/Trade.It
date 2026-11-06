@@ -1731,6 +1731,7 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
+            gridUpdateStopwatch.Stop();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
@@ -1888,9 +1889,50 @@ namespace Trade.It
                     filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
                 }
 
-                // Materialize the name-filter result so the volume timer measures only the volume stage.
                 filtered = ApplyNameFilter(filtered).ToList();
-                filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
+
+                var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
+                var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
+                var volumeFilterWillRun =
+                    double.TryParse(volumeThresholdText, NumberStyles.Float, CultureInfo.InvariantCulture, out var volumeThreshold) &&
+                    double.IsFinite(volumeThreshold) &&
+                    int.TryParse(volumeDaysText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var volumeDays) &&
+                    volumeDays > 0 &&
+                    volumeRatioOperatorComboBox.SelectedItem != null;
+
+                if (volumeFilterWillRun)
+                {
+                    // Stage 1: force history-file reading and parsing before volume calculations.
+                    var historyStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    var volumeCandidates = filtered.ToList();
+                    foreach (var symbol in volumeCandidates)
+                    {
+                        try { filterContext.GetRows(symbol); }
+                        catch { /* The volume filter will classify invalid history as it did before. */ }
+                    }
+                    historyStopwatch.Stop();
+                    MessageBox.Show(
+                        this,
+                        $"مرحله ۱ ـ خواندن و پردازش تاریخچه‌ها: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
+                        "اندازه‌گیری فیلتر حجم",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    // Stage 2: measure only the volume-ratio calculation.
+                    var volumeFilterStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    filtered = ApplyVolumeRatioFilter(volumeCandidates, definition, filterContext).ToList();
+                    volumeFilterStopwatch.Stop();
+                    MessageBox.Show(
+                        this,
+                        $"مرحله ۲ ـ محاسبه فیلتر حجم: {volumeFilterStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {((List<string>)filtered).Count}",
+                        "اندازه‌گیری فیلتر حجم",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                else
+                {
+                    filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
+                }
                 filtered = ApplyPastDaysFilter(filtered, definition, filterContext);
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
@@ -1927,6 +1969,7 @@ namespace Trade.It
             }
 
             var result = filtered.ToList();
+            var gridUpdateStopwatch = System.Diagnostics.Stopwatch.StartNew();
             internalPortfolioUpdate = true;
             try
             {
@@ -1948,6 +1991,16 @@ namespace Trade.It
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
 
             ShowFilterDataWarnings();
+
+            if (filtersApplied && volumeFilterWillRun)
+            {
+                MessageBox.Show(
+                    this,
+                    $"مرحله ۳ ـ به‌روزرسانی جدول و نمایش نتایج: {gridUpdateStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد سطرهای جدول: {result.Count}",
+                    "اندازه‌گیری فیلتر حجم",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
 
         private void ShowFilterDataWarnings()
@@ -2041,7 +2094,6 @@ namespace Trade.It
                 return symbols;
 
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var calculated = new List<(string Symbol, double Ratio)>();
 
             foreach (var symbol in symbols)
@@ -2060,14 +2112,6 @@ namespace Trade.It
                 .Where(x => MatchesVolumeRatioOperator(x.Ratio, threshold, tolerance, op))
                 .Select(x => x.Symbol)
                 .ToList();
-
-            stopwatch.Stop();
-            MessageBox.Show(
-                this,
-                $"زمان اجرای فیلتر حجم: {stopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {result.Count}",
-                "اندازه‌گیری فیلتر حجم",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
 
             return result;
         }
