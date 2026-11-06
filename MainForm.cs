@@ -1731,7 +1731,6 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
-            gridUpdateStopwatch.Stop();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
