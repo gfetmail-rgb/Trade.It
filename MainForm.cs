@@ -2357,19 +2357,58 @@ namespace Trade.It
             out DateTime date)
         {
             date = default;
-            var normalized = NormalizeTradingDigits(value).Trim();
-            if (string.IsNullOrWhiteSpace(normalized)) return false;
-            var parts = normalized.Split(new[] { '/', '-', '.', '\\', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var normalized = NormalizeTradingDigits(value).AsSpan().Trim();
+            if (normalized.IsEmpty) return false;
+
             int year, month, day;
-            if (parts.Length >= 3 && int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) && int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out month) && int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+            var position = 0;
+            var partCount = 0;
+            ReadOnlySpan<char> yearPart = default;
+            ReadOnlySpan<char> monthPart = default;
+            ReadOnlySpan<char> dayPart = default;
+
+            while (position < normalized.Length && partCount < 3)
             {
+                while (position < normalized.Length && IsSourceDateSeparator(normalized[position]))
+                    position++;
+
+                if (position >= normalized.Length)
+                    break;
+
+                var start = position;
+                while (position < normalized.Length && !IsSourceDateSeparator(normalized[position]))
+                    position++;
+
+                var part = normalized.Slice(start, position - start);
+                if (partCount == 0) yearPart = part;
+                else if (partCount == 1) monthPart = part;
+                else dayPart = part;
+                partCount++;
             }
-            else
+
+            var separatedDateValid =
+                partCount >= 3 &&
+                int.TryParse(yearPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out year) &&
+                int.TryParse(monthPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out month) &&
+                int.TryParse(dayPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out day);
+
+            if (!separatedDateValid)
             {
-                var digits = new string(normalized.Where(char.IsDigit).ToArray());
-                if (digits.Length < 8) return false;
-                if (!int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) || !int.TryParse(digits.Substring(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) || !int.TryParse(digits.Substring(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day)) return false;
+                Span<char> digits = stackalloc char[8];
+                var digitCount = 0;
+                foreach (var character in normalized)
+                {
+                    if (char.IsDigit(character) && digitCount < digits.Length)
+                        digits[digitCount++] = character;
+                }
+
+                if (digitCount < 8 ||
+                    !int.TryParse(digits[..4], NumberStyles.Integer, CultureInfo.InvariantCulture, out year) ||
+                    !int.TryParse(digits.Slice(4, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out month) ||
+                    !int.TryParse(digits.Slice(6, 2), NumberStyles.Integer, CultureInfo.InvariantCulture, out day))
+                    return false;
             }
+
             try
             {
                 if (definition.Calendar == InputCalendar.Gregorian)
@@ -2377,12 +2416,16 @@ namespace Trade.It
                     date = new DateTime(year, month, day);
                     return true;
                 }
+
                 date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
                     .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
                 return true;
             }
             catch { return false; }
         }
+
+        private static bool IsSourceDateSeparator(char value) =>
+            value is '/' or '-' or '.' or '\\\\' or ' ';
 
         private static bool CompareNumeric(double left, double right, string op)
         {
