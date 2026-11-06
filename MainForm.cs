@@ -1877,15 +1877,19 @@ namespace Trade.It
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
             TimeSpan historyFileReadTime = TimeSpan.Zero;
-            TimeSpan historyParseTime = TimeSpan.Zero;
+            TimeSpan historySplitTime = TimeSpan.Zero;
+            TimeSpan historyDateParseTime = TimeSpan.Zero;
+            TimeSpan historySortTime = TimeSpan.Zero;
             var filterContext = new FilterRunContext(
                 symbol => ReadOrderedSymbolRows(
                     definition,
                     symbol,
-                    (fileRead, parse) =>
+                    (fileRead, split, dateParse, sort) =>
                     {
                         historyFileReadTime += fileRead;
-                        historyParseTime += parse;
+                        historySplitTime += split;
+                        historyDateParseTime += dateParse;
+                        historySortTime += sort;
                     }));
             IEnumerable<string> filtered = symbols;
             var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
@@ -1921,7 +1925,7 @@ namespace Trade.It
                     historyStopwatch.Stop();
                     MessageBox.Show(
                         this,
-                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ تجزیه، اعتبارسنجی و مرتب‌سازی: {historyParseTime.TotalSeconds:F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
+                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ Split سطرها: {historySplitTime.TotalSeconds:F2} ثانیه\n۱-پ ـ تبدیل تاریخ‌ها: {historyDateParseTime.TotalSeconds:F2} ثانیه\n۱-ت ـ مرتب‌سازی: {historySortTime.TotalSeconds:F2} ثانیه\nسایر پردازش‌ها و سربار: {Math.Max(0, historyStopwatch.Elapsed.TotalSeconds - historyFileReadTime.TotalSeconds - historySplitTime.TotalSeconds - historyDateParseTime.TotalSeconds - historySortTime.TotalSeconds):F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
                         "اندازه‌گیری فیلتر حجم",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -2434,7 +2438,7 @@ namespace Trade.It
         private List<string[]> ReadOrderedSymbolRows(
             PortfolioDefinition definition,
             string symbol,
-            Action<TimeSpan, TimeSpan>? timingCallback = null)
+            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null)
         {
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -2445,7 +2449,12 @@ namespace Trade.It
             var filesContainingSymbolRows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             long sequence = 0;
             var fileReadTime = TimeSpan.Zero;
-            var parseStopwatch = new System.Diagnostics.Stopwatch();
+            var splitTime = TimeSpan.Zero;
+            var dateParseTime = TimeSpan.Zero;
+            var sortTime = TimeSpan.Zero;
+            var splitStopwatch = new System.Diagnostics.Stopwatch();
+            var dateParseStopwatch = new System.Diagnostics.Stopwatch();
+            var sortStopwatch = new System.Diagnostics.Stopwatch();
 
             foreach (var file in GetSymbolFiles(definition, symbol))
             {
@@ -2456,14 +2465,16 @@ namespace Trade.It
                 fileReadStopwatch.Stop();
                 fileReadTime += fileReadStopwatch.Elapsed;
 
-                parseStopwatch.Start();
                 var firstLine = true;
                 foreach (var line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
+                    splitStopwatch.Start();
                     var row = SplitTradingDataLine(line, definition.Separator);
+                    splitStopwatch.Stop();
+
                     if (firstLine && definition.HasHeader)
                     {
                         firstLine = false;
@@ -2479,7 +2490,13 @@ namespace Trade.It
                     filesContainingSymbolRows.Add(file);
                     if (dateColumn > 0)
                     {
-                        if (dateColumn > row.Length || !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                        if (dateColumn > row.Length)
+                            continue;
+
+                        dateParseStopwatch.Start();
+                        var validDate = TryParseSourceDate(row[dateColumn - 1], definition, out var date);
+                        dateParseStopwatch.Stop();
+                        if (!validDate)
                             continue;
                         collected.Add((date.Date, sequence++, row));
                     }
@@ -2488,25 +2505,26 @@ namespace Trade.It
                         collected.Add((DateTime.MinValue, sequence++, row));
                     }
                 }
-                parseStopwatch.Stop();
-            }
+                splitTime += splitStopwatch.Elapsed;
+                dateParseTime += dateParseStopwatch.Elapsed;            }
 
             // Without dates, chronology across separate inside-file data sources
             // cannot be inferred safely. Do not let arbitrary file order silently
             // produce incorrect candle offsets.
             if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
             {
-                timingCallback?.Invoke(fileReadTime, parseStopwatch.Elapsed);
+                timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, sortTime);
                 return new List<string[]>();
             }
 
-            parseStopwatch.Start();
+            sortStopwatch.Start();
             var orderedRows = dateColumn > 0
                 ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
                 : collected.OrderBy(x => x.Sequence).Select(x => x.Row).ToList();
-            parseStopwatch.Stop();
+            sortStopwatch.Stop();
+            sortTime = sortStopwatch.Elapsed;
 
-            timingCallback?.Invoke(fileReadTime, parseStopwatch.Elapsed);
+            timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, sortTime);
             return orderedRows;
         }
 
