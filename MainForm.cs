@@ -2425,7 +2425,7 @@ namespace Trade.It
         }
 
         private static bool IsSourceDateSeparator(char value) =>
-            value is '/' or '-' or '.' or '\\\\' or ' ';
+            value is '/' or '-' or '.' or '\\' or ' ';
 
         private static bool CompareNumeric(double left, double right, string op)
         {
