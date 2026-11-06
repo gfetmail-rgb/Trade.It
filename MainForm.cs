@@ -1879,6 +1879,14 @@ namespace Trade.It
                 .ToList();
             var filterContext = new FilterRunContext(symbol => ReadOrderedSymbolRows(definition, symbol));
             IEnumerable<string> filtered = symbols;
+            var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
+            var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
+            var volumeFilterWillRun =
+                double.TryParse(volumeThresholdText, NumberStyles.Float, CultureInfo.InvariantCulture, out var volumeThreshold) &&
+                double.IsFinite(volumeThreshold) &&
+                int.TryParse(volumeDaysText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var volumeDays) &&
+                volumeDays > 0 &&
+                volumeRatioOperatorComboBox.SelectedItem != null;
 
             if (filtersApplied)
             {
@@ -1890,15 +1898,6 @@ namespace Trade.It
                 }
 
                 filtered = ApplyNameFilter(filtered).ToList();
-
-                var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
-                var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
-                var volumeFilterWillRun =
-                    double.TryParse(volumeThresholdText, NumberStyles.Float, CultureInfo.InvariantCulture, out var volumeThreshold) &&
-                    double.IsFinite(volumeThreshold) &&
-                    int.TryParse(volumeDaysText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var volumeDays) &&
-                    volumeDays > 0 &&
-                    volumeRatioOperatorComboBox.SelectedItem != null;
 
                 if (volumeFilterWillRun)
                 {
@@ -1920,11 +1919,12 @@ namespace Trade.It
 
                     // Stage 2: measure only the volume-ratio calculation.
                     var volumeFilterStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    filtered = ApplyVolumeRatioFilter(volumeCandidates, definition, filterContext).ToList();
+                    var volumeResult = ApplyVolumeRatioFilter(volumeCandidates, definition, filterContext).ToList();
                     volumeFilterStopwatch.Stop();
+                    filtered = volumeResult;
                     MessageBox.Show(
                         this,
-                        $"مرحله ۲ ـ محاسبه فیلتر حجم: {volumeFilterStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {((List<string>)filtered).Count}",
+                        $"مرحله ۲ ـ محاسبه فیلتر حجم: {volumeFilterStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {volumeResult.Count}",
                         "اندازه‌گیری فیلتر حجم",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -1986,6 +1986,7 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
+            gridUpdateStopwatch.Stop();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
