@@ -2000,8 +2000,7 @@ namespace Trade.It
 
         private IEnumerable<string> ApplyVolumeRatioFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext)
         {
-            // Do not bypass an active volume-ratio filter when the volume column is missing.
-            // TryGetLatestVolumeRatio will reject each symbol and the post-filter warning will report them.
+            // Missing or invalid volume data excludes the symbol from the result.
             var ratioText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
             var nText = NormalizeTradingDigits(textBox1.Text).Trim();
             if (!double.TryParse(ratioText, NumberStyles.Float, CultureInfo.InvariantCulture, out var threshold) ||
@@ -2021,7 +2020,6 @@ namespace Trade.It
             {
                 if (volumeColumn > 0 && dataPathValid && TryGetLatestVolumeRatio(definition, symbol, n, filterContext, volumeColumn, out var ratio))
                     calculated.Add((symbol, ratio));
-                else
             }
 
             // Use one consistent tolerance for all three operators so >, < and =
