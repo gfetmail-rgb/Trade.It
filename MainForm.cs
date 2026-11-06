@@ -1879,16 +1879,18 @@ namespace Trade.It
             TimeSpan historyFileReadTime = TimeSpan.Zero;
             TimeSpan historySplitTime = TimeSpan.Zero;
             TimeSpan historyDateParseTime = TimeSpan.Zero;
+            TimeSpan historyCalendarConversionTime = TimeSpan.Zero;
             TimeSpan historySortTime = TimeSpan.Zero;
             var filterContext = new FilterRunContext(
                 symbol => ReadOrderedSymbolRows(
                     definition,
                     symbol,
-                    (fileRead, split, dateParse, sort) =>
+                    (fileRead, split, dateParse, calendarConversion, sort) =>
                     {
                         historyFileReadTime += fileRead;
                         historySplitTime += split;
                         historyDateParseTime += dateParse;
+                        historyCalendarConversionTime += calendarConversion;
                         historySortTime += sort;
                     }));
             IEnumerable<string> filtered = symbols;
@@ -1925,7 +1927,7 @@ namespace Trade.It
                     historyStopwatch.Stop();
                     MessageBox.Show(
                         this,
-                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ Split سطرها: {historySplitTime.TotalSeconds:F2} ثانیه\n۱-پ ـ تبدیل تاریخ‌ها: {historyDateParseTime.TotalSeconds:F2} ثانیه\n۱-ت ـ مرتب‌سازی: {historySortTime.TotalSeconds:F2} ثانیه\nسایر پردازش‌ها و سربار: {Math.Max(0, historyStopwatch.Elapsed.TotalSeconds - historyFileReadTime.TotalSeconds - historySplitTime.TotalSeconds - historyDateParseTime.TotalSeconds - historySortTime.TotalSeconds):F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
+                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ Split سطرها: {historySplitTime.TotalSeconds:F2} ثانیه\n۱-پ ـ تبدیل تاریخ‌ها: {historyDateParseTime.TotalSeconds:F2} ثانیه (از این مقدار، تبدیل تقویم: {historyCalendarConversionTime.TotalSeconds:F2} ثانیه)\n۱-ت ـ مرتب‌سازی: {historySortTime.TotalSeconds:F2} ثانیه\nسایر پردازش‌ها و سربار: {Math.Max(0, historyStopwatch.Elapsed.TotalSeconds - historyFileReadTime.TotalSeconds - historySplitTime.TotalSeconds - historyDateParseTime.TotalSeconds - historySortTime.TotalSeconds):F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
                         "اندازه‌گیری فیلتر حجم",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -2501,7 +2503,7 @@ namespace Trade.It
         private List<string[]> ReadOrderedSymbolRows(
             PortfolioDefinition definition,
             string symbol,
-            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null)
+            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null)
         {
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -2587,7 +2589,7 @@ namespace Trade.It
             // produce incorrect candle offsets.
             if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
             {
-                timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, sortTime);
+                timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, calendarConversionTime, sortTime);
                 return new List<string[]>();
             }
 
