@@ -2600,7 +2600,7 @@ namespace Trade.It
             sortStopwatch.Stop();
             sortTime = sortStopwatch.Elapsed;
 
-            timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, sortTime);
+            timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, calendarConversionTime, sortTime);
             return orderedRows;
         }
 
