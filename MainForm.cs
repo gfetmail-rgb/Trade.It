@@ -2566,7 +2566,21 @@ namespace Trade.It
             return mapping?.Column ?? 0;
         }
 
-        private static string NormalizeTradingDigits(string value) => value.Replace('۰', '0').Replace('۱', '1').Replace('۲', '2').Replace('۳', '3').Replace('۴', '4').Replace('۵', '5').Replace('۶', '6').Replace('۷', '7').Replace('۸', '8').Replace('۹', '9');
+        private static string NormalizeTradingDigits(string value)
+        {
+            char[]? normalized = null;
+            for (var i = 0; i < value.Length; i++)
+            {
+                var digit = value[i];
+                if (digit < '۰' || digit > '۹')
+                    continue;
+
+                normalized ??= value.ToCharArray();
+                normalized[i] = (char)('0' + (digit - '۰'));
+            }
+
+            return normalized == null ? value : new string(normalized);
+        }
 
         private static string[] SplitTradingDataLine(string line, string? separator) => line.Split(new[] { string.IsNullOrEmpty(separator) ? "," : separator }, StringSplitOptions.None);
 
