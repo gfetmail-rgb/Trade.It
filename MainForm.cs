@@ -2656,7 +2656,13 @@ namespace Trade.It
             return normalized == null ? value : new string(normalized);
         }
 
-        private static string[] SplitTradingDataLine(string line, string? separator) => line.Split(string.IsNullOrEmpty(separator) ? "," : separator, StringSplitOptions.None);
+        private static string[] SplitTradingDataLine(string line, string? separator)
+        {
+            var actualSeparator = string.IsNullOrEmpty(separator) ? "," : separator;
+            return actualSeparator.Length == 1
+                ? line.Split(actualSeparator[0], StringSplitOptions.None)
+                : line.Split(actualSeparator, StringSplitOptions.None);
+        }
 
         private static Encoding DetectTradingDataEncoding(string filePath)
         {
