@@ -2505,8 +2505,10 @@ namespace Trade.It
                         collected.Add((DateTime.MinValue, sequence++, row));
                     }
                 }
-                splitTime += splitStopwatch.Elapsed;
-                dateParseTime += dateParseStopwatch.Elapsed;            }
+            }
+
+            splitTime = splitStopwatch.Elapsed;
+            dateParseTime = dateParseStopwatch.Elapsed;
 
             // Without dates, chronology across separate inside-file data sources
             // cannot be inferred safely. Do not let arbitrary file order silently
