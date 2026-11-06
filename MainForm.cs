@@ -2858,11 +2858,6 @@ namespace Trade.It
 
             return symbols.Where(symbol =>
             {
-                {
-                    invalidComparisonPriceSymbols++;
-                    return false;
-                }
-
                 List<string[]> rows;
                 try
                 {
