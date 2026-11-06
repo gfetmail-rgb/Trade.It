@@ -2360,7 +2360,9 @@ namespace Trade.It
             var normalized = NormalizeTradingDigits(value).AsSpan().Trim();
             if (normalized.IsEmpty) return false;
 
-            int year, month, day;
+            var year = 0;
+            var month = 0;
+            var day = 0;
             var position = 0;
             var partCount = 0;
             ReadOnlySpan<char> yearPart = default;
