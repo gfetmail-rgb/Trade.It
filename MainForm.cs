@@ -1888,7 +1888,8 @@ namespace Trade.It
                     filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
                 }
 
-                filtered = ApplyNameFilter(filtered);
+                // Materialize the name-filter result so the volume timer measures only the volume stage.
+                filtered = ApplyNameFilter(filtered).ToList();
                 filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
                 filtered = ApplyPastDaysFilter(filtered, definition, filterContext);
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
@@ -2040,6 +2041,7 @@ namespace Trade.It
                 return symbols;
 
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var calculated = new List<(string Symbol, double Ratio)>();
 
             foreach (var symbol in symbols)
@@ -2054,10 +2056,20 @@ namespace Trade.It
             // form a disjoint partition of every ratio that could be calculated.
             var tolerance = 1e-10 * Math.Max(1.0, Math.Abs(threshold));
 
-            return calculated
+            var result = calculated
                 .Where(x => MatchesVolumeRatioOperator(x.Ratio, threshold, tolerance, op))
                 .Select(x => x.Symbol)
                 .ToList();
+
+            stopwatch.Stop();
+            MessageBox.Show(
+                this,
+                $"زمان اجرای فیلتر حجم: {stopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {result.Count}",
+                "اندازه‌گیری فیلتر حجم",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            return result;
         }
 
         private static bool MatchesVolumeRatioOperator(double ratio, double threshold, double tolerance, string op)
