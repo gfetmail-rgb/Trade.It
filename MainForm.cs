@@ -2113,10 +2113,12 @@ namespace Trade.It
 
             var op = volumeRatioOperatorComboBox.SelectedItem.ToString()?.Trim() ?? string.Empty;
             var calculated = new List<(string Symbol, double Ratio)>();
+            var volumeColumn = GetMappingColumn(definition, "حجم");
+            var dataPathValid = !string.IsNullOrWhiteSpace(definition.DataPath) && Directory.Exists(definition.DataPath);
 
             foreach (var symbol in symbols)
             {
-                if (TryGetLatestVolumeRatio(definition, symbol, n, filterContext, out var ratio))
+                if (volumeColumn > 0 && dataPathValid && TryGetLatestVolumeRatio(definition, symbol, n, filterContext, volumeColumn, out var ratio))
                     calculated.Add((symbol, ratio));
                 else
                     invalidVolumeRatioSymbols++;
@@ -2151,12 +2153,9 @@ namespace Trade.It
             };
         }
 
-        private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, FilterRunContext filterContext, out double ratio)
+        private bool TryGetLatestVolumeRatio(PortfolioDefinition definition, string symbol, int n, FilterRunContext filterContext, int volumeColumn, out double ratio)
         {
             ratio = 0;
-            var volumeColumn = GetMappingColumn(definition, "حجم");
-            if (volumeColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
-                return false;
 
             List<string[]> rows;
             try
@@ -2178,7 +2177,7 @@ namespace Trade.It
                 !double.IsFinite(latestVolume) || latestVolume < 0)
                 return false;
 
-            var priorVolumes = new List<double>(n);
+            double volumeSum = 0;
             for (var offset = n; offset >= 1; offset--)
             {
                 var row = rows[rows.Count - 1 - offset];
@@ -2187,13 +2186,10 @@ namespace Trade.It
                     !double.IsFinite(volume) || volume < 0)
                     return false;
 
-                priorVolumes.Add(volume);
+                volumeSum += volume;
             }
 
-            if (priorVolumes.Count != n)
-                return false;
-
-            var average = priorVolumes.Average();
+            var average = volumeSum / n;
             if (average <= 0)
                 return false;
 
@@ -2823,9 +2819,13 @@ namespace Trade.It
         private IEnumerable<string> ApplyComparisonFilter(IEnumerable<string> symbols, PortfolioDefinition definition, FilterRunContext filterContext, ComboBox firstFieldComboBox, ComboBox operatorComboBox, ComboBox secondFieldComboBox, TextBox firstOffsetTextBox, TextBox secondOffsetTextBox)
         {
             if (!TryGetComparisonSettings(firstFieldComboBox, operatorComboBox, secondFieldComboBox, firstOffsetTextBox, secondOffsetTextBox, out var firstField, out var op, out var secondField, out var firstOffset, out var relativeOffset)) return symbols;
+            var firstColumn = GetMappingColumn(definition, firstField);
+            var secondColumn = GetMappingColumn(definition, secondField);
+            var dataPathValid = !string.IsNullOrWhiteSpace(definition.DataPath) && Directory.Exists(definition.DataPath);
             return symbols.Where(symbol =>
             {
-                if (!TryGetComparisonValues(definition, symbol, firstField, secondField, firstOffset, relativeOffset, filterContext, out var left, out var right))
+                if (firstColumn <= 0 || secondColumn <= 0 || !dataPathValid ||
+                    !TryGetComparisonValues(symbol, firstColumn, secondColumn, firstOffset, relativeOffset, filterContext, out var left, out var right))
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2847,12 +2847,17 @@ namespace Trade.It
             if (string.IsNullOrWhiteSpace(firstField) || string.IsNullOrWhiteSpace(secondField) || string.IsNullOrWhiteSpace(op))
                 return symbols;
 
+            var firstColumn = GetMappingColumn(definition, firstField);
+            var secondColumn = GetMappingColumn(definition, secondField);
+            var dataPathValid = !string.IsNullOrWhiteSpace(definition.DataPath) && Directory.Exists(definition.DataPath);
+            if (firstColumn <= 0 || secondColumn <= 0 || !dataPathValid)
+            {
+                invalidComparisonPriceSymbols++;
+                return symbols.Where(_ => false);
+            }
+
             return symbols.Where(symbol =>
             {
-                var firstColumn = GetMappingColumn(definition, firstField);
-                var secondColumn = GetMappingColumn(definition, secondField);
-                if (firstColumn <= 0 || secondColumn <= 0 ||
-                    string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
                 {
                     invalidComparisonPriceSymbols++;
                     return false;
@@ -2927,14 +2932,10 @@ namespace Trade.It
                     _ => string.Empty
         };
 
-        private bool TryGetComparisonValues(PortfolioDefinition definition, string symbol, string firstField, string secondField, int firstOffset, int secondOffset, FilterRunContext filterContext, out double left, out double right)
+        private bool TryGetComparisonValues(string symbol, int firstColumn, int secondColumn, int firstOffset, int secondOffset, FilterRunContext filterContext, out double left, out double right)
         {
             left = 0;
             right = 0;
-            var firstColumn = GetMappingColumn(definition, firstField);
-            var secondColumn = GetMappingColumn(definition, secondField);
-            if (firstColumn <= 0 || secondColumn <= 0 || string.IsNullOrWhiteSpace(definition.DataPath) || !Directory.Exists(definition.DataPath))
-                return false;
 
             List<string[]> rows;
             try
