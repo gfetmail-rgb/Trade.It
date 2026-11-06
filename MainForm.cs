@@ -2346,6 +2346,16 @@ namespace Trade.It
 
         private static bool TryParseSourceDate(string value, PortfolioDefinition definition, out DateTime date)
         {
+            return TryParseSourceDate(value, definition,
+                definition.Calendar == InputCalendar.Gregorian ? null : new PersianCalendar(), out date);
+        }
+
+        private static bool TryParseSourceDate(
+            string value,
+            PortfolioDefinition definition,
+            PersianCalendar? persianCalendar,
+            out DateTime date)
+        {
             date = default;
             var normalized = NormalizeTradingDigits(value).Trim();
             if (string.IsNullOrWhiteSpace(normalized)) return false;
@@ -2367,7 +2377,8 @@ namespace Trade.It
                     date = new DateTime(year, month, day);
                     return true;
                 }
-                date = new PersianCalendar().ToDateTime(year, month, day, 0, 0, 0, 0).Date;
+                date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
+                    .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
                 return true;
             }
             catch { return false; }
@@ -2455,6 +2466,9 @@ namespace Trade.It
             var splitStopwatch = new System.Diagnostics.Stopwatch();
             var dateParseStopwatch = new System.Diagnostics.Stopwatch();
             var sortStopwatch = new System.Diagnostics.Stopwatch();
+            var persianCalendar = definition.Calendar == InputCalendar.Gregorian
+                ? null
+                : new PersianCalendar();
 
             foreach (var file in GetSymbolFiles(definition, symbol))
             {
@@ -2494,7 +2508,7 @@ namespace Trade.It
                             continue;
 
                         dateParseStopwatch.Start();
-                        var validDate = TryParseSourceDate(row[dateColumn - 1], definition, out var date);
+                        var validDate = TryParseSourceDate(row[dateColumn - 1], definition, persianCalendar, out var date);
                         dateParseStopwatch.Stop();
                         if (!validDate)
                             continue;
