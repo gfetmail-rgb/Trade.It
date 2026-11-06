@@ -1881,6 +1881,7 @@ namespace Trade.It
             TimeSpan historyDateParseTime = TimeSpan.Zero;
             TimeSpan historyCalendarConversionTime = TimeSpan.Zero;
             TimeSpan historySortTime = TimeSpan.Zero;
+            var persianDateCache = new Dictionary<int, DateTime>();
             var filterContext = new FilterRunContext(
                 symbol => ReadOrderedSymbolRows(
                     definition,
@@ -1892,7 +1893,8 @@ namespace Trade.It
                         historyDateParseTime += dateParse;
                         historyCalendarConversionTime += calendarConversion;
                         historySortTime += sort;
-                    }));
+                    },
+                    persianDateCache));
             IEnumerable<string> filtered = symbols;
             var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
             var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
@@ -2357,7 +2359,8 @@ namespace Trade.It
             PortfolioDefinition definition,
             PersianCalendar? persianCalendar,
             out DateTime date,
-            Action<TimeSpan>? conversionTimingCallback = null)
+            Action<TimeSpan>? conversionTimingCallback = null,
+            Dictionary<int, DateTime>? persianDateCache = null)
         {
             date = default;
             var normalized = NormalizeTradingDigits(value).AsSpan().Trim();
@@ -2424,8 +2427,17 @@ namespace Trade.It
                 }
                 else
                 {
-                    date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
-                        .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
+                    var cacheKey = year * 10000 + month * 100 + day;
+                    if (persianDateCache != null && persianDateCache.TryGetValue(cacheKey, out var cachedDate))
+                    {
+                        date = cachedDate;
+                    }
+                    else
+                    {
+                        date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
+                            .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
+                        persianDateCache?.TryAdd(cacheKey, date);
+                    }
                 }
 
                 conversionTimingCallback?.Invoke(
@@ -2503,7 +2515,8 @@ namespace Trade.It
         private List<string[]> ReadOrderedSymbolRows(
             PortfolioDefinition definition,
             string symbol,
-            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null)
+            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null,
+            Dictionary<int, DateTime>? persianDateCache = null)
         {
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -2568,7 +2581,8 @@ namespace Trade.It
                             definition,
                             persianCalendar,
                             out var date,
-                            elapsed => calendarConversionTime += elapsed);
+                            elapsed => calendarConversionTime += elapsed,
+                            persianDateCache);
                         dateParseStopwatch.Stop();
                         if (!validDate)
                             continue;
