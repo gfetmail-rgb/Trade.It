@@ -2354,7 +2354,8 @@ namespace Trade.It
             string value,
             PortfolioDefinition definition,
             PersianCalendar? persianCalendar,
-            out DateTime date)
+            out DateTime date,
+            Action<TimeSpan>? conversionTimingCallback = null)
         {
             date = default;
             var normalized = NormalizeTradingDigits(value).AsSpan().Trim();
@@ -2413,14 +2414,20 @@ namespace Trade.It
 
             try
             {
+                var conversionStart = System.Diagnostics.Stopwatch.GetTimestamp();
+
                 if (definition.Calendar == InputCalendar.Gregorian)
                 {
                     date = new DateTime(year, month, day);
-                    return true;
+                }
+                else
+                {
+                    date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
+                        .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
                 }
 
-                date = (persianCalendar ?? throw new InvalidOperationException("Persian calendar was not initialized."))
-                    .ToDateTime(year, month, day, 0, 0, 0, 0).Date;
+                conversionTimingCallback?.Invoke(
+                    System.Diagnostics.Stopwatch.GetElapsedTime(conversionStart));
                 return true;
             }
             catch { return false; }
@@ -2507,6 +2514,7 @@ namespace Trade.It
             var fileReadTime = TimeSpan.Zero;
             var splitTime = TimeSpan.Zero;
             var dateParseTime = TimeSpan.Zero;
+            var calendarConversionTime = TimeSpan.Zero;
             var sortTime = TimeSpan.Zero;
             var splitStopwatch = new System.Diagnostics.Stopwatch();
             var dateParseStopwatch = new System.Diagnostics.Stopwatch();
@@ -2553,7 +2561,12 @@ namespace Trade.It
                             continue;
 
                         dateParseStopwatch.Start();
-                        var validDate = TryParseSourceDate(row[dateColumn - 1], definition, persianCalendar, out var date);
+                        var validDate = TryParseSourceDate(
+                            row[dateColumn - 1],
+                            definition,
+                            persianCalendar,
+                            out var date,
+                            elapsed => calendarConversionTime += elapsed);
                         dateParseStopwatch.Stop();
                         if (!validDate)
                             continue;
