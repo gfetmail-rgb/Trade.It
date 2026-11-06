@@ -21,13 +21,17 @@ namespace Trade.It
         private sealed class FilterRunContext
         {
             private readonly Func<string, List<string[]>> _reader;
+            private readonly Action<TimeSpan, TimeSpan>? _readMetrics;
 
             private readonly Dictionary<string, Lazy<List<string[]>>> _cache =
                 new(StringComparer.OrdinalIgnoreCase);
 
-            public FilterRunContext(Func<string, List<string[]>> reader)
+            public FilterRunContext(
+                Func<string, List<string[]>> reader,
+                Action<TimeSpan, TimeSpan>? readMetrics = null)
             {
                 _reader = reader ?? throw new ArgumentNullException(nameof(reader));
+                _readMetrics = readMetrics;
             }
 
             public List<string[]> GetRows(string symbol)
@@ -1876,7 +1880,22 @@ namespace Trade.It
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
-            var filterContext = new FilterRunContext(symbol => ReadOrderedSymbolRows(definition, symbol));
+            TimeSpan historyFileReadTime = TimeSpan.Zero;
+            TimeSpan historyParseTime = TimeSpan.Zero;
+            var filterContext = new FilterRunContext(
+                symbol => ReadOrderedSymbolRows(
+                    definition,
+                    symbol,
+                    (fileRead, parse) =>
+                    {
+                        historyFileReadTime += fileRead;
+                        historyParseTime += parse;
+                    }),
+                (fileRead, parse) =>
+                {
+                    historyFileReadTime += fileRead;
+                    historyParseTime += parse;
+                });
             IEnumerable<string> filtered = symbols;
             var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
             var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
@@ -1911,7 +1930,7 @@ namespace Trade.It
                     historyStopwatch.Stop();
                     MessageBox.Show(
                         this,
-                        $"مرحله ۱ ـ خواندن و پردازش تاریخچه‌ها: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
+                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ تجزیه، اعتبارسنجی و مرتب‌سازی: {historyParseTime.TotalSeconds:F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
                         "اندازه‌گیری فیلتر حجم",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -2421,7 +2440,10 @@ namespace Trade.It
         // remaining candles are sorted oldest-to-newest by their actual date.
         // This makes index 0 (from the end) the latest dated candle even when
         // one symbol's rows are spread across multiple files.
-        private List<string[]> ReadOrderedSymbolRows(PortfolioDefinition definition, string symbol)
+        private List<string[]> ReadOrderedSymbolRows(
+            PortfolioDefinition definition,
+            string symbol,
+            Action<TimeSpan, TimeSpan>? timingCallback = null)
         {
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var dateColumn = GetMappingColumn(definition, "تاریخ");
@@ -2431,11 +2453,21 @@ namespace Trade.It
             var collected = new List<(DateTime Date, long Sequence, string[] Row)>();
             var filesContainingSymbolRows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             long sequence = 0;
+            var fileReadTime = TimeSpan.Zero;
+            var parseStopwatch = new System.Diagnostics.Stopwatch();
 
             foreach (var file in GetSymbolFiles(definition, symbol))
             {
+                // Read and decode the file first so disk/file I/O is measured
+                // separately from row parsing and validation.
+                var fileReadStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var lines = File.ReadAllLines(file, DetectTradingDataEncoding(file));
+                fileReadStopwatch.Stop();
+                fileReadTime += fileReadStopwatch.Elapsed;
+
+                parseStopwatch.Start();
                 var firstLine = true;
-                foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+                foreach (var line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
@@ -2465,17 +2497,26 @@ namespace Trade.It
                         collected.Add((DateTime.MinValue, sequence++, row));
                     }
                 }
+                parseStopwatch.Stop();
             }
 
             // Without dates, chronology across separate inside-file data sources
             // cannot be inferred safely. Do not let arbitrary file order silently
             // produce incorrect candle offsets.
             if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
+            {
+                timingCallback?.Invoke(fileReadTime, parseStopwatch.Elapsed);
                 return new List<string[]>();
+            }
 
-            return dateColumn > 0
+            parseStopwatch.Start();
+            var orderedRows = dateColumn > 0
                 ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
                 : collected.OrderBy(x => x.Sequence).Select(x => x.Row).ToList();
+            parseStopwatch.Stop();
+
+            timingCallback?.Invoke(fileReadTime, parseStopwatch.Elapsed);
+            return orderedRows;
         }
 
         private static int GetMappingColumn(PortfolioDefinition definition, string field)
