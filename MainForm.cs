@@ -2851,10 +2851,11 @@ namespace Trade.It
             var secondColumn = GetMappingColumn(definition, secondField);
             var dataPathValid = !string.IsNullOrWhiteSpace(definition.DataPath) && Directory.Exists(definition.DataPath);
             if (firstColumn <= 0 || secondColumn <= 0 || !dataPathValid)
-            {
-                invalidComparisonPriceSymbols++;
-                return symbols.Where(_ => false);
-            }
+                return symbols.Where(_ =>
+                {
+                    invalidComparisonPriceSymbols++;
+                    return false;
+                });
 
             return symbols.Where(symbol =>
             {
