@@ -18,6 +18,33 @@ namespace Trade.It
     
     public partial class MainForm : Form
     {
+        private sealed class FilterRunContext
+        {
+            private readonly Func<string, List<string[]>> _reader;
+
+            private readonly Dictionary<string, Lazy<List<string[]>>> _cache =
+                new(StringComparer.OrdinalIgnoreCase);
+
+            public FilterRunContext(Func<string, List<string[]>> reader)
+            {
+                _reader = reader ?? throw new ArgumentNullException(nameof(reader));
+            }
+
+            public List<string[]> GetRows(string symbol)
+            {
+                if (!_cache.TryGetValue(symbol, out var lazyRows))
+                {
+                    lazyRows = new Lazy<List<string[]>>(
+                        () => _reader(symbol),
+                        System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
+
+                    _cache.Add(symbol, lazyRows);
+                }
+
+                return lazyRows.Value;
+            }
+        }
+
         private readonly Dictionary<string, PortfolioDefinition> loadedPortfolios = new(StringComparer.OrdinalIgnoreCase);
         private bool internalPortfolioUpdate;
         private string? displayedPortfolioName;
