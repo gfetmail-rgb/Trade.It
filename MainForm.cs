@@ -56,12 +56,8 @@ namespace Trade.It
         private bool filtersApplied;
         private bool filters2Applied;
         private int latestTradeDateLoadVersion;
-        private int invalidVolumeRatioSymbols;
-        private int invalidComparisonPriceSymbols;
-        private int invalidPercentChangeSymbols;
         private Button filterApplyButton;
         private TextBox textBox1;
-
 
         private readonly HashSet<string> appliedMarketNodeIds = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> marketFilterExplicitNodeIds = new(StringComparer.OrdinalIgnoreCase);
@@ -157,7 +153,6 @@ namespace Trade.It
                 form.ShowDialog(this);
                 LoadMarketFilterItemsFromSymbolDefinition();
             };
-
 
             portfolioComboBox.SelectedIndexChanged += PortfolioComboBox_SelectedIndexChanged;
             newPortfolioButton.Click += NewPortfolioButton_Click;
@@ -551,7 +546,6 @@ namespace Trade.It
             }
         }
 
-
         private void IndividualFilterClearButton_Click(object? sender, EventArgs e)
         {
             if (sender is Button button && button.Tag is string filterKey)
@@ -632,7 +626,6 @@ namespace Trade.It
             // ظاهر دکمه همان تنظیمات Designer باقی می‌ماند.
             fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
         }
-
 
         protected override void OnHandleCreated(EventArgs e)
         {
@@ -1007,7 +1000,6 @@ namespace Trade.It
                 await Task.Yield();
             }
         }
-
 
         private async Task LoadLatestVolumesAsync(PortfolioDefinition definition, List<string> symbols, int loadVersion)
         {
@@ -1868,42 +1860,14 @@ namespace Trade.It
                 return;
             }
 
-            invalidVolumeRatioSymbols = 0;
-            invalidComparisonPriceSymbols = 0;
-            invalidPercentChangeSymbols = 0;
-
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
-            TimeSpan historyFileReadTime = TimeSpan.Zero;
-            TimeSpan historySplitTime = TimeSpan.Zero;
-            TimeSpan historyDateParseTime = TimeSpan.Zero;
-            TimeSpan historyCalendarConversionTime = TimeSpan.Zero;
-            TimeSpan historySortTime = TimeSpan.Zero;
             var persianDateCache = new Dictionary<int, DateTime>();
             var filterContext = new FilterRunContext(
-                symbol => ReadOrderedSymbolRows(
-                    definition,
-                    symbol,
-                    (fileRead, split, dateParse, calendarConversion, sort) =>
-                    {
-                        historyFileReadTime += fileRead;
-                        historySplitTime += split;
-                        historyDateParseTime += dateParse;
-                        historyCalendarConversionTime += calendarConversion;
-                        historySortTime += sort;
-                    },
-                    persianDateCache));
+                symbol => ReadOrderedSymbolRows(definition, symbol, persianDateCache));
             IEnumerable<string> filtered = symbols;
-            var volumeThresholdText = NormalizeTradingDigits(volumeRatioTextBox.Text).Trim();
-            var volumeDaysText = NormalizeTradingDigits(textBox1.Text).Trim();
-            var volumeFilterWillRun =
-                double.TryParse(volumeThresholdText, NumberStyles.Float, CultureInfo.InvariantCulture, out var volumeThreshold) &&
-                double.IsFinite(volumeThreshold) &&
-                int.TryParse(volumeDaysText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var volumeDays) &&
-                volumeDays > 0 &&
-                volumeRatioOperatorComboBox.SelectedItem != null;
 
             if (filtersApplied)
             {
@@ -1914,42 +1878,8 @@ namespace Trade.It
                     filtered = filtered.Where(symbol => showTraded == todaySymbols.Contains(symbol));
                 }
 
-                filtered = ApplyNameFilter(filtered).ToList();
-
-                if (volumeFilterWillRun)
-                {
-                    // Stage 1: force history-file reading and parsing before volume calculations.
-                    var historyStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    var volumeCandidates = filtered.ToList();
-                    foreach (var symbol in volumeCandidates)
-                    {
-                        try { filterContext.GetRows(symbol); }
-                        catch { /* The volume filter will classify invalid history as it did before. */ }
-                    }
-                    historyStopwatch.Stop();
-                    MessageBox.Show(
-                        this,
-                        $"مرحله ۱ ـ کل خواندن و پردازش: {historyStopwatch.Elapsed.TotalSeconds:F2} ثانیه\n۱-الف ـ خواندن فایل‌ها: {historyFileReadTime.TotalSeconds:F2} ثانیه\n۱-ب ـ Split سطرها: {historySplitTime.TotalSeconds:F2} ثانیه\n۱-پ ـ تبدیل تاریخ‌ها: {historyDateParseTime.TotalSeconds:F2} ثانیه (از این مقدار، تبدیل تقویم: {historyCalendarConversionTime.TotalSeconds:F2} ثانیه)\n۱-ت ـ مرتب‌سازی: {historySortTime.TotalSeconds:F2} ثانیه\nسایر پردازش‌ها و سربار: {Math.Max(0, historyStopwatch.Elapsed.TotalSeconds - historyFileReadTime.TotalSeconds - historySplitTime.TotalSeconds - historyDateParseTime.TotalSeconds - historySortTime.TotalSeconds):F2} ثانیه\nتعداد نمادهای بررسی‌شده: {volumeCandidates.Count}",
-                        "اندازه‌گیری فیلتر حجم",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
-                    // Stage 2: measure only the volume-ratio calculation.
-                    var volumeFilterStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    var volumeResult = ApplyVolumeRatioFilter(volumeCandidates, definition, filterContext).ToList();
-                    volumeFilterStopwatch.Stop();
-                    filtered = volumeResult;
-                    MessageBox.Show(
-                        this,
-                        $"مرحله ۲ ـ محاسبه فیلتر حجم: {volumeFilterStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد نمادهای باقی‌مانده: {volumeResult.Count}",
-                        "اندازه‌گیری فیلتر حجم",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                }
-                else
-                {
-                    filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
-                }
+                filtered = ApplyNameFilter(filtered);
+                filtered = ApplyVolumeRatioFilter(filtered, definition, filterContext);
                 filtered = ApplyPastDaysFilter(filtered, definition, filterContext);
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox1, comparisonOperatorComboBox2, comparisonSecondComboBox1, comparisonFirstTextBox2, comparisonSecondTextBox2);
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparisonFirstComboBox2, comparisonOperatorComboBox1, comparisonSecondComboBox2, comparisonFirstTextBox1, comparisonSecondTextBox1);
@@ -1961,16 +1891,15 @@ namespace Trade.It
                     var nText = NormalizeTradingDigits(ohlcChangeDaysTextBox.Text).Trim();
                     var percentText = NormalizeTradingDigits(ohlcChangePercentTextBox.Text).Trim();
                     var op = GetOhlcChangeOperator();
-                    if (!string.IsNullOrEmpty(field) && int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 && double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
+                    if (!string.IsNullOrEmpty(field) &&
+                        int.TryParse(nText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) && n > 0 &&
+                        double.TryParse(percentText, NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) &&
+                        double.IsFinite(percent) && !string.IsNullOrWhiteSpace(op))
+                    {
                         filtered = filtered.Where(symbol =>
-                        {
-                            if (!TryGetOhlcChange(definition, symbol, field, n, filterContext, out var changePercent))
-                            {
-                                invalidPercentChangeSymbols++;
-                                return false;
-                            }
-                            return CompareNumeric(changePercent, percent, op);
-                        });
+                            TryGetOhlcChange(definition, symbol, field, n, filterContext, out var changePercent) &&
+                            CompareNumeric(changePercent, percent, op));
+                    }
                 }
             }
 
@@ -1981,12 +1910,11 @@ namespace Trade.It
                 filtered = ApplyComparisonFilter(filtered, definition, filterContext, comparison2FirstComboBox3, comparison2OperatorComboBox3, comparison2SecondComboBox3, comparison2FirstOffsetTextBox3, comparison2SecondOffsetTextBox3);
                 filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox1, comparisonRangeOperatorComboBox1, comparisonRangeSecondComboBox1, comparisonRangeOffsetTextBox1);
                 filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox2, comparisonRangeOperatorComboBox2, comparisonRangeSecondComboBox2, comparisonRangeOffsetTextBox2);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
-            filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox3, comparisonRangeOperatorComboBox3, comparisonRangeSecondComboBox3, comparisonRangeOffsetTextBox3);
+                filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             }
 
             var result = filtered.ToList();
-            var gridUpdateStopwatch = System.Diagnostics.Stopwatch.StartNew();
             internalPortfolioUpdate = true;
             try
             {
@@ -2003,36 +1931,9 @@ namespace Trade.It
             selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
-            gridUpdateStopwatch.Stop();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
-
-            ShowFilterDataWarnings();
-
-            if (filtersApplied && volumeFilterWillRun)
-            {
-                MessageBox.Show(
-                    this,
-                    $"مرحله ۳ ـ به‌روزرسانی جدول و نمایش نتایج: {gridUpdateStopwatch.Elapsed.TotalSeconds:F2} ثانیه\nتعداد سطرهای جدول: {result.Count}",
-                    "اندازه‌گیری فیلتر حجم",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-        }
-
-        private void ShowFilterDataWarnings()
-        {
-            var warnings = new List<string>();
-            if (invalidVolumeRatioSymbols > 0)
-                warnings.Add($"• فیلتر نسبت حجم: {ToPersianDigits(invalidVolumeRatioSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن تاریخچه حجم از نتیجه حذف شد.");
-            if (invalidComparisonPriceSymbols > 0)
-                warnings.Add($"• فیلترهای مقایسه قیمت: {ToPersianDigits(invalidComparisonPriceSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
-            if (invalidPercentChangeSymbols > 0)
-                warnings.Add($"• فیلتر تغییر درصد قیمت: {ToPersianDigits(invalidPercentChangeSymbols.ToString())} نماد به دلیل ناکافی یا نامعتبر بودن داده‌های قیمت از نتیجه حذف شد.");
-
-            if (warnings.Count > 0)
-                MessageBox.Show(this, "برخی نمادها به دلیل کافی یا معتبر نبودن داده‌ها قابل ارزیابی نبودند و از نتایج حذف شدند:\n\n" + string.Join(Environment.NewLine, warnings), "گزارش داده‌های فیلترها", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
@@ -2121,7 +2022,6 @@ namespace Trade.It
                 if (volumeColumn > 0 && dataPathValid && TryGetLatestVolumeRatio(definition, symbol, n, filterContext, volumeColumn, out var ratio))
                     calculated.Add((symbol, ratio));
                 else
-                    invalidVolumeRatioSymbols++;
             }
 
             // Use one consistent tolerance for all three operators so >, < and =
@@ -2355,7 +2255,6 @@ namespace Trade.It
             PortfolioDefinition definition,
             PersianCalendar? persianCalendar,
             out DateTime date,
-            Action<TimeSpan>? conversionTimingCallback = null,
             Dictionary<int, DateTime>? persianDateCache = null)
         {
             date = default;
@@ -2415,7 +2314,6 @@ namespace Trade.It
 
             try
             {
-                var conversionStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
                 if (definition.Calendar == InputCalendar.Gregorian)
                 {
@@ -2436,8 +2334,6 @@ namespace Trade.It
                     }
                 }
 
-                conversionTimingCallback?.Invoke(
-                    System.Diagnostics.Stopwatch.GetElapsedTime(conversionStart));
                 return true;
             }
             catch { return false; }
@@ -2511,7 +2407,6 @@ namespace Trade.It
         private List<string[]> ReadOrderedSymbolRows(
             PortfolioDefinition definition,
             string symbol,
-            Action<TimeSpan, TimeSpan, TimeSpan, TimeSpan, TimeSpan>? timingCallback = null,
             Dictionary<int, DateTime>? persianDateCache = null)
         {
             var symbolColumn = GetMappingColumn(definition, "نماد");
@@ -2522,26 +2417,13 @@ namespace Trade.It
             var collected = new List<(DateTime Date, long Sequence, string[] Row)>();
             var filesContainingSymbolRows = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             long sequence = 0;
-            var fileReadTime = TimeSpan.Zero;
-            var splitTime = TimeSpan.Zero;
-            var dateParseTime = TimeSpan.Zero;
-            var calendarConversionTime = TimeSpan.Zero;
-            var sortTime = TimeSpan.Zero;
-            var splitStopwatch = new System.Diagnostics.Stopwatch();
-            var dateParseStopwatch = new System.Diagnostics.Stopwatch();
-            var sortStopwatch = new System.Diagnostics.Stopwatch();
             var persianCalendar = definition.Calendar == InputCalendar.Gregorian
                 ? null
                 : new PersianCalendar();
 
             foreach (var file in GetSymbolFiles(definition, symbol))
             {
-                // Read and decode the file first so disk/file I/O is measured
-                // separately from row parsing and validation.
-                var fileReadStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 var lines = File.ReadAllLines(file, DetectTradingDataEncoding(file));
-                fileReadStopwatch.Stop();
-                fileReadTime += fileReadStopwatch.Elapsed;
 
                 var firstLine = true;
                 foreach (var line in lines)
@@ -2549,9 +2431,7 @@ namespace Trade.It
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
-                    splitStopwatch.Start();
                     var row = SplitTradingDataLine(line, definition.Separator);
-                    splitStopwatch.Stop();
 
                     if (firstLine && definition.HasHeader)
                     {
@@ -2571,15 +2451,12 @@ namespace Trade.It
                         if (dateColumn > row.Length)
                             continue;
 
-                        dateParseStopwatch.Start();
                         var validDate = TryParseSourceDate(
                             row[dateColumn - 1],
                             definition,
                             persianCalendar,
                             out var date,
-                            elapsed => calendarConversionTime += elapsed,
                             persianDateCache);
-                        dateParseStopwatch.Stop();
                         if (!validDate)
                             continue;
                         collected.Add((date.Date, sequence++, row));
@@ -2591,26 +2468,18 @@ namespace Trade.It
                 }
             }
 
-            splitTime = splitStopwatch.Elapsed;
-            dateParseTime = dateParseStopwatch.Elapsed;
-
             // Without dates, chronology across separate inside-file data sources
             // cannot be inferred safely. Do not let arbitrary file order silently
             // produce incorrect candle offsets.
             if (dateColumn <= 0 && definition.SymbolSource == SymbolSource.InsideFile && filesContainingSymbolRows.Count > 1)
             {
-                timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, calendarConversionTime, sortTime);
                 return new List<string[]>();
             }
 
-            sortStopwatch.Start();
             var orderedRows = dateColumn > 0
                 ? collected.OrderBy(x => x.Date).ThenBy(x => x.Sequence).Select(x => x.Row).ToList()
                 : collected.OrderBy(x => x.Sequence).Select(x => x.Row).ToList();
-            sortStopwatch.Stop();
-            sortTime = sortStopwatch.Elapsed;
 
-            timingCallback?.Invoke(fileReadTime, splitTime, dateParseTime, calendarConversionTime, sortTime);
             return orderedRows;
         }
 
@@ -2827,7 +2696,6 @@ namespace Trade.It
                 if (firstColumn <= 0 || secondColumn <= 0 || !dataPathValid ||
                     !TryGetComparisonValues(symbol, firstColumn, secondColumn, firstOffset, relativeOffset, filterContext, out var left, out var right))
                 {
-                    invalidComparisonPriceSymbols++;
                     return false;
                 }
                 return CompareComparisonOperator(left, right, op);
@@ -2853,7 +2721,6 @@ namespace Trade.It
             if (firstColumn <= 0 || secondColumn <= 0 || !dataPathValid)
                 return symbols.Where(_ =>
                 {
-                    invalidComparisonPriceSymbols++;
                     return false;
                 });
 
@@ -2866,7 +2733,6 @@ namespace Trade.It
                 }
                 catch
                 {
-                    invalidComparisonPriceSymbols++;
                     return false;
                 }
 
@@ -2875,7 +2741,6 @@ namespace Trade.It
                 // every preceding candle from 1 through the configured offset.
                 if (rows.Count <= offset)
                 {
-                    invalidComparisonPriceSymbols++;
                     return false;
                 }
 
@@ -2884,7 +2749,6 @@ namespace Trade.It
                     !TryParseTradingNumber(latestRow[firstColumn - 1], out var latestValue) ||
                     !double.IsFinite(latestValue))
                 {
-                    invalidComparisonPriceSymbols++;
                     return false;
                 }
 
@@ -2895,7 +2759,6 @@ namespace Trade.It
                         !TryParseTradingNumber(row[secondColumn - 1], out var rangeValue) ||
                         !double.IsFinite(rangeValue))
                     {
-                        invalidComparisonPriceSymbols++;
                         return false;
                     }
                     if (!CompareComparisonOperator(latestValue, rangeValue, op))
