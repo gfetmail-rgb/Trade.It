@@ -1002,7 +1002,24 @@ namespace Trade.It
             var oldStep = plot.Width / (double)oldCount;
             var anchorRelativeIndex =
                 (anchorX - plot.Left - initialOffset - horizontalPanOffset) / oldStep - 0.5;
-            var anchorAbsoluteIndex = firstIndex + anchorRelativeIndex;
+
+            // اگر لنگر زوم روی فضای خالی نمودار افتاده باشد، نباید مختصات
+            // یک کندل فرضی خارج از داده‌ها را حفظ کنیم؛ نزدیک‌ترین کندل
+            // واقعیِ قابل‌مشاهده را به‌عنوان لنگر انتخاب می‌کنیم.
+            var firstVisibleIndex = Math.Clamp(firstIndex, 0, points.Count - 1);
+            var lastVisibleIndex = Math.Clamp(
+                firstIndex + oldCount - 1,
+                firstVisibleIndex,
+                points.Count - 1);
+            var anchorAbsoluteIndex = Math.Clamp(
+                firstIndex + anchorRelativeIndex,
+                firstVisibleIndex,
+                lastVisibleIndex);
+
+            // مختصات صفحه‌ای لنگر را از روی کندل واقعیِ انتخاب‌شده بازسازی می‌کنیم.
+            anchorX = plot.Left +
+                oldStep * (anchorAbsoluteIndex - firstIndex + 0.5) +
+                initialOffset + horizontalPanOffset;
 
             visibleCount = newCount;
 
