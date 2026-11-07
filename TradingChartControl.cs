@@ -41,6 +41,7 @@ namespace Trade.It
         private Point horizontalAxisStartPoint;
         private int horizontalAxisStartVisibleCount;
         private double horizontalAxisCenterIndex;
+        private int horizontalAxisAnchorScreenX;
         private bool verticalAxisDrag;
         private Point verticalAxisStartPoint;
         private double verticalAxisStartZoom;
@@ -1486,8 +1487,24 @@ namespace Trade.It
                 var rightAnchorX = GetChartRightAnchorX(plot);
                 var rightEdgeRelativeIndex =
                     (rightAnchorX - plotLeft - axisInitialOffset - horizontalPanOffset) / axisStep - 0.5;
-                // لنگر زوم محور افقی همیشه مرز راست محدوده رسم کندل‌ها است.
-                horizontalAxisCenterIndex = firstIndex + rightEdgeRelativeIndex;
+
+                // دقیقاً مانند ZoomX، لنگر باید یک کندل واقعی و قابل‌مشاهده باشد؛
+                // نه یک موقعیت فرضی در فضای خالی سمت راست نمودار.
+                var firstVisibleIndex = Math.Clamp(firstIndex, 0, points.Count - 1);
+                var lastVisibleIndex = Math.Clamp(
+                    firstIndex + Math.Max(2, visibleCount) - 1,
+                    firstVisibleIndex,
+                    points.Count - 1);
+                horizontalAxisCenterIndex = Math.Clamp(
+                    firstIndex + rightEdgeRelativeIndex,
+                    firstVisibleIndex,
+                    lastVisibleIndex);
+
+                // مختصات صفحه‌ای همان کندل واقعی در لحظه شروع Drag ثابت می‌ماند.
+                horizontalAxisAnchorScreenX = (int)Math.Round(
+                    plot.Left +
+                    axisStep * (horizontalAxisCenterIndex - firstIndex + 0.5) +
+                    axisInitialOffset + horizontalPanOffset);
 
                 Capture = true;
                 Cursor = Cursors.SizeWE;
@@ -1704,23 +1721,19 @@ namespace Trade.It
                     var zoomStep = zoomPlot.Width / (double)Math.Max(2, newCount);
                     var zoomInitialOffset = -zoomPlot.Width * 0.25;
 
-                    // مختصات کندل لنگر در لبه راست Plot با شروع Drag ثبت شده
-                    // و در تمام طول Drag ثابت می‌ماند.
-                    var rightAnchorX = GetChartRightAnchorX(zoomPlot);
+                    // همان الگوریتم ZoomX: موقعیت کندل لنگر واقعی را با مختصات
+                    // صفحه‌ای ثابت نگه می‌داریم و firstIndex و Offset را با هم
+                    // محاسبه می‌کنیم تا محتوا هنگام زوم به زیر Clip رانده نشود.
                     var anchorRelativeIndex =
-                        (rightAnchorX - zoomPlot.Left - zoomInitialOffset - horizontalPanOffset)
-                        / zoomStep - 0.5;
+                        (horizontalAxisAnchorScreenX - zoomPlot.Left -
+                         zoomInitialOffset - horizontalPanOffset) / zoomStep - 0.5;
 
                     firstIndex = Math.Clamp(
                         (int)Math.Round(horizontalAxisCenterIndex - anchorRelativeIndex),
                         0,
                         Math.Max(0, points.Count - newCount));
 
-                    // پس از تعیین firstIndex، Offset را طوری تنظیم می‌کنیم که
-                    // همان کندل لنگر در مختصات ثابت لبه راست باقی بماند.
-                    // بدون این جبران، تغییر firstIndex باعث رانش افقی محتوا
-                    // و بریده‌شدن کندل‌ها در مرز Clip می‌شود.
-                    horizontalPanOffset = rightAnchorX -
+                    horizontalPanOffset = horizontalAxisAnchorScreenX -
                         (zoomPlot.Left +
                          zoomStep * (horizontalAxisCenterIndex - firstIndex + 0.5) +
                          zoomInitialOffset);
