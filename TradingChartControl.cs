@@ -1017,9 +1017,10 @@ namespace Trade.It
                 lastVisibleIndex);
 
             // مختصات صفحه‌ای لنگر را از روی کندل واقعیِ انتخاب‌شده بازسازی می‌کنیم.
-            anchorX = plot.Left +
+            anchorX = (int)Math.Round(
+                plot.Left +
                 oldStep * (anchorAbsoluteIndex - firstIndex + 0.5) +
-                initialOffset + horizontalPanOffset;
+                initialOffset + horizontalPanOffset);
 
             visibleCount = newCount;
 
