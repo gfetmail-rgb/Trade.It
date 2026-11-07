@@ -1022,6 +1022,11 @@ namespace Trade.It
                     (int)Math.Round(anchorAbsoluteIndex - newAnchorRelativeIndex),
                     0,
                     Math.Max(0, points.Count - newCount));
+
+                // firstIndex فقط کندل صحیح را جابه‌جا می‌کند؛ اختلاف زیرکندلی
+                // باید در Offset جبران شود تا لنگر زوم در همان مختصات بماند.
+                horizontalPanOffset = anchorX -
+                    (plot.Left + newStep * (anchorAbsoluteIndex - firstIndex + 0.5) + initialOffset);
             }
 
             crosshairIndex = -1;
