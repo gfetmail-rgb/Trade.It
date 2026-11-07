@@ -1716,9 +1716,14 @@ namespace Trade.It
                         0,
                         Math.Max(0, points.Count - newCount));
 
-                    // Offset افقی و جبران فاصلهٔ راست باید هنگام زوم حفظ شوند.
-                    // صفر کردن این مقدار، chartPanCompensation را از وضعیت واقعی
-                    // رسم جدا می‌کند و در حرکت بعدی باعث پرش نمودار می‌شود.
+                    // پس از تعیین firstIndex، Offset را طوری تنظیم می‌کنیم که
+                    // همان کندل لنگر در مختصات ثابت لبه راست باقی بماند.
+                    // بدون این جبران، تغییر firstIndex باعث رانش افقی محتوا
+                    // و بریده‌شدن کندل‌ها در مرز Clip می‌شود.
+                    horizontalPanOffset = rightAnchorX -
+                        (zoomPlot.Left +
+                         zoomStep * (horizontalAxisCenterIndex - firstIndex + 0.5) +
+                         zoomInitialOffset);
                 }
 
                 crosshairIndex = -1;
