@@ -1384,6 +1384,8 @@ namespace Trade.It
                 // Cache date-only values: M1 files commonly repeat the same date across
                 // hundreds of candles, so parsing it for every row is unnecessary.
                 var dateParseCache = new Dictionary<string, DateTime?>(StringComparer.Ordinal);
+                string? lastRawDate = null;
+                DateTime? lastParsedDate = null;
                 foreach (var filePath in filesToLoad)
                 {
                     var firstLine = true;
@@ -1442,16 +1444,28 @@ namespace Trade.It
                             if (!hasDateValue)
                                 continue;
 
-                            var rawDate = dateValue.ToString();
                             if (timingSample)
                                 phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
-                            if (!dateParseCache.TryGetValue(rawDate, out var cachedDate))
+                            DateTime? cachedDate;
+                            if (lastRawDate != null &&
+                                dateValue.SequenceEqual(lastRawDate.AsSpan()))
                             {
-                                cachedDate = TryParseChartDate(rawDate, definition, out var parsedDate)
-                                    ? parsedDate
-                                    : null;
-                                dateParseCache.Add(rawDate, cachedDate);
+                                cachedDate = lastParsedDate;
+                            }
+                            else
+                            {
+                                var rawDate = dateValue.ToString();
+                                if (!dateParseCache.TryGetValue(rawDate, out cachedDate))
+                                {
+                                    cachedDate = TryParseChartDate(rawDate, definition, out var parsedDate)
+                                        ? parsedDate
+                                        : null;
+                                    dateParseCache.Add(rawDate, cachedDate);
+                                }
+
+                                lastRawDate = rawDate;
+                                lastParsedDate = cachedDate;
                             }
 
                             if (timingSample)
