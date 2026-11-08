@@ -893,7 +893,7 @@ namespace Trade.It
 
             var count = Math.Clamp(visibleCount, 1, points.Count);
             var plot = GetPlotRectangle();
-            var step = Math.Max(1.0, plot.Width / (double)count);
+            var step = plot.Width / (double)count;
             var initialOffset = -plot.Width * 0.25;
 
             // در حالت تست، کندل مرجع همیشه باید در محل لنگر سمت راست نمودار بماند.
