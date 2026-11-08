@@ -907,6 +907,7 @@
             volumeColumn.MinimumWidth = 8;
             volumeColumn.Name = "volumeColumn";
             volumeColumn.ReadOnly = true;
+            volumeColumn.ValueType = typeof(double);
             volumeColumn.Width = 100;
             volumeColumn.DefaultCellStyle.Format = "N0";
             volumeColumn.Visible = false;
