@@ -1352,22 +1352,22 @@ namespace Trade.It
             List<string> filesToLoad = new();
             var readAndParseWatch = new System.Diagnostics.Stopwatch();
 
+            // Keep timing accumulators in the method scope because the summary is
+            // emitted after the file-reading try/catch block.
+            const int timingSampleMask = 1023;
+            long timingRows = 0;
+            long timingSamples = 0;
+            long splitTicks = 0;
+            long dateTicks = 0;
+            long timeTicks = 0;
+            long numericTicks = 0;
+            long pointTicks = 0;
+
             try
             {
                 filesToLoad = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
                 fileDiscoveryWatch.Stop();
                 readAndParseWatch.Start();
-
-                // Sample one row out of every 1024 to estimate the cost of each
-                // parsing stage without adding stopwatch overhead to every candle.
-                const int timingSampleMask = 1023;
-                long timingRows = 0;
-                long timingSamples = 0;
-                long splitTicks = 0;
-                long dateTicks = 0;
-                long timeTicks = 0;
-                long numericTicks = 0;
-                long pointTicks = 0;
 
                 // Cache date-only values: M1 files commonly repeat the same date across
                 // hundreds of candles, so parsing it for every row is unnecessary.
