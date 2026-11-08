@@ -820,7 +820,7 @@ namespace Trade.It
                 var dataLoadWatch = System.Diagnostics.Stopwatch.StartNew();
                 var points = LoadChartData(definition, symbol);
                 dataLoadWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadChartData={dataLoadWatch.Elapsed.TotalMilliseconds:F1}ms, points={points.Count}");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadChartData={dataLoadWatch.Elapsed.TotalMilliseconds:F1}ms, points={points.Count}");
                 if (points.Count == 0)
                 {
                     var diagnostic = string.IsNullOrWhiteSpace(lastChartDataLoadError)
@@ -845,12 +845,12 @@ namespace Trade.It
                 var createChartWatch = System.Diagnostics.Stopwatch.StartNew();
                 var chart = GetOrCreateChart(symbol);
                 createChartWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, GetOrCreateChart={createChartWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, GetOrCreateChart={createChartWatch.Elapsed.TotalMilliseconds:F1}ms");
                 var setDataWatch = System.Diagnostics.Stopwatch.StartNew();
                 chart.SetData(points, symbol, dataIsOrdered: true);
                 chart.SetChartType(GetSelectedChartType());
                 setDataWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, SetDataAndType={setDataWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, SetDataAndType={setDataWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 var analysisWatch = System.Diagnostics.Stopwatch.StartNew();
                 if (isNewChart)
@@ -860,7 +860,7 @@ namespace Trade.It
                         ApplyAnalysisDocument(chart, savedAnalysis);
                 }
                 analysisWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadAndApplyAnalysis={analysisWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadAndApplyAnalysis={analysisWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
@@ -875,7 +875,7 @@ namespace Trade.It
                 var attachWatch = System.Diagnostics.Stopwatch.StartNew();
                 AttachChartToTab(chart, symbol);
                 attachWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, AttachChart={attachWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, AttachChart={attachWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 // بعد از نمایش چارت، فوکوس را روی فهرست سهام نگه می‌داریم
                 // تا کلیدهای ناوبری مستقیماً روی فهرست عمل کنند.
@@ -894,7 +894,7 @@ namespace Trade.It
                     stocksDataGridView.Focus();
                 }
                 chartOpenWatch.Stop();
-                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, TOTAL={chartOpenWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartOpenTiming] Symbol={symbol}, TOTAL={chartOpenWatch.Elapsed.TotalMilliseconds:F1}ms");
             }
             catch (Exception ex)
             {
@@ -1429,7 +1429,7 @@ namespace Trade.It
             {
                 fileDiscoveryWatch.Stop();
                 readAndParseWatch.Stop();
-                Console.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={(filesToLoad is null ? -1 : filesToLoad.Count)}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, ERROR={ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={(filesToLoad is null ? -1 : filesToLoad.Count)}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, ERROR={ex.Message}");
                 lastChartDataLoadError = $"خطا هنگام خواندن داده: {ex.Message}";
                 return new List<TradingChartPoint>();
             }
@@ -1447,7 +1447,7 @@ namespace Trade.It
             var sortWatch = System.Diagnostics.Stopwatch.StartNew();
             var sortedResult = result.OrderBy(x => x.Date).ToList();
             sortWatch.Stop();
-            Console.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms");
+            System.Diagnostics.Debug.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms");
             return sortedResult;
         }
 
