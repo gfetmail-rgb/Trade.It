@@ -1369,6 +1369,7 @@ namespace Trade.It
             const int timingSampleMask = 1023;
             long timingRows = 0;
             long timingSamples = 0;
+            long readTicks = 0;
             long splitTicks = 0;
             long dateTicks = 0;
             long timeTicks = 0;
@@ -1389,12 +1390,21 @@ namespace Trade.It
                 foreach (var filePath in filesToLoad)
                 {
                     var firstLine = true;
-                    foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
+                    using var lineEnumerator = File.ReadLines(filePath, DetectTradingDataEncoding(filePath)).GetEnumerator();
+                    while (true)
                     {
+                        var timingSample = (timingRows & timingSampleMask) == 0;
+                        var readStart = timingSample ? System.Diagnostics.Stopwatch.GetTimestamp() : 0L;
+                        if (!lineEnumerator.MoveNext())
+                            break;
+                        if (timingSample)
+                            readTicks += System.Diagnostics.Stopwatch.GetTimestamp() - readStart;
+
+                        timingRows++;
+                        var line = lineEnumerator.Current;
                         if (string.IsNullOrWhiteSpace(line))
                             continue;
 
-                        var timingSample = (timingRows++ & timingSampleMask) == 0;
                         var phaseStart = timingSample ? System.Diagnostics.Stopwatch.GetTimestamp() : 0L;
                         var lineSpan = line.AsSpan();
                         var separator = string.IsNullOrEmpty(definition.Separator) ? "," : definition.Separator;
@@ -1568,7 +1578,7 @@ namespace Trade.It
                 $"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, " +
                 $"Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, " +
                 $"Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms, Samples={timingSamples}/{timingRows}, " +
-                $"Split~={ToEstimatedMilliseconds(splitTicks):F1}ms, Date~={ToEstimatedMilliseconds(dateTicks):F1}ms, " +
+                $"Read~={ToEstimatedMilliseconds(readTicks):F1}ms, Split~={ToEstimatedMilliseconds(splitTicks):F1}ms, Date~={ToEstimatedMilliseconds(dateTicks):F1}ms, " +
                 $"Time~={ToEstimatedMilliseconds(timeTicks):F1}ms, Numbers~={ToEstimatedMilliseconds(numericTicks):F1}ms, " +
                 $"Point~={ToEstimatedMilliseconds(pointTicks):F1}ms");
             return sortedResult;
