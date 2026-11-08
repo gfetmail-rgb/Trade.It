@@ -109,6 +109,8 @@
         private Label filterCountLabel2;
 
         private System.Windows.Forms.ComboBox portfolioComboBox;
+        private System.Windows.Forms.TextBox symbolSearchTextBox;
+        private System.Windows.Forms.Button symbolSearchClearButton;
         private System.Windows.Forms.Label portfolioLabel;
         private System.Windows.Forms.DataGridView stocksDataGridView;
         private System.Windows.Forms.Button navigationButton;
@@ -256,6 +258,8 @@
             selectColumn = new DataGridViewCheckBoxColumn();
             volumeColumn = new DataGridViewTextBoxColumn();
             portfolioComboBox = new ComboBox();
+            symbolSearchTextBox = new TextBox();
+            symbolSearchClearButton = new Button();
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
             tabPageFilters2 = new TabPage();
@@ -722,6 +726,8 @@
             stocksTabPage.Controls.Add(stocksGridCountLabel);
             stocksTabPage.Controls.Add(groupBox2);
             stocksTabPage.Controls.Add(stocksDataGridView);
+            stocksTabPage.Controls.Add(symbolSearchTextBox);
+            stocksTabPage.Controls.Add(symbolSearchClearButton);
             stocksTabPage.Controls.Add(portfolioComboBox);
             stocksTabPage.Controls.Add(portfolioLabel);
             stocksTabPage.Location = new Point(4, 34);
@@ -857,11 +863,11 @@
             stocksDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksDataGridView.ColumnHeadersHeight = 34;
             stocksDataGridView.Columns.AddRange(new DataGridViewColumn[] { rowColumn, symbolColumn, lastTradeColumn, selectColumn, volumeColumn });
-            stocksDataGridView.Location = new Point(11, 47);
+            stocksDataGridView.Location = new Point(11, 84);
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
-            stocksDataGridView.Size = new Size(368, 685);
+            stocksDataGridView.Size = new Size(368, 648);
             stocksDataGridView.TabIndex = 0;
             // 
             // rowColumn
@@ -907,6 +913,28 @@
             // 
             // portfolioComboBox
             // 
+            // 
+            // symbolSearchTextBox
+            // 
+            symbolSearchTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            symbolSearchTextBox.Location = new Point(11, 47);
+            symbolSearchTextBox.Name = "symbolSearchTextBox";
+            symbolSearchTextBox.PlaceholderText = "جستجو در نام نماد";
+            symbolSearchTextBox.RightToLeft = RightToLeft.Yes;
+            symbolSearchTextBox.Size = new Size(285, 31);
+            symbolSearchTextBox.TabIndex = 5;
+            // 
+            // symbolSearchClearButton
+            // 
+            symbolSearchClearButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            symbolSearchClearButton.Location = new Point(301, 46);
+            symbolSearchClearButton.Name = "symbolSearchClearButton";
+            symbolSearchClearButton.Size = new Size(78, 33);
+            symbolSearchClearButton.TabIndex = 6;
+            symbolSearchClearButton.Text = "پاک";
+            symbolSearchClearButton.UseVisualStyleBackColor = true;
+            // 
+            // portfolioComboBox
             portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new Point(11, 6);
