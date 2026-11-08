@@ -1357,6 +1357,9 @@ namespace Trade.It
                 filesToLoad = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
                 fileDiscoveryWatch.Stop();
                 readAndParseWatch.Start();
+                // Cache date-only values: M1 files commonly repeat the same date across
+                // hundreds of candles, so parsing it for every row is unnecessary.
+                var dateParseCache = new Dictionary<string, DateTime?>(StringComparer.Ordinal);
                 foreach (var filePath in filesToLoad)
                 {
                     var firstLine = true;
@@ -1385,10 +1388,22 @@ namespace Trade.It
                         DateTime date;
                         if (!definition.NoDateTime)
                         {
-                            if (dateColumn <= 0 || dateColumn > row.Length ||
-                                !TryParseChartDate(row[dateColumn - 1], definition, out date))
+                            if (dateColumn <= 0 || dateColumn > row.Length)
                                 continue;
 
+                            var rawDate = row[dateColumn - 1];
+                            if (!dateParseCache.TryGetValue(rawDate, out var cachedDate))
+                            {
+                                cachedDate = TryParseChartDate(rawDate, definition, out var parsedDate)
+                                    ? parsedDate
+                                    : null;
+                                dateParseCache.Add(rawDate, cachedDate);
+                            }
+
+                            if (!cachedDate.HasValue)
+                                continue;
+
+                            date = cachedDate.Value;
                             if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
                                 date = date.Date.Add(time);
                         }
