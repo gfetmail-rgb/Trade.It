@@ -159,12 +159,12 @@ namespace Trade.It
             Resize += NoDateAxis_Resize;
         }
 
-        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null)
+        public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null, bool dataIsOrdered = false)
         {
             chartSymbol = symbol?.Trim() ?? string.Empty;
             chartTimeFrame = timeFrame?.Trim() ?? string.Empty;
             points.Clear();
-            points.AddRange(data.OrderBy(x => x.Date));
+            points.AddRange(dataIsOrdered ? data : data.OrderBy(x => x.Date));
             InvalidateIchimokuCache();
             InvalidateBollingerCache();
             InvalidateObvCache();
