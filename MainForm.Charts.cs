@@ -1347,6 +1347,13 @@ namespace Trade.It
             }
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
+            var maxMappedColumn = Math.Max(
+                Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn)),
+                Math.Max(
+                    definition.NoDateTime ? 0 : dateColumn,
+                    Math.Max(timeColumn, Math.Max(volumeColumn,
+                        definition.SymbolSource == SymbolSource.InsideFile ? symbolColumn : 0))));
+            var columnRanges = new Range[Math.Max(1, maxMappedColumn)];
             var syntheticIndex = 0L;
             var fileDiscoveryWatch = System.Diagnostics.Stopwatch.StartNew();
             List<string> filesToLoad = new();
@@ -1392,13 +1399,7 @@ namespace Trade.It
                         }
                         firstLine = false;
 
-                        if (definition.SymbolSource == SymbolSource.InsideFile &&
-                            (!TryGetTradingColumnSpan(lineSpan, separator, symbolColumn, out var symbolValue) ||
-                             !symbolValue.Trim().Equals(symbol.AsSpan(), StringComparison.OrdinalIgnoreCase)))
-                            continue;
-
-                        var requiredMaxColumn = Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn));
-                        if (!TryGetTradingColumnSpan(lineSpan, separator, requiredMaxColumn, out _))
+                        if (!TrySplitTradingLine(lineSpan, separator.AsSpan(), columnRanges))
                             continue;
 
                         if (timingSample)
@@ -1407,25 +1408,27 @@ namespace Trade.It
                             timingSamples++;
                         }
 
-                        if (!definition.NoDateTime &&
-                            (dateColumn <= 0 || !TryGetTradingColumnSpan(lineSpan, separator, dateColumn, out _)))
+                        if (definition.SymbolSource == SymbolSource.InsideFile &&
+                            (symbolColumn <= 0 ||
+                             !lineSpan[columnRanges[symbolColumn - 1]].Trim().Equals(symbol.AsSpan(), StringComparison.OrdinalIgnoreCase)))
                             continue;
 
-                        if (!TryGetTradingColumnSpan(lineSpan, separator, openColumn, out var openValue) ||
-                            !TryGetTradingColumnSpan(lineSpan, separator, highColumn, out var highValue) ||
-                            !TryGetTradingColumnSpan(lineSpan, separator, lowColumn, out var lowValue) ||
-                            !TryGetTradingColumnSpan(lineSpan, separator, closeColumn, out var closeValue))
-                            continue;
-
-                        ReadOnlySpan<char> dateValue = default;
-                        ReadOnlySpan<char> timeValue = default;
-                        ReadOnlySpan<char> volumeValue = default;
-                        var hasDateValue = definition.NoDateTime ||
-                            TryGetTradingColumnSpan(lineSpan, separator, dateColumn, out dateValue);
-                        var hasTimeValue = timeColumn > 0 &&
-                            TryGetTradingColumnSpan(lineSpan, separator, timeColumn, out timeValue);
-                        var hasVolumeValue = volumeColumn > 0 &&
-                            TryGetTradingColumnSpan(lineSpan, separator, volumeColumn, out volumeValue);
+                        var openValue = lineSpan[columnRanges[openColumn - 1]];
+                        var highValue = lineSpan[columnRanges[highColumn - 1]];
+                        var lowValue = lineSpan[columnRanges[lowColumn - 1]];
+                        var closeValue = lineSpan[columnRanges[closeColumn - 1]];
+                        var dateValue = !definition.NoDateTime && dateColumn > 0
+                            ? lineSpan[columnRanges[dateColumn - 1]]
+                            : ReadOnlySpan<char>.Empty;
+                        var timeValue = timeColumn > 0
+                            ? lineSpan[columnRanges[timeColumn - 1]]
+                            : ReadOnlySpan<char>.Empty;
+                        var volumeValue = volumeColumn > 0
+                            ? lineSpan[columnRanges[volumeColumn - 1]]
+                            : ReadOnlySpan<char>.Empty;
+                        var hasDateValue = definition.NoDateTime || dateColumn > 0;
+                        var hasTimeValue = timeColumn > 0;
+                        var hasVolumeValue = volumeColumn > 0;
 
                         DateTime date;
                         if (!definition.NoDateTime)
@@ -1552,40 +1555,36 @@ namespace Trade.It
         }
 
 
-        private static bool TryGetTradingColumnSpan(
+        private static bool TrySplitTradingLine(
             ReadOnlySpan<char> line,
-            string separator,
-            int oneBasedColumn,
-            out ReadOnlySpan<char> value)
+            ReadOnlySpan<char> separator,
+            Span<Range> columns)
         {
-            value = default;
-            if (oneBasedColumn <= 0 || string.IsNullOrEmpty(separator))
+            if (separator.IsEmpty || columns.IsEmpty)
                 return false;
 
-            var separatorSpan = separator.AsSpan();
-            var currentColumn = 1;
+            var columnIndex = 0;
             var start = 0;
 
             for (var i = 0; i <= line.Length; i++)
             {
                 var isSeparator = i == line.Length ||
-                    (i + separatorSpan.Length <= line.Length &&
-                     line.Slice(i, separatorSpan.Length).SequenceEqual(separatorSpan));
+                    (i + separator.Length <= line.Length &&
+                     line.Slice(i, separator.Length).SequenceEqual(separator));
 
                 if (!isSeparator)
                     continue;
 
-                if (currentColumn == oneBasedColumn)
-                {
-                    value = line.Slice(start, i - start);
+                columns[columnIndex] = new Range(start, i);
+                columnIndex++;
+
+                if (columnIndex == columns.Length)
                     return true;
-                }
 
                 if (i == line.Length)
                     break;
 
-                currentColumn++;
-                i += separatorSpan.Length - 1;
+                i += separator.Length - 1;
                 start = i + 1;
             }
 
