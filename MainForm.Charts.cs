@@ -1393,12 +1393,15 @@ namespace Trade.It
                     using var lineEnumerator = File.ReadLines(filePath, DetectTradingDataEncoding(filePath)).GetEnumerator();
                     while (true)
                     {
-                        var timingSample = (timingRows & timingSampleMask) == 0;
-                        var readStart = timingSample ? System.Diagnostics.Stopwatch.GetTimestamp() : 0L;
-                        if (!lineEnumerator.MoveNext())
+                        // Measure every MoveNext call: buffered file reads are bursty,
+                        // so fixed-interval sampling can miss the expensive buffer refills.
+                        var readStart = System.Diagnostics.Stopwatch.GetTimestamp();
+                        var hasNextLine = lineEnumerator.MoveNext();
+                        readTicks += System.Diagnostics.Stopwatch.GetTimestamp() - readStart;
+                        if (!hasNextLine)
                             break;
-                        if (timingSample)
-                            readTicks += System.Diagnostics.Stopwatch.GetTimestamp() - readStart;
+
+                        var timingSample = (timingRows & timingSampleMask) == 0;
 
                         timingRows++;
                         var line = lineEnumerator.Current;
