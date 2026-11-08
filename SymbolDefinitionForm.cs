@@ -32,6 +32,10 @@ public sealed partial class SymbolDefinitionForm : Form
         symbolsDataGridView.SelectionChanged += (_, _) => LoadSelected();
         symbolsDataGridView.ColumnHeaderMouseClick += SymbolsDataGridView_ColumnHeaderMouseClick;
         symbolSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
+        nameSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
+        marketLevel1SearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
+        marketLevel2SearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
+        descriptionSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
     }
 
     private void LoadMarketLevels(string? selectedNodeId = null)
@@ -193,15 +197,30 @@ public sealed partial class SymbolDefinitionForm : Form
         try
         {
             symbolsDataGridView.Rows.Clear();
-            var search = SymbolDefinitionRules.NormalizeText(symbolSearchTextBox.Text);
-            var items = SymbolDefinitionStore.Load()
-                .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase);
+            var symbolSearch = SymbolDefinitionRules.NormalizeText(symbolSearchTextBox.Text);
+            var nameSearch = SymbolDefinitionRules.NormalizeText(nameSearchTextBox.Text);
+            var level1Search = SymbolDefinitionRules.NormalizeText(marketLevel1SearchTextBox.Text);
+            var level2Search = SymbolDefinitionRules.NormalizeText(marketLevel2SearchTextBox.Text);
+            var descriptionSearch = SymbolDefinitionRules.NormalizeText(descriptionSearchTextBox.Text);
 
-            if (!string.IsNullOrWhiteSpace(search))
-                items = items.Where(x =>
-                    SymbolDefinitionRules.NormalizeText(x.SymbolTitle)
-                        .Contains(search, StringComparison.OrdinalIgnoreCase))
-                    .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase);
+            var items = SymbolDefinitionStore.Load()
+                .Where(x =>
+                {
+                    var marketPath = GetMarketPath(x);
+
+                    return
+                        (string.IsNullOrWhiteSpace(symbolSearch) ||
+                            SymbolDefinitionRules.NormalizeText(x.SymbolTitle).Contains(symbolSearch, StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(nameSearch) ||
+                            SymbolDefinitionRules.NormalizeText(x.Name).Contains(nameSearch, StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(level1Search) ||
+                            SymbolDefinitionRules.NormalizeText(marketPath.MarketType).Contains(level1Search, StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(level2Search) ||
+                            SymbolDefinitionRules.NormalizeText(marketPath.IndustryFund).Contains(level2Search, StringComparison.OrdinalIgnoreCase)) &&
+                        (string.IsNullOrWhiteSpace(descriptionSearch) ||
+                            SymbolDefinitionRules.NormalizeText(x.Description).Contains(descriptionSearch, StringComparison.OrdinalIgnoreCase));
+                })
+                .OrderBy(x => x.SymbolTitle, StringComparer.OrdinalIgnoreCase);
 
             int rowNumber = 1;
             foreach (var item in items)
