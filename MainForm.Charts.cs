@@ -1343,7 +1343,7 @@ namespace Trade.It
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var syntheticIndex = 0L;
             var fileDiscoveryWatch = System.Diagnostics.Stopwatch.StartNew();
-            List<string> filesToLoad;
+            List<string> filesToLoad = new();
             var readAndParseWatch = new System.Diagnostics.Stopwatch();
 
             try
