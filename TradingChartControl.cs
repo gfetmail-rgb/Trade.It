@@ -55,6 +55,7 @@ namespace Trade.It
         private double verticalPanOffset;
         private double horizontalPanOffset;
         private ChartDrawingTool activeDrawingTool;
+        private bool chartPaintTimingPending;
         private bool drawingInProgress;
         private int drawingStage;
         private Point drawingStartPoint;
@@ -161,6 +162,7 @@ namespace Trade.It
 
         public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null, bool dataIsOrdered = false)
         {
+            chartPaintTimingPending = true;
             chartSymbol = symbol?.Trim() ?? string.Empty;
             chartTimeFrame = timeFrame?.Trim() ?? string.Empty;
             points.Clear();
