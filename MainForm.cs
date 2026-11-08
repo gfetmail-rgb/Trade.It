@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -962,6 +963,7 @@ namespace Trade.It
             if (!HasDateColumn(definition) || symbols.Count == 0)
                 return;
 
+            var totalWatch = Stopwatch.StartNew();
             const int batchSize = 25;
             for (var start = 0; start < symbols.Count; start += batchSize)
             {
@@ -970,6 +972,7 @@ namespace Trade.It
 
                 var batchStart = start;
                 string[] batch;
+                var workerWatch = Stopwatch.StartNew();
                 try
                 {
                     batch = await Task.Run(() =>
@@ -983,7 +986,6 @@ namespace Trade.It
                             }
                             catch
                             {
-                                // A failure for one symbol must not stop loading dates for later symbols.
                                 values[i] = string.Empty;
                             }
                         }
@@ -992,18 +994,29 @@ namespace Trade.It
                 }
                 catch
                 {
-                    // If an unexpected batch-level error occurs, continue with the next batch.
                     batch = Enumerable.Repeat(string.Empty, Math.Min(batchSize, symbols.Count - batchStart)).ToArray();
                 }
+                workerWatch.Stop();
 
                 if (loadVersion != latestTradeDateLoadVersion || IsDisposed)
                     return;
 
+                var uiWatch = Stopwatch.StartNew();
                 for (var i = 0; i < batch.Length && batchStart + i < stocksDataGridView.Rows.Count; i++)
                     stocksDataGridView.Rows[batchStart + i].Cells[lastTradeColumn.Index].Value = batch[i];
+                uiWatch.Stop();
+
+                Debug.WriteLine(
+                    $"[TradeDateTiming] Batch {batchStart + 1}-{batchStart + batch.Length}/{symbols.Count}: " +
+                    $"worker={workerWatch.Elapsed.TotalMilliseconds:F1}ms, " +
+                    $"grid={uiWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 await Task.Yield();
             }
+
+            totalWatch.Stop();
+            Debug.WriteLine(
+                $"[TradeDateTiming] COMPLETE symbols={symbols.Count}, total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
         }
 
         private async Task LoadLatestVolumesAsync(PortfolioDefinition definition, List<string> symbols, int loadVersion)
@@ -1789,33 +1802,96 @@ namespace Trade.It
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
             DateTime? latest = null;
+            long fileDiscoveryTicks = 0;
+            long encodingTicks = 0;
+            long fileReadTicks = 0;
+            long rowProcessingTicks = 0;
+            var totalWatch = Stopwatch.StartNew();
 
             try
             {
-                foreach (var file in GetSymbolFiles(definition, symbol))
+                var discoveryWatch = Stopwatch.StartNew();
+                var files = GetSymbolFiles(definition, symbol).ToList();
+                discoveryWatch.Stop();
+                fileDiscoveryTicks = discoveryWatch.ElapsedTicks;
+
+                foreach (var file in files)
                 {
+                    var encodingWatch = Stopwatch.StartNew();
+                    var encoding = DetectTradingDataEncoding(file);
+                    encodingWatch.Stop();
+                    encodingTicks += encodingWatch.ElapsedTicks;
+
+                    using var enumerator = File.ReadLines(file, encoding).GetEnumerator();
                     var firstLine = true;
-                    foreach (var line in File.ReadLines(file, DetectTradingDataEncoding(file)))
+
+                    while (true)
                     {
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-                        var row = SplitTradingDataLine(line, definition.Separator);
-                        if (firstLine && definition.HasHeader) { firstLine = false; continue; }
-                        firstLine = false;
+                        var readWatch = Stopwatch.StartNew();
+                        var hasLine = enumerator.MoveNext();
+                        readWatch.Stop();
+                        fileReadTicks += readWatch.ElapsedTicks;
 
-                        if (definition.SymbolSource == SymbolSource.InsideFile &&
-                            (symbolColumn <= 0 || symbolColumn > row.Length || !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
-                            continue;
+                        if (!hasLine)
+                            break;
 
-                        if (dateColumn > row.Length) continue;
-                        if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) && (!latest.HasValue || date > latest.Value))
-                            latest = date;
+                        var processWatch = Stopwatch.StartNew();
+                        try
+                        {
+                            var line = enumerator.Current;
+                            if (string.IsNullOrWhiteSpace(line))
+                                continue;
+
+                            var row = SplitTradingDataLine(line, definition.Separator);
+                            if (firstLine && definition.HasHeader)
+                            {
+                                firstLine = false;
+                                continue;
+                            }
+                            firstLine = false;
+
+                            if (definition.SymbolSource == SymbolSource.InsideFile &&
+                                (symbolColumn <= 0 || symbolColumn > row.Length ||
+                                 !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                                continue;
+
+                            if (dateColumn > row.Length)
+                                continue;
+
+                            if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) &&
+                                (!latest.HasValue || date > latest.Value))
+                            {
+                                latest = date;
+                            }
+                        }
+                        finally
+                        {
+                            rowProcessingTicks += processWatch.ElapsedTicks;
+                        }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                totalWatch.Stop();
+                Debug.WriteLine(
+                    $"[TradeDateTiming] Symbol={symbol}, ERROR={ex.GetType().Name}: {ex.Message}, " +
+                    $"fileDiscovery={Stopwatch.GetElapsedTime(fileDiscoveryTicks).TotalMilliseconds:F1}ms, " +
+                    $"encoding={Stopwatch.GetElapsedTime(encodingTicks).TotalMilliseconds:F1}ms, " +
+                    $"fileRead={Stopwatch.GetElapsedTime(fileReadTicks).TotalMilliseconds:F1}ms, " +
+                    $"rowProcessing={Stopwatch.GetElapsedTime(rowProcessingTicks).TotalMilliseconds:F1}ms, " +
+                    $"total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
                 return string.Empty;
             }
+
+            totalWatch.Stop();
+            Debug.WriteLine(
+                $"[TradeDateTiming] Symbol={symbol}, files={files.Count}, " +
+                $"fileDiscovery={Stopwatch.GetElapsedTime(fileDiscoveryTicks).TotalMilliseconds:F1}ms, " +
+                $"encoding={Stopwatch.GetElapsedTime(encodingTicks).TotalMilliseconds:F1}ms, " +
+                $"fileRead={Stopwatch.GetElapsedTime(fileReadTicks).TotalMilliseconds:F1}ms, " +
+                $"rowProcessing={Stopwatch.GetElapsedTime(rowProcessingTicks).TotalMilliseconds:F1}ms, " +
+                $"total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
 
             if (!latest.HasValue) return string.Empty;
 
