@@ -911,9 +911,6 @@
             volumeColumn.DefaultCellStyle.Format = "N0";
             volumeColumn.Visible = false;
             // 
-            // portfolioComboBox
-            // 
-            // 
             // symbolSearchTextBox
             // 
             symbolSearchTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
