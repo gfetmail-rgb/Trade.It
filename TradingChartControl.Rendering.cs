@@ -7,6 +7,7 @@ namespace Trade.It
     {
         protected override void OnPaint(PaintEventArgs e)
         {
+            var paintTimingWatch = chartPaintTimingPending ? System.Diagnostics.Stopwatch.StartNew() : null;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             SyncPriceIndicatorButtons();
             e.Graphics.Clear(BackColor);
@@ -310,6 +311,12 @@ namespace Trade.It
                 e.Graphics.DrawString(headerText, headerFont, headerBrush, plot.Left + 16f, 2f);
 
             DrawAdvancedTextLabels(e.Graphics, plot, layoutCount, min, max);
+            if (paintTimingWatch != null)
+            {
+                paintTimingWatch.Stop();
+                chartPaintTimingPending = false;
+                Console.WriteLine($"[ChartPaintTiming] Symbol={chartSymbol}, Points={points.Count}, Visible={displayedCount}, Elapsed={paintTimingWatch.Elapsed.TotalMilliseconds:F1}ms");
+            }
         }
 
 
