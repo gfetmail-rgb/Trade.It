@@ -1353,6 +1353,11 @@ namespace Trade.It
                     definition.NoDateTime ? 0 : dateColumn,
                     Math.Max(timeColumn, Math.Max(volumeColumn,
                         definition.SymbolSource == SymbolSource.InsideFile ? symbolColumn : 0))));
+            var requiredColumnCount = Math.Max(
+                Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn)),
+                Math.Max(
+                    definition.NoDateTime ? 0 : dateColumn,
+                    definition.SymbolSource == SymbolSource.InsideFile ? symbolColumn : 0));
             var columnRanges = new Range[Math.Max(1, maxMappedColumn)];
             var syntheticIndex = 0L;
             var fileDiscoveryWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -1399,7 +1404,8 @@ namespace Trade.It
                         }
                         firstLine = false;
 
-                        if (!TrySplitTradingLine(lineSpan, separator.AsSpan(), columnRanges))
+                        if (!TrySplitTradingLine(lineSpan, separator.AsSpan(), columnRanges, out var columnCount) ||
+                            columnCount < requiredColumnCount)
                             continue;
 
                         if (timingSample)
@@ -1420,15 +1426,15 @@ namespace Trade.It
                         var dateValue = !definition.NoDateTime && dateColumn > 0
                             ? lineSpan[columnRanges[dateColumn - 1]]
                             : ReadOnlySpan<char>.Empty;
-                        var timeValue = timeColumn > 0
+                        var hasTimeValue = timeColumn > 0 && timeColumn <= columnCount;
+                        var timeValue = hasTimeValue
                             ? lineSpan[columnRanges[timeColumn - 1]]
                             : ReadOnlySpan<char>.Empty;
-                        var volumeValue = volumeColumn > 0
+                        var hasVolumeValue = volumeColumn > 0 && volumeColumn <= columnCount;
+                        var volumeValue = hasVolumeValue
                             ? lineSpan[columnRanges[volumeColumn - 1]]
                             : ReadOnlySpan<char>.Empty;
                         var hasDateValue = definition.NoDateTime || dateColumn > 0;
-                        var hasTimeValue = timeColumn > 0;
-                        var hasVolumeValue = volumeColumn > 0;
 
                         DateTime date;
                         if (!definition.NoDateTime)
@@ -1558,12 +1564,13 @@ namespace Trade.It
         private static bool TrySplitTradingLine(
             ReadOnlySpan<char> line,
             ReadOnlySpan<char> separator,
-            Span<Range> columns)
+            Span<Range> columns,
+            out int columnCount)
         {
+            columnCount = 0;
             if (separator.IsEmpty || columns.IsEmpty)
                 return false;
 
-            var columnIndex = 0;
             var start = 0;
 
             for (var i = 0; i <= line.Length; i++)
@@ -1575,20 +1582,17 @@ namespace Trade.It
                 if (!isSeparator)
                     continue;
 
-                columns[columnIndex] = new Range(start, i);
-                columnIndex++;
+                columns[columnCount] = new Range(start, i);
+                columnCount++;
 
-                if (columnIndex == columns.Length)
+                if (columnCount == columns.Length || i == line.Length)
                     return true;
-
-                if (i == line.Length)
-                    break;
 
                 i += separator.Length - 1;
                 start = i + 1;
             }
 
-            return false;
+            return true;
         }
 
         private static bool TryParseTradingNumber(ReadOnlySpan<char> value, out double number)
