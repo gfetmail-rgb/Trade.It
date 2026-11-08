@@ -315,7 +315,7 @@ namespace Trade.It
             {
                 paintTimingWatch.Stop();
                 chartPaintTimingPending = false;
-                Console.WriteLine($"[ChartPaintTiming] Symbol={chartSymbol}, Points={points.Count}, Visible={displayedCount}, Elapsed={paintTimingWatch.Elapsed.TotalMilliseconds:F1}ms");
+                System.Diagnostics.Debug.WriteLine($"[ChartPaintTiming] Symbol={chartSymbol}, Points={points.Count}, Visible={displayedCount}, Elapsed={paintTimingWatch.Elapsed.TotalMilliseconds:F1}ms");
             }
         }
 
