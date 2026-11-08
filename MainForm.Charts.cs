@@ -1430,7 +1430,7 @@ namespace Trade.It
                         DateTime date;
                         if (!definition.NoDateTime)
                         {
-                            if (dateColumn <= 0 || dateColumn > row.Length)
+                            if (!hasDateValue)
                                 continue;
 
                             var rawDate = dateValue.ToString();
@@ -1452,7 +1452,7 @@ namespace Trade.It
                                 continue;
 
                             date = cachedDate.Value;
-                            if (timeColumn > 0 && timeColumn <= row.Length)
+                            if (hasTimeValue)
                             {
                                 if (timingSample)
                                     phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
