@@ -842,19 +842,25 @@ namespace Trade.It
                 chartInfoLabel.Text = $"{symbol}   |   {points.Count:N0} رکورد";
                 chartPlaceholderLabel.Visible = false;
                 var isNewChart = !chartControls.ContainsKey(symbol);
+                var createChartWatch = System.Diagnostics.Stopwatch.StartNew();
                 var chart = GetOrCreateChart(symbol);
+                createChartWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, GetOrCreateChart={createChartWatch.Elapsed.TotalMilliseconds:F1}ms");
                 var setDataWatch = System.Diagnostics.Stopwatch.StartNew();
                 chart.SetData(points, symbol, dataIsOrdered: true);
                 chart.SetChartType(GetSelectedChartType());
                 setDataWatch.Stop();
                 Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, SetDataAndType={setDataWatch.Elapsed.TotalMilliseconds:F1}ms");
 
+                var analysisWatch = System.Diagnostics.Stopwatch.StartNew();
                 if (isNewChart)
                 {
                     var savedAnalysis = ChartAnalysisStorage.Load(symbol);
                     if (savedAnalysis != null)
                         ApplyAnalysisDocument(chart, savedAnalysis);
                 }
+                analysisWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadAndApplyAnalysis={analysisWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
