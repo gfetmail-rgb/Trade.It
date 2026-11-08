@@ -1382,12 +1382,8 @@ namespace Trade.It
 
                         var timingSample = (timingRows++ & timingSampleMask) == 0;
                         var phaseStart = timingSample ? System.Diagnostics.Stopwatch.GetTimestamp() : 0L;
-                        var row = SplitTradingDataLine(line, definition.Separator);
-                        if (timingSample)
-                        {
-                            splitTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
-                            timingSamples++;
-                        }
+                        var lineSpan = line.AsSpan();
+                        var separator = string.IsNullOrEmpty(definition.Separator) ? "," : definition.Separator;
 
                         if (firstLine && definition.HasHeader)
                         {
@@ -1397,13 +1393,39 @@ namespace Trade.It
                         firstLine = false;
 
                         if (definition.SymbolSource == SymbolSource.InsideFile &&
-                            (symbolColumn <= 0 || symbolColumn > row.Length ||
-                             !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                            (!TryGetTradingColumnSpan(lineSpan, separator, symbolColumn, out var symbolValue) ||
+                             !symbolValue.Trim().Equals(symbol.AsSpan(), StringComparison.OrdinalIgnoreCase)))
                             continue;
 
                         var requiredMaxColumn = Math.Max(Math.Max(openColumn, highColumn), Math.Max(lowColumn, closeColumn));
-                        if (requiredMaxColumn > row.Length)
+                        if (!TryGetTradingColumnSpan(lineSpan, separator, requiredMaxColumn, out _))
                             continue;
+
+                        if (timingSample)
+                        {
+                            splitTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
+                            timingSamples++;
+                        }
+
+                        if (!definition.NoDateTime &&
+                            (dateColumn <= 0 || !TryGetTradingColumnSpan(lineSpan, separator, dateColumn, out _)))
+                            continue;
+
+                        if (!TryGetTradingColumnSpan(lineSpan, separator, openColumn, out var openValue) ||
+                            !TryGetTradingColumnSpan(lineSpan, separator, highColumn, out var highValue) ||
+                            !TryGetTradingColumnSpan(lineSpan, separator, lowColumn, out var lowValue) ||
+                            !TryGetTradingColumnSpan(lineSpan, separator, closeColumn, out var closeValue))
+                            continue;
+
+                        ReadOnlySpan<char> dateValue = default;
+                        ReadOnlySpan<char> timeValue = default;
+                        ReadOnlySpan<char> volumeValue = default;
+                        var hasDateValue = definition.NoDateTime ||
+                            TryGetTradingColumnSpan(lineSpan, separator, dateColumn, out dateValue);
+                        var hasTimeValue = timeColumn > 0 &&
+                            TryGetTradingColumnSpan(lineSpan, separator, timeColumn, out timeValue);
+                        var hasVolumeValue = volumeColumn > 0 &&
+                            TryGetTradingColumnSpan(lineSpan, separator, volumeColumn, out volumeValue);
 
                         DateTime date;
                         if (!definition.NoDateTime)
@@ -1411,7 +1433,7 @@ namespace Trade.It
                             if (dateColumn <= 0 || dateColumn > row.Length)
                                 continue;
 
-                            var rawDate = row[dateColumn - 1];
+                            var rawDate = dateValue.ToString();
                             if (timingSample)
                                 phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
@@ -1435,7 +1457,7 @@ namespace Trade.It
                                 if (timingSample)
                                     phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
-                                if (TryParseChartTime(row[timeColumn - 1], out var time))
+                                if (hasTimeValue && TryParseChartTime(timeValue.ToString(), out var time))
                                     date = date.Date.Add(time);
 
                                 if (timingSample)
@@ -1450,10 +1472,10 @@ namespace Trade.It
                         if (timingSample)
                             phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
-                        if (!TryParseTradingNumber(row[openColumn - 1], out var open) ||
-                            !TryParseTradingNumber(row[highColumn - 1], out var high) ||
-                            !TryParseTradingNumber(row[lowColumn - 1], out var low) ||
-                            !TryParseTradingNumber(row[closeColumn - 1], out var close))
+                        if (!TryParseTradingNumber(openValue, out var open) ||
+                            !TryParseTradingNumber(highValue, out var high) ||
+                            !TryParseTradingNumber(lowValue, out var low) ||
+                            !TryParseTradingNumber(closeValue, out var close))
                         {
                             if (timingSample)
                                 numericTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
@@ -1461,8 +1483,8 @@ namespace Trade.It
                         }
 
                         var volume = 0d;
-                        if (volumeColumn > 0 && volumeColumn <= row.Length)
-                            TryParseTradingNumber(row[volumeColumn - 1], out volume);
+                        if (hasVolumeValue)
+                            TryParseTradingNumber(volumeValue, out volume);
 
                         if (timingSample)
                             numericTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
@@ -1529,6 +1551,77 @@ namespace Trade.It
             return sortedResult;
         }
 
+
+        private static bool TryGetTradingColumnSpan(
+            ReadOnlySpan<char> line,
+            string separator,
+            int oneBasedColumn,
+            out ReadOnlySpan<char> value)
+        {
+            value = default;
+            if (oneBasedColumn <= 0 || string.IsNullOrEmpty(separator))
+                return false;
+
+            var separatorSpan = separator.AsSpan();
+            var currentColumn = 1;
+            var start = 0;
+
+            for (var i = 0; i <= line.Length; i++)
+            {
+                var isSeparator = i == line.Length ||
+                    (i + separatorSpan.Length <= line.Length &&
+                     line.Slice(i, separatorSpan.Length).SequenceEqual(separatorSpan));
+
+                if (!isSeparator)
+                    continue;
+
+                if (currentColumn == oneBasedColumn)
+                {
+                    value = line.Slice(start, i - start);
+                    return true;
+                }
+
+                if (i == line.Length)
+                    break;
+
+                currentColumn++;
+                i += separatorSpan.Length - 1;
+                start = i + 1;
+            }
+
+            return false;
+        }
+
+        private static bool TryParseTradingNumber(ReadOnlySpan<char> value, out double number)
+        {
+            value = value.Trim();
+            if (value.IsEmpty)
+            {
+                number = 0;
+                return false;
+            }
+
+            Span<char> buffer = value.Length <= 256
+                ? stackalloc char[value.Length]
+                : new char[value.Length];
+            var length = 0;
+
+            foreach (var character in value)
+            {
+                if (character is ',' or '٬' or ' ')
+                    continue;
+
+                buffer[length++] = character is >= '۰' and <= '۹'
+                    ? (char)('0' + character - '۰')
+                    : character;
+            }
+
+            return double.TryParse(
+                buffer[..length],
+                NumberStyles.Float | NumberStyles.AllowThousands,
+                CultureInfo.InvariantCulture,
+                out number);
+        }
 
         private static bool TryParseChartDate(string value, PortfolioDefinition definition, out DateTime date)
         {
