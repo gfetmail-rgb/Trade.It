@@ -5,6 +5,10 @@ partial class SymbolDefinitionForm
     private System.ComponentModel.IContainer components = null!;
     private TextBox symbolTextBox = null!;
     private TextBox symbolSearchTextBox = null!;
+    private TextBox nameSearchTextBox = null!;
+    private TextBox marketLevel1SearchTextBox = null!;
+    private TextBox marketLevel2SearchTextBox = null!;
+    private TextBox descriptionSearchTextBox = null!;
     private TextBox nameTextBox = null!;
     private ComboBox marketLevel1ComboBox = null!;
     private ComboBox marketLevel2ComboBox = null!;
@@ -40,6 +44,10 @@ partial class SymbolDefinitionForm
         DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
         symbolTextBox = new TextBox();
         symbolSearchTextBox = new TextBox();
+        nameSearchTextBox = new TextBox();
+        marketLevel1SearchTextBox = new TextBox();
+        marketLevel2SearchTextBox = new TextBox();
+        descriptionSearchTextBox = new TextBox();
         nameTextBox = new TextBox();
         marketLevel1ComboBox = new ComboBox();
         marketLevel2ComboBox = new ComboBox();
@@ -81,8 +89,44 @@ partial class SymbolDefinitionForm
         symbolSearchTextBox.Name = "symbolSearchTextBox";
         symbolSearchTextBox.PlaceholderText = "جستجوی نماد";
         symbolSearchTextBox.RightToLeft = RightToLeft.Yes;
-        symbolSearchTextBox.Size = new Size(360, 29);
+        symbolSearchTextBox.Size = new Size(246, 29);
         symbolSearchTextBox.TabIndex = 15;
+        // 
+        // nameSearchTextBox
+        // 
+        nameSearchTextBox.Location = new Point(264, 176);
+        nameSearchTextBox.Name = "nameSearchTextBox";
+        nameSearchTextBox.PlaceholderText = "جستجوی نام";
+        nameSearchTextBox.RightToLeft = RightToLeft.Yes;
+        nameSearchTextBox.Size = new Size(246, 29);
+        nameSearchTextBox.TabIndex = 16;
+        // 
+        // marketLevel1SearchTextBox
+        // 
+        marketLevel1SearchTextBox.Location = new Point(518, 176);
+        marketLevel1SearchTextBox.Name = "marketLevel1SearchTextBox";
+        marketLevel1SearchTextBox.PlaceholderText = "جستجوی گره سطح اول";
+        marketLevel1SearchTextBox.RightToLeft = RightToLeft.Yes;
+        marketLevel1SearchTextBox.Size = new Size(246, 29);
+        marketLevel1SearchTextBox.TabIndex = 17;
+        // 
+        // marketLevel2SearchTextBox
+        // 
+        marketLevel2SearchTextBox.Location = new Point(772, 176);
+        marketLevel2SearchTextBox.Name = "marketLevel2SearchTextBox";
+        marketLevel2SearchTextBox.PlaceholderText = "جستجوی گره سطح دوم";
+        marketLevel2SearchTextBox.RightToLeft = RightToLeft.Yes;
+        marketLevel2SearchTextBox.Size = new Size(246, 29);
+        marketLevel2SearchTextBox.TabIndex = 18;
+        // 
+        // descriptionSearchTextBox
+        // 
+        descriptionSearchTextBox.Location = new Point(1026, 176);
+        descriptionSearchTextBox.Name = "descriptionSearchTextBox";
+        descriptionSearchTextBox.PlaceholderText = "جستجوی توضیحات";
+        descriptionSearchTextBox.RightToLeft = RightToLeft.Yes;
+        descriptionSearchTextBox.Size = new Size(246, 29);
+        descriptionSearchTextBox.TabIndex = 19;
         // 
         // nameTextBox
         // 
@@ -191,7 +235,7 @@ partial class SymbolDefinitionForm
         // countLabel
         // 
         countLabel.AutoSize = true;
-        countLabel.Location = new Point(793, 179);
+        countLabel.Location = new Point(810, 140);
         countLabel.Name = "countLabel";
         countLabel.Size = new Size(68, 22);
         countLabel.TabIndex = 16;
@@ -358,6 +402,10 @@ partial class SymbolDefinitionForm
         Controls.Add(closeButton);
         Controls.Add(countLabel);
         Controls.Add(symbolSearchTextBox);
+        Controls.Add(nameSearchTextBox);
+        Controls.Add(marketLevel1SearchTextBox);
+        Controls.Add(marketLevel2SearchTextBox);
+        Controls.Add(descriptionSearchTextBox);
         Controls.Add(symbolsDataGridView);
         Controls.Add(label00);
         Controls.Add(label10);
