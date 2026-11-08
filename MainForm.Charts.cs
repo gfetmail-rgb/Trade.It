@@ -1357,6 +1357,18 @@ namespace Trade.It
                 filesToLoad = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
                 fileDiscoveryWatch.Stop();
                 readAndParseWatch.Start();
+
+                // Sample one row out of every 1024 to estimate the cost of each
+                // parsing stage without adding stopwatch overhead to every candle.
+                const int timingSampleMask = 1023;
+                long timingRows = 0;
+                long timingSamples = 0;
+                long splitTicks = 0;
+                long dateTicks = 0;
+                long timeTicks = 0;
+                long numericTicks = 0;
+                long pointTicks = 0;
+
                 // Cache date-only values: M1 files commonly repeat the same date across
                 // hundreds of candles, so parsing it for every row is unnecessary.
                 var dateParseCache = new Dictionary<string, DateTime?>(StringComparer.Ordinal);
@@ -1368,7 +1380,15 @@ namespace Trade.It
                         if (string.IsNullOrWhiteSpace(line))
                             continue;
 
+                        var timingSample = (timingRows++ & timingSampleMask) == 0;
+                        var phaseStart = timingSample ? System.Diagnostics.Stopwatch.GetTimestamp() : 0L;
                         var row = SplitTradingDataLine(line, definition.Separator);
+                        if (timingSample)
+                        {
+                            splitTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
+                            timingSamples++;
+                        }
+
                         if (firstLine && definition.HasHeader)
                         {
                             firstLine = false;
@@ -1392,6 +1412,9 @@ namespace Trade.It
                                 continue;
 
                             var rawDate = row[dateColumn - 1];
+                            if (timingSample)
+                                phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
+
                             if (!dateParseCache.TryGetValue(rawDate, out var cachedDate))
                             {
                                 cachedDate = TryParseChartDate(rawDate, definition, out var parsedDate)
@@ -1400,33 +1423,58 @@ namespace Trade.It
                                 dateParseCache.Add(rawDate, cachedDate);
                             }
 
+                            if (timingSample)
+                                dateTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
+
                             if (!cachedDate.HasValue)
                                 continue;
 
                             date = cachedDate.Value;
-                            if (timeColumn > 0 && timeColumn <= row.Length && TryParseChartTime(row[timeColumn - 1], out var time))
-                                date = date.Date.Add(time);
+                            if (timeColumn > 0 && timeColumn <= row.Length)
+                            {
+                                if (timingSample)
+                                    phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
+
+                                if (TryParseChartTime(row[timeColumn - 1], out var time))
+                                    date = date.Date.Add(time);
+
+                                if (timingSample)
+                                    timeTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
+                            }
                         }
                         else
                         {
                             date = DateTime.UnixEpoch.AddDays(syntheticIndex++);
                         }
 
+                        if (timingSample)
+                            phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
+
                         if (!TryParseTradingNumber(row[openColumn - 1], out var open) ||
                             !TryParseTradingNumber(row[highColumn - 1], out var high) ||
                             !TryParseTradingNumber(row[lowColumn - 1], out var low) ||
                             !TryParseTradingNumber(row[closeColumn - 1], out var close))
+                        {
+                            if (timingSample)
+                                numericTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
                             continue;
+                        }
 
                         var volume = 0d;
                         if (volumeColumn > 0 && volumeColumn <= row.Length)
                             TryParseTradingNumber(row[volumeColumn - 1], out volume);
+
+                        if (timingSample)
+                            numericTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
 
                         if (double.IsNaN(open) || double.IsInfinity(open) ||
                             double.IsNaN(high) || double.IsInfinity(high) ||
                             double.IsNaN(low) || double.IsInfinity(low) ||
                             double.IsNaN(close) || double.IsInfinity(close))
                             continue;
+
+                        if (timingSample)
+                            phaseStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
                         result.Add(new TradingChartPoint
                         {
@@ -1437,6 +1485,9 @@ namespace Trade.It
                             Close = close,
                             Volume = double.IsNaN(volume) || double.IsInfinity(volume) ? 0d : volume
                         });
+
+                        if (timingSample)
+                            pointTicks += System.Diagnostics.Stopwatch.GetTimestamp() - phaseStart;
                     }
                 }
             }
@@ -1462,7 +1513,19 @@ namespace Trade.It
             var sortWatch = System.Diagnostics.Stopwatch.StartNew();
             var sortedResult = result.OrderBy(x => x.Date).ToList();
             sortWatch.Stop();
-            System.Diagnostics.Debug.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms");
+            var timingScale = timingSamples > 0 ? 1024d : 0d;
+            double ToEstimatedMilliseconds(long ticks) =>
+                timingSamples > 0
+                    ? ticks * timingScale * 1000d / System.Diagnostics.Stopwatch.Frequency / timingSamples
+                    : 0d;
+
+            System.Diagnostics.Debug.WriteLine(
+                $"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, " +
+                $"Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, " +
+                $"Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms, Samples={timingSamples}/{timingRows}, " +
+                $"Split~={ToEstimatedMilliseconds(splitTicks):F1}ms, Date~={ToEstimatedMilliseconds(dateTicks):F1}ms, " +
+                $"Time~={ToEstimatedMilliseconds(timeTicks):F1}ms, Numbers~={ToEstimatedMilliseconds(numericTicks):F1}ms, " +
+                $"Point~={ToEstimatedMilliseconds(pointTicks):F1}ms");
             return sortedResult;
         }
 
