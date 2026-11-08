@@ -1598,8 +1598,28 @@ namespace Trade.It
             if (separator.IsEmpty || columns.IsEmpty)
                 return false;
 
-            var start = 0;
+            // The common CSV case has a one-character separator. Span.IndexOf
+            // uses an optimized search and avoids comparing the separator at
+            // every character in every one of the millions of input rows.
+            if (separator.Length == 1)
+            {
+                var start = 0;
+                while (true)
+                {
+                    var relativeIndex = line[start..].IndexOf(separator[0]);
+                    var end = relativeIndex < 0 ? line.Length : start + relativeIndex;
 
+                    columns[columnCount] = new Range(start, end);
+                    columnCount++;
+
+                    if (relativeIndex < 0 || columnCount == columns.Length)
+                        return true;
+
+                    start = end + 1;
+                }
+            }
+
+            var fieldStart = 0;
             for (var i = 0; i <= line.Length; i++)
             {
                 var isSeparator = i == line.Length ||
@@ -1609,18 +1629,19 @@ namespace Trade.It
                 if (!isSeparator)
                     continue;
 
-                columns[columnCount] = new Range(start, i);
+                columns[columnCount] = new Range(fieldStart, i);
                 columnCount++;
 
                 if (columnCount == columns.Length || i == line.Length)
                     return true;
 
                 i += separator.Length - 1;
-                start = i + 1;
+                fieldStart = i + 1;
             }
 
             return true;
         }
+
 
         private static bool TryParseTradingNumber(ReadOnlySpan<char> value, out double number)
         {
