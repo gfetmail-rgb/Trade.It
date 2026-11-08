@@ -1807,11 +1807,12 @@ namespace Trade.It
             long fileReadTicks = 0;
             long rowProcessingTicks = 0;
             var totalWatch = Stopwatch.StartNew();
+            var files = new List<string>();
 
             try
             {
                 var discoveryWatch = Stopwatch.StartNew();
-                var files = GetSymbolFiles(definition, symbol).ToList();
+                files = GetSymbolFiles(definition, symbol).ToList();
                 discoveryWatch.Stop();
                 fileDiscoveryTicks = discoveryWatch.ElapsedTicks;
 
