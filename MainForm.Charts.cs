@@ -800,6 +800,7 @@ namespace Trade.It
 
         private void ShowSymbolChart(string symbol)
         {
+            var chartOpenWatch = System.Diagnostics.Stopwatch.StartNew();
             var currentChart = GetActiveChart();
             if (currentChart != null && !string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
             {
@@ -816,7 +817,10 @@ namespace Trade.It
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
             try
             {
+                var dataLoadWatch = System.Diagnostics.Stopwatch.StartNew();
                 var points = LoadChartData(definition, symbol);
+                dataLoadWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, LoadChartData={dataLoadWatch.Elapsed.TotalMilliseconds:F1}ms, points={points.Count}");
                 if (points.Count == 0)
                 {
                     var diagnostic = string.IsNullOrWhiteSpace(lastChartDataLoadError)
@@ -839,8 +843,11 @@ namespace Trade.It
                 chartPlaceholderLabel.Visible = false;
                 var isNewChart = !chartControls.ContainsKey(symbol);
                 var chart = GetOrCreateChart(symbol);
+                var setDataWatch = System.Diagnostics.Stopwatch.StartNew();
                 chart.SetData(points, symbol, dataIsOrdered: true);
                 chart.SetChartType(GetSelectedChartType());
+                setDataWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, SetDataAndType={setDataWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 if (isNewChart)
                 {
@@ -859,7 +866,10 @@ namespace Trade.It
                 SetToggleButtonState(hideChartButton, false);
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
                 SetIndicatorPanelButtonState(chart);
+                var attachWatch = System.Diagnostics.Stopwatch.StartNew();
                 AttachChartToTab(chart, symbol);
+                attachWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, AttachChart={attachWatch.Elapsed.TotalMilliseconds:F1}ms");
 
                 // بعد از نمایش چارت، فوکوس را روی فهرست سهام نگه می‌داریم
                 // تا کلیدهای ناوبری مستقیماً روی فهرست عمل کنند.
@@ -877,6 +887,8 @@ namespace Trade.It
                     selectedRow.Selected = true;
                     stocksDataGridView.Focus();
                 }
+                chartOpenWatch.Stop();
+                Console.WriteLine($"[ChartOpenTiming] Symbol={symbol}, TOTAL={chartOpenWatch.Elapsed.TotalMilliseconds:F1}ms");
             }
             catch (Exception ex)
             {
@@ -1330,10 +1342,16 @@ namespace Trade.It
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
             var syntheticIndex = 0L;
+            var fileDiscoveryWatch = System.Diagnostics.Stopwatch.StartNew();
+            List<string> filesToLoad;
+            var readAndParseWatch = new System.Diagnostics.Stopwatch();
 
             try
             {
-                foreach (var filePath in specificFiles ?? GetSymbolFiles(definition, symbol))
+                filesToLoad = (specificFiles ?? GetSymbolFiles(definition, symbol)).ToList();
+                fileDiscoveryWatch.Stop();
+                readAndParseWatch.Start();
+                foreach (var filePath in filesToLoad)
                 {
                     var firstLine = true;
                     foreach (var line in File.ReadLines(filePath, DetectTradingDataEncoding(filePath)))
@@ -1403,6 +1421,9 @@ namespace Trade.It
             }
             catch (Exception ex)
             {
+                fileDiscoveryWatch.Stop();
+                readAndParseWatch.Stop();
+                Console.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={(filesToLoad is null ? -1 : filesToLoad.Count)}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, ERROR={ex.Message}");
                 lastChartDataLoadError = $"خطا هنگام خواندن داده: {ex.Message}";
                 return new List<TradingChartPoint>();
             }
@@ -1416,9 +1437,12 @@ namespace Trade.It
                     $"Separator=[{definition.Separator}]; HasHeader={definition.HasHeader}; SymbolSource={definition.SymbolSource}; Calendar={definition.Calendar}; NoDateTime={definition.NoDateTime}";
             }
 
-            return result
-                .OrderBy(x => x.Date)
-                .ToList();
+            readAndParseWatch.Stop();
+            var sortWatch = System.Diagnostics.Stopwatch.StartNew();
+            var sortedResult = result.OrderBy(x => x.Date).ToList();
+            sortWatch.Stop();
+            Console.WriteLine($"[ChartDataTiming] Symbol={symbol}, Files={filesToLoad.Count}, Points={result.Count}, Discovery={fileDiscoveryWatch.Elapsed.TotalMilliseconds:F1}ms, ReadParse={readAndParseWatch.Elapsed.TotalMilliseconds:F1}ms, Sort={sortWatch.Elapsed.TotalMilliseconds:F1}ms");
+            return sortedResult;
         }
 
 
