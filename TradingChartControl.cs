@@ -896,8 +896,9 @@ namespace Trade.It
             var step = Math.Max(1.0, plot.Width / (double)count);
             var initialOffset = -plot.Width * 0.25;
 
-            // کندل مرجع باید در همان مختصات صفحه‌ای که کاربر انتخاب کرده
-            // باقی بماند؛ لازم نیست به لبه راست Plot منتقل شود.
+            // در حالت تست، کندل مرجع همیشه باید در محل لنگر سمت راست نمودار بماند.
+            // این لنگر مشترک است تا زوم با چرخ ماوس و کشیدن محور افقی یکسان عمل کنند.
+            testAnchorScreenX = GetChartRightAnchorX(plot);
             var relativeIndex =
                 (testAnchorScreenX - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
             var desiredFirst = (int)Math.Round(testEndIndex - relativeIndex);
