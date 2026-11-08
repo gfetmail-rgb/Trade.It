@@ -655,6 +655,8 @@ namespace Trade.It
             refreshButton.Click += TradingStatusRefreshChanged;
             nameComboBox.SelectedIndexChanged += NameFilterChanged;
             nameTextBox.TextChanged += NameFilterChanged;
+            symbolSearchTextBox.TextChanged += SymbolSearchTextBox_TextChanged;
+            symbolSearchClearButton.Click += (_, _) => symbolSearchTextBox.Clear();
             clearFiltersButton2.Click += ClearFiltersButton_Click;
             filterApplyButton2.Click += FilterApplyButton_Click;
             volumeRatioTextBox.TextChanged += AdditionalFilterChanged;
@@ -722,7 +724,7 @@ namespace Trade.It
 
                 // Refreshing the portfolio must not discard an already-applied Filters tab.
                 // Reapply the committed filters without changing their button/lock state.
-                if (filtersApplied || filters2Applied)
+                if (filtersApplied || filters2Applied || !string.IsNullOrWhiteSpace(symbolSearchTextBox.Text))
                     ApplyTradingStatusFilterWithWaitCursor();
             }
             catch (Exception ex)
@@ -806,7 +808,10 @@ namespace Trade.It
             try
             {
                 PopulateStocksGrid(definition);
-                UpdateFilterCounts();
+                if (!string.IsNullOrWhiteSpace(symbolSearchTextBox.Text) || filtersApplied || filters2Applied)
+                    ApplyTradingStatusFilter();
+                else
+                    UpdateFilterCounts();
             }
             finally
             {
@@ -1868,6 +1873,7 @@ namespace Trade.It
             var filterContext = new FilterRunContext(
                 symbol => ReadOrderedSymbolRows(definition, symbol, persianDateCache));
             IEnumerable<string> filtered = symbols;
+            filtered = ApplyMainSymbolNameSearch(filtered);
 
             if (filtersApplied)
             {
@@ -1934,6 +1940,38 @@ namespace Trade.It
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
+        }
+
+        private void SymbolSearchTextBox_TextChanged(object? sender, EventArgs e)
+        {
+            if (IsDisposed || string.IsNullOrWhiteSpace(displayedPortfolioName))
+                return;
+
+            ApplyTradingStatusFilterWithWaitCursor();
+        }
+
+        private IEnumerable<string> ApplyMainSymbolNameSearch(IEnumerable<string> symbols)
+        {
+            var phrase = NormalizeSymbolName(symbolSearchTextBox.Text);
+            if (string.IsNullOrWhiteSpace(phrase))
+                return symbols;
+
+            var definitions = SymbolDefinitionForm.SymbolDefinitionStore.Load()
+                .Where(x => !string.IsNullOrWhiteSpace(x.SymbolTitle))
+                .GroupBy(
+                    x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
+                    StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    group => group.Key,
+                    group => NormalizeSymbolName(group.First().Name),
+                    StringComparer.OrdinalIgnoreCase);
+
+            return symbols.Where(symbol =>
+            {
+                var key = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol);
+                return definitions.TryGetValue(key, out var fullName) &&
+                    fullName.Contains(phrase, StringComparison.OrdinalIgnoreCase);
+            });
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
