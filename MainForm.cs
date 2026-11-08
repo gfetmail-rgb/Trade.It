@@ -1803,10 +1803,11 @@ namespace Trade.It
             var symbolColumn = GetMappingColumn(definition, "نماد");
             DateTime? latest = null;
             var totalWatch = Stopwatch.StartNew();
-            var files = GetSymbolFiles(definition, symbol).ToList();
+            var files = new List<string>();
 
             try
             {
+                files = GetSymbolFiles(definition, symbol).ToList();
                 foreach (var file in files)
                 {
                     var encoding = DetectTradingDataEncoding(file);
