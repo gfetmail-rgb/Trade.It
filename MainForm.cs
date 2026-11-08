@@ -1956,22 +1956,8 @@ namespace Trade.It
             if (string.IsNullOrWhiteSpace(phrase))
                 return symbols;
 
-            var definitions = SymbolDefinitionForm.SymbolDefinitionStore.Load()
-                .Where(x => !string.IsNullOrWhiteSpace(x.SymbolTitle))
-                .GroupBy(
-                    x => SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(x.SymbolTitle),
-                    StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(
-                    group => group.Key,
-                    group => NormalizeSymbolName(group.First().Name),
-                    StringComparer.OrdinalIgnoreCase);
-
             return symbols.Where(symbol =>
-            {
-                var key = SymbolDefinitionForm.SymbolDefinitionRules.NormalizeText(symbol);
-                return definitions.TryGetValue(key, out var fullName) &&
-                    fullName.Contains(phrase, StringComparison.OrdinalIgnoreCase);
-            });
+                NormalizeSymbolName(symbol).Contains(phrase, StringComparison.OrdinalIgnoreCase));
         }
 
         private IEnumerable<string> ApplyNameFilter(IEnumerable<string> symbols)
