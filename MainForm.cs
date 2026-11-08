@@ -944,7 +944,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < symbols.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false, string.Empty);
+                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false, null);
             }
             finally
             {
@@ -1073,9 +1073,67 @@ namespace Trade.It
                 !Directory.Exists(definition.DataPath))
                 return null;
 
-            var rows = ReadOrderedSymbolRows(definition, symbol);
-            if (rows.Count == 0 || volumeColumnIndex > rows[^1].Length ||
-                !TryParseTradingNumber(rows[^1][volumeColumnIndex - 1], out var volume) ||
+            var symbolColumn = GetMappingColumn(definition, "نماد");
+            var dateColumn = GetMappingColumn(definition, "تاریخ");
+            if (dateColumn <= 0)
+                dateColumn = GetMappingColumn(definition, "تاریخ لاتین");
+
+            DateTime? latestDate = null;
+            double? latestVolume = null;
+            var foundRecordWithoutDate = false;
+
+            foreach (var file in GetSymbolFiles(definition, symbol))
+            {
+                var encoding = DetectTradingDataEncoding(file);
+
+                foreach (var line in ReadTradingDataLinesFromEnd(file, encoding))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var row = SplitTradingDataLine(line, definition.Separator);
+                    if (definition.SymbolSource == SymbolSource.InsideFile &&
+                        (symbolColumn <= 0 || symbolColumn > row.Length ||
+                         !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    if (dateColumn > 0)
+                    {
+                        if (dateColumn > row.Length ||
+                            !TryParseSourceDate(row[dateColumn - 1], definition, out var date))
+                        {
+                            // Match the ordered-row reader: rows with invalid dates
+                            // are excluded, so continue backwards to the latest valid one.
+                            continue;
+                        }
+
+                        if (!latestDate.HasValue || date > latestDate.Value)
+                        {
+                            latestDate = date;
+                            latestVolume = TryReadVolumeFromRow(row, volumeColumnIndex);
+                        }
+                    }
+                    else
+                    {
+                        // Without dates, preserve the existing file-order behavior:
+                        // the last matching record in the last matching file wins.
+                        latestVolume = TryReadVolumeFromRow(row, volumeColumnIndex);
+                        foundRecordWithoutDate = true;
+                    }
+
+                    break;
+                }
+            }
+
+            return dateColumn > 0 ? latestVolume : foundRecordWithoutDate ? latestVolume : null;
+        }
+
+        private static double? TryReadVolumeFromRow(string[] row, int volumeColumnIndex)
+        {
+            if (volumeColumnIndex > row.Length ||
+                !TryParseTradingNumber(row[volumeColumnIndex - 1], out var volume) ||
                 !double.IsFinite(volume))
                 return null;
 
@@ -1730,7 +1788,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, string.Empty);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, null);
             }
             finally
             {
@@ -2012,7 +2070,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, string.Empty);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, null);
             }
             finally
             {
@@ -2755,7 +2813,7 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, "");
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false;
@@ -3016,7 +3074,7 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, "");
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
