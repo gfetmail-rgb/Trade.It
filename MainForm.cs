@@ -1802,73 +1802,45 @@ namespace Trade.It
 
             var symbolColumn = GetMappingColumn(definition, "نماد");
             DateTime? latest = null;
-            long fileDiscoveryTicks = 0;
-            long encodingTicks = 0;
-            long fileReadTicks = 0;
-            long rowProcessingTicks = 0;
             var totalWatch = Stopwatch.StartNew();
-            var files = new List<string>();
+            var files = GetSymbolFiles(definition, symbol).ToList();
 
             try
             {
-                var discoveryWatch = Stopwatch.StartNew();
-                files = GetSymbolFiles(definition, symbol).ToList();
-                discoveryWatch.Stop();
-                fileDiscoveryTicks = discoveryWatch.ElapsedTicks;
-
                 foreach (var file in files)
                 {
-                    var encodingWatch = Stopwatch.StartNew();
                     var encoding = DetectTradingDataEncoding(file);
-                    encodingWatch.Stop();
-                    encodingTicks += encodingWatch.ElapsedTicks;
 
-                    using var enumerator = File.ReadLines(file, encoding).GetEnumerator();
-                    var firstLine = true;
-
-                    while (true)
+                    // Read records backwards. For filename-based sources, the first
+                    // non-empty line encountered is the file's final data record.
+                    // For inside-file sources, continue backwards until this symbol's
+                    // final record is found in the file.
+                    foreach (var line in ReadTradingDataLinesFromEnd(file, encoding))
                     {
-                        var readWatch = Stopwatch.StartNew();
-                        var hasLine = enumerator.MoveNext();
-                        readWatch.Stop();
-                        fileReadTicks += readWatch.ElapsedTicks;
+                        if (string.IsNullOrWhiteSpace(line))
+                            continue;
 
-                        if (!hasLine)
-                            break;
+                        var row = SplitTradingDataLine(line, definition.Separator);
 
-                        var processWatch = Stopwatch.StartNew();
-                        try
+                        if (definition.SymbolSource == SymbolSource.InsideFile)
                         {
-                            var line = enumerator.Current;
-                            if (string.IsNullOrWhiteSpace(line))
-                                continue;
-
-                            var row = SplitTradingDataLine(line, definition.Separator);
-                            if (firstLine && definition.HasHeader)
+                            if (symbolColumn <= 0 || symbolColumn > row.Length ||
+                                !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase))
                             {
-                                firstLine = false;
                                 continue;
                             }
-                            firstLine = false;
-
-                            if (definition.SymbolSource == SymbolSource.InsideFile &&
-                                (symbolColumn <= 0 || symbolColumn > row.Length ||
-                                 !string.Equals(row[symbolColumn - 1].Trim(), symbol, StringComparison.OrdinalIgnoreCase)))
-                                continue;
-
-                            if (dateColumn > row.Length)
-                                continue;
-
-                            if (TryParseSourceDate(row[dateColumn - 1], definition, out var date) &&
-                                (!latest.HasValue || date > latest.Value))
-                            {
-                                latest = date;
-                            }
                         }
-                        finally
+
+                        if (dateColumn <= row.Length &&
+                            TryParseSourceDate(row[dateColumn - 1], definition, out var date) &&
+                            (!latest.HasValue || date > latest.Value))
                         {
-                            rowProcessingTicks += processWatch.ElapsedTicks;
+                            latest = date;
                         }
+
+                        // The last record for this symbol has been reached. Do not
+                        // fall back to an older record if its date is malformed.
+                        break;
                     }
                 }
             }
@@ -1877,21 +1849,13 @@ namespace Trade.It
                 totalWatch.Stop();
                 Debug.WriteLine(
                     $"[TradeDateTiming] Symbol={symbol}, ERROR={ex.GetType().Name}: {ex.Message}, " +
-                    $"fileDiscovery={Stopwatch.GetElapsedTime(fileDiscoveryTicks).TotalMilliseconds:F1}ms, " +
-                    $"encoding={Stopwatch.GetElapsedTime(encodingTicks).TotalMilliseconds:F1}ms, " +
-                    $"fileRead={Stopwatch.GetElapsedTime(fileReadTicks).TotalMilliseconds:F1}ms, " +
-                    $"rowProcessing={Stopwatch.GetElapsedTime(rowProcessingTicks).TotalMilliseconds:F1}ms, " +
-                    $"total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
+                    $"files={files.Count}, total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
                 return string.Empty;
             }
 
             totalWatch.Stop();
             Debug.WriteLine(
                 $"[TradeDateTiming] Symbol={symbol}, files={files.Count}, " +
-                $"fileDiscovery={Stopwatch.GetElapsedTime(fileDiscoveryTicks).TotalMilliseconds:F1}ms, " +
-                $"encoding={Stopwatch.GetElapsedTime(encodingTicks).TotalMilliseconds:F1}ms, " +
-                $"fileRead={Stopwatch.GetElapsedTime(fileReadTicks).TotalMilliseconds:F1}ms, " +
-                $"rowProcessing={Stopwatch.GetElapsedTime(rowProcessingTicks).TotalMilliseconds:F1}ms, " +
                 $"total={totalWatch.Elapsed.TotalMilliseconds:F1}ms");
 
             if (!latest.HasValue) return string.Empty;
@@ -1902,6 +1866,50 @@ namespace Trade.It
             var calendar = new PersianCalendar();
             var value = $"{calendar.GetYear(latest.Value):0000}/{calendar.GetMonth(latest.Value):00}/{calendar.GetDayOfMonth(latest.Value):00}";
             return ToPersianDigits(value);
+        }
+
+        private static IEnumerable<string> ReadTradingDataLinesFromEnd(string filePath, Encoding encoding)
+        {
+            const int bufferSize = 8192;
+            var buffer = new byte[bufferSize];
+
+            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var reversedLine = new MemoryStream();
+            var position = stream.Length;
+
+            while (position > 0)
+            {
+                var bytesToRead = (int)Math.Min(buffer.Length, position);
+                position -= bytesToRead;
+                stream.Position = position;
+
+                var bytesRead = stream.Read(buffer, 0, bytesToRead);
+                for (var i = bytesRead - 1; i >= 0; i--)
+                {
+                    var current = buffer[i];
+                    if (current == 0x0A || current == 0x0D)
+                    {
+                        if (reversedLine.Length == 0)
+                            continue;
+
+                        var lineBytes = reversedLine.ToArray();
+                        Array.Reverse(lineBytes);
+                        reversedLine.SetLength(0);
+                        yield return encoding.GetString(lineBytes).TrimStart('\uFEFF');
+                    }
+                    else
+                    {
+                        reversedLine.WriteByte(current);
+                    }
+                }
+            }
+
+            if (reversedLine.Length > 0)
+            {
+                var lineBytes = reversedLine.ToArray();
+                Array.Reverse(lineBytes);
+                yield return encoding.GetString(lineBytes).TrimStart('\uFEFF');
+            }
         }
 
         private static bool HasDateColumn(PortfolioDefinition? definition)
