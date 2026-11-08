@@ -899,7 +899,7 @@ namespace Trade.It
             // کندل مرجع باید در همان مختصات صفحه‌ای که کاربر انتخاب کرده
             // باقی بماند؛ لازم نیست به لبه راست Plot منتقل شود.
             var relativeIndex =
-                (testAnchorScreenX - plot.Left - initialOffset) / step - 0.5;
+                (testAnchorScreenX - plot.Left - initialOffset - horizontalPanOffset) / step - 0.5;
             var desiredFirst = (int)Math.Round(testEndIndex - relativeIndex);
 
             firstIndex = Math.Clamp(
