@@ -296,7 +296,7 @@ namespace Trade.It
                 // هر تایم‌فریم یک View مستقل دارد. چارت موجود دوباره SetData نمی‌شود،
                 // تا زوم، پن و وضعیت تست خودش را از دست ندهد.
                 if (isNewTimeframeChart)
-                    chart.SetData(points, symbol, timeFrame);
+                    chart.SetData(points, symbol, timeFrame, dataIsOrdered: true);
 
                 // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
                 // باید از فضای چندتایم‌فریمی به آن منتقل شود.
@@ -839,7 +839,7 @@ namespace Trade.It
                 chartPlaceholderLabel.Visible = false;
                 var isNewChart = !chartControls.ContainsKey(symbol);
                 var chart = GetOrCreateChart(symbol);
-                chart.SetData(points, symbol);
+                chart.SetData(points, symbol, dataIsOrdered: true);
                 chart.SetChartType(GetSelectedChartType());
 
                 if (isNewChart)
