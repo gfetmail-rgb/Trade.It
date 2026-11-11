@@ -288,6 +288,7 @@ namespace Trade.It
                         dialog.MeanReversionWeight,
                         dialog.VolatilityLimit,
                         dialog.WickPatternWeight,
+                        dialog.ForecastCandleCount,
                         out var error))
                 {
                     MessageBox.Show(this, $"ذخیره تنظیمات OnFuMoradi انجام نشد: {error}",
