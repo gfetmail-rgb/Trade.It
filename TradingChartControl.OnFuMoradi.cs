@@ -579,17 +579,18 @@ namespace Trade.It
                 return;
             }
 
-            using var bullishFill = new SolidBrush(Color.FromArgb(105, 144, 190, 144));
-            using var bearishFill = new SolidBrush(Color.FromArgb(105, 225, 170, 115));
-            using var bullishOutline = new Pen(onFuMoradiAutoMode
-                ? Color.FromArgb(220, 85, 145, 90)
-                : Color.FromArgb(210, 30, 115, 165), 1.2f) { DashStyle = DashStyle.Dash };
-            using var bearishOutline = new Pen(onFuMoradiAutoMode
-                ? Color.FromArgb(220, 185, 125, 75)
-                : Color.FromArgb(210, 180, 55, 55), 1.2f) { DashStyle = DashStyle.Dash };
-            using var wickPen = new Pen(onFuMoradiAutoMode
-                ? Color.FromArgb(190, 135, 130, 110)
-                : Color.FromArgb(190, 90, 90, 90), 1.1f) { DashStyle = DashStyle.Dash };
+            // Candle outlines and wicks use the same strong directional colors
+            // in both modes. Auto mode adds a muted, fully opaque solid body fill.
+            using var bullishFill = new SolidBrush(Color.FromArgb(150, 205, 232, 205));
+            using var bearishFill = new SolidBrush(Color.FromArgb(150, 245, 211, 180));
+            using var bullishOutline = new Pen(Color.DarkGreen, 1.2f)
+                { DashStyle = DashStyle.Solid };
+            using var bearishOutline = new Pen(Color.DarkRed, 1.2f)
+                { DashStyle = DashStyle.Solid };
+            using var bullishWickPen = new Pen(Color.DarkGreen, 1.1f)
+                { DashStyle = DashStyle.Solid };
+            using var bearishWickPen = new Pen(Color.DarkRed, 1.1f)
+                { DashStyle = DashStyle.Solid };
 
             // The right side of the chart has a reserved 25% margin. If the user zooms
             // very close, compress only projected spacing enough to keep all forecast
@@ -619,6 +620,7 @@ namespace Trade.It
                 var fill = rising ? bullishFill : bearishFill;
                 var outline = rising ? bullishOutline : bearishOutline;
 
+                var wickPen = rising ? bullishWickPen : bearishWickPen;
                 graphics.DrawLine(wickPen, x, high, x, low);
                 var top = Math.Min(open, close);
                 var bottom = Math.Max(open, close);
@@ -627,8 +629,8 @@ namespace Trade.It
                     top,
                     x + candleWidth / 2f,
                     Math.Max(top + 1f, bottom));
-                // Manual forecast candles are hollow; Auto candles use muted
-                // bullish green and bearish orange fills.
+                // Manual bodies remain completely hollow. Auto bodies receive
+                // a uniform solid muted fill without hatch or transparency pattern.
                 if (onFuMoradiAutoMode)
                     graphics.FillRectangle(fill, rect);
                 graphics.DrawRectangle(outline, rect.X, rect.Y, rect.Width, rect.Height);
