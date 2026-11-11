@@ -15,8 +15,8 @@ namespace Trade.It
         BollingerBands,
         OnBalanceVolume,
         VolumeWeightedAveragePrice,
-        DonchianChannel
-    }
+        DonchianChannel,
+        AwesomeOscillator
 
     internal sealed class ChartIndicator
     {
@@ -61,6 +61,10 @@ namespace Trade.It
         public int MacdFastPeriod { get; set; } = 12;
         public int MacdSlowPeriod { get; set; } = 26;
         public int MacdSignalPeriod { get; set; } = 9;
+        public int AwesomeOscillatorFastPeriod { get; set; } = 5;
+        public int AwesomeOscillatorSlowPeriod { get; set; } = 34;
+        public Color AwesomeOscillatorRisingColor { get; set; } = Color.FromArgb(80, 170, 100);
+        public Color AwesomeOscillatorFallingColor { get; set; } = Color.FromArgb(210, 100, 100);
         public bool ShowStochasticK { get; set; } = true;
         public bool ShowStochasticD { get; set; } = true;
         public bool ShowStochastic20 { get; set; } = true;
@@ -123,6 +127,7 @@ namespace Trade.It
         private double[]? macdLineCache;
         private double[]? macdSignalCache;
         private double[]? macdHistogramCache;
+        private double[]? awesomeOscillatorCache;
         private double[]? stochasticKCache;
         private double[]? stochasticDCache;
         private double[]? stochasticRsiKCache;
@@ -246,6 +251,7 @@ namespace Trade.It
 
         internal bool HasRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.RelativeStrengthIndex);
         internal bool HasMacdIndicator => indicators.Any(x => x.Type == ChartIndicatorType.MovingAverageConvergenceDivergence);
+        internal bool HasAwesomeOscillator => indicators.Any(x => x.Type == ChartIndicatorType.AwesomeOscillator);
         internal bool HasStochasticIndicator => indicators.Any(x => x.Type == ChartIndicatorType.Stochastic);
         internal bool HasStochasticRsiIndicator => indicators.Any(x => x.Type == ChartIndicatorType.StochasticRelativeStrengthIndex);
         internal bool HasAtrIndicator => indicators.Any(x => x.Type == ChartIndicatorType.AverageTrueRange);
@@ -586,6 +592,20 @@ namespace Trade.It
             return true;
         }
 
+        public void AddAwesomeOscillator()
+        {
+            indicators.Add(new ChartIndicator
+            {
+                Type = ChartIndicatorType.AwesomeOscillator,
+                AwesomeOscillatorFastPeriod = 5,
+                AwesomeOscillatorSlowPeriod = 34
+            });
+            InvalidateAwesomeOscillatorCache();
+            selectedIndicatorIndex = indicators.Count - 1;
+            Invalidate();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         public void AddIchimoku()
         {
             indicators.Add(new ChartIndicator
@@ -789,6 +809,13 @@ namespace Trade.It
                 return selectedIndicatorIndex;
             }
 
+            var awesomePlot = GetAwesomeOscillatorPlotRectangle();
+            if (awesomePlot != Rectangle.Empty && awesomePlot.Contains(location))
+            {
+                selectedIndicatorIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.AwesomeOscillator);
+                return selectedIndicatorIndex;
+            }
+
             var rsiPlot = GetRsiPlotRectangle();
             if (rsiPlot != Rectangle.Empty && rsiPlot.Contains(location))
             {
@@ -820,7 +847,8 @@ namespace Trade.It
                     indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex ||
                     indicator.Type == ChartIndicatorType.AverageTrueRange ||
                     indicator.Type == ChartIndicatorType.AverageDirectionalIndex ||
-                    indicator.Type == ChartIndicatorType.OnBalanceVolume)
+                    indicator.Type == ChartIndicatorType.OnBalanceVolume ||
+                    indicator.Type == ChartIndicatorType.AwesomeOscillator)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic)
@@ -1340,7 +1368,7 @@ namespace Trade.It
                 if (!indicator.IsVisible)
                     continue;
 
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume)
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume || indicator.Type == ChartIndicatorType.AwesomeOscillator
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.DonchianChannel)
@@ -1831,12 +1859,49 @@ namespace Trade.It
 
         internal void InvalidateMacdCache()
         {
+            InvalidateAwesomeOscillatorCache();
             InvalidateStochasticCache();
             InvalidateStochasticRsiCache();
             macdLineCache = null;
             macdSignalCache = null;
             macdHistogramCache = null;
         }
+
+        private void EnsureAwesomeOscillatorCache(ChartIndicator indicator)
+        {
+            if (awesomeOscillatorCache != null && awesomeOscillatorCache.Length == points.Count)
+                return;
+
+            var fastPeriod = Math.Max(2, indicator.AwesomeOscillatorFastPeriod);
+            var slowPeriod = Math.Max(fastPeriod + 1, indicator.AwesomeOscillatorSlowPeriod);
+            var medianPrices = points.Select(point => (point.High + point.Low) / 2.0).ToArray();
+            var fast = CalculateSimpleMovingAverageSeries(medianPrices, fastPeriod);
+            var slow = CalculateSimpleMovingAverageSeries(medianPrices, slowPeriod);
+            awesomeOscillatorCache = Enumerable.Repeat(double.NaN, points.Count).ToArray();
+            for (var i = 0; i < points.Count; i++)
+                if (double.IsFinite(fast[i]) && double.IsFinite(slow[i]))
+                    awesomeOscillatorCache[i] = fast[i] - slow[i];
+        }
+
+        private static double[] CalculateSimpleMovingAverageSeries(double[] source, int period)
+        {
+            var result = Enumerable.Repeat(double.NaN, source.Length).ToArray();
+            if (period <= 0 || source.Length < period)
+                return result;
+
+            var sum = 0.0;
+            for (var i = 0; i < source.Length; i++)
+            {
+                sum += source[i];
+                if (i >= period)
+                    sum -= source[i - period];
+                if (i >= period - 1)
+                    result[i] = sum / period;
+            }
+            return result;
+        }
+
+        internal void InvalidateAwesomeOscillatorCache() => awesomeOscillatorCache = null;
 
         private static double[] CalculateExponentialMovingAverageSeries(double[] source, int period)
         {
