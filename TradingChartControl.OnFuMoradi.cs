@@ -579,19 +579,17 @@ namespace Trade.It
                 return;
             }
 
-            using var bullishFill = new SolidBrush(onFuMoradiAutoMode
-                ? Color.FromArgb(105, 125, 125, 125)
-                : Color.FromArgb(90, 45, 145, 190));
-            using var bearishFill = new SolidBrush(onFuMoradiAutoMode
-                ? Color.FromArgb(105, 125, 125, 125)
-                : Color.FromArgb(90, 205, 85, 85));
+            using var bullishFill = new SolidBrush(Color.FromArgb(105, 144, 190, 144));
+            using var bearishFill = new SolidBrush(Color.FromArgb(105, 225, 170, 115));
             using var bullishOutline = new Pen(onFuMoradiAutoMode
-                ? Color.FromArgb(220, 90, 90, 90)
+                ? Color.FromArgb(220, 85, 145, 90)
                 : Color.FromArgb(210, 30, 115, 165), 1.2f) { DashStyle = DashStyle.Dash };
             using var bearishOutline = new Pen(onFuMoradiAutoMode
-                ? Color.FromArgb(220, 90, 90, 90)
+                ? Color.FromArgb(220, 185, 125, 75)
                 : Color.FromArgb(210, 180, 55, 55), 1.2f) { DashStyle = DashStyle.Dash };
-            using var wickPen = new Pen(Color.FromArgb(190, 90, 90, 90), 1.1f) { DashStyle = DashStyle.Dash };
+            using var wickPen = new Pen(onFuMoradiAutoMode
+                ? Color.FromArgb(190, 135, 130, 110)
+                : Color.FromArgb(190, 90, 90, 90), 1.1f) { DashStyle = DashStyle.Dash };
 
             // The right side of the chart has a reserved 25% margin. If the user zooms
             // very close, compress only projected spacing enough to keep all forecast
@@ -629,7 +627,10 @@ namespace Trade.It
                     top,
                     x + candleWidth / 2f,
                     Math.Max(top + 1f, bottom));
-                graphics.FillRectangle(fill, rect);
+                // Manual forecast candles are hollow; Auto candles use muted
+                // bullish green and bearish orange fills.
+                if (onFuMoradiAutoMode)
+                    graphics.FillRectangle(fill, rect);
                 graphics.DrawRectangle(outline, rect.X, rect.Y, rect.Width, rect.Height);
             }
         }
@@ -657,11 +658,9 @@ namespace Trade.It
             if (testMode && selectedIndex > testEndIndex)
                 return;
 
+            // Selecting a candle changes only the forecast anchor.
+            // The user explicitly controls Manual/Auto mode through the mode buttons.
             onFuMoradiAnchorIndex = selectedIndex;
-            if (GetOnFuMoradiIndicator() is { } activeIndicator)
-                ApplyOnFuMoradiManualParameters(activeIndicator);
-            onFuMoradiHasOptimizedParameters = false;
-            onFuMoradiAutoMode = false;
             SyncOnFuMoradiButtons();
             onFuMoradiCachedAnchorIndex = -1;
             onFuMoradiLastRenderLogAnchor = int.MinValue;
