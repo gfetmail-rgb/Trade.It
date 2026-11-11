@@ -68,10 +68,14 @@ namespace Trade.It
             rsiPeriod3 = CreateTextBox(new Point(12, 48), "14");
             rsiOperator3 = CreateComboBox(new Point(105, 48), new Size(105, 25), "بین", "کمتر از", "بیشتر از");
             rsiMinimum3 = CreateTextBox(new Point(218, 48), "40");
+            rsiMinimum3.Size = new Size(50, 25);
             rsiMaximum3 = CreateTextBox(new Point(275, 48), "70");
+            rsiMaximum3.Size = new Size(50, 25);
+            var rsiMaximumLabel = CreateLabel("حد بالا", 275, 29);
+            rsiMaximumLabel.Size = new Size(60, 18);
             rsiFilterGroup3.Controls.AddRange(new Control[] {
                 rsiFilterEnabled3, CreateLabel("دوره", 12, 29), CreateLabel("شرط", 105, 29),
-                CreateLabel("حد پایین", 218, 29), CreateLabel("حد بالا", 275, 29),
+                CreateLabel("حد پایین", 218, 29), rsiMaximumLabel,
                 rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3
             });
             rsiFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(rsiFilterEnabled3, rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3);
