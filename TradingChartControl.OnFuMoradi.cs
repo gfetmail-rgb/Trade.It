@@ -64,9 +64,13 @@ namespace Trade.It
 
             var plot = GetPlotRectangle();
             var y = Math.Max(2, plot.Top + 2);
-            onFuMoradiManualButton.Location = new Point(plot.Left + 3, y);
-            onFuMoradiAutoButton.Location = new Point(plot.Left + 82, y);
-            onFuMoradiSaveButton.Location = new Point(plot.Left + 161, y);
+            const int buttonWidth = 76;
+            const int buttonGap = 3;
+            var totalButtonsWidth = buttonWidth * 3 + buttonGap * 2;
+            var buttonsLeft = plot.Left + Math.Max(0, (plot.Width - totalButtonsWidth) / 2);
+            onFuMoradiManualButton.Location = new Point(buttonsLeft, y);
+            onFuMoradiAutoButton.Location = new Point(buttonsLeft + buttonWidth + buttonGap, y);
+            onFuMoradiSaveButton.Location = new Point(buttonsLeft + (buttonWidth + buttonGap) * 2, y);
             onFuMoradiManualButton.BringToFront();
             onFuMoradiAutoButton.BringToFront();
             onFuMoradiSaveButton.BringToFront();
