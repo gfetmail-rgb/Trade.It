@@ -212,7 +212,6 @@ namespace Trade.It
             for (var rowIndex = firstIndex; rowIndex < rows.Count; rowIndex++)
             {
                 var row = rows[rowIndex];
-            {
                 if (column > row.Length || !TryParseTradingNumber(row[column - 1], out var value) ||
                     !double.IsFinite(value) || value <= 0)
                     return false;
