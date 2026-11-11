@@ -361,10 +361,10 @@ namespace Trade.It
                     return false;
             }
 
-            var tr = new double[rows.Count];
-            var plusDm = new double[rows.Count];
-            var minusDm = new double[rows.Count];
-            for (var i = 1; i < rows.Count; i++)
+            var tr = new double[sampleCount];
+            var plusDm = new double[sampleCount];
+            var minusDm = new double[sampleCount];
+            for (var i = 1; i < sampleCount; i++)
             {
                 var upMove = highs[i] - highs[i - 1];
                 var downMove = lows[i - 1] - lows[i];
@@ -387,7 +387,7 @@ namespace Trade.It
 
             var dxValues = new List<double>();
             AddDx();
-            for (var i = period + 1; i < rows.Count; i++)
+            for (var i = period + 1; i < sampleCount; i++)
             {
                 smoothTr = smoothTr - smoothTr / period + tr[i];
                 smoothPlus = smoothPlus - smoothPlus / period + plusDm[i];
