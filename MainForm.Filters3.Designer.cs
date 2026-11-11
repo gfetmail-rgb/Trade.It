@@ -83,9 +83,9 @@ namespace Trade.It
             rsiPeriodLabel.Size = new Size(65, 24);
             var rsiConditionLabel = CreateLabel("شرط", 92, 39);
             rsiConditionLabel.Size = new Size(112, 24);
-            var rsiMinimumLabel = CreateLabel("حد پایین", 218, 39);
+            var rsiMinimumLabel = CreateLabel("حداقل", 218, 94);
             rsiMinimumLabel.Size = new Size(55, 24);
-            var rsiMaximumLabel = CreateLabel("حد بالا", 290, 39);
+            var rsiMaximumLabel = CreateLabel("حداکثر", 290, 94);
             rsiMaximumLabel.Size = new Size(55, 24);
             rsiFilterGroup3.Controls.AddRange(new Control[] {
                 rsiFilterEnabled3, rsiPeriodLabel, rsiConditionLabel,
