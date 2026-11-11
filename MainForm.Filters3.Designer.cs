@@ -56,10 +56,10 @@ namespace Trade.It
                 "قیمت پایانی بالاتر از میانگین", "میانگین کوتاه بالاتر از میانگین بلند");
             maFilterPeriod1_3 = CreateTextBox(new Point(12, 79), "20");
             maFilterPeriod2_3 = CreateTextBox(new Point(105, 79), "50");
-            var maPeriod1Label = CreateLabel("دوره اول", 12, 61);
-            maPeriod1Label.Size = new Size(82, 18);
-            var maPeriod2Label = CreateLabel("دوره دوم", 105, 61);
-            maPeriod2Label.Size = new Size(82, 18);
+            var maPeriod1Label = CreateLabel("دوره اول", 12, 53);
+            maPeriod1Label.Size = new Size(82, 24);
+            var maPeriod2Label = CreateLabel("دوره دوم", 105, 53);
+            maPeriod2Label.Size = new Size(82, 24);
             maFilterGroup3.Controls.AddRange(new Control[] {
                 maFilterEnabled3, maFilterMode3,
                 maPeriod1Label, maPeriod2Label,
@@ -76,14 +76,14 @@ namespace Trade.It
             rsiMinimum3.Size = new Size(55, 25);
             rsiMaximum3 = CreateTextBox(new Point(290, 66), "70");
             rsiMaximum3.Size = new Size(55, 25);
-            var rsiPeriodLabel = CreateLabel("دوره", 12, 43);
-            rsiPeriodLabel.Size = new Size(65, 18);
-            var rsiConditionLabel = CreateLabel("شرط", 92, 43);
-            rsiConditionLabel.Size = new Size(112, 18);
-            var rsiMinimumLabel = CreateLabel("حد پایین", 218, 43);
-            rsiMinimumLabel.Size = new Size(55, 18);
-            var rsiMaximumLabel = CreateLabel("حد بالا", 290, 43);
-            rsiMaximumLabel.Size = new Size(55, 18);
+            var rsiPeriodLabel = CreateLabel("دوره", 12, 39);
+            rsiPeriodLabel.Size = new Size(65, 24);
+            var rsiConditionLabel = CreateLabel("شرط", 92, 39);
+            rsiConditionLabel.Size = new Size(112, 24);
+            var rsiMinimumLabel = CreateLabel("حد پایین", 218, 39);
+            rsiMinimumLabel.Size = new Size(55, 24);
+            var rsiMaximumLabel = CreateLabel("حد بالا", 290, 39);
+            rsiMaximumLabel.Size = new Size(55, 24);
             rsiFilterGroup3.Controls.AddRange(new Control[] {
                 rsiFilterEnabled3, rsiPeriodLabel, rsiConditionLabel,
                 rsiMinimumLabel, rsiMaximumLabel,
@@ -97,14 +97,14 @@ namespace Trade.It
             distanceHighMax3 = CreateTextBox(new Point(190, 58), "8");
             distanceLowPeriod3 = CreateTextBox(new Point(12, 119), "20");
             distanceLowMin3 = CreateTextBox(new Point(190, 119), "2");
-            var distanceHighPeriodLabel = CreateLabel("دوره سقف", 12, 29);
-            distanceHighPeriodLabel.Size = new Size(150, 18);
-            var distanceHighMaxLabel = CreateLabel("حداکثر فاصله از سقف ٪", 190, 29);
-            distanceHighMaxLabel.Size = new Size(155, 18);
-            var distanceLowPeriodLabel = CreateLabel("دوره کف", 12, 94);
-            distanceLowPeriodLabel.Size = new Size(150, 18);
-            var distanceLowMinLabel = CreateLabel("حداقل فاصله از کف ٪", 190, 94);
-            distanceLowMinLabel.Size = new Size(155, 18);
+            var distanceHighPeriodLabel = CreateLabel("دوره سقف", 12, 25);
+            distanceHighPeriodLabel.Size = new Size(150, 24);
+            var distanceHighMaxLabel = CreateLabel("حداکثر فاصله از سقف ٪", 190, 25);
+            distanceHighMaxLabel.Size = new Size(155, 24);
+            var distanceLowPeriodLabel = CreateLabel("دوره کف", 12, 90);
+            distanceLowPeriodLabel.Size = new Size(150, 24);
+            var distanceLowMinLabel = CreateLabel("حداقل فاصله از کف ٪", 190, 90);
+            distanceLowMinLabel.Size = new Size(155, 24);
             distanceFilterGroup3.Controls.AddRange(new Control[] {
                 distanceFilterEnabled3,
                 distanceHighPeriodLabel, distanceHighMaxLabel,
@@ -119,12 +119,12 @@ namespace Trade.It
             volumePricePeriod3 = CreateTextBox(new Point(12, 66), "20");
             volumePriceRatio3 = CreateTextBox(new Point(132, 66), "1.3");
             volumePriceDirection3 = CreateComboBox(new Point(245, 66), new Size(100, 25), "مثبت", "منفی", "بدون شرط");
-            var volumePeriodLabel = CreateLabel("دوره میانگین حجم", 12, 43);
-            volumePeriodLabel.Size = new Size(110, 18);
-            var volumeRatioLabel = CreateLabel("حداقل نسبت حجم", 132, 43);
-            volumeRatioLabel.Size = new Size(105, 18);
-            var volumeDirectionLabel = CreateLabel("جهت تغییر قیمت", 245, 43);
-            volumeDirectionLabel.Size = new Size(100, 18);
+            var volumePeriodLabel = CreateLabel("دوره میانگین حجم", 12, 39);
+            volumePeriodLabel.Size = new Size(110, 24);
+            var volumeRatioLabel = CreateLabel("حداقل نسبت حجم", 132, 39);
+            volumeRatioLabel.Size = new Size(105, 24);
+            var volumeDirectionLabel = CreateLabel("جهت تغییر قیمت", 245, 39);
+            volumeDirectionLabel.Size = new Size(100, 24);
             volumePriceFilterGroup3.Controls.AddRange(new Control[] {
                 volumePriceFilterEnabled3,
                 volumePeriodLabel, volumeRatioLabel, volumeDirectionLabel,
@@ -137,10 +137,10 @@ namespace Trade.It
             trendStrengthFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             adxPeriod3 = CreateTextBox(new Point(12, 66), "14");
             adxMinimum3 = CreateTextBox(new Point(190, 66), "20");
-            var adxPeriodLabel = CreateLabel("دوره ADX", 12, 43);
-            adxPeriodLabel.Size = new Size(150, 18);
-            var adxMinimumLabel = CreateLabel("حداقل قدرت روند", 190, 43);
-            adxMinimumLabel.Size = new Size(155, 18);
+            var adxPeriodLabel = CreateLabel("دوره ADX", 12, 39);
+            adxPeriodLabel.Size = new Size(150, 24);
+            var adxMinimumLabel = CreateLabel("حداقل قدرت روند", 190, 39);
+            adxMinimumLabel.Size = new Size(155, 24);
             trendStrengthFilterGroup3.Controls.AddRange(new Control[] {
                 trendStrengthFilterEnabled3, adxPeriodLabel, adxMinimumLabel,
                 adxPeriod3, adxMinimum3
@@ -239,7 +239,7 @@ namespace Trade.It
             {
                 Text = text,
                 Location = new Point(x, y),
-                Size = new Size(100, 18),
+                Size = new Size(100, 24),
                 TextAlign = ContentAlignment.MiddleRight
             };
         }
