@@ -109,17 +109,20 @@ namespace Trade.It
 
                 if (maFilterEnabled3.Checked)
                 {
+                    var maLookback = Math.Max(ReadInt(maFilterPeriod1_3),
+                        maFilterMode3.SelectedIndex == 1 ? ReadInt(maFilterPeriod2_3) : 0);
                     if (closeColumn <= 0 ||
-                        !TryReadSeries(rows, closeColumn, out var closes) ||
+                        !TryReadSeries(rows, closeColumn, maLookback, out var closes) ||
                         !PassMovingAverageFilter(closes))
                         return false;
                 }
 
                 if (rsiFilterEnabled3.Checked)
                 {
+                    var rsiPeriod = ReadInt(rsiPeriod3);
                     if (closeColumn <= 0 ||
-                        !TryReadSeries(rows, closeColumn, out var rsiCloses) ||
-                        !TryCalculateRsi(rsiCloses, ReadInt(rsiPeriod3), out var rsi) ||
+                        !TryReadSeries(rows, closeColumn, rsiPeriod * 5 + 1, out var rsiCloses) ||
+                        !TryCalculateRsi(rsiCloses, rsiPeriod, out var rsi) ||
                         !PassRsiFilter(rsi))
                         return false;
                 }
@@ -199,17 +202,23 @@ namespace Trade.It
             };
         }
 
-        private static bool TryReadSeries(List<string[]> rows, int column, out List<double> values)
+        private static bool TryReadSeries(List<string[]> rows, int column, int requiredCount, out List<double> values)
         {
-            values = new List<double>(rows.Count);
-            foreach (var row in rows)
+            values = new List<double>(requiredCount);
+            if (requiredCount <= 0 || rows.Count < requiredCount)
+                return false;
+
+            var firstIndex = rows.Count - requiredCount;
+            for (var rowIndex = firstIndex; rowIndex < rows.Count; rowIndex++)
+            {
+                var row = rows[rowIndex];
             {
                 if (column > row.Length || !TryParseTradingNumber(row[column - 1], out var value) ||
                     !double.IsFinite(value) || value <= 0)
                     return false;
                 values.Add(value);
             }
-            return values.Count > 0;
+            return values.Count == requiredCount;
         }
 
         private static bool TryReadLatest(List<string[]> rows, int column, out double value) =>
@@ -331,19 +340,22 @@ namespace Trade.It
             adx = 0;
             positiveDi = 0;
             negativeDi = 0;
-            if (period <= 0 || rows.Count < period * 2 + 1)
+            if (period <= 0 || rows.Count < period * 5 + 1)
                 return false;
 
-            var highs = new double[rows.Count];
-            var lows = new double[rows.Count];
-            var closes = new double[rows.Count];
-            for (var i = 0; i < rows.Count; i++)
+            var startIndex = rows.Count - (period * 5 + 1);
+            var sampleCount = rows.Count - startIndex;
+            var highs = new double[sampleCount];
+            var lows = new double[sampleCount];
+            var closes = new double[sampleCount];
+            for (var i = 0; i < sampleCount; i++)
             {
-                if (highColumn > rows[i].Length || lowColumn > rows[i].Length ||
-                    closeColumn > rows[i].Length ||
-                    !TryParseTradingNumber(rows[i][highColumn - 1], out highs[i]) ||
-                    !TryParseTradingNumber(rows[i][lowColumn - 1], out lows[i]) ||
-                    !TryParseTradingNumber(rows[i][closeColumn - 1], out closes[i]) ||
+                var row = rows[startIndex + i];
+                if (highColumn > row.Length || lowColumn > row.Length ||
+                    closeColumn > row.Length ||
+                    !TryParseTradingNumber(row[highColumn - 1], out highs[i]) ||
+                    !TryParseTradingNumber(row[lowColumn - 1], out lows[i]) ||
+                    !TryParseTradingNumber(row[closeColumn - 1], out closes[i]) ||
                     !double.IsFinite(highs[i]) || !double.IsFinite(lows[i]) ||
                     !double.IsFinite(closes[i]) || highs[i] < lows[i])
                     return false;
