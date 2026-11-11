@@ -18,6 +18,7 @@ namespace Trade.It
 
         public void ToggleOnFuMoradi()
         {
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] TOGGLE_ENTER Instance={onFuMoradiInstanceId}, Symbol={chartSymbol}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}, Indicators={indicators.Count}, Stack={Environment.StackTrace}");
             var existingIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.OnFuMoradi);
             if (existingIndex >= 0)
             {
