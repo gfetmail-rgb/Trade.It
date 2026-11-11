@@ -19,6 +19,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="MainForm.Filters3.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="MainForm.Filters3.Designer.cs">
+			<DependentUpon>MainForm.cs</DependentUpon>
+		</Compile>
 		<Compile Update="MainForm.ChartTabs.cs">
 			<DependentUpon>MainForm.cs</DependentUpon>
 		</Compile>
