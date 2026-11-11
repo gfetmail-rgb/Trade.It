@@ -13,9 +13,10 @@ namespace Trade.It
             bool ReadPositiveInt(TextBox box, string title, out int value)
             {
                 var text = NormalizeTradingDigits(box.Text).Trim();
-                if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out value) && value > 0)
+                if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out value) &&
+                    value > 0 && value <= 1000)
                     return true;
-                errors.Add($"{title}: عدد صحیح بزرگ‌تر از صفر وارد کنید.");
+                errors.Add($"{title}: عدد صحیح بین ۱ تا ۱۰۰۰ وارد کنید.");
                 return false;
             }
 
