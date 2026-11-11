@@ -169,6 +169,7 @@ namespace Trade.It
             var upperWickSum = 0.0;
             var lowerWickSum = 0.0;
             var bodySum = 0.0;
+            var candleRangeSum = 0.0;
             for (var i = atrStart; i <= anchor; i++)
             {
                 var p = points[i];
@@ -187,14 +188,21 @@ namespace Trade.It
                 upperWickSum += Math.Max(0, p.High - bodyTop);
                 lowerWickSum += Math.Max(0, bodyBottom - p.Low);
                 bodySum += Math.Max(0, bodyTop - bodyBottom);
+
+                var candleRange = p.High - p.Low;
+                if (double.IsFinite(candleRange) && candleRange > 0)
+                    candleRangeSum += candleRange;
             }
 
             var atr = atrSamples > 0 ? atrSum / atrSamples : lastClose * 0.01;
             var volatility = Math.Clamp(atr / lastClose, 0.0001, 0.20);
             var samples = Math.Max(1, anchor - atrStart + 1);
-            var upperWickRatio = Math.Clamp(upperWickSum / samples / Math.Max(atr, 1e-12), 0.05, 0.75);
-            var lowerWickRatio = Math.Clamp(lowerWickSum / samples / Math.Max(atr, 1e-12), 0.05, 0.75);
-            var bodyRatio = Math.Clamp(bodySum / samples / Math.Max(atr, 1e-12), 0.10, 0.90);
+            var averageCandleRange = candleRangeSum > 0
+                ? candleRangeSum / samples
+                : atr;
+            var totalWick = upperWickSum + lowerWickSum;
+            var upperWickShare = totalWick > 1e-12 ? upperWickSum / totalWick : 0.5;
+            var lowerWickShare = totalWick > 1e-12 ? lowerWickSum / totalWick : 0.5;
 
             var alpha = Math.Clamp(indicator.OnFuMoradiAlpha, 0, 2);
             var beta = Math.Clamp(indicator.OnFuMoradiBeta, 0, 2);
@@ -219,13 +227,17 @@ namespace Trade.It
                 var open = previousCloseForecast;
                 var close = open * Math.Exp(drift);
 
-                // A small candle-shape component carries recent average body/wick proportions forward.
-                var expectedRange = Math.Max(atr * delta, open * volatility * 0.35) * (0.75 + bodyRatio * 0.5);
+                // Match projected candle height to the recent average High-Low range.
+                // ATR remains dedicated to volatility/drift; it no longer shrinks candle bodies.
                 var body = Math.Abs(close - open);
+                var expectedRange = Math.Max(averageCandleRange, body);
                 var residualRange = Math.Max(0, expectedRange - body);
-                var patternBias = Math.Clamp(epsilon * (upperWickRatio - lowerWickRatio), -0.5, 0.5);
-                var upperWick = residualRange * Math.Clamp(upperWickRatio + patternBias * 0.25, 0.05, 0.80);
-                var lowerWick = residualRange * Math.Clamp(lowerWickRatio - patternBias * 0.25, 0.05, 0.80);
+                var patternBias = Math.Clamp(epsilon * (upperWickShare - lowerWickShare), -0.5, 0.5);
+                var adjustedUpperShare = Math.Clamp(upperWickShare + patternBias * 0.25, 0.05, 0.95);
+                var adjustedLowerShare = Math.Clamp(lowerWickShare - patternBias * 0.25, 0.05, 0.95);
+                var wickShareTotal = adjustedUpperShare + adjustedLowerShare;
+                var upperWick = residualRange * adjustedUpperShare / wickShareTotal;
+                var lowerWick = residualRange * adjustedLowerShare / wickShareTotal;
                 var high = Math.Max(open, close) + upperWick;
                 var low = Math.Max(1e-12, Math.Min(open, close) - lowerWick);
 
