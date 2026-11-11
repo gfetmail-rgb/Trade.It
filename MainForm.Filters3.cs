@@ -484,5 +484,44 @@ namespace Trade.It
             if (filterCountLabel3 != null)
                 filterCountLabel3.Text = text;
         }
+
+        private void maFilterEnabled3_CheckedChanged(object? sender, EventArgs e)
+        {
+            maFilterMode3.Enabled = maFilterEnabled3.Checked;
+            maPriceMode3.Enabled = maFilterEnabled3.Checked;
+            maFilterPeriod1_3.Enabled = maFilterEnabled3.Checked;
+            maFilterPeriod2_3.Enabled = maFilterEnabled3.Checked;
+        }
+
+        private void rsiFilterEnabled3_CheckedChanged(object? sender, EventArgs e)
+        {
+            rsiPeriod3.Enabled = rsiFilterEnabled3.Checked;
+            rsiOperator3.Enabled = rsiFilterEnabled3.Checked;
+            rsiMinimum3.Enabled = rsiFilterEnabled3.Checked;
+            rsiMaximum3.Enabled = rsiFilterEnabled3.Checked;
+        }
+
+        private void distanceFilterEnabled3_CheckedChanged(object? sender, EventArgs e)
+        {
+            distanceHighPeriod3.Enabled = distanceFilterEnabled3.Checked;
+            distanceHighMax3.Enabled = distanceFilterEnabled3.Checked;
+            distanceLowPeriod3.Enabled = distanceFilterEnabled3.Checked;
+            distanceLowMin3.Enabled = distanceFilterEnabled3.Checked;
+        }
+
+        private void volumePriceFilterEnabled3_CheckedChanged(object? sender, EventArgs e)
+        {
+            volumePricePeriod3.Enabled = volumePriceFilterEnabled3.Checked;
+            volumePriceRatio3.Enabled = volumePriceFilterEnabled3.Checked;
+            volumePriceDirection3.Enabled = volumePriceFilterEnabled3.Checked;
+        }
+
+        private void trendStrengthFilterEnabled3_CheckedChanged(object? sender, EventArgs e)
+        {
+            adxPeriod3.Enabled = trendStrengthFilterEnabled3.Checked;
+            adxMinimum3.Enabled = trendStrengthFilterEnabled3.Checked;
+            adxDirection3.Enabled = trendStrengthFilterEnabled3.Checked;
+        }
+
     }
 }
