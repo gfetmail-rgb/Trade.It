@@ -47,6 +47,16 @@ namespace Trade.It
             onFuMoradiSaveButton.BringToFront();
         }
 
+        private void ApplyOnFuMoradiManualParameters(ChartIndicator indicator)
+        {
+            indicator.OnFuMoradiAlpha = 0.55;
+            indicator.OnFuMoradiBeta = 0.25;
+            indicator.OnFuMoradiGamma = 0.20;
+            indicator.OnFuMoradiDelta = 0.35;
+            indicator.OnFuMoradiEpsilon = 0.15;
+            LoadOnFuMoradiManualParameters(indicator);
+        }
+
         private void LoadOnFuMoradiManualParameters(ChartIndicator indicator)
         {
             try
@@ -102,7 +112,7 @@ namespace Trade.It
             var indicator = GetOnFuMoradiIndicator();
             if (indicator == null)
                 return;
-            LoadOnFuMoradiManualParameters(indicator);
+            ApplyOnFuMoradiManualParameters(indicator);
             onFuMoradiAutoMode = false;
             onFuMoradiHasOptimizedParameters = false;
             onFuMoradiCachedAnchorIndex = -1;
@@ -263,7 +273,7 @@ namespace Trade.It
                 OnFuMoradiDelta = 0.35,
                 OnFuMoradiEpsilon = 0.15
             };
-            LoadOnFuMoradiManualParameters(newIndicator);
+            ApplyOnFuMoradiManualParameters(newIndicator);
             indicators.Add(newIndicator);
             onFuMoradiAutoMode = false;
             onFuMoradiHasOptimizedParameters = false;
@@ -620,6 +630,8 @@ namespace Trade.It
                 return;
 
             onFuMoradiAnchorIndex = selectedIndex;
+            if (GetOnFuMoradiIndicator() is { } activeIndicator)
+                ApplyOnFuMoradiManualParameters(activeIndicator);
             onFuMoradiHasOptimizedParameters = false;
             onFuMoradiAutoMode = false;
             SyncOnFuMoradiButtons();
