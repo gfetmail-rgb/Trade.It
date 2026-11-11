@@ -156,6 +156,10 @@ namespace Trade.It
             if (macdPlot != Rectangle.Empty)
                 RenderClippedPanel(e.Graphics, macdPlot, g => RenderMacdPanel(g, macdPlot, panelVisible, step, initialOffset));
 
+            var awesomeOscillatorPlot = GetAwesomeOscillatorPlotRectangle();
+            if (awesomeOscillatorPlot != Rectangle.Empty)
+                RenderClippedPanel(e.Graphics, awesomeOscillatorPlot, g => RenderAwesomeOscillatorPanel(g, awesomeOscillatorPlot, panelVisible, step, initialOffset));
+
             var stochasticPlot = GetStochasticPlotRectangle();
             if (stochasticPlot != Rectangle.Empty && HasStochasticIndicator)
                 RenderClippedPanel(e.Graphics, stochasticPlot, g => RenderStochasticPanel(g, stochasticPlot, panelVisible, step, initialOffset));
@@ -200,6 +204,9 @@ namespace Trade.It
 
                 if (macdPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, macdPlot.Top - 1, plot.Right, macdPlot.Top - 1);
+
+                if (awesomeOscillatorPlot != Rectangle.Empty)
+                    e.Graphics.DrawLine(splitterPen, plot.Left, awesomeOscillatorPlot.Top - 1, plot.Right, awesomeOscillatorPlot.Top - 1);
 
                 if (stochasticRsiPlot != Rectangle.Empty)
                     e.Graphics.DrawLine(splitterPen, plot.Left, stochasticRsiPlot.Top - 1, plot.Right, stochasticRsiPlot.Top - 1);
@@ -839,6 +846,7 @@ namespace Trade.It
             public Rectangle Price { get; init; }
             public Rectangle Rsi { get; init; }
             public Rectangle Macd { get; init; }
+            public Rectangle AwesomeOscillator { get; init; }
             public Rectangle Stochastic { get; init; }
             public Rectangle StochasticRsi { get; init; }
             public Rectangle Atr { get; init; }
@@ -877,6 +885,10 @@ namespace Trade.It
                     Math.Max(60, totalHeight / 2))
                 : 0;
 
+            var awesomeOscillatorHeight = HasAwesomeOscillator
+                ? Math.Clamp((int)Math.Round(totalHeight * macdPanelRatio), 60, Math.Max(60, totalHeight / 2))
+                : 0;
+
             var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var stochasticRsiHeight = HasStochasticRsiIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticRsiPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
             var atrHeight = HasAtrIndicator ? Math.Clamp((int)Math.Round(totalHeight * atrPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
@@ -892,6 +904,7 @@ namespace Trade.It
 
             var reserved = (rsiHeight > 0 ? rsiHeight + gap : 0) +
                            (macdHeight > 0 ? macdHeight + gap : 0) +
+                           (awesomeOscillatorHeight > 0 ? awesomeOscillatorHeight + gap : 0) +
                            (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                            (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
@@ -908,6 +921,7 @@ namespace Trade.It
             var availableLower = Math.Max(0, overallBottom - priceBottom);
             var lowerRequested = (rsiHeight > 0 ? rsiHeight + gap : 0) +
                                  (macdHeight > 0 ? macdHeight + gap : 0) +
+                           (awesomeOscillatorHeight > 0 ? awesomeOscillatorHeight + gap : 0) +
                                  (stochasticHeight > 0 ? stochasticHeight + gap : 0) +
                                  (stochasticRsiHeight > 0 ? stochasticRsiHeight + gap : 0) +
                            (atrHeight > 0 ? atrHeight + gap : 0) +
@@ -920,6 +934,7 @@ namespace Trade.It
                 var scale = availableLower / (double)lowerRequested;
                 rsiHeight = (int)Math.Floor(rsiHeight * scale);
                 macdHeight = (int)Math.Floor(macdHeight * scale);
+                awesomeOscillatorHeight = (int)Math.Floor(awesomeOscillatorHeight * scale);
                 stochasticHeight = (int)Math.Floor(stochasticHeight * scale);
                 stochasticRsiHeight = (int)Math.Floor(stochasticRsiHeight * scale);
                  atrHeight = (int)Math.Floor(atrHeight * scale);
@@ -947,6 +962,15 @@ namespace Trade.It
                 var macdBottom = Math.Min(overallBottom - 1, macdTop + macdHeight);
                 macd = Rectangle.FromLTRB(left, macdTop, right, Math.Max(macdTop + 1, macdBottom));
                 cursor = macd.Bottom;
+            }
+
+            Rectangle awesomeOscillator = Rectangle.Empty;
+            if (awesomeOscillatorHeight > 0)
+            {
+                var awesomeTop = Math.Min(overallBottom - 1, cursor + gap);
+                var awesomeBottom = Math.Min(overallBottom - 1, awesomeTop + awesomeOscillatorHeight);
+                awesomeOscillator = Rectangle.FromLTRB(left, awesomeTop, right, Math.Max(awesomeTop + 1, awesomeBottom));
+                cursor = awesomeOscillator.Bottom;
             }
 
             Rectangle stochastic = Rectangle.Empty;
@@ -1006,6 +1030,7 @@ namespace Trade.It
                 Price = price,
                 Rsi = rsi,
                 Macd = macd,
+                AwesomeOscillator = awesomeOscillator,
                 Stochastic = stochastic,
                 StochasticRsi = stochasticRsi,
                 Atr = atr,
@@ -1021,6 +1046,8 @@ namespace Trade.It
         private Rectangle GetRsiPlotRectangle() => GetLowerPanelLayout().Rsi;
 
         private Rectangle GetMacdPlotRectangle() => GetLowerPanelLayout().Macd;
+
+        private Rectangle GetAwesomeOscillatorPlotRectangle() => GetLowerPanelLayout().AwesomeOscillator;
 
         private Rectangle GetStochasticPlotRectangle() => GetLowerPanelLayout().Stochastic;
 
@@ -1252,6 +1279,59 @@ namespace Trade.It
 
                 previous = current;
             }
+        }
+
+        private void RenderAwesomeOscillatorPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
+        {
+            if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasAwesomeOscillator)
+                return;
+
+            var indicator = indicators.First(x => x.Type == ChartIndicatorType.AwesomeOscillator);
+            EnsureAwesomeOscillatorCache(indicator);
+            var start = Math.Max(0, firstIndex);
+            var end = Math.Min(awesomeOscillatorCache!.Length, firstIndex + visible.Count);
+            var maxAbs = 0.0;
+            for (var i = start; i < end; i++)
+                if (double.IsFinite(awesomeOscillatorCache[i]))
+                    maxAbs = Math.Max(maxAbs, Math.Abs(awesomeOscillatorCache[i]));
+            maxAbs = Math.Max(maxAbs * 1.15, 1e-9);
+
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            using var titleFont = new Font(Font.FontFamily, Math.Max(7f, Font.Size - 2f), FontStyle.Bold);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Right, plot.Top);
+            g.DrawLine(axisPen, plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+            g.DrawLine(axisPen, plot.Left, plot.Top, plot.Left, plot.Bottom);
+
+            var zeroY = (float)MacdValueToScreen(0, plot, maxAbs);
+            g.DrawLine(axisPen, plot.Left, zeroY, plot.Right, zeroY);
+            var barWidth = Math.Max(2f, (float)(step * 0.65));
+            for (var i = 0; i < visible.Count; i++)
+            {
+                var absoluteIndex = firstIndex + i;
+                if (absoluteIndex < 0 || absoluteIndex >= awesomeOscillatorCache.Length ||
+                    !double.IsFinite(awesomeOscillatorCache[absoluteIndex]))
+                    continue;
+
+                var value = awesomeOscillatorCache[absoluteIndex];
+                var y = (float)MacdValueToScreen(value, plot, maxAbs);
+                var x = (float)(plot.Left + step * (i + 0.5) + initialOffset + horizontalPanOffset);
+                var top = Math.Min(zeroY, y);
+                var bottom = Math.Max(zeroY, y);
+                var rect = RectangleF.FromLTRB(x - barWidth / 2f, top, x + barWidth / 2f, Math.Max(top + 1f, bottom));
+                var rising = absoluteIndex > 0 && value > awesomeOscillatorCache[absoluteIndex - 1];
+                var color = rising ? indicator.AwesomeOscillatorRisingColor : indicator.AwesomeOscillatorFallingColor;
+                using var brush = new SolidBrush(color);
+                using var pen = new Pen(color, 1f);
+                g.FillRectangle(brush, rect);
+                g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+            }
+
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteCrossIndex = firstIndex + crossIndex;
+            var valueText = absoluteCrossIndex >= 0 && absoluteCrossIndex < awesomeOscillatorCache.Length && double.IsFinite(awesomeOscillatorCache[absoluteCrossIndex])
+                ? awesomeOscillatorCache[absoluteCrossIndex].ToString("0.########", CultureInfo.InvariantCulture)
+                : "—";
+            DrawIndicatorPanelTitle(g, plot, $"Awesome Oscillator ({indicator.AwesomeOscillatorFastPeriod},{indicator.AwesomeOscillatorSlowPeriod}) = {valueText}", titleFont, indicator.AwesomeOscillatorRisingColor);
         }
 
         private void RenderAtrPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
