@@ -4,6 +4,7 @@ namespace Trade.It
     {
         private TradingChartControl? indicatorContextChart;
         private static int onFuMoradiClickSequence;
+        private int currentOnFuMoradiClickSequence;
 
         private void InitializeIndicatorMenuRuntime()
         {
@@ -26,8 +27,9 @@ namespace Trade.It
             indicatorOnFuMoradiMenuItem.Click += (_, _) =>
             {
                 var sequence = System.Threading.Interlocked.Increment(ref onFuMoradiClickSequence);
+                currentOnFuMoradiClickSequence = sequence;
                 System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] MENU_CLICK Seq={sequence}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
-                AddOnFuMoradiToActiveChart(sequence);
+                AddOnFuMoradiToActiveChart();
             };
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
@@ -145,9 +147,9 @@ namespace Trade.It
             chart.AddAwesomeOscillator();
         }
 
-        private void AddOnFuMoradiToActiveChart(int sequence)
+        private void AddOnFuMoradiToActiveChart()
         {
-            System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] ADD_HANDLER Seq={sequence}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] ADD_HANDLER Seq={currentOnFuMoradiClickSequence}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
             var chart = GetActiveChart();
             if (chart == null || chart.Points.Count == 0 ||
                 !string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
