@@ -405,7 +405,8 @@ namespace Trade.It
                 Beta: indicator.OnFuMoradiBeta,
                 Gamma: indicator.OnFuMoradiGamma,
                 Delta: indicator.OnFuMoradiDelta,
-                Epsilon: indicator.OnFuMoradiEpsilon);
+                Epsilon: indicator.OnFuMoradiEpsilon,
+                Period: indicator.Period);
 
             indicator.OnFuMoradiAlpha = Math.Clamp(trendWeight, 0, 2);
             indicator.OnFuMoradiBeta = Math.Clamp(momentumWeight, 0, 2);
