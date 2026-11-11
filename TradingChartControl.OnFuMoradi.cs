@@ -277,8 +277,9 @@ namespace Trade.It
                 return false;
             }
 
-            onFuMoradiAutoMode = false;
-            onFuMoradiHasOptimizedParameters = false;
+            // Applying parameter values must not change the mode selected by the user.
+            // If Auto is active, it remains active; the saved values are loaded when
+            // the user explicitly switches to Manual.
             onFuMoradiCachedAnchorIndex = -1;
             onFuMoradiCachedIndicatorIndex = -1;
             onFuMoradiForecast.Clear();
