@@ -21,6 +21,7 @@
         private System.Windows.Forms.ToolStripMenuItem indicatorVwapMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorDonchianMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorAwesomeOscillatorMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem indicatorOnFuMoradiMenuItem;
         private System.Windows.Forms.ToolStripMenuItem indicatorClearMenuItem;
         private System.Windows.Forms.ContextMenuStrip indicatorContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem indicatorSettingsMenuItem;
@@ -220,6 +221,7 @@
             indicatorVwapMenuItem = new ToolStripMenuItem();
             indicatorDonchianMenuItem = new ToolStripMenuItem();
             indicatorAwesomeOscillatorMenuItem = new ToolStripMenuItem();
+            indicatorOnFuMoradiMenuItem = new ToolStripMenuItem();
             indicatorClearMenuItem = new ToolStripMenuItem();
             indicatorContextMenuStrip = new ContextMenuStrip();
             indicatorSettingsMenuItem = new ToolStripMenuItem();
@@ -500,7 +502,7 @@
             // 
             // indicatorsMenuItem
             // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, new ToolStripSeparator(), indicatorBollingerMenuItem, indicatorDonchianMenuItem, new ToolStripSeparator(), indicatorRsiMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorMacdMenuItem, indicatorAwesomeOscillatorMenuItem, new ToolStripSeparator(), indicatorAtrMenuItem, indicatorAdxMenuItem, new ToolStripSeparator(), indicatorObvMenuItem, indicatorVwapMenuItem, new ToolStripSeparator(), indicatorClearMenuItem });
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, new ToolStripSeparator(), indicatorBollingerMenuItem, indicatorDonchianMenuItem, new ToolStripSeparator(), indicatorRsiMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorMacdMenuItem, indicatorAwesomeOscillatorMenuItem, indicatorOnFuMoradiMenuItem, new ToolStripSeparator(), indicatorAtrMenuItem, indicatorAdxMenuItem, new ToolStripSeparator(), indicatorObvMenuItem, indicatorVwapMenuItem, new ToolStripSeparator(), indicatorClearMenuItem });
             indicatorsMenuItem.Name = "indicatorsMenuItem";
             indicatorsMenuItem.Size = new Size(105, 29);
             indicatorsMenuItem.Text = "اندیکاتورها";
@@ -566,6 +568,10 @@
             indicatorAwesomeOscillatorMenuItem.Name = "indicatorAwesomeOscillatorMenuItem";
             indicatorAwesomeOscillatorMenuItem.Size = new Size(190, 22);
             indicatorAwesomeOscillatorMenuItem.Text = "Awesome Oscillator";
+            // indicatorOnFuMoradiMenuItem
+            indicatorOnFuMoradiMenuItem.Name = "indicatorOnFuMoradiMenuItem";
+            indicatorOnFuMoradiMenuItem.Size = new Size(190, 22);
+            indicatorOnFuMoradiMenuItem.Text = "OnFuMoradi";
             // indicatorClearMenuItem
             // 
             indicatorClearMenuItem.Name = "indicatorClearMenuItem";
