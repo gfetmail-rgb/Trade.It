@@ -16,7 +16,8 @@ namespace Trade.It
         OnBalanceVolume,
         VolumeWeightedAveragePrice,
         DonchianChannel,
-        AwesomeOscillator
+        AwesomeOscillator,
+        OnFuMoradi
     }
 
     internal sealed class ChartIndicator
@@ -66,6 +67,11 @@ namespace Trade.It
         public int AwesomeOscillatorSlowPeriod { get; set; } = 34;
         public Color AwesomeOscillatorRisingColor { get; set; } = Color.FromArgb(80, 170, 100);
         public Color AwesomeOscillatorFallingColor { get; set; } = Color.FromArgb(210, 100, 100);
+        public double OnFuMoradiAlpha { get; set; } = 0.55;
+        public double OnFuMoradiBeta { get; set; } = 0.25;
+        public double OnFuMoradiGamma { get; set; } = 0.20;
+        public double OnFuMoradiDelta { get; set; } = 0.35;
+        public double OnFuMoradiEpsilon { get; set; } = 0.15;
         public bool ShowStochasticK { get; set; } = true;
         public bool ShowStochasticD { get; set; } = true;
         public bool ShowStochastic20 { get; set; } = true;
