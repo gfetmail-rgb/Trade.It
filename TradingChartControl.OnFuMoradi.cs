@@ -283,7 +283,6 @@ namespace Trade.It
             if (localAnchor < 0 || localAnchor >= displayedCount)
                 return;
 
-            var candleWidth = Math.Max(2f, (float)(step * 0.65));
             using var bullishFill = new SolidBrush(Color.FromArgb(90, 45, 145, 190));
             using var bearishFill = new SolidBrush(Color.FromArgb(90, 205, 85, 85));
             using var bullishOutline = new Pen(Color.FromArgb(210, 30, 115, 165), 1.2f) { DashStyle = DashStyle.Dash };
@@ -298,6 +297,7 @@ namespace Trade.It
             var forecastStep = normalFutureWidth > availableFutureWidth && normalFutureWidth > 0
                 ? step * availableFutureWidth / normalFutureWidth
                 : step;
+            var candleWidth = Math.Max(1.5f, (float)(Math.Min(step, forecastStep) * 0.65));
             var forecastStartX = plot.Left + step * (localAnchor + 1.5) + initialOffset + horizontalPanOffset;
 
             for (var i = 0; i < onFuMoradiForecast.Count; i++)
