@@ -105,7 +105,7 @@ namespace Trade.It
             volumePriceFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(volumePriceFilterEnabled3,
                 volumePricePeriod3, volumePriceRatio3, volumePriceDirection3);
 
-            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند (ADX)", 8, 508, 350, 100);
+            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند صعودی (ADX)", 8, 508, 350, 100);
             trendStrengthFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             adxPeriod3 = CreateTextBox(new Point(12, 48), "14");
             adxMinimum3 = CreateTextBox(new Point(105, 48), "20");
@@ -136,6 +136,12 @@ namespace Trade.It
             filterCountLabel3.TextAlign = ContentAlignment.MiddleRight;
             filterCountLabel3.Size = new Size(330, 25);
             filterCountLabel3.Location = new Point(8, 660);
+
+            SetFilterInputsEnabled(maFilterEnabled3, maFilterMode3, maFilterPeriod1_3, maFilterPeriod2_3);
+            SetFilterInputsEnabled(rsiFilterEnabled3, rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3);
+            SetFilterInputsEnabled(distanceFilterEnabled3, distanceHighPeriod3, distanceHighMax3, distanceLowPeriod3, distanceLowMin3);
+            SetFilterInputsEnabled(volumePriceFilterEnabled3, volumePricePeriod3, volumePriceRatio3, volumePriceDirection3);
+            SetFilterInputsEnabled(trendStrengthFilterEnabled3, adxPeriod3, adxMinimum3);
 
             tabPageFilters3.Controls.AddRange(new Control[] {
                 maFilterGroup3, rsiFilterGroup3, distanceFilterGroup3,
