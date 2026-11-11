@@ -1828,6 +1828,10 @@ namespace Trade.It
             var hasStocks = definition?.Symbols?.Any(s => !string.IsNullOrWhiteSpace(s)) == true;
             var hasDate = hasStocks && HasDateColumn(definition);
             var hasVolume = hasStocks && HasVolumeColumn(definition);
+            var hasClose = hasStocks && GetMappingColumn(definition, "آخرین") > 0;
+            var hasHighLow = hasClose &&
+                GetMappingColumn(definition, "بیشترین") > 0 &&
+                GetMappingColumn(definition, "کمترین") > 0;
             volumeColumn.Visible = HasVolumeColumn(definition);
 
             var filtersEnabled = hasStocks && !filtersApplied;
@@ -1848,11 +1852,11 @@ namespace Trade.It
             comparisonRangeGroup3.Enabled = filters2Enabled;
             comparisonRangeGroup4.Enabled = filters2Enabled;
             ohlcChangeFilterGroup.Enabled = filtersEnabled;
-            maFilterGroup3.Enabled = filters3Enabled;
-            rsiFilterGroup3.Enabled = filters3Enabled;
-            distanceFilterGroup3.Enabled = filters3Enabled;
-            volumePriceFilterGroup3.Enabled = filters3Enabled;
-            trendStrengthFilterGroup3.Enabled = filters3Enabled;
+            maFilterGroup3.Enabled = filters3Enabled && hasClose;
+            rsiFilterGroup3.Enabled = filters3Enabled && hasClose;
+            distanceFilterGroup3.Enabled = filters3Enabled && hasHighLow;
+            volumePriceFilterGroup3.Enabled = filters3Enabled && hasVolume && hasClose;
+            trendStrengthFilterGroup3.Enabled = filters3Enabled && hasHighLow;
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
             filterApplyButton.Enabled = hasStocks;
