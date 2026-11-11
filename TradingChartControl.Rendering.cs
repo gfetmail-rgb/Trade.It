@@ -12,7 +12,7 @@ namespace Trade.It
             SyncPriceIndicatorButtons();
             e.Graphics.Clear(BackColor);
             base.OnPaint(e);
-            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] OnPaint entered: Points={points.Count}, Active={IsOnFuMoradiActive}, Size={Width}x{Height}");
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] OnPaint entered: Instance={onFuMoradiInstanceId}, Symbol={chartSymbol}, Points={points.Count}, Active={IsOnFuMoradiActive}, Indicators={indicators.Count}, Types={string.Join(",", indicators.Select(x => x.Type.ToString()))}, Size={Width}x{Height}");
             if (points.Count == 0)
             {
                 System.Diagnostics.Debug.WriteLine("[OnFuMoradi] OnPaint skipped: no points");
