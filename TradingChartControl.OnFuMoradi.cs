@@ -150,27 +150,129 @@ namespace Trade.It
             Invalidate();
         }
 
+        private sealed class OnFuMoradiEvaluationMetrics
+        {
+            public int Samples { get; set; }
+            public double AbsoluteOhlcErrorSum { get; set; }
+            public double SquaredOhlcErrorSum { get; set; }
+            public int OhlcValueCount { get; set; }
+            public double RangeErrorSum { get; set; }
+            public int DirectionCorrect { get; set; }
+            public int DirectionSamples { get; set; }
+            public double[] HorizonAbsoluteErrorSums { get; } = new double[5];
+            public int[] HorizonValueCounts { get; } = new int[5];
+
+            public double OhlcMaePercent =>
+                OhlcValueCount > 0 ? AbsoluteOhlcErrorSum / OhlcValueCount : double.NaN;
+
+            public double OhlcRmsePercent =>
+                OhlcValueCount > 0 ? Math.Sqrt(SquaredOhlcErrorSum / OhlcValueCount) : double.NaN;
+
+            public double RangeMaePercent =>
+                Samples > 0 ? RangeErrorSum / Samples : double.NaN;
+
+            public double DirectionalAccuracyPercent =>
+                DirectionSamples > 0 ? 100.0 * DirectionCorrect / DirectionSamples : double.NaN;
+
+            // All terms are expressed in percentage points. Lower is better.
+            public double CompositeScore =>
+                0.50 * OhlcMaePercent +
+                0.20 * OhlcRmsePercent +
+                0.20 * RangeMaePercent +
+                0.10 * (100.0 - DirectionalAccuracyPercent);
+        }
+
+        private OnFuMoradiEvaluationMetrics EvaluateOnFuMoradiCandidate(
+            ChartIndicator candidate,
+            int[] validationAnchors)
+        {
+            var metrics = new OnFuMoradiEvaluationMetrics();
+            const int horizon = 5;
+            candidate.Period = horizon;
+
+            foreach (var validationAnchor in validationAnchors)
+            {
+                // Forecasts use data through validationAnchor only. All five subsequent
+                // candles are held out and are used exclusively as validation targets.
+                var forecast = CalculateOnFuMoradiForecast(validationAnchor, candidate);
+                if (forecast.Count < horizon)
+                    continue;
+
+                for (var step = 1; step <= horizon; step++)
+                {
+                    var actual = points[validationAnchor + step];
+                    var predicted = forecast[step - 1];
+                    if (!double.IsFinite(actual.Close) || actual.Close <= 0 ||
+                        !double.IsFinite(actual.Open) || !double.IsFinite(actual.High) ||
+                        !double.IsFinite(actual.Low) || actual.High < actual.Low ||
+                        !double.IsFinite(predicted.Open) || !double.IsFinite(predicted.High) ||
+                        !double.IsFinite(predicted.Low) || !double.IsFinite(predicted.Close))
+                        continue;
+
+                    var scale = actual.Close;
+                    var errors = new[]
+                    {
+                        (predicted.Open - actual.Open) / scale * 100.0,
+                        (predicted.High - actual.High) / scale * 100.0,
+                        (predicted.Low - actual.Low) / scale * 100.0,
+                        (predicted.Close - actual.Close) / scale * 100.0
+                    };
+
+                    foreach (var error in errors)
+                    {
+                        metrics.AbsoluteOhlcErrorSum += Math.Abs(error);
+                        metrics.SquaredOhlcErrorSum += error * error;
+                        metrics.OhlcValueCount++;
+                        metrics.HorizonAbsoluteErrorSums[step - 1] += Math.Abs(error);
+                        metrics.HorizonValueCounts[step - 1]++;
+                    }
+
+                    var predictedRange = Math.Max(0, predicted.High - predicted.Low);
+                    var actualRange = actual.High - actual.Low;
+                    metrics.RangeErrorSum += Math.Abs(predictedRange - actualRange) / scale * 100.0;
+
+                    var predictedDirection = Math.Sign(predicted.Close - predicted.Open);
+                    var actualDirection = Math.Sign(actual.Close - actual.Open);
+                    if (predictedDirection == actualDirection)
+                        metrics.DirectionCorrect++;
+                    metrics.DirectionSamples++;
+                    metrics.Samples++;
+                }
+            }
+
+            return metrics;
+        }
+
         private void OnFuMoradiAutoButton_Click(object? sender, EventArgs e)
         {
             var indicator = GetOnFuMoradiIndicator();
             var anchor = ResolveOnFuMoradiAnchor();
-            if (indicator == null || anchor < 20)
+            const int evaluationHorizon = 5;
+            if (indicator == null || anchor < 24)
+            {
+                MessageBox.Show(FindForm(),
+                    "برای ارزیابی چندگامی، حداقل ۲۵ کندل معتبر لازم است.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
+            }
 
-            var bestScore = double.PositiveInfinity;
-            var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
-                Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
-                Epsilon: indicator.OnFuMoradiEpsilon);
             var firstValidationAnchor = Math.Max(19, anchor - 99);
-            var validationAnchors = Enumerable.Range(firstValidationAnchor, anchor - firstValidationAnchor)
-                .Where(i => i < anchor)
-                .ToArray();
+            var lastValidationAnchor = anchor - evaluationHorizon;
+            var validationAnchors = Enumerable.Range(
+                firstValidationAnchor,
+                lastValidationAnchor - firstValidationAnchor + 1).ToArray();
 
             double[] alphas = { 0.30, 0.55, 0.80 };
             double[] betas = { 0.10, 0.25, 0.40 };
             double[] gammas = { 0.10, 0.20, 0.35 };
             double[] deltas = { 0.20, 0.35, 0.50 };
             double[] epsilons = { 0.00, 0.15, 0.30 };
+
+            var bestScore = double.PositiveInfinity;
+            var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
+                Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
+                Epsilon: indicator.OnFuMoradiEpsilon);
+            OnFuMoradiEvaluationMetrics? bestMetrics = null;
 
             foreach (var alpha in alphas)
             foreach (var beta in betas)
@@ -181,39 +283,27 @@ namespace Trade.It
                 var candidate = new ChartIndicator
                 {
                     Type = ChartIndicatorType.OnFuMoradi,
-                    Period = 1,
+                    Period = evaluationHorizon,
                     OnFuMoradiAlpha = alpha,
                     OnFuMoradiBeta = beta,
                     OnFuMoradiGamma = gamma,
                     OnFuMoradiDelta = delta,
                     OnFuMoradiEpsilon = epsilon
                 };
-                var error = 0.0;
-                var samples = 0;
-                foreach (var validationAnchor in validationAnchors)
+
+                var metrics = EvaluateOnFuMoradiCandidate(candidate, validationAnchors);
+                var score = metrics.CompositeScore;
+                if (metrics.Samples > 0 && double.IsFinite(score) && score < bestScore)
                 {
-                    // Forecast input ends at validationAnchor; the next candle is used
-                    // only as the out-of-sample target and never enters the calculation.
-                    var forecast = CalculateOnFuMoradiForecast(validationAnchor, candidate);
-                    if (forecast.Count == 0)
-                        continue;
-                    var actual = points[validationAnchor + 1].Close;
-                    var predicted = forecast[0].Close;
-                    if (!double.IsFinite(actual) || actual <= 0 || !double.IsFinite(predicted))
-                        continue;
-                    error += Math.Abs(Math.Log(predicted / actual));
-                    samples++;
-                }
-                if (samples > 0 && error / samples < bestScore)
-                {
-                    bestScore = error / samples;
+                    bestScore = score;
                     best = (alpha, beta, gamma, delta, epsilon);
+                    bestMetrics = metrics;
                 }
             }
 
-            if (!double.IsFinite(bestScore))
+            if (bestMetrics == null)
             {
-                MessageBox.Show(FindForm(), "داده کافی برای بهینه‌سازی معتبر وجود ندارد.",
+                MessageBox.Show(FindForm(), "داده معتبر کافی برای ارزیابی و بهینه‌سازی وجود ندارد.",
                     "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -229,6 +319,28 @@ namespace Trade.It
             onFuMoradiForecast.Clear();
             SyncOnFuMoradiButtons();
             Invalidate();
+
+            var horizonReport = string.Join(Environment.NewLine,
+                Enumerable.Range(0, evaluationHorizon).Select(i =>
+                    $"گام {i + 1}: MAE={(
+                        bestMetrics.HorizonValueCounts[i] > 0
+                            ? bestMetrics.HorizonAbsoluteErrorSums[i] / bestMetrics.HorizonValueCounts[i]
+                            : double.NaN):F3}%"));
+
+            var report =
+                $"ارزیابی Walk-Forward با افق {evaluationHorizon} کندل" + Environment.NewLine +
+                $"تعداد کندل‌های ارزیابی‌شده: {bestMetrics.Samples:N0}" + Environment.NewLine +
+                $"MAE چهار مؤلفه OHLC: {bestMetrics.OhlcMaePercent:F3}%" + Environment.NewLine +
+                $"RMSE چهار مؤلفه OHLC: {bestMetrics.OhlcRmsePercent:F3}%" + Environment.NewLine +
+                $"خطای MAE دامنه High-Low: {bestMetrics.RangeMaePercent:F3}%" + Environment.NewLine +
+                $"درستی جهت کندل: {bestMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
+                "خطای MAE به تفکیک افق:" + Environment.NewLine + horizonReport +
+                Environment.NewLine + Environment.NewLine +
+                $"پارامترهای منتخب: روند={best.Alpha:F2}، شتاب={best.Beta:F2}، " +
+                $"بازگشت={best.Gamma:F2}، محدودیت نوسان={best.Delta:F2}، سایه={best.Epsilon:F2}";
+
+            MessageBox.Show(FindForm(), report, "گزارش ارزیابی OnFuMoradi",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         internal bool TryApplyOnFuMoradiManualSettings(
