@@ -22,6 +22,7 @@ namespace Trade.It
             indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
             indicatorDonchianMenuItem.Click += (_, _) => AddDonchianToActiveChart();
             indicatorAwesomeOscillatorMenuItem.Click += (_, _) => AddAwesomeOscillatorToActiveChart();
+            indicatorOnFuMoradiMenuItem.Click += (_, _) => AddOnFuMoradiToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -138,6 +139,19 @@ namespace Trade.It
             chart.AddAwesomeOscillator();
         }
 
+        private void AddOnFuMoradiToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت معمولی فعال باز کنید.", "OnFuMoradi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.ToggleOnFuMoradi();
+        }
+
         private void AddDonchianToActiveChart()
         {
             var chart = GetActiveChart();
@@ -224,7 +238,8 @@ namespace Trade.It
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
             indicatorSettingsMenuItem.Enabled = indicator.Type != ChartIndicatorType.VolumeWeightedAveragePrice &&
-                                                indicator.Type != ChartIndicatorType.AwesomeOscillator;
+                                                indicator.Type != ChartIndicatorType.AwesomeOscillator &&
+                                                indicator.Type != ChartIndicatorType.OnFuMoradi;
         }
 
         private void OpenIndicatorSettings()
