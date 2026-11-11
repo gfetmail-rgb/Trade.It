@@ -306,8 +306,7 @@ namespace Trade.It
             var bestScore = double.PositiveInfinity;
             var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
                 Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
-                Epsilon: indicator.OnFuMoradiEpsilon,
-                Period: indicator.Period);
+                Epsilon: indicator.OnFuMoradiEpsilon);
             OnFuMoradiEvaluationMetrics? bestMetrics = null;
 
             foreach (var alpha in alphas)
@@ -408,7 +407,7 @@ namespace Trade.It
         }
 
         private string BuildOnFuMoradiSensitivityReport(
-            (double Alpha, double Beta, double Gamma, double Delta, double Epsilon, int Period) best,
+            (double Alpha, double Beta, double Gamma, double Delta, double Epsilon) best,
             int[] trainingAnchors,
             int evaluationHorizon)
         {
