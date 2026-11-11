@@ -152,6 +152,8 @@ namespace Trade.It
                 volumePriceFilterGroup3, trendStrengthFilterGroup3,
                 filterApplyButton3, clearFiltersButton3, filterCountLabel3
             });
+            tabPageFilters3.ResumeLayout(false);
+            tabPageFilters3.PerformLayout();
 
             controlTabControl.Controls.Add(tabPageFilters3);
         }
