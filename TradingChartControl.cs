@@ -1546,6 +1546,8 @@ namespace Trade.It
             }
             if (points.Count > 1)
             {
+                onFuMoradiMouseDownPoint = e.Location;
+                onFuMoradiClickCandidate = IsOnFuMoradiActive && IsInsidePlot(e.Location);
                 panning = true;
                 panStartPoint = e.Location;
                 panStartFirstIndex = firstIndex;
@@ -1753,6 +1755,18 @@ namespace Trade.It
             }
             if (panning && Capture && points.Count > 1)
             {
+                if (onFuMoradiClickCandidate)
+                {
+                    var dragSize = SystemInformation.DragSize;
+                    var clickDx = Math.Abs(e.X - onFuMoradiMouseDownPoint.X);
+                    var clickDy = Math.Abs(e.Y - onFuMoradiMouseDownPoint.Y);
+                    if (clickDx < Math.Max(1, dragSize.Width / 2) &&
+                        clickDy < Math.Max(1, dragSize.Height / 2))
+                        return;
+
+                    onFuMoradiClickCandidate = false;
+                }
+
                 var dx = e.X - panStartPoint.X;
                 var dy = e.Y - panStartPoint.Y;
                 var step = Math.Max(1.0, GetPlotRectangle().Width / (double)Math.Max(1, visibleCount));
@@ -1817,6 +1831,18 @@ namespace Trade.It
                     AnalysisChanged?.Invoke(this, EventArgs.Empty);
                     return;
                 }
+                if (onFuMoradiClickCandidate)
+                {
+                    var dragSize = SystemInformation.DragSize;
+                    var clickDx = Math.Abs(e.X - onFuMoradiMouseDownPoint.X);
+                    var clickDy = Math.Abs(e.Y - onFuMoradiMouseDownPoint.Y);
+                    var isClick = clickDx < Math.Max(1, dragSize.Width / 2) &&
+                                  clickDy < Math.Max(1, dragSize.Height / 2);
+                    onFuMoradiClickCandidate = false;
+                    if (isClick)
+                        SelectOnFuMoradiAnchor(e.Location);
+                }
+
                 if (horizontalAxisDrag || verticalAxisDrag || panning)
                 {
                     horizontalAxisDrag = false; verticalAxisDrag = false; panning = false; Capture = false; Cursor = Cursors.Default; Invalidate();
