@@ -142,10 +142,11 @@ namespace Trade.It
         private void AddOnFuMoradiToActiveChart()
         {
             var chart = GetActiveChart();
-            if (chart == null || chart.Points.Count == 0)
+            if (chart == null || chart.Points.Count == 0 ||
+                !string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
             {
-                MessageBox.Show(this, "ابتدا یک چارت معمولی فعال باز کنید.", "OnFuMoradi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, "OnFuMoradi فقط روی چارت معمولی نماد قابل استفاده است؛ در تحلیل چندتایم‌فریمی در دسترس نیست.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
