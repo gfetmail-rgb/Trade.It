@@ -16,6 +16,7 @@ namespace Trade.It
             public double Gamma { get; set; }
             public double Delta { get; set; }
             public double Epsilon { get; set; }
+            public int ForecastCandleCount { get; set; } = 13;
         }
 
         private static string OnFuMoradiSettingsPath =>
@@ -104,6 +105,9 @@ namespace Trade.It
                 indicator.OnFuMoradiGamma = saved.Gamma;
                 indicator.OnFuMoradiDelta = saved.Delta;
                 indicator.OnFuMoradiEpsilon = saved.Epsilon;
+                indicator.Period = Math.Clamp(saved.ForecastCandleCount <= 0
+                    ? 13
+                    : saved.ForecastCandleCount, 1, 100);
             }
             catch (Exception ex)
             {
@@ -130,7 +134,8 @@ namespace Trade.It
                 Beta = indicator.OnFuMoradiBeta,
                 Gamma = indicator.OnFuMoradiGamma,
                 Delta = indicator.OnFuMoradiDelta,
-                Epsilon = indicator.OnFuMoradiEpsilon
+                Epsilon = indicator.OnFuMoradiEpsilon,
+                ForecastCandleCount = Math.Clamp(indicator.Period, 1, 100)
             });
             System.IO.File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(
                 all, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
@@ -286,7 +291,8 @@ namespace Trade.It
             var bestScore = double.PositiveInfinity;
             var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
                 Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
-                Epsilon: indicator.OnFuMoradiEpsilon);
+                Epsilon: indicator.OnFuMoradiEpsilon,
+                Period: indicator.Period);
             OnFuMoradiEvaluationMetrics? bestMetrics = null;
 
             foreach (var alpha in alphas)
@@ -382,6 +388,7 @@ namespace Trade.It
             double meanReversionWeight,
             double volatilityLimit,
             double wickPatternWeight,
+            int forecastCandleCount,
             out string error)
         {
             error = string.Empty;
@@ -405,6 +412,7 @@ namespace Trade.It
             indicator.OnFuMoradiGamma = Math.Clamp(meanReversionWeight, 0, 2);
             indicator.OnFuMoradiDelta = Math.Clamp(volatilityLimit, 0.05, 2);
             indicator.OnFuMoradiEpsilon = Math.Clamp(wickPatternWeight, 0, 2);
+            indicator.Period = Math.Clamp(forecastCandleCount, 1, 100);
 
             try
             {
@@ -417,6 +425,7 @@ namespace Trade.It
                 indicator.OnFuMoradiGamma = previous.Gamma;
                 indicator.OnFuMoradiDelta = previous.Delta;
                 indicator.OnFuMoradiEpsilon = previous.Epsilon;
+                indicator.Period = previous.Period;
                 error = ex.Message;
                 return false;
             }
@@ -495,7 +504,7 @@ namespace Trade.It
             var newIndicator = new ChartIndicator
             {
                 Type = ChartIndicatorType.OnFuMoradi,
-                Period = 10,
+                Period = 13,
                 OnFuMoradiAlpha = 0.55,
                 OnFuMoradiBeta = 0.25,
                 OnFuMoradiGamma = 0.20,
