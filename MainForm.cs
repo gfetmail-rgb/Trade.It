@@ -133,6 +133,7 @@ namespace Trade.It
             LoadMarketFilterItemsFromSymbolDefinition();
 
             mainMenuStrip.RightToLeft = RightToLeft.Yes;
+            InitializeIndicatorMenuRuntime();
 
             portfolioDefinitionMenuItem.Click += (_, _) =>
             {
