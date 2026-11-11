@@ -3,6 +3,7 @@ namespace Trade.It
     public partial class MainForm
     {
         private TradingChartControl? indicatorContextChart;
+        private static int onFuMoradiClickSequence;
 
         private void InitializeIndicatorMenuRuntime()
         {
@@ -22,7 +23,12 @@ namespace Trade.It
             indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
             indicatorDonchianMenuItem.Click += (_, _) => AddDonchianToActiveChart();
             indicatorAwesomeOscillatorMenuItem.Click += (_, _) => AddAwesomeOscillatorToActiveChart();
-            indicatorOnFuMoradiMenuItem.Click += (_, _) => AddOnFuMoradiToActiveChart();
+            indicatorOnFuMoradiMenuItem.Click += (_, _) =>
+            {
+                var sequence = System.Threading.Interlocked.Increment(ref onFuMoradiClickSequence);
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] MENU_CLICK Seq={sequence}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
+                AddOnFuMoradiToActiveChart(sequence);
+            };
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -139,8 +145,9 @@ namespace Trade.It
             chart.AddAwesomeOscillator();
         }
 
-        private void AddOnFuMoradiToActiveChart()
+        private void AddOnFuMoradiToActiveChart(int sequence)
         {
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradiTrace] ADD_HANDLER Seq={sequence}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
             var chart = GetActiveChart();
             if (chart == null || chart.Points.Count == 0 ||
                 !string.IsNullOrWhiteSpace(chart.ChartTimeFrame))
