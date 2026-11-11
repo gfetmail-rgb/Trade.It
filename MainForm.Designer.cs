@@ -723,8 +723,8 @@
             controlTabControl.Controls.Add(stocksTabPage);
             controlTabControl.Controls.Add(tabPage2);
             controlTabControl.Controls.Add(tabPageFilters2);
-            controlTabControl.Controls.Add(marketsTabPage);
             InitializeFilters3Designer();
+            controlTabControl.Controls.Add(marketsTabPage);
             controlTabControl.Dock = DockStyle.Fill;
             controlTabControl.Location = new Point(0, 0);
             controlTabControl.Name = "controlTabControl";
