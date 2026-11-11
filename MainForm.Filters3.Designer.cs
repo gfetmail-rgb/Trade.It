@@ -13,6 +13,7 @@ namespace Trade.It
         private GroupBox maFilterGroup3 = null!;
         private CheckBox maFilterEnabled3 = null!;
         private ComboBox maFilterMode3 = null!;
+        private ComboBox maPriceMode3 = null!;
         private TextBox maFilterPeriod1_3 = null!;
         private TextBox maFilterPeriod2_3 = null!;
 
@@ -50,24 +51,26 @@ namespace Trade.It
             tabPageFilters3.RightToLeft = RightToLeft.Yes;
             tabPageFilters3.AutoScroll = true;
 
-            maFilterGroup3 = CreateFilterGroup("میانگین متحرک", 8, 8, 365, 140);
+            maFilterGroup3 = CreateFilterGroup("میانگین متحرک", 8, 8, 365, 180);
             maFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
-            maFilterMode3 = CreateComboBox(new Point(12, 48), new Size(335, 25),
-                "قیمت پایانی بالاتر از میانگین", "میانگین کوتاه بالاتر از میانگین بلند");
-            maFilterPeriod1_3 = CreateTextBox(new Point(12, 79), "20");
-            maFilterPeriod2_3 = CreateTextBox(new Point(105, 79), "50");
-            var maPeriod1Label = CreateLabel("کوتاه", 12, 53);
+            maFilterPeriod1_3 = CreateTextBox(new Point(12, 72), "20");
+            maFilterPeriod2_3 = CreateTextBox(new Point(105, 72), "50");
+            var maPeriod1Label = CreateLabel("کوتاه", 12, 48);
             maPeriod1Label.Size = new Size(82, 24);
-            var maPeriod2Label = CreateLabel("بلند", 105, 53);
+            var maPeriod2Label = CreateLabel("بلند", 105, 48);
             maPeriod2Label.Size = new Size(82, 24);
+            maFilterMode3 = CreateComboBox(new Point(12, 105), new Size(335, 25),
+                "میانگین کوتاه بالاتر از میانگین بلند", "میانگین کوتاه پایین‌تر از میانگین بلند");
+            maPriceMode3 = CreateComboBox(new Point(12, 137), new Size(335, 25),
+                "قیمت بالاتر از میانگین کوتاه", "قیمت پایین‌تر از میانگین بلند", "قیمت بین دو میانگین", "بدون شرط");
             maFilterGroup3.Controls.AddRange(new Control[] {
-                maFilterEnabled3, maFilterMode3,
+                maFilterEnabled3, maFilterMode3, maPriceMode3,
                 maPeriod1Label, maPeriod2Label,
                 maFilterPeriod1_3, maFilterPeriod2_3
             });
-            maFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(maFilterEnabled3, maFilterMode3, maFilterPeriod1_3, maFilterPeriod2_3);
+            maFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(maFilterEnabled3, maFilterMode3, maPriceMode3, maFilterPeriod1_3, maFilterPeriod2_3);
 
-            rsiFilterGroup3 = CreateFilterGroup("شاخص قدرت نسبی (RSI)", 8, 166, 365, 145);
+            rsiFilterGroup3 = CreateFilterGroup("شاخص قدرت نسبی (RSI)", 8, 206, 365, 145);
             rsiFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             rsiPeriod3 = CreateTextBox(new Point(12, 66), "14");
             rsiPeriod3.Size = new Size(65, 25);
@@ -91,7 +94,7 @@ namespace Trade.It
             });
             rsiFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(rsiFilterEnabled3, rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3);
 
-            distanceFilterGroup3 = CreateFilterGroup("فاصله قیمت از سقف و کف اخیر", 8, 329, 365, 175);
+            distanceFilterGroup3 = CreateFilterGroup("فاصله قیمت از سقف و کف اخیر", 8, 369, 365, 175);
             distanceFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             distanceHighPeriod3 = CreateTextBox(new Point(12, 58), "20");
             distanceHighMax3 = CreateTextBox(new Point(190, 58), "8");
@@ -114,7 +117,7 @@ namespace Trade.It
             distanceFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(distanceFilterEnabled3,
                 distanceHighPeriod3, distanceHighMax3, distanceLowPeriod3, distanceLowMin3);
 
-            volumePriceFilterGroup3 = CreateFilterGroup("افزایش حجم همراه با تغییر قیمت", 8, 522, 365, 145);
+            volumePriceFilterGroup3 = CreateFilterGroup("افزایش حجم همراه با تغییر قیمت", 8, 562, 365, 145);
             volumePriceFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             volumePricePeriod3 = CreateTextBox(new Point(12, 66), "20");
             volumePriceRatio3 = CreateTextBox(new Point(132, 66), "1.3");
@@ -133,7 +136,7 @@ namespace Trade.It
             volumePriceFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(volumePriceFilterEnabled3,
                 volumePricePeriod3, volumePriceRatio3, volumePriceDirection3);
 
-            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند صعودی (ADX)", 8, 685, 365, 140);
+            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند صعودی (ADX)", 8, 725, 365, 140);
             trendStrengthFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             adxPeriod3 = CreateTextBox(new Point(12, 66), "14");
             adxMinimum3 = CreateTextBox(new Point(190, 66), "20");
@@ -151,14 +154,14 @@ namespace Trade.It
             filterApplyButton3.Name = "filterApplyButton3";
             filterApplyButton3.Text = "تایید";
             filterApplyButton3.Size = new Size(100, 34);
-            filterApplyButton3.Location = new Point(270, 842);
+            filterApplyButton3.Location = new Point(270, 882);
             filterApplyButton3.Click += FilterApplyButton_Click;
 
             clearFiltersButton3 = new Button();
             clearFiltersButton3.Name = "clearFiltersButton3";
             clearFiltersButton3.Text = "پاک";
             clearFiltersButton3.Size = new Size(75, 34);
-            clearFiltersButton3.Location = new Point(185, 842);
+            clearFiltersButton3.Location = new Point(185, 882);
             clearFiltersButton3.Click += ClearFiltersButton_Click;
 
             filterCountLabel3 = new Label();
@@ -166,7 +169,7 @@ namespace Trade.It
             filterCountLabel3.AutoSize = false;
             filterCountLabel3.TextAlign = ContentAlignment.MiddleRight;
             filterCountLabel3.Size = new Size(350, 25);
-            filterCountLabel3.Location = new Point(8, 884);
+            filterCountLabel3.Location = new Point(8, 924);
 
             SetFilterInputsEnabled(maFilterEnabled3, maFilterMode3, maFilterPeriod1_3, maFilterPeriod2_3);
             SetFilterInputsEnabled(rsiFilterEnabled3, rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3);
