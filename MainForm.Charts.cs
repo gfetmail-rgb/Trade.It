@@ -28,7 +28,6 @@ namespace Trade.It
         {
             if (chartRuntimeInitialized) return;
             chartRuntimeInitialized = true;
-            InitializeIndicatorMenuRuntime();
             chartTypeComboBox.SelectedIndexChanged += ChartTypeComboBox_SelectedIndexChanged;
             stocksDataGridView.CellClick += StocksDataGridView_CellClickForChart;
             resetChartButton.Click += (_, _) => GetActiveChart()?.ResetView();
