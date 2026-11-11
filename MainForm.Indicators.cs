@@ -264,8 +264,7 @@ namespace Trade.It
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
             indicatorSettingsMenuItem.Enabled = indicator.Type != ChartIndicatorType.VolumeWeightedAveragePrice &&
-                                                indicator.Type != ChartIndicatorType.AwesomeOscillator &&
-                                                indicator.Type != ChartIndicatorType.OnFuMoradi;
+                                                indicator.Type != ChartIndicatorType.AwesomeOscillator;
         }
 
         private void OpenIndicatorSettings()
@@ -278,7 +277,24 @@ namespace Trade.It
             if (index < 0 || index >= chart.Indicators.Count)
                 return;
 
-            if (chart.Indicators[index].Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
+            if (chart.Indicators[index].Type == ChartIndicatorType.OnFuMoradi)
+            {
+                using var dialog = new OnFuMoradiSettingsForm(chart.Indicators[index]);
+                if (dialog.ShowDialog(this) == DialogResult.OK &&
+                    !chart.TryApplyOnFuMoradiManualSettings(
+                        index,
+                        dialog.TrendWeight,
+                        dialog.MomentumWeight,
+                        dialog.MeanReversionWeight,
+                        dialog.VolatilityLimit,
+                        dialog.WickPatternWeight,
+                        out var error))
+                {
+                    MessageBox.Show(this, $"ذخیره تنظیمات OnFuMoradi انجام نشد: {error}",
+                        "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (chart.Indicators[index].Type == ChartIndicatorType.StochasticRelativeStrengthIndex)
             {
                 using var dialog = new StochasticRsiSettingsForm(chart.Indicators[index], chart.Points.Count);
                 if (dialog.ShowDialog(this) == DialogResult.OK)
