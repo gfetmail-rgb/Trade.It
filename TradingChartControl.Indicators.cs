@@ -1449,15 +1449,17 @@ namespace Trade.It
             var spanB = ichimokuSpanBCache!;
             var chikou = ichimokuChikouCache!;
 
+            var displacement = Math.Max(0, indicator.IchimokuDisplacement);
+
             DrawIchimokuCloud(g, plot, min, max, displayedCount, step, initialOffset,
-                spanA, spanB, indicator.ShowBullishCloud, indicator.ShowBearishCloud,
+                spanA, spanB, displacement, indicator.ShowBullishCloud, indicator.ShowBearishCloud,
                 indicator.BullishCloudColor, indicator.BearishCloudColor);
 
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, tenkan, 0, indicator.ShowTenkan, indicator.TenkanColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, kijun, 0, indicator.ShowKijun, indicator.KijunColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanA, 26, indicator.ShowSpanA, indicator.SpanAColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanB, 26, indicator.ShowSpanB, indicator.SpanBColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, chikou, -26, indicator.ShowChikou, indicator.ChikouColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, tenkan, 0, displayedCount, indicator.ShowTenkan, indicator.TenkanColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, kijun, 0, displayedCount, indicator.ShowKijun, indicator.KijunColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanA, displacement, displayedCount, indicator.ShowSpanA, indicator.SpanAColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanB, displacement, displayedCount, indicator.ShowSpanB, indicator.SpanBColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, chikou, -displacement, displayedCount, indicator.ShowChikou, indicator.ChikouColor);
 
         }
 
@@ -1471,6 +1473,7 @@ namespace Trade.It
             double initialOffset,
             double[] values,
             int shift,
+            int displayedCount,
             bool show,
             Color color)
         {
@@ -1478,8 +1481,11 @@ namespace Trade.It
 
             using var pen = new Pen(color, Math.Max(1.2f, LineAppearanceSettings.ChartLineWidth));
             PointF? previous = null;
+            var lastSourceIndexExclusive = Math.Min(values.Length, firstIndex + displayedCount);
 
-            for (var sourceIndex = 0; sourceIndex < values.Length; sourceIndex++)
+            // در Test Mode فقط داده‌های تا کندل مرجع مجازند؛
+            // اما Spanها پس از انتقال زمانی می‌توانند در فضای خالی سمت راست دیده شوند.
+            for (var sourceIndex = 0; sourceIndex < lastSourceIndexExclusive; sourceIndex++)
             {
                 if (double.IsNaN(values[sourceIndex]))
                 {
@@ -1488,7 +1494,7 @@ namespace Trade.It
                 }
 
                 var screenIndex = sourceIndex - firstIndex + shift;
-                if (screenIndex < -1 || screenIndex > displayedCount)
+                if (screenIndex < -1)
                 {
                     previous = null;
                     continue;
@@ -1515,20 +1521,26 @@ namespace Trade.It
             double initialOffset,
             double[] spanA,
             double[] spanB,
+            int displacement,
             bool showBullish,
             bool showBearish,
             Color bullishColor,
             Color bearishColor)
         {
-            for (var sourceIndex = 0; sourceIndex < points.Count - 1; sourceIndex++)
+            var lastSourceIndexExclusive = Math.Min(points.Count, firstIndex + displayedCount);
+
+            // در حالت عادی تا آخرین کندل داده و در Test Mode فقط تا کندل مرجع رسم می‌کنیم.
+            // محدودیت انتهای محدوده نمایش کندل‌ها نباید ابر منتقل‌شده به آینده را حذف کند؛
+            // Clip خود Plot بخش خارج از فضای رسم را کنترل می‌کند.
+            for (var sourceIndex = 0; sourceIndex < lastSourceIndexExclusive - 1; sourceIndex++)
             {
                 if (double.IsNaN(spanA[sourceIndex]) || double.IsNaN(spanB[sourceIndex]) ||
                     double.IsNaN(spanA[sourceIndex + 1]) || double.IsNaN(spanB[sourceIndex + 1]))
                     continue;
 
-                var screenIndex = sourceIndex - firstIndex + 26;
+                var screenIndex = sourceIndex - firstIndex + displacement;
                 var nextScreenIndex = screenIndex + 1;
-                if (nextScreenIndex < 0 || screenIndex > displayedCount)
+                if (nextScreenIndex < 0)
                     continue;
 
                 var bullish = spanA[sourceIndex] >= spanB[sourceIndex];
