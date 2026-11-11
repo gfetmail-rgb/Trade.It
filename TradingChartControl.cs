@@ -167,6 +167,9 @@ namespace Trade.It
             chartTimeFrame = timeFrame?.Trim() ?? string.Empty;
             points.Clear();
             points.AddRange(dataIsOrdered ? data : data.OrderBy(x => x.Date));
+            onFuMoradiAnchorIndex = points.Count > 0 ? points.Count - 1 : -1;
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiForecast.Clear();
             InvalidateIchimokuCache();
             InvalidateBollingerCache();
             InvalidateObvCache();
@@ -772,6 +775,9 @@ namespace Trade.It
             testEndIndex = -1;
             testAnchorIndex = -1;
             testAnchorScreenX = 0f;
+            onFuMoradiAnchorIndex = enabled ? -1 : (points.Count > 0 ? points.Count - 1 : -1);
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiForecast.Clear();
 
             // با ورود/خروج از حالت تست، هیچ وضعیت نیمه‌کاره‌ای از
             // ورودی ماوس نباید به رسم ابزارهای معمولی منتقل شود.
@@ -809,6 +815,11 @@ namespace Trade.It
 
             testEndIndex = nextEnd;
             testAnchorIndex = testEndIndex;
+            if (IsOnFuMoradiActive)
+            {
+                onFuMoradiAnchorIndex = testEndIndex;
+                onFuMoradiCachedAnchorIndex = -1;
+            }
             KeepTestAnchorFixed();
             crosshairIndex = -1;
             Invalidate();
@@ -935,6 +946,11 @@ namespace Trade.It
             // را یک کندل به چپ/راست جابه‌جا می‌کند.
             testEndIndex = Math.Clamp(firstIndex + relativeIndex, 0, points.Count - 1);
             testAnchorIndex = testEndIndex;
+            if (IsOnFuMoradiActive)
+            {
+                onFuMoradiAnchorIndex = testEndIndex;
+                onFuMoradiCachedAnchorIndex = -1;
+            }
             testAnchorScreenX = location.X;
             testStartSelected = true;
             KeepTestAnchorFixed();
