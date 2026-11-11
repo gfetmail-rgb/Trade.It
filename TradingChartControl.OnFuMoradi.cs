@@ -4,6 +4,7 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
+        private readonly string onFuMoradiInstanceId = Guid.NewGuid().ToString("N").Substring(0, 8);
         private int onFuMoradiAnchorIndex = -1;
         private int onFuMoradiCachedAnchorIndex = -1;
         private int onFuMoradiCachedIndicatorIndex = -1;
@@ -57,7 +58,7 @@ namespace Trade.It
             onFuMoradiCachedIndicatorIndex = -1;
             onFuMoradiForecast.Clear();
             onFuMoradiLastRenderLogAnchor = int.MinValue;
-            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Activated: Points={points.Count}, TestMode={testMode}, TestStartSelected={testStartSelected}, TestEnd={testEndIndex}, Anchor={onFuMoradiAnchorIndex}, Indicators={indicators.Count}");
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Activated: Instance={onFuMoradiInstanceId}, Symbol={chartSymbol}, Points={points.Count}, TestMode={testMode}, TestStartSelected={testStartSelected}, TestEnd={testEndIndex}, Anchor={onFuMoradiAnchorIndex}, Indicators={indicators.Count}, Types={string.Join(",", indicators.Select(x => x.Type.ToString()))}");
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
