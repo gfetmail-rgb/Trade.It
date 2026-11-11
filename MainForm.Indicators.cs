@@ -24,6 +24,18 @@ namespace Trade.It
             indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
             indicatorDonchianMenuItem.Click += (_, _) => AddDonchianToActiveChart();
             indicatorAwesomeOscillatorMenuItem.Click += (_, _) => AddAwesomeOscillatorToActiveChart();
+            indicatorOnFuMoradiMenuItem.MouseDown += (_, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradiInput] MOUSE_DOWN Button={e.Button}, Clicks={e.Clicks}, X={e.X}, Y={e.Y}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
+            };
+            indicatorOnFuMoradiMenuItem.MouseUp += (_, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradiInput] MOUSE_UP Button={e.Button}, Clicks={e.Clicks}, X={e.X}, Y={e.Y}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
+            };
+            indicatorOnFuMoradiMenuItem.DoubleClick += (_, _) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradiInput] DOUBLE_CLICK MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}");
+            };
             indicatorOnFuMoradiMenuItem.Click += (_, _) =>
             {
                 var sequence = System.Threading.Interlocked.Increment(ref onFuMoradiClickSequence);
