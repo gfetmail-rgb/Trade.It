@@ -630,6 +630,8 @@ namespace Trade.It
             if (index < 0 || index >= indicators.Count)
                 return false;
 
+            System.Diagnostics.Debug.WriteLine($"[IndicatorRemoval] RemoveIndicatorAt: Instance={GetHashCode()}, Symbol={chartSymbol}, Index={index}, Type={indicators[index].Type}, CountBefore={indicators.Count}");
+            System.Diagnostics.Debug.WriteLine(Environment.StackTrace);
             indicators.RemoveAt(index);
             selectedIndicatorIndex = -1;
             Invalidate();
@@ -740,6 +742,8 @@ namespace Trade.It
             if (indicators.Count == 0)
                 return;
 
+            System.Diagnostics.Debug.WriteLine($"[IndicatorRemoval] RemoveAllIndicators: Instance={GetHashCode()}, Symbol={chartSymbol}, CountBefore={indicators.Count}, Types={string.Join(",", indicators.Select(x => x.Type.ToString()))}");
+            System.Diagnostics.Debug.WriteLine(Environment.StackTrace);
             indicators.Clear();
             selectedIndicatorIndex = -1;
 
