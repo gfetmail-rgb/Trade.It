@@ -262,6 +262,21 @@ namespace Trade.It
                 firstValidationAnchor,
                 lastValidationAnchor - firstValidationAnchor + 1).ToArray();
 
+            // Keep the newest chronological portion completely out of parameter
+            // selection. A five-anchor embargo prevents training targets from
+            // overlapping the beginning of the final holdout period.
+            if (validationAnchors.Length < 25)
+            {
+                MessageBox.Show(FindForm(),
+                    "برای بهینه‌سازی همراه با آزمون مستقل، حداقل ۲۵ مبدأ ارزیابی پنج‌گامی لازم است. داده تاریخی بیشتری بارگذاری کنید.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var splitIndex = (int)Math.Floor(validationAnchors.Length * 0.80);
+            var trainingAnchors = validationAnchors.Take(splitIndex - evaluationHorizon).ToArray();
+            var holdoutAnchors = validationAnchors.Skip(splitIndex).ToArray();
+
             double[] alphas = { 0.30, 0.55, 0.80 };
             double[] betas = { 0.10, 0.25, 0.40 };
             double[] gammas = { 0.10, 0.20, 0.35 };
@@ -291,19 +306,36 @@ namespace Trade.It
                     OnFuMoradiEpsilon = epsilon
                 };
 
-                var metrics = EvaluateOnFuMoradiCandidate(candidate, validationAnchors);
-                var score = metrics.CompositeScore;
-                if (metrics.Samples > 0 && double.IsFinite(score) && score < bestScore)
+                var trainingMetrics = EvaluateOnFuMoradiCandidate(candidate, trainingAnchors);
+                var score = trainingMetrics.CompositeScore;
+                if (trainingMetrics.Samples > 0 && double.IsFinite(score) && score < bestScore)
                 {
                     bestScore = score;
                     best = (alpha, beta, gamma, delta, epsilon);
-                    bestMetrics = metrics;
                 }
             }
 
-            if (bestMetrics == null)
+            if (!double.IsFinite(bestScore))
             {
-                MessageBox.Show(FindForm(), "داده معتبر کافی برای ارزیابی و بهینه‌سازی وجود ندارد.",
+                MessageBox.Show(FindForm(), "داده معتبر کافی برای بهینه‌سازی وجود ندارد.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var holdoutCandidate = new ChartIndicator
+            {
+                Type = ChartIndicatorType.OnFuMoradi,
+                Period = evaluationHorizon,
+                OnFuMoradiAlpha = best.Alpha,
+                OnFuMoradiBeta = best.Beta,
+                OnFuMoradiGamma = best.Gamma,
+                OnFuMoradiDelta = best.Delta,
+                OnFuMoradiEpsilon = best.Epsilon
+            };
+            bestMetrics = EvaluateOnFuMoradiCandidate(holdoutCandidate, holdoutAnchors);
+            if (bestMetrics.Samples == 0 || !double.IsFinite(bestMetrics.CompositeScore))
+            {
+                MessageBox.Show(FindForm(), "ارزیابی مستقل روی داده‌های کنارگذاشته‌شده نتیجه معتبر نداد.",
                     "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -329,7 +361,7 @@ namespace Trade.It
 
             var report =
                 $"ارزیابی Walk-Forward با افق {evaluationHorizon} کندل" + Environment.NewLine +
-                $"تعداد کندل‌های ارزیابی‌شده: {bestMetrics.Samples:N0}" + Environment.NewLine +
+                $"تعداد کندل‌های آزمون مستقل: {bestMetrics.Samples:N0}" + Environment.NewLine +
                 $"MAE چهار مؤلفه OHLC: {bestMetrics.OhlcMaePercent:F3}%" + Environment.NewLine +
                 $"RMSE چهار مؤلفه OHLC: {bestMetrics.OhlcRmsePercent:F3}%" + Environment.NewLine +
                 $"خطای MAE دامنه High-Low: {bestMetrics.RangeMaePercent:F3}%" + Environment.NewLine +
