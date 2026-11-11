@@ -10,6 +10,7 @@ namespace Trade.It
         private List<TradingChartPoint> onFuMoradiForecast = new();
         private bool onFuMoradiClickCandidate;
         private Point onFuMoradiMouseDownPoint;
+        private int onFuMoradiLastRenderLogAnchor = int.MinValue;
 
         private bool IsOnFuMoradiActive =>
             indicators.Any(x => x.Type == ChartIndicatorType.OnFuMoradi);
@@ -55,6 +56,8 @@ namespace Trade.It
             onFuMoradiCachedAnchorIndex = -1;
             onFuMoradiCachedIndicatorIndex = -1;
             onFuMoradiForecast.Clear();
+            onFuMoradiLastRenderLogAnchor = int.MinValue;
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Activated: Points={points.Count}, TestMode={testMode}, TestStartSelected={testStartSelected}, TestEnd={testEndIndex}, Anchor={onFuMoradiAnchorIndex}, Indicators={indicators.Count}");
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -101,6 +104,7 @@ namespace Trade.It
             onFuMoradiForecast = CalculateOnFuMoradiForecast(anchor, indicator);
             onFuMoradiCachedAnchorIndex = anchor;
             onFuMoradiCachedIndicatorIndex = indicatorIndex;
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Forecast calculated: Anchor={anchor}, Period={indicator.Period}, Candles={onFuMoradiForecast.Count}, LastClose={points[anchor].Close}, FirstIndex={firstIndex}, VisibleCount={visibleCount}");
         }
 
         private List<TradingChartPoint> CalculateOnFuMoradiForecast(int anchor, ChartIndicator indicator)
@@ -281,7 +285,14 @@ namespace Trade.It
             var anchor = ResolveOnFuMoradiAnchor();
             var localAnchor = anchor - firstIndex;
             if (localAnchor < 0 || localAnchor >= displayedCount)
+            {
+                if (onFuMoradiLastRenderLogAnchor != anchor)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Render skipped: Anchor={anchor}, LocalAnchor={localAnchor}, DisplayedCount={displayedCount}, FirstIndex={firstIndex}, TestMode={testMode}, TestEnd={testEndIndex}");
+                    onFuMoradiLastRenderLogAnchor = anchor;
+                }
                 return;
+            }
 
             using var bullishFill = new SolidBrush(Color.FromArgb(90, 45, 145, 190));
             using var bearishFill = new SolidBrush(Color.FromArgb(90, 205, 85, 85));
@@ -299,6 +310,11 @@ namespace Trade.It
                 : step;
             var candleWidth = Math.Max(1.5f, (float)(Math.Min(step, forecastStep) * 0.65));
             var forecastStartX = plot.Left + step * (localAnchor + 1.5) + initialOffset + horizontalPanOffset;
+            if (onFuMoradiLastRenderLogAnchor != anchor)
+            {
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Render: Anchor={anchor}, LocalAnchor={localAnchor}, Candles={onFuMoradiForecast.Count}, Plot={plot}, Step={step:F2}, InitialOffset={initialOffset:F2}, Pan={horizontalPanOffset:F2}, ForecastStartX={forecastStartX:F2}, ForecastEndX={forecastStartX + forecastStep * (onFuMoradiForecast.Count - 1):F2}, ForecastStep={forecastStep:F2}, Clip={plot}");
+                onFuMoradiLastRenderLogAnchor = anchor;
+            }
 
             for (var i = 0; i < onFuMoradiForecast.Count; i++)
             {
@@ -350,6 +366,7 @@ namespace Trade.It
 
             onFuMoradiAnchorIndex = selectedIndex;
             onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiLastRenderLogAnchor = int.MinValue;
 
             if (testMode)
             {
