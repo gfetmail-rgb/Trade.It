@@ -248,10 +248,10 @@ namespace Trade.It
             var indicator = GetOnFuMoradiIndicator();
             var anchor = ResolveOnFuMoradiAnchor();
             const int evaluationHorizon = 5;
-            if (indicator == null || anchor < 24)
+            if (indicator == null || anchor < 48)
             {
                 MessageBox.Show(FindForm(),
-                    "برای ارزیابی چندگامی، حداقل ۲۵ کندل معتبر لازم است.",
+                    "برای ارزیابی مستقل پنج‌گامی، حداقل ۴۹ کندل معتبر لازم است.",
                     "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
