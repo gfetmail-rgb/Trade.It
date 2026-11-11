@@ -214,7 +214,7 @@ namespace Trade.It
                 var close = open * Math.Exp(drift);
 
                 // A small candle-shape component carries recent average body/wick proportions forward.
-                var expectedRange = Math.Max(atr * delta, open * volatility * 0.35);
+                var expectedRange = Math.Max(atr * delta, open * volatility * 0.35) * (0.75 + bodyRatio * 0.5);
                 var body = Math.Abs(close - open);
                 var residualRange = Math.Max(0, expectedRange - body);
                 var patternBias = Math.Clamp(epsilon * (upperWickRatio - lowerWickRatio), -0.5, 0.5);
