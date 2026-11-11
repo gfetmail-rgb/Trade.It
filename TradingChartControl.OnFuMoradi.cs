@@ -350,6 +350,19 @@ namespace Trade.It
 
             onFuMoradiAnchorIndex = selectedIndex;
             onFuMoradiCachedAnchorIndex = -1;
+
+            if (testMode)
+            {
+                // In Test Mode the selected candle becomes the visible data boundary.
+                // No real candle after it remains on screen while its forecast is shown.
+                testEndIndex = selectedIndex;
+                testAnchorIndex = selectedIndex;
+                testAnchorScreenX = location.X;
+                testStartSelected = true;
+                KeepTestAnchorFixed();
+                TestReferenceTimeChanged?.Invoke(this, points[selectedIndex].Date);
+            }
+
             Invalidate();
         }
     }
