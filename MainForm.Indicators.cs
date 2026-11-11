@@ -21,6 +21,7 @@ namespace Trade.It
             indicatorObvMenuItem.Click += (_, _) => AddObvToActiveChart();
             indicatorVwapMenuItem.Click += (_, _) => AddVwapToActiveChart();
             indicatorDonchianMenuItem.Click += (_, _) => AddDonchianToActiveChart();
+            indicatorAwesomeOscillatorMenuItem.Click += (_, _) => AddAwesomeOscillatorToActiveChart();
             indicatorClearMenuItem.Click += (_, _) => ClearIndicatorsFromActiveChart();
 
             indicatorContextMenuStrip.Opening += IndicatorContextMenuStrip_Opening;
@@ -124,6 +125,19 @@ namespace Trade.It
             chart.AddOnBalanceVolume();
         }
 
+        private void AddAwesomeOscillatorToActiveChart()
+        {
+            var chart = GetActiveChart();
+            if (chart == null || chart.Points.Count == 0)
+            {
+                MessageBox.Show(this, "ابتدا یک چارت فعال باز کنید.", "اندیکاتورها",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            chart.AddAwesomeOscillator();
+        }
+
         private void AddDonchianToActiveChart()
         {
             var chart = GetActiveChart();
@@ -209,7 +223,8 @@ namespace Trade.It
                 return;
 
             var indicator = indicatorContextChart!.Indicators[indicatorContextChart.SelectedIndicatorIndex];
-            indicatorSettingsMenuItem.Enabled = indicator.Type != ChartIndicatorType.VolumeWeightedAveragePrice;
+            indicatorSettingsMenuItem.Enabled = indicator.Type != ChartIndicatorType.VolumeWeightedAveragePrice &&
+                                                indicator.Type != ChartIndicatorType.AwesomeOscillator;
         }
 
         private void OpenIndicatorSettings()
