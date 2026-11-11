@@ -151,7 +151,7 @@ namespace Trade.It
                         return false;
 
                     var direction = volumePriceDirection3.SelectedItem?.ToString();
-                    if (direction == "مثبت" && latestClose <= previousClose)
+                    if (direction == "مثبت" && latestClose < previousClose)
                         return false;
                     if (direction == "منفی" && latestClose >= previousClose)
                         return false;
