@@ -247,7 +247,10 @@ namespace Trade.It
         private void ExpandPriceRangeForOnFuMoradi(ref double min, ref double max)
         {
             EnsureOnFuMoradiForecast();
-            if (onFuMoradiForecast.Count == 0)
+            var anchor = ResolveOnFuMoradiAnchor();
+            if (onFuMoradiForecast.Count == 0 ||
+                anchor < firstIndex ||
+                anchor >= firstIndex + Math.Max(1, visibleCount))
                 return;
 
             foreach (var candle in onFuMoradiForecast)
