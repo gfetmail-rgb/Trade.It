@@ -6,8 +6,12 @@ namespace Trade.It
         private static int onFuMoradiClickSequence;
         private int currentOnFuMoradiClickSequence;
 
+        private static int indicatorMenuRuntimeInitializationCount;
+
         private void InitializeIndicatorMenuRuntime()
         {
+            var initialization = System.Threading.Interlocked.Increment(ref indicatorMenuRuntimeInitializationCount);
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradiInit] InitializeIndicatorMenuRuntime Count={initialization}, MainForm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}, Thread={Environment.CurrentManagedThreadId}, Tick={Environment.TickCount64}, Stack={Environment.StackTrace}");
             indicatorBollingerMenuItem.Text = "Bollinger Bands";
             indicatorDonchianMenuItem.Text = "Donchian Channel";
             indicatorMaMenuItem.Click += (_, _) => AddMovingAverageToActiveChart();
