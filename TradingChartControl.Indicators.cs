@@ -842,6 +842,7 @@ namespace Trade.It
             }
 
             GetVerticalRange(visible, out var min, out var max);
+            ExpandPriceRangeForOnFuMoradi(ref min, ref max);
             var step = plot.Width / (double)Math.Max(1, visibleCount);
             var initialOffset = -plot.Width * 0.25;
             const double tolerance = 8.0;
