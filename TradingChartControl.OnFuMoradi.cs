@@ -35,8 +35,16 @@ namespace Trade.It
             onFuMoradiSaveButton.Visible = visible;
             onFuMoradiSaveButton.Enabled = visible && onFuMoradiHasOptimizedParameters;
 
-            // Highlight the currently active Auto mode and the available Save action.
+            // Highlight the selected parameter mode and the available Save action.
             // Inactive buttons retain the standard gray WinForms background.
+            var manualModeActive = !onFuMoradiAutoMode;
+            onFuMoradiManualButton.BackColor = manualModeActive
+                ? Color.DodgerBlue
+                : SystemColors.Control;
+            onFuMoradiManualButton.ForeColor = manualModeActive
+                ? Color.White
+                : SystemColors.ControlText;
+
             onFuMoradiAutoButton.BackColor = onFuMoradiAutoMode
                 ? Color.DodgerBlue
                 : SystemColors.Control;
