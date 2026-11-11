@@ -1368,7 +1368,7 @@ namespace Trade.It
                 if (!indicator.IsVisible)
                     continue;
 
-                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume || indicator.Type == ChartIndicatorType.AwesomeOscillator
+                if (indicator.Type == ChartIndicatorType.RelativeStrengthIndex || indicator.Type == ChartIndicatorType.MovingAverageConvergenceDivergence || indicator.Type == ChartIndicatorType.Stochastic || indicator.Type == ChartIndicatorType.StochasticRelativeStrengthIndex || indicator.Type == ChartIndicatorType.AverageTrueRange || indicator.Type == ChartIndicatorType.OnBalanceVolume || indicator.Type == ChartIndicatorType.AwesomeOscillator)
                     continue;
 
                 if (indicator.Type == ChartIndicatorType.DonchianChannel)
