@@ -4,6 +4,215 @@ namespace Trade.It
 {
     internal sealed partial class TradingChartControl
     {
+        private bool onFuMoradiAutoMode;
+        private bool onFuMoradiHasOptimizedParameters;
+
+        private sealed class OnFuMoradiSavedParameters
+        {
+            public string Symbol { get; set; } = string.Empty;
+            public string TimeFrame { get; set; } = string.Empty;
+            public double Alpha { get; set; }
+            public double Beta { get; set; }
+            public double Gamma { get; set; }
+            public double Delta { get; set; }
+            public double Epsilon { get; set; }
+        }
+
+        private static string OnFuMoradiSettingsPath =>
+            System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Trade.It",
+                "OnFuMoradiSettings.json");
+
+        private string OnFuMoradiSettingsKey =>
+            $"{chartSymbol.Trim()}|{(string.IsNullOrWhiteSpace(chartTimeFrame) ? "Normal" : chartTimeFrame.Trim())}";
+
+        private void SyncOnFuMoradiButtons()
+        {
+            var visible = IsOnFuMoradiActive;
+            onFuMoradiManualButton.Visible = visible;
+            onFuMoradiAutoButton.Visible = visible;
+            onFuMoradiSaveButton.Visible = visible;
+            onFuMoradiSaveButton.Enabled = visible && onFuMoradiHasOptimizedParameters;
+            if (!visible)
+                return;
+
+            var plot = GetPlotRectangle();
+            var y = Math.Max(2, plot.Top + 2);
+            onFuMoradiManualButton.Location = new Point(plot.Left + 3, y);
+            onFuMoradiAutoButton.Location = new Point(plot.Left + 82, y);
+            onFuMoradiSaveButton.Location = new Point(plot.Left + 161, y);
+            onFuMoradiManualButton.BringToFront();
+            onFuMoradiAutoButton.BringToFront();
+            onFuMoradiSaveButton.BringToFront();
+        }
+
+        private void LoadOnFuMoradiManualParameters(ChartIndicator indicator)
+        {
+            try
+            {
+                var path = OnFuMoradiSettingsPath;
+                if (!System.IO.File.Exists(path))
+                    return;
+                var all = System.Text.Json.JsonSerializer.Deserialize<List<OnFuMoradiSavedParameters>>(
+                    System.IO.File.ReadAllText(path)) ?? new();
+                var saved = all.LastOrDefault(x => string.Equals(
+                    $"{x.Symbol}|{x.TimeFrame}", OnFuMoradiSettingsKey, StringComparison.OrdinalIgnoreCase));
+                if (saved == null)
+                    return;
+                indicator.OnFuMoradiAlpha = saved.Alpha;
+                indicator.OnFuMoradiBeta = saved.Beta;
+                indicator.OnFuMoradiGamma = saved.Gamma;
+                indicator.OnFuMoradiDelta = saved.Delta;
+                indicator.OnFuMoradiEpsilon = saved.Epsilon;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Settings load failed: {ex}");
+            }
+        }
+
+        private void SaveOnFuMoradiManualParameters(ChartIndicator indicator)
+        {
+            var path = OnFuMoradiSettingsPath;
+            var directory = System.IO.Path.GetDirectoryName(path)!;
+            System.IO.Directory.CreateDirectory(directory);
+            var all = System.IO.File.Exists(path)
+                ? System.Text.Json.JsonSerializer.Deserialize<List<OnFuMoradiSavedParameters>>(
+                    System.IO.File.ReadAllText(path)) ?? new()
+                : new List<OnFuMoradiSavedParameters>();
+            all.RemoveAll(x => string.Equals(
+                $"{x.Symbol}|{x.TimeFrame}", OnFuMoradiSettingsKey, StringComparison.OrdinalIgnoreCase));
+            all.Add(new OnFuMoradiSavedParameters
+            {
+                Symbol = chartSymbol.Trim(),
+                TimeFrame = string.IsNullOrWhiteSpace(chartTimeFrame) ? "Normal" : chartTimeFrame.Trim(),
+                Alpha = indicator.OnFuMoradiAlpha,
+                Beta = indicator.OnFuMoradiBeta,
+                Gamma = indicator.OnFuMoradiGamma,
+                Delta = indicator.OnFuMoradiDelta,
+                Epsilon = indicator.OnFuMoradiEpsilon
+            });
+            System.IO.File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(
+                all, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        private void OnFuMoradiManualButton_Click(object? sender, EventArgs e)
+        {
+            var indicator = GetOnFuMoradiIndicator();
+            if (indicator == null)
+                return;
+            LoadOnFuMoradiManualParameters(indicator);
+            onFuMoradiAutoMode = false;
+            onFuMoradiHasOptimizedParameters = false;
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiForecast.Clear();
+            SyncOnFuMoradiButtons();
+            Invalidate();
+        }
+
+        private void OnFuMoradiAutoButton_Click(object? sender, EventArgs e)
+        {
+            var indicator = GetOnFuMoradiIndicator();
+            var anchor = ResolveOnFuMoradiAnchor();
+            if (indicator == null || anchor < 20)
+                return;
+
+            var bestScore = double.PositiveInfinity;
+            var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
+                Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
+                Epsilon: indicator.OnFuMoradiEpsilon);
+            var firstValidationAnchor = Math.Max(20, anchor - 99);
+            var validationAnchors = Enumerable.Range(firstValidationAnchor, anchor - firstValidationAnchor)
+                .Where(i => i < anchor)
+                .Where(i => (anchor - i) % 2 == 0)
+                .ToArray();
+
+            double[] alphas = { 0.30, 0.55, 0.80 };
+            double[] betas = { 0.10, 0.25, 0.40 };
+            double[] gammas = { 0.10, 0.20, 0.35 };
+            double[] deltas = { 0.20, 0.35, 0.50 };
+            double[] epsilons = { 0.00, 0.15, 0.30 };
+
+            foreach (var alpha in alphas)
+            foreach (var beta in betas)
+            foreach (var gamma in gammas)
+            foreach (var delta in deltas)
+            foreach (var epsilon in epsilons)
+            {
+                var candidate = new ChartIndicator
+                {
+                    Type = ChartIndicatorType.OnFuMoradi,
+                    Period = 1,
+                    OnFuMoradiAlpha = alpha,
+                    OnFuMoradiBeta = beta,
+                    OnFuMoradiGamma = gamma,
+                    OnFuMoradiDelta = delta,
+                    OnFuMoradiEpsilon = epsilon
+                };
+                var error = 0.0;
+                var samples = 0;
+                foreach (var validationAnchor in validationAnchors)
+                {
+                    // Forecast input ends at validationAnchor; the next candle is used
+                    // only as the out-of-sample target and never enters the calculation.
+                    var forecast = CalculateOnFuMoradiForecast(validationAnchor, candidate);
+                    if (forecast.Count == 0)
+                        continue;
+                    var actual = points[validationAnchor + 1].Close;
+                    var predicted = forecast[0].Close;
+                    if (!double.IsFinite(actual) || actual <= 0 || !double.IsFinite(predicted))
+                        continue;
+                    error += Math.Abs(Math.Log(predicted / actual));
+                    samples++;
+                }
+                if (samples > 0 && error / samples < bestScore)
+                {
+                    bestScore = error / samples;
+                    best = (alpha, beta, gamma, delta, epsilon);
+                }
+            }
+
+            if (!double.IsFinite(bestScore))
+            {
+                MessageBox.Show(FindForm(), "داده کافی برای بهینه‌سازی معتبر وجود ندارد.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            indicator.OnFuMoradiAlpha = best.Alpha;
+            indicator.OnFuMoradiBeta = best.Beta;
+            indicator.OnFuMoradiGamma = best.Gamma;
+            indicator.OnFuMoradiDelta = best.Delta;
+            indicator.OnFuMoradiEpsilon = best.Epsilon;
+            onFuMoradiAutoMode = true;
+            onFuMoradiHasOptimizedParameters = true;
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiForecast.Clear();
+            SyncOnFuMoradiButtons();
+            Invalidate();
+        }
+
+        private void OnFuMoradiSaveButton_Click(object? sender, EventArgs e)
+        {
+            var indicator = GetOnFuMoradiIndicator();
+            if (indicator == null || !onFuMoradiHasOptimizedParameters)
+                return;
+            try
+            {
+                SaveOnFuMoradiManualParameters(indicator);
+                onFuMoradiHasOptimizedParameters = false;
+                onFuMoradiAutoMode = false;
+                SyncOnFuMoradiButtons();
+                Invalidate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(FindForm(), $"ذخیره پارامترها انجام نشد: {ex.Message}",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private readonly string onFuMoradiInstanceId = Guid.NewGuid().ToString("N").Substring(0, 8);
         private int onFuMoradiAnchorIndex = -1;
         private int onFuMoradiCachedAnchorIndex = -1;
@@ -26,6 +235,9 @@ namespace Trade.It
                 onFuMoradiAnchorIndex = -1;
                 onFuMoradiForecast.Clear();
                 onFuMoradiClickCandidate = false;
+                onFuMoradiAutoMode = false;
+                onFuMoradiHasOptimizedParameters = false;
+                SyncOnFuMoradiButtons();
                 Invalidate();
                 return;
             }
@@ -41,7 +253,7 @@ namespace Trade.It
                 return;
             }
 
-            indicators.Add(new ChartIndicator
+            var newIndicator = new ChartIndicator
             {
                 Type = ChartIndicatorType.OnFuMoradi,
                 Period = 10,
@@ -50,7 +262,11 @@ namespace Trade.It
                 OnFuMoradiGamma = 0.20,
                 OnFuMoradiDelta = 0.35,
                 OnFuMoradiEpsilon = 0.15
-            });
+            };
+            LoadOnFuMoradiManualParameters(newIndicator);
+            indicators.Add(newIndicator);
+            onFuMoradiAutoMode = false;
+            onFuMoradiHasOptimizedParameters = false;
 
             onFuMoradiAnchorIndex = testMode
                 ? (testStartSelected ? testEndIndex : -1)
@@ -60,6 +276,7 @@ namespace Trade.It
             onFuMoradiForecast.Clear();
             onFuMoradiLastRenderLogAnchor = int.MinValue;
             System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Activated: Instance={onFuMoradiInstanceId}, Symbol={chartSymbol}, Points={points.Count}, TestMode={testMode}, TestStartSelected={testStartSelected}, TestEnd={testEndIndex}, Anchor={onFuMoradiAnchorIndex}, Indicators={indicators.Count}, Types={string.Join(",", indicators.Select(x => x.Type.ToString()))}");
+            SyncOnFuMoradiButtons();
             Invalidate();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -324,10 +541,18 @@ namespace Trade.It
                 return;
             }
 
-            using var bullishFill = new SolidBrush(Color.FromArgb(90, 45, 145, 190));
-            using var bearishFill = new SolidBrush(Color.FromArgb(90, 205, 85, 85));
-            using var bullishOutline = new Pen(Color.FromArgb(210, 30, 115, 165), 1.2f) { DashStyle = DashStyle.Dash };
-            using var bearishOutline = new Pen(Color.FromArgb(210, 180, 55, 55), 1.2f) { DashStyle = DashStyle.Dash };
+            using var bullishFill = new SolidBrush(onFuMoradiAutoMode
+                ? Color.FromArgb(105, 125, 125, 125)
+                : Color.FromArgb(90, 45, 145, 190));
+            using var bearishFill = new SolidBrush(onFuMoradiAutoMode
+                ? Color.FromArgb(105, 125, 125, 125)
+                : Color.FromArgb(90, 205, 85, 85));
+            using var bullishOutline = new Pen(onFuMoradiAutoMode
+                ? Color.FromArgb(220, 90, 90, 90)
+                : Color.FromArgb(210, 30, 115, 165), 1.2f) { DashStyle = DashStyle.Dash };
+            using var bearishOutline = new Pen(onFuMoradiAutoMode
+                ? Color.FromArgb(220, 90, 90, 90)
+                : Color.FromArgb(210, 180, 55, 55), 1.2f) { DashStyle = DashStyle.Dash };
             using var wickPen = new Pen(Color.FromArgb(190, 90, 90, 90), 1.1f) { DashStyle = DashStyle.Dash };
 
             // The right side of the chart has a reserved 25% margin. If the user zooms
@@ -395,6 +620,9 @@ namespace Trade.It
                 return;
 
             onFuMoradiAnchorIndex = selectedIndex;
+            onFuMoradiHasOptimizedParameters = false;
+            onFuMoradiAutoMode = false;
+            SyncOnFuMoradiButtons();
             onFuMoradiCachedAnchorIndex = -1;
             onFuMoradiLastRenderLogAnchor = int.MinValue;
 
