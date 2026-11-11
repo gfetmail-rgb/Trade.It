@@ -197,15 +197,23 @@ namespace Trade.It
             ChartIndicator candidate,
             int[] validationAnchors)
         {
-            var metrics = new OnFuMoradiEvaluationMetrics();
             const int horizon = 5;
             candidate.Period = horizon;
+            return EvaluateOnFuMoradiForecastFactory(
+                validationAnchors,
+                horizon,
+                (anchor, steps) => CalculateOnFuMoradiForecast(anchor, candidate));
+        }
 
+        private OnFuMoradiEvaluationMetrics EvaluateOnFuMoradiForecastFactory(
+            int[] validationAnchors,
+            int horizon,
+            Func<int, int, List<TradingChartPoint>> forecastFactory)
+        {
+            var metrics = new OnFuMoradiEvaluationMetrics();
             foreach (var validationAnchor in validationAnchors)
             {
-                // Forecasts use data through validationAnchor only. All five subsequent
-                // candles are held out and are used exclusively as validation targets.
-                var forecast = CalculateOnFuMoradiForecast(validationAnchor, candidate);
+                var forecast = forecastFactory(validationAnchor, horizon);
                 if (forecast.Count < horizon)
                     continue;
 
@@ -257,20 +265,124 @@ namespace Trade.It
             return metrics;
         }
 
+        private List<TradingChartPoint> CalculateOnFuMoradiBaselineForecast(
+            int anchor,
+            int horizon,
+            bool statisticalContinuation)
+        {
+            var result = new List<TradingChartPoint>();
+            if (anchor < 19 || anchor >= points.Count || horizon <= 0)
+                return result;
+
+            var last = points[anchor];
+            if (!double.IsFinite(last.Close) || last.Close <= 0)
+                return result;
+
+            var dateStep = anchor > 0
+                ? points[anchor].Date - points[anchor - 1].Date
+                : TimeSpan.FromDays(1);
+            if (dateStep <= TimeSpan.Zero || dateStep > TimeSpan.FromDays(366))
+                dateStep = TimeSpan.FromDays(1);
+
+            if (!statisticalContinuation)
+            {
+                // Persistence baseline: repeat the latest observed OHLC candle unchanged.
+                for (var step = 1; step <= horizon; step++)
+                {
+                    result.Add(new TradingChartPoint
+                    {
+                        Date = last.Date.AddTicks(dateStep.Ticks * step),
+                        HasRealDate = last.HasRealDate,
+                        Open = last.Open,
+                        High = last.High,
+                        Low = last.Low,
+                        Close = last.Close,
+                        Volume = 0
+                    });
+                }
+                return result;
+            }
+
+            // Statistical continuation baseline: extrapolate the mean log return
+            // and mean normalized range/wick proportions of the latest five candles.
+            var first = Math.Max(1, anchor - 4);
+            var returnSum = 0.0;
+            var rangeRatioSum = 0.0;
+            var upperWickSum = 0.0;
+            var lowerWickSum = 0.0;
+            var sampleCount = 0;
+
+            for (var index = first; index <= anchor; index++)
+            {
+                var previousClose = points[index - 1].Close;
+                var candle = points[index];
+                if (!double.IsFinite(previousClose) || previousClose <= 0 ||
+                    !double.IsFinite(candle.Close) || candle.Close <= 0 ||
+                    !double.IsFinite(candle.Open) || !double.IsFinite(candle.High) ||
+                    !double.IsFinite(candle.Low) || candle.High < candle.Low)
+                    continue;
+
+                returnSum += Math.Log(candle.Close / previousClose);
+                rangeRatioSum += Math.Max(0, candle.High - candle.Low) / candle.Close;
+                upperWickSum += Math.Max(0, candle.High - Math.Max(candle.Open, candle.Close));
+                lowerWickSum += Math.Max(0, Math.Min(candle.Open, candle.Close) - candle.Low);
+                sampleCount++;
+            }
+
+            if (sampleCount == 0)
+                return result;
+
+            var averageLogReturn = returnSum / sampleCount;
+            var averageRangeRatio = rangeRatioSum / sampleCount;
+            var totalWick = upperWickSum + lowerWickSum;
+            var upperShare = totalWick > 1e-12 ? upperWickSum / totalWick : 0.5;
+            var lowerShare = totalWick > 1e-12 ? lowerWickSum / totalWick : 0.5;
+            var previousCloseForecast = last.Close;
+
+            for (var step = 1; step <= horizon; step++)
+            {
+                var open = previousCloseForecast;
+                var close = open * Math.Exp(averageLogReturn);
+                var body = Math.Abs(close - open);
+                var expectedRange = Math.Max(open * averageRangeRatio, body);
+                var residualRange = Math.Max(0, expectedRange - body);
+                var wickTotal = upperShare + lowerShare;
+                var upperWick = wickTotal > 0 ? residualRange * upperShare / wickTotal : residualRange / 2.0;
+                var lowerWick = residualRange - upperWick;
+
+                result.Add(new TradingChartPoint
+                {
+                    Date = last.Date.AddTicks(dateStep.Ticks * step),
+                    HasRealDate = last.HasRealDate,
+                    Open = open,
+                    High = Math.Max(open, close) + upperWick,
+                    Low = Math.Max(1e-12, Math.Min(open, close) - lowerWick),
+                    Close = close,
+                    Volume = 0
+                });
+
+                previousCloseForecast = close;
+            }
+
+            return result;
+        }
+
         private void OnFuMoradiAutoButton_Click(object? sender, EventArgs e)
         {
             var indicator = GetOnFuMoradiIndicator();
             var anchor = ResolveOnFuMoradiAnchor();
             const int evaluationHorizon = 5;
-            if (indicator == null || anchor < 48)
+            if (indicator == null || anchor < 523)
             {
                 MessageBox.Show(FindForm(),
-                    "برای ارزیابی مستقل پنج‌گامی، حداقل ۴۹ کندل معتبر لازم است.",
+                    "برای مقایسه معتبر با حداقل ۲۰ پنجره آزمون مستقل پنج‌گامی، حداقل ۵۲۴ کندل معتبر لازم است.",
                     "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            var firstValidationAnchor = Math.Max(19, anchor - 99);
+            // Keep 500 chronological validation origins: 400 for model selection
+            // (with a five-origin embargo) and 100 for the untouched holdout.
+            var firstValidationAnchor = Math.Max(19, anchor - 504);
             var lastValidationAnchor = anchor - evaluationHorizon;
             var validationAnchors = Enumerable.Range(
                 firstValidationAnchor,
@@ -279,10 +391,10 @@ namespace Trade.It
             // Keep the newest chronological portion completely out of parameter
             // selection. A five-anchor embargo prevents training targets from
             // overlapping the beginning of the final holdout period.
-            if (validationAnchors.Length < 25)
+            if (validationAnchors.Length < 500)
             {
                 MessageBox.Show(FindForm(),
-                    "برای بهینه‌سازی همراه با آزمون مستقل، حداقل ۲۵ مبدأ ارزیابی پنج‌گامی لازم است. داده تاریخی بیشتری بارگذاری کنید.",
+                    "برای این گزارش به ۵۰۰ مبدأ تاریخی نیاز است تا حداقل ۲۰ پنجره آزمون مستقل پنج‌گامی تشکیل شود.",
                     "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -360,6 +472,21 @@ namespace Trade.It
                 return;
             }
 
+            var persistenceMetrics = EvaluateOnFuMoradiForecastFactory(
+                holdoutAnchors, evaluationHorizon,
+                (testAnchor, steps) => CalculateOnFuMoradiBaselineForecast(testAnchor, steps, false));
+            var statisticalMetrics = EvaluateOnFuMoradiForecastFactory(
+                holdoutAnchors, evaluationHorizon,
+                (testAnchor, steps) => CalculateOnFuMoradiBaselineForecast(testAnchor, steps, true));
+
+            if (persistenceMetrics.Samples == 0 || statisticalMetrics.Samples == 0)
+            {
+                MessageBox.Show(FindForm(),
+                    "محاسبه مدل‌های پایه روی همان آزمون مستقل کامل نشد؛ گزارش مقایسه معتبر نیست.",
+                    "OnFuMoradi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             indicator.OnFuMoradiAlpha = best.Alpha;
             indicator.OnFuMoradiBeta = best.Beta;
             indicator.OnFuMoradiGamma = best.Gamma;
@@ -394,6 +521,10 @@ namespace Trade.It
                 $"MAE پایانی (Close): {bestMetrics.ComponentMae(3):F3}%" + Environment.NewLine +
                 $"خطای MAE دامنه High-Low: {bestMetrics.RangeMaePercent:F3}%" + Environment.NewLine +
                 $"درستی جهت کندل: {bestMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
+                "مقایسه با مدل‌های پایه (همان آزمون مستقل):" + Environment.NewLine +
+                $"تکرار آخرین کندل: MAE={persistenceMetrics.OhlcMaePercent:F3}%، RMSE={persistenceMetrics.OhlcRmsePercent:F3}%، جهت={persistenceMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
+                $"تداوم آماری پنج کندل اخیر: MAE={statisticalMetrics.OhlcMaePercent:F3}%، RMSE={statisticalMetrics.OhlcRmsePercent:F3}%، جهت={statisticalMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
+                $"امتیاز ترکیبی کمتر بهتر است | OnFuMoradi={bestMetrics.CompositeScore:F3}، تکرار آخرین کندل={persistenceMetrics.CompositeScore:F3}، تداوم آماری={statisticalMetrics.CompositeScore:F3}" + Environment.NewLine +
                 "خطای MAE به تفکیک افق:" + Environment.NewLine + horizonReport +
                 Environment.NewLine + Environment.NewLine +
                 $"پارامترهای منتخب: روند={best.Alpha:F2}، شتاب={best.Beta:F2}، " +
