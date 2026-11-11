@@ -96,7 +96,6 @@ namespace Trade.It
             var closeColumn = GetMappingColumn(definition, "آخرین");
             var highColumn = GetMappingColumn(definition, "بیشترین");
             var lowColumn = GetMappingColumn(definition, "کمترین");
-            var openColumn = GetMappingColumn(definition, "اولین");
             var volumeColumn = GetMappingColumn(definition, "حجم");
 
             return symbols.Where(symbol =>
@@ -143,7 +142,7 @@ namespace Trade.It
                 if (volumePriceFilterEnabled3.Checked)
                 {
                     var period = ReadInt(volumePricePeriod3);
-                    if (volumeColumn <= 0 || closeColumn <= 0 || openColumn <= 0 ||
+                    if (volumeColumn <= 0 || closeColumn <= 0 ||
                         !TryGetVolumeRatio(rows, volumeColumn, period, out var volumeRatio) ||
                         volumeRatio < ReadDouble(volumePriceRatio3) ||
                         !TryReadLatest(rows, closeColumn, out var latestClose) ||
@@ -160,8 +159,9 @@ namespace Trade.It
                 if (trendStrengthFilterEnabled3.Checked)
                 {
                     if (highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0 ||
-                        !TryCalculateAdx(rows, highColumn, lowColumn, closeColumn, ReadInt(adxPeriod3), out var adx) ||
-                        adx < ReadDouble(adxMinimum3))
+                        !TryCalculateAdx(rows, highColumn, lowColumn, closeColumn, ReadInt(adxPeriod3),
+                            out var adx, out var positiveDi, out var negativeDi) ||
+                        adx < ReadDouble(adxMinimum3) || positiveDi <= negativeDi)
                         return false;
                 }
 
@@ -183,7 +183,7 @@ namespace Trade.It
             var secondPeriod = ReadInt(maFilterPeriod2_3);
             return TryAverage(closes, firstPeriod, out var shortAverage) &&
                    TryAverage(closes, secondPeriod, out var longAverage) &&
-                   shortAverage > longAverage;
+                   shortAverage > longAverage && closes[^1] > longAverage;
         }
 
         private bool PassRsiFilter(double rsi)
@@ -326,9 +326,11 @@ namespace Trade.It
 
         private static bool TryCalculateAdx(
             List<string[]> rows, int highColumn, int lowColumn, int closeColumn,
-            int period, out double adx)
+            int period, out double adx, out double positiveDi, out double negativeDi)
         {
             adx = 0;
+            positiveDi = 0;
+            negativeDi = 0;
             if (period <= 0 || rows.Count < period * 2 + 1)
                 return false;
 
@@ -389,7 +391,12 @@ namespace Trade.It
                 currentAdx = (currentAdx * (period - 1) + dxValues[i]) / period;
 
             adx = currentAdx;
-            return double.IsFinite(adx);
+            if (smoothTr > 1e-12)
+            {
+                positiveDi = 100.0 * smoothPlus / smoothTr;
+                negativeDi = 100.0 * smoothMinus / smoothTr;
+            }
+            return double.IsFinite(adx) && double.IsFinite(positiveDi) && double.IsFinite(negativeDi);
 
             void AddDx()
             {
