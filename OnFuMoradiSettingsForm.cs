@@ -7,6 +7,7 @@ namespace Trade.It
         internal double MeanReversionWeight => (double)meanReversionWeightNumeric.Value;
         internal double VolatilityLimit => (double)volatilityLimitNumeric.Value;
         internal double WickPatternWeight => (double)wickPatternWeightNumeric.Value;
+        internal int ForecastCandleCount => (int)forecastCandleCountNumeric.Value;
 
         internal OnFuMoradiSettingsForm(ChartIndicator indicator)
         {
@@ -19,6 +20,7 @@ namespace Trade.It
             meanReversionWeightNumeric.Value = Clamp(indicator.OnFuMoradiGamma, 0m, 2m);
             volatilityLimitNumeric.Value = Clamp(indicator.OnFuMoradiDelta, 0.05m, 2m);
             wickPatternWeightNumeric.Value = Clamp(indicator.OnFuMoradiEpsilon, 0m, 2m);
+            forecastCandleCountNumeric.Value = Math.Clamp(indicator.Period, 1, 100);
 
             defaultButton.Click += (_, _) => ApplyDefaults();
             okButton.Click += (_, _) => DialogResult = DialogResult.OK;
@@ -39,6 +41,7 @@ namespace Trade.It
             meanReversionWeightNumeric.Value = 0.20m;
             volatilityLimitNumeric.Value = 0.35m;
             wickPatternWeightNumeric.Value = 0.15m;
+            forecastCandleCountNumeric.Value = 13m;
         }
     }
 }
