@@ -33,12 +33,9 @@ namespace Trade.It
             if (maFilterEnabled3.Checked)
             {
                 ReadPositiveInt(maFilterPeriod1_3, "میانگین متحرک، دوره اول", out var first);
-                if (maFilterMode3.SelectedIndex == 1)
-                {
-                    if (ReadPositiveInt(maFilterPeriod2_3, "میانگین متحرک، دوره دوم", out var second) &&
-                        first > 0 && first >= second)
-                        errors.Add("برای مقایسه دو میانگین، دوره اول باید از دوره دوم کوتاه‌تر باشد.");
-                }
+                if (ReadPositiveInt(maFilterPeriod2_3, "میانگین متحرک، دوره بلند", out var second) &&
+                    first > 0 && first >= second)
+                    errors.Add("دوره کوتاه باید از دوره بلند کوچک‌تر باشد.");
             }
 
             if (rsiFilterEnabled3.Checked)
@@ -111,8 +108,7 @@ namespace Trade.It
 
                 if (maFilterEnabled3.Checked)
                 {
-                    var maLookback = Math.Max(ReadInt(maFilterPeriod1_3),
-                        maFilterMode3.SelectedIndex == 1 ? ReadInt(maFilterPeriod2_3) : 0);
+                    var maLookback = Math.Max(ReadInt(maFilterPeriod1_3), ReadInt(maFilterPeriod2_3));
                     if (closeColumn <= 0 ||
                         !TryReadSeries(rows, closeColumn, maLookback, out var closes) ||
                         !PassMovingAverageFilter(closes))
@@ -176,19 +172,30 @@ namespace Trade.It
 
         private bool PassMovingAverageFilter(IReadOnlyList<double> closes)
         {
-            var firstPeriod = ReadInt(maFilterPeriod1_3);
-            if (maFilterMode3.SelectedIndex == 0)
-            {
-                if (closes.Count < firstPeriod ||
-                    !TryAverage(closes, firstPeriod, out var average))
-                    return false;
-                return closes[^1] > average;
-            }
+            var shortPeriod = ReadInt(maFilterPeriod1_3);
+            var longPeriod = ReadInt(maFilterPeriod2_3);
+            if (!TryAverage(closes, shortPeriod, out var shortAverage) ||
+                !TryAverage(closes, longPeriod, out var longAverage))
+                return false;
 
-            var secondPeriod = ReadInt(maFilterPeriod2_3);
-            return TryAverage(closes, firstPeriod, out var shortAverage) &&
-                   TryAverage(closes, secondPeriod, out var longAverage) &&
-                   shortAverage > longAverage && closes[^1] > longAverage;
+            var averagesPass = maFilterMode3.SelectedIndex switch
+            {
+                0 => shortAverage > longAverage,
+                1 => shortAverage < longAverage,
+                _ => false
+            };
+            if (!averagesPass)
+                return false;
+
+            return maPriceMode3.SelectedIndex switch
+            {
+                0 => closes[^1] > shortAverage,
+                1 => closes[^1] < longAverage,
+                2 => closes[^1] > Math.Min(shortAverage, longAverage) &&
+                     closes[^1] < Math.Max(shortAverage, longAverage),
+                3 => true,
+                _ => false
+            };
         }
 
         private bool PassRsiFilter(double rsi)
@@ -445,6 +452,7 @@ namespace Trade.It
             trendStrengthFilterEnabled3.Checked = false;
 
             maFilterMode3.SelectedIndex = 0;
+            maPriceMode3.SelectedIndex = 3;
             maFilterPeriod1_3.Text = "20";
             maFilterPeriod2_3.Text = "50";
             rsiPeriod3.Text = "14";
