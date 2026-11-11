@@ -1326,12 +1326,7 @@ namespace Trade.It
                 g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
             }
 
-            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var absoluteCrossIndex = firstIndex + crossIndex;
-            var valueText = absoluteCrossIndex >= 0 && absoluteCrossIndex < awesomeOscillatorCache.Length && double.IsFinite(awesomeOscillatorCache[absoluteCrossIndex])
-                ? awesomeOscillatorCache[absoluteCrossIndex].ToString("0.########", CultureInfo.InvariantCulture)
-                : "—";
-            DrawIndicatorPanelTitle(g, plot, $"Awesome Oscillator ({indicator.AwesomeOscillatorFastPeriod},{indicator.AwesomeOscillatorSlowPeriod}) = {valueText}", titleFont, indicator.AwesomeOscillatorRisingColor);
+            DrawIndicatorPanelTitle(g, plot, $"AO({indicator.AwesomeOscillatorFastPeriod},{indicator.AwesomeOscillatorSlowPeriod})", titleFont, indicator.AwesomeOscillatorRisingColor);
         }
 
         private void RenderAtrPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
@@ -1369,12 +1364,7 @@ namespace Trade.It
                 previous = current;
             }
 
-            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var crosshairAbsoluteIndex = firstIndex + crossIndex;
-            var atrValueText = crosshairAbsoluteIndex >= 0 && crosshairAbsoluteIndex < atrCache!.Length && !double.IsNaN(atrCache[crosshairAbsoluteIndex]) && !double.IsInfinity(atrCache[crosshairAbsoluteIndex])
-                ? atrCache[crosshairAbsoluteIndex].ToString("0.########", CultureInfo.InvariantCulture)
-                : "—";
-            DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})={atrValueText}", titleFont, indicator.LineColor);
+            DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})", titleFont, indicator.LineColor);
         }
 
         private static double GetAtrScaleMax(double[] values, int firstIndex, int displayedCount)
@@ -1456,14 +1446,7 @@ namespace Trade.It
             DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxPlusDiCache!, indicator.ShowAdxPlusDi, indicator.AdxPlusDiColor);
             DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxMinusDiCache!, indicator.ShowAdxMinusDi, indicator.AdxMinusDiColor);
 
-            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var absoluteIndex = firstIndex + crossIndex;
-            var valueText = absoluteIndex >= 0 && absoluteIndex < adxCache!.Length &&
-                            !double.IsNaN(adxCache[absoluteIndex]) && !double.IsInfinity(adxCache[absoluteIndex])
-                ? adxCache[absoluteIndex].ToString("0.##", CultureInfo.InvariantCulture)
-                : "—";
-
-            DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})={valueText}", titleFont, indicator.AdxLineColor);
+            DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})", titleFont, indicator.AdxLineColor);
         }
 
         private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
