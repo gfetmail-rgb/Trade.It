@@ -41,6 +41,7 @@ namespace Trade.It
         private CheckBox trendStrengthFilterEnabled3 = null!;
         private TextBox adxPeriod3 = null!;
         private TextBox adxMinimum3 = null!;
+        private ComboBox adxDirection3 = null!;
 
         private void InitializeFilters3Designer()
         {
@@ -136,19 +137,20 @@ namespace Trade.It
             volumePriceFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(volumePriceFilterEnabled3,
                 volumePricePeriod3, volumePriceRatio3, volumePriceDirection3);
 
-            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند صعودی (ADX)", 8, 725, 365, 140);
+            trendStrengthFilterGroup3 = CreateFilterGroup("قدرت روند (ADX)", 8, 725, 365, 140);
             trendStrengthFilterEnabled3 = CreateEnableCheckBox("فعال", 265, 20);
             adxPeriod3 = CreateTextBox(new Point(12, 66), "14");
             adxMinimum3 = CreateTextBox(new Point(190, 66), "20");
+            adxDirection3 = CreateComboBox(new Point(12, 100), new Size(333, 25), "صعودی", "نزولی");
             var adxPeriodLabel = CreateLabel("دوره ADX", 12, 39);
             adxPeriodLabel.Size = new Size(150, 24);
             var adxMinimumLabel = CreateLabel("حداقل قدرت روند", 190, 39);
             adxMinimumLabel.Size = new Size(155, 24);
             trendStrengthFilterGroup3.Controls.AddRange(new Control[] {
                 trendStrengthFilterEnabled3, adxPeriodLabel, adxMinimumLabel,
-                adxPeriod3, adxMinimum3
+                adxPeriod3, adxMinimum3, adxDirection3
             });
-            trendStrengthFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(trendStrengthFilterEnabled3, adxPeriod3, adxMinimum3);
+            trendStrengthFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(trendStrengthFilterEnabled3, adxPeriod3, adxMinimum3, adxDirection3);
 
             filterApplyButton3 = new Button();
             filterApplyButton3.Name = "filterApplyButton3";
