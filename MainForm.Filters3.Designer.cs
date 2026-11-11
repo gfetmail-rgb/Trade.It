@@ -56,9 +56,13 @@ namespace Trade.It
                 "قیمت پایانی بالاتر از میانگین", "میانگین کوتاه بالاتر از میانگین بلند");
             maFilterPeriod1_3 = CreateTextBox(new Point(12, 79), "20");
             maFilterPeriod2_3 = CreateTextBox(new Point(105, 79), "50");
+            var maPeriod1Label = CreateLabel("دوره اول", 12, 61);
+            maPeriod1Label.Size = new Size(82, 18);
+            var maPeriod2Label = CreateLabel("دوره دوم", 105, 61);
+            maPeriod2Label.Size = new Size(82, 18);
             maFilterGroup3.Controls.AddRange(new Control[] {
                 maFilterEnabled3, maFilterMode3,
-                CreateLabel("دوره اول", 12, 61), CreateLabel("دوره دوم (فقط حالت دوم)", 105, 61),
+                maPeriod1Label, maPeriod2Label,
                 maFilterPeriod1_3, maFilterPeriod2_3
             });
             maFilterEnabled3.CheckedChanged += (_, _) => SetFilterInputsEnabled(maFilterEnabled3, maFilterMode3, maFilterPeriod1_3, maFilterPeriod2_3);
