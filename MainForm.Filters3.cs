@@ -162,7 +162,15 @@ namespace Trade.It
                     if (highColumn <= 0 || lowColumn <= 0 || closeColumn <= 0 ||
                         !TryCalculateAdx(rows, highColumn, lowColumn, closeColumn, ReadInt(adxPeriod3),
                             out var adx, out var positiveDi, out var negativeDi) ||
-                        adx < ReadDouble(adxMinimum3) || positiveDi <= negativeDi)
+                        adx < ReadDouble(adxMinimum3))
+                        return false;
+
+                    var adxDirection = adxDirection3.SelectedItem?.ToString();
+                    if (adxDirection == "صعودی" && positiveDi <= negativeDi)
+                        return false;
+                    if (adxDirection == "نزولی" && negativeDi <= positiveDi)
+                        return false;
+                    if (adxDirection != "صعودی" && adxDirection != "نزولی")
                         return false;
                 }
 
@@ -468,6 +476,7 @@ namespace Trade.It
             volumePriceDirection3.SelectedIndex = 0;
             adxPeriod3.Text = "14";
             adxMinimum3.Text = "20";
+            adxDirection3.SelectedIndex = 0;
         }
 
         private void UpdateFilters3Count(string text)
