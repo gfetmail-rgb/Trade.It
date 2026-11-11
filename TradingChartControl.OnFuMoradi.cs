@@ -203,6 +203,9 @@ namespace Trade.It
             var totalWick = upperWickSum + lowerWickSum;
             var upperWickShare = totalWick > 1e-12 ? upperWickSum / totalWick : 0.5;
             var lowerWickShare = totalWick > 1e-12 ? lowerWickSum / totalWick : 0.5;
+            var averageBodyRatio = candleRangeSum > 1e-12
+                ? Math.Clamp(bodySum / candleRangeSum, 0.20, 0.65)
+                : 0.35;
 
             var alpha = Math.Clamp(indicator.OnFuMoradiAlpha, 0, 2);
             var beta = Math.Clamp(indicator.OnFuMoradiBeta, 0, 2);
@@ -225,12 +228,25 @@ namespace Trade.It
                 // Limit each projected return to a volatility-scaled range.
                 drift = Math.Clamp(drift, -volatility * delta, volatility * delta);
                 var open = previousCloseForecast;
-                var close = open * Math.Exp(drift);
+                var rawClose = open * Math.Exp(drift);
 
-                // Match projected candle height to the recent average High-Low range.
-                // ATR remains dedicated to volatility/drift; it no longer shrinks candle bodies.
-                var body = Math.Abs(close - open);
-                var expectedRange = Math.Max(averageCandleRange, body);
+                // Forecast body size follows the recent empirical body/range ratio.
+                // The sign remains model-driven; only a near-zero move uses the
+                // historical trend/momentum direction as a fallback.
+                var expectedRange = Math.Max(averageCandleRange, Math.Abs(rawClose - open));
+                var direction = Math.Abs(drift) > 1e-10
+                    ? Math.Sign(drift)
+                    : Math.Abs(trend) > 1e-10
+                        ? Math.Sign(trend)
+                        : Math.Sign(momentum);
+                if (direction == 0)
+                    direction = 1;
+
+                var targetBody = Math.Min(
+                    expectedRange * averageBodyRatio,
+                    expectedRange * 0.80);
+                var body = Math.Max(Math.Abs(rawClose - open), targetBody);
+                var close = open + direction * body;
                 var residualRange = Math.Max(0, expectedRange - body);
                 var patternBias = Math.Clamp(epsilon * (upperWickShare - lowerWickShare), -0.5, 0.5);
                 var adjustedUpperShare = Math.Clamp(upperWickShare + patternBias * 0.25, 0.05, 0.95);
