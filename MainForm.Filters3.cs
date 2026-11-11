@@ -61,7 +61,8 @@ namespace Trade.It
             if (volumePriceFilterEnabled3.Checked)
             {
                 ReadPositiveInt(volumePricePeriod3, "افزایش حجم، دوره میانگین", out _);
-                if (!ReadNonNegative(volumePriceRatio3, "افزایش حجم، نسبت حداقل", out var ratio) || ratio <= 0)
+                var validRatio = ReadNonNegative(volumePriceRatio3, "افزایش حجم، نسبت حداقل", out var ratio);
+                if (validRatio && ratio <= 0)
                     errors.Add("نسبت حجم باید بزرگ‌تر از صفر باشد.");
             }
 
