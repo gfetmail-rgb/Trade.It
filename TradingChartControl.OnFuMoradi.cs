@@ -132,10 +132,9 @@ namespace Trade.It
             var best = (Alpha: indicator.OnFuMoradiAlpha, Beta: indicator.OnFuMoradiBeta,
                 Gamma: indicator.OnFuMoradiGamma, Delta: indicator.OnFuMoradiDelta,
                 Epsilon: indicator.OnFuMoradiEpsilon);
-            var firstValidationAnchor = Math.Max(20, anchor - 99);
+            var firstValidationAnchor = Math.Max(19, anchor - 99);
             var validationAnchors = Enumerable.Range(firstValidationAnchor, anchor - firstValidationAnchor)
                 .Where(i => i < anchor)
-                .Where(i => (anchor - i) % 2 == 0)
                 .ToArray();
 
             double[] alphas = { 0.30, 0.55, 0.80 };
