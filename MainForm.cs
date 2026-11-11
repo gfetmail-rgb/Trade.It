@@ -1480,7 +1480,8 @@ namespace Trade.It
 
         private void FilterTabSelected(object? sender, EventArgs e)
         {
-            if (controlTabControl.SelectedTab == tabPage2 || controlTabControl.SelectedTab == tabPageFilters2)
+            if (controlTabControl.SelectedTab == tabPage2 || controlTabControl.SelectedTab == tabPageFilters2 ||
+                controlTabControl.SelectedTab == tabPageFilters3)
             {
                 // Switching tabs must not rewrite the visible market-tree checks.
                 // Applied selections are captured when the user confirms market filters;
@@ -1491,15 +1492,20 @@ namespace Trade.It
 
         private void ClearFiltersButton_Click(object? sender, EventArgs e)
         {
+            var isThirdTab = ReferenceEquals(sender, clearFiltersButton3);
             var isSecondTab = ReferenceEquals(sender, clearFiltersButton2);
-            if (isSecondTab ? filters2Applied : filtersApplied)
+            if (isThirdTab ? filters3Applied : isSecondTab ? filters2Applied : filtersApplied)
                 return;
 
             ClearDisplayedChartIfAny();
             resettingFilters = true;
             try
             {
-                if (isSecondTab)
+                if (isThirdTab)
+                {
+                    ResetFilters3();
+                }
+                else if (isSecondTab)
                 {
                     ResetFilterControls(tabPageFilters2);
                 }
@@ -1756,13 +1762,21 @@ namespace Trade.It
 
         private void FilterApplyButton_Click(object? sender, EventArgs e)
         {
+            var isThirdTab = ReferenceEquals(sender, filterApplyButton3);
             var isSecondTab = ReferenceEquals(sender, filterApplyButton2);
-            var isApplied = isSecondTab ? filters2Applied : filtersApplied;
-            if (!isApplied && !ValidateFilterInputs(isSecondTab))
-                return;
+            var isApplied = isThirdTab ? filters3Applied : isSecondTab ? filters2Applied : filtersApplied;
+            if (!isApplied)
+            {
+                if (isThirdTab && !ValidateFilters3Inputs())
+                    return;
+                if (!isThirdTab && !ValidateFilterInputs(isSecondTab))
+                    return;
+            }
 
             ClearDisplayedChartIfAny();
-            if (isSecondTab)
+            if (isThirdTab)
+                filters3Applied = !filters3Applied;
+            else if (isSecondTab)
                 filters2Applied = !filters2Applied;
             else
                 filtersApplied = !filtersApplied;
@@ -1818,6 +1832,7 @@ namespace Trade.It
 
             var filtersEnabled = hasStocks && !filtersApplied;
             var filters2Enabled = hasStocks && !filters2Applied;
+            var filters3Enabled = hasStocks && !filters3Applied;
             tradingStatusGroup.Enabled = filtersEnabled && hasDate;
             pastDaysGroup.Enabled = filtersEnabled && hasDate;
             volumeRatioGroup.Enabled = filtersEnabled && hasVolume;
@@ -1833,15 +1848,23 @@ namespace Trade.It
             comparisonRangeGroup3.Enabled = filters2Enabled;
             comparisonRangeGroup4.Enabled = filters2Enabled;
             ohlcChangeFilterGroup.Enabled = filtersEnabled;
+            maFilterGroup3.Enabled = filters3Enabled;
+            rsiFilterGroup3.Enabled = filters3Enabled;
+            distanceFilterGroup3.Enabled = filters3Enabled;
+            volumePriceFilterGroup3.Enabled = filters3Enabled;
+            trendStrengthFilterGroup3.Enabled = filters3Enabled;
 
             filterApplyButton.Text = filtersApplied ? "خاموش" : "تایید";
             filterApplyButton.Enabled = hasStocks;
             filterApplyButton2.Text = filters2Applied ? "خاموش" : "تایید";
             filterApplyButton2.Enabled = hasStocks;
+            filterApplyButton3.Text = filters3Applied ? "خاموش" : "تایید";
+            filterApplyButton3.Enabled = hasStocks;
 
             // «پاک کردن» فقط زمانی مجاز است که فیلترها خاموش باشند.
             clearFiltersButton.Enabled = hasStocks && !filtersApplied;
             clearFiltersButton2.Enabled = hasStocks && !filters2Applied;
+            clearFiltersButton3.Enabled = hasStocks && !filters3Applied;
 
             if (!hasDate)
             {
@@ -2065,6 +2088,9 @@ namespace Trade.It
                 filtered = ApplyComparisonRangeFilter(filtered, definition, filterContext, comparisonRangeFirstComboBox4, comparisonRangeOperatorComboBox4, comparisonRangeSecondComboBox4, comparisonRangeOffsetTextBox4);
             }
 
+            if (filters3Applied)
+                filtered = ApplyFilters3(filtered, definition, filterContext);
+
             var result = filtered.ToList();
             internalPortfolioUpdate = true;
             try
@@ -2162,6 +2188,7 @@ namespace Trade.It
                 filterCountLabel.Text = text;
             if (filterCountLabel2 != null)
                 filterCountLabel2.Text = text;
+            UpdateFilters3Count(text);
 
             if (marketCountLabel != null)
                 marketCountLabel.Text = text;
