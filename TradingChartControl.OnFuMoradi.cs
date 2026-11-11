@@ -385,8 +385,8 @@ namespace Trade.It
 
             var report =
                 $"ارزیابی Walk-Forward با افق {evaluationHorizon} کندل" + Environment.NewLine +
-                $"تعداد پنجره‌های آزمون مستقل: {bestMetrics.Samples / evaluationHorizon:N0}" + Environment.NewLine +
-                $"تعداد کندل‌های هدف یکتا: {bestMetrics.Samples:N0}" + Environment.NewLine +
+                $"تعداد پنجره‌های آزمون مستقل: {holdoutAnchors.Length:N0}" + Environment.NewLine +
+                $"تعداد کندل‌های هدف معتبر و غیرتکراری: {bestMetrics.Samples:N0}" + Environment.NewLine +
                 $"MAE کل OHLC: {bestMetrics.OhlcMaePercent:F3}%" + Environment.NewLine +
                 $"RMSE کل OHLC: {bestMetrics.OhlcRmsePercent:F3}%" + Environment.NewLine +
                 $"MAE بازشدن (Open): {bestMetrics.ComponentMae(0):F3}%" + Environment.NewLine +
