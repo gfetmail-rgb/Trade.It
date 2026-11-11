@@ -34,6 +34,23 @@ namespace Trade.It
             onFuMoradiAutoButton.Visible = visible;
             onFuMoradiSaveButton.Visible = visible;
             onFuMoradiSaveButton.Enabled = visible && onFuMoradiHasOptimizedParameters;
+
+            // Highlight the currently active Auto mode and the available Save action.
+            // Inactive buttons retain the standard gray WinForms background.
+            onFuMoradiAutoButton.BackColor = onFuMoradiAutoMode
+                ? Color.DodgerBlue
+                : SystemColors.Control;
+            onFuMoradiAutoButton.ForeColor = onFuMoradiAutoMode
+                ? Color.White
+                : SystemColors.ControlText;
+
+            onFuMoradiSaveButton.BackColor = onFuMoradiSaveButton.Enabled
+                ? Color.DodgerBlue
+                : SystemColors.Control;
+            onFuMoradiSaveButton.ForeColor = onFuMoradiSaveButton.Enabled
+                ? Color.White
+                : SystemColors.ControlText;
+
             if (!visible)
                 return;
 
