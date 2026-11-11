@@ -231,6 +231,62 @@ namespace Trade.It
             Invalidate();
         }
 
+        internal bool TryApplyOnFuMoradiManualSettings(
+            int index,
+            double trendWeight,
+            double momentumWeight,
+            double meanReversionWeight,
+            double volatilityLimit,
+            double wickPatternWeight,
+            out string error)
+        {
+            error = string.Empty;
+            if (index < 0 || index >= indicators.Count ||
+                indicators[index].Type != ChartIndicatorType.OnFuMoradi)
+            {
+                error = "اندیکاتور OnFuMoradi دیگر فعال نیست.";
+                return false;
+            }
+
+            var indicator = indicators[index];
+            var previous = (
+                Alpha: indicator.OnFuMoradiAlpha,
+                Beta: indicator.OnFuMoradiBeta,
+                Gamma: indicator.OnFuMoradiGamma,
+                Delta: indicator.OnFuMoradiDelta,
+                Epsilon: indicator.OnFuMoradiEpsilon);
+
+            indicator.OnFuMoradiAlpha = Math.Clamp(trendWeight, 0, 2);
+            indicator.OnFuMoradiBeta = Math.Clamp(momentumWeight, 0, 2);
+            indicator.OnFuMoradiGamma = Math.Clamp(meanReversionWeight, 0, 2);
+            indicator.OnFuMoradiDelta = Math.Clamp(volatilityLimit, 0.05, 2);
+            indicator.OnFuMoradiEpsilon = Math.Clamp(wickPatternWeight, 0, 2);
+
+            try
+            {
+                SaveOnFuMoradiManualParameters(indicator);
+            }
+            catch (Exception ex)
+            {
+                indicator.OnFuMoradiAlpha = previous.Alpha;
+                indicator.OnFuMoradiBeta = previous.Beta;
+                indicator.OnFuMoradiGamma = previous.Gamma;
+                indicator.OnFuMoradiDelta = previous.Delta;
+                indicator.OnFuMoradiEpsilon = previous.Epsilon;
+                error = ex.Message;
+                return false;
+            }
+
+            onFuMoradiAutoMode = false;
+            onFuMoradiHasOptimizedParameters = false;
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiCachedIndicatorIndex = -1;
+            onFuMoradiForecast.Clear();
+            SyncOnFuMoradiButtons();
+            Invalidate();
+            return true;
+        }
+
         private void OnFuMoradiSaveButton_Click(object? sender, EventArgs e)
         {
             var indicator = GetOnFuMoradiIndicator();
