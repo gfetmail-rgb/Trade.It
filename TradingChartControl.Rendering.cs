@@ -34,6 +34,7 @@ namespace Trade.It
                 ? visible
                 : visible.Take(displayedCount).ToList();
             GetVerticalRange(scaledVisible, out var min, out var max);
+            ExpandPriceRangeForOnFuMoradi(ref min, ref max);
 
             using var gridPen = new Pen(LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineWidth) { DashStyle = LineAppearanceSettings.GridLineStyle };
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
@@ -120,6 +121,8 @@ namespace Trade.It
                     }
                 }
             }
+
+            RenderOnFuMoradiForecast(e.Graphics, plot, layoutCount, min, max, displayedCount, step, initialOffset);
 
             DrawIndicators(e.Graphics, plot, layoutCount, min, max, displayedCount, step, initialOffset);
 
