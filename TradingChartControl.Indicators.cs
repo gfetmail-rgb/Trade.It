@@ -1455,11 +1455,11 @@ namespace Trade.It
                 spanA, spanB, displacement, indicator.ShowBullishCloud, indicator.ShowBearishCloud,
                 indicator.BullishCloudColor, indicator.BearishCloudColor);
 
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, tenkan, 0, displayedCount, indicator.ShowTenkan, indicator.TenkanColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, kijun, 0, displayedCount, indicator.ShowKijun, indicator.KijunColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanA, displacement, displayedCount, indicator.ShowSpanA, indicator.SpanAColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanB, displacement, displayedCount, indicator.ShowSpanB, indicator.SpanBColor);
-            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, chikou, -displacement, displayedCount, indicator.ShowChikou, indicator.ChikouColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, tenkan, 0, indicator.ShowTenkan, indicator.TenkanColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, kijun, 0, indicator.ShowKijun, indicator.KijunColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanA, displacement, indicator.ShowSpanA, indicator.SpanAColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, spanB, displacement, indicator.ShowSpanB, indicator.SpanBColor);
+            DrawIchimokuLine(g, plot, min, max, displayedCount, step, initialOffset, chikou, -displacement, indicator.ShowChikou, indicator.ChikouColor);
 
         }
 
@@ -1473,7 +1473,6 @@ namespace Trade.It
             double initialOffset,
             double[] values,
             int shift,
-            int displayedCount,
             bool show,
             Color color)
         {
