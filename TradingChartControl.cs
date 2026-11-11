@@ -158,6 +158,7 @@ namespace Trade.It
             noDateAxisLabel.MouseDown += NoDateAxisLabel_MouseDown;
             MouseMove += NoDateAxis_MouseMove;
             Resize += NoDateAxis_Resize;
+            Resize += (_, _) => SyncOnFuMoradiButtons();
         }
 
         public void SetData(IEnumerable<TradingChartPoint> data, string? symbol = null, string? timeFrame = null, bool dataIsOrdered = false)
