@@ -16,6 +16,9 @@ namespace Trade.It
         private System.Windows.Forms.Button priceIndicatorButton11 = null!;
         private System.Windows.Forms.Button priceIndicatorButton12 = null!;
         private System.Windows.Forms.Button[] priceIndicatorButtons = null!;
+        private System.Windows.Forms.Button onFuMoradiManualButton = null!;
+        private System.Windows.Forms.Button onFuMoradiAutoButton = null!;
+        private System.Windows.Forms.Button onFuMoradiSaveButton = null!;
 
         private void InitializeComponent()
         {
@@ -32,6 +35,9 @@ namespace Trade.It
             priceIndicatorButton10 = new System.Windows.Forms.Button();
             priceIndicatorButton11 = new System.Windows.Forms.Button();
             priceIndicatorButton12 = new System.Windows.Forms.Button();
+            onFuMoradiManualButton = new System.Windows.Forms.Button();
+            onFuMoradiAutoButton = new System.Windows.Forms.Button();
+            onFuMoradiSaveButton = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // noDateAxisLabel
@@ -220,6 +226,47 @@ namespace Trade.It
             Controls.Add(priceIndicatorButton10);
             Controls.Add(priceIndicatorButton11);
             Controls.Add(priceIndicatorButton12);
+            Controls.Add(onFuMoradiManualButton);
+            Controls.Add(onFuMoradiAutoButton);
+            Controls.Add(onFuMoradiSaveButton);
+
+            // onFuMoradiManualButton
+            onFuMoradiManualButton.BackColor = System.Drawing.SystemColors.Control;
+            onFuMoradiManualButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            onFuMoradiManualButton.Location = new System.Drawing.Point(8, 8);
+            onFuMoradiManualButton.Name = "onFuMoradiManualButton";
+            onFuMoradiManualButton.Size = new System.Drawing.Size(76, 30);
+            onFuMoradiManualButton.TabIndex = 13;
+            onFuMoradiManualButton.TabStop = false;
+            onFuMoradiManualButton.Text = "دستی";
+            onFuMoradiManualButton.UseVisualStyleBackColor = false;
+            onFuMoradiManualButton.Visible = false;
+            onFuMoradiManualButton.Click += OnFuMoradiManualButton_Click;
+            // onFuMoradiAutoButton
+            onFuMoradiAutoButton.BackColor = System.Drawing.SystemColors.Control;
+            onFuMoradiAutoButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            onFuMoradiAutoButton.Location = new System.Drawing.Point(88, 8);
+            onFuMoradiAutoButton.Name = "onFuMoradiAutoButton";
+            onFuMoradiAutoButton.Size = new System.Drawing.Size(76, 30);
+            onFuMoradiAutoButton.TabIndex = 14;
+            onFuMoradiAutoButton.TabStop = false;
+            onFuMoradiAutoButton.Text = "خودکار";
+            onFuMoradiAutoButton.UseVisualStyleBackColor = false;
+            onFuMoradiAutoButton.Visible = false;
+            onFuMoradiAutoButton.Click += OnFuMoradiAutoButton_Click;
+            // onFuMoradiSaveButton
+            onFuMoradiSaveButton.BackColor = System.Drawing.SystemColors.Control;
+            onFuMoradiSaveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            onFuMoradiSaveButton.Location = new System.Drawing.Point(168, 8);
+            onFuMoradiSaveButton.Name = "onFuMoradiSaveButton";
+            onFuMoradiSaveButton.Size = new System.Drawing.Size(76, 30);
+            onFuMoradiSaveButton.TabIndex = 15;
+            onFuMoradiSaveButton.TabStop = false;
+            onFuMoradiSaveButton.Text = "ثبت";
+            onFuMoradiSaveButton.UseVisualStyleBackColor = false;
+            onFuMoradiSaveButton.Visible = false;
+            onFuMoradiSaveButton.Enabled = false;
+            onFuMoradiSaveButton.Click += OnFuMoradiSaveButton_Click;
             ResumeLayout(false);
         }
     }
