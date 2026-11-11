@@ -164,6 +164,8 @@ namespace Trade.It
             public double RangeErrorSum { get; set; }
             public int DirectionCorrect { get; set; }
             public int DirectionSamples { get; set; }
+            public double[] ComponentAbsoluteErrorSums { get; } = new double[4];
+            public int[] ComponentValueCounts { get; } = new int[4];
             public double[] HorizonAbsoluteErrorSums { get; } = new double[5];
             public int[] HorizonValueCounts { get; } = new int[5];
 
@@ -179,12 +181,16 @@ namespace Trade.It
             public double DirectionalAccuracyPercent =>
                 DirectionSamples > 0 ? 100.0 * DirectionCorrect / DirectionSamples : double.NaN;
 
-            // All terms are expressed in percentage points. Lower is better.
             public double CompositeScore =>
                 0.50 * OhlcMaePercent +
                 0.20 * OhlcRmsePercent +
                 0.20 * RangeMaePercent +
                 0.10 * (100.0 - DirectionalAccuracyPercent);
+
+            public double ComponentMae(int index) =>
+                ComponentValueCounts[index] > 0
+                    ? ComponentAbsoluteErrorSums[index] / ComponentValueCounts[index]
+                    : double.NaN;
         }
 
         private OnFuMoradiEvaluationMetrics EvaluateOnFuMoradiCandidate(
@@ -223,12 +229,15 @@ namespace Trade.It
                         (predicted.Close - actual.Close) / scale * 100.0
                     };
 
-                    foreach (var error in errors)
+                    for (var component = 0; component < errors.Length; component++)
                     {
-                        metrics.AbsoluteOhlcErrorSum += Math.Abs(error);
-                        metrics.SquaredOhlcErrorSum += error * error;
+                        var absoluteError = Math.Abs(errors[component]);
+                        metrics.AbsoluteOhlcErrorSum += absoluteError;
+                        metrics.SquaredOhlcErrorSum += errors[component] * errors[component];
                         metrics.OhlcValueCount++;
-                        metrics.HorizonAbsoluteErrorSums[step - 1] += Math.Abs(error);
+                        metrics.ComponentAbsoluteErrorSums[component] += absoluteError;
+                        metrics.ComponentValueCounts[component]++;
+                        metrics.HorizonAbsoluteErrorSums[step - 1] += absoluteError;
                         metrics.HorizonValueCounts[step - 1]++;
                     }
 
@@ -280,7 +289,13 @@ namespace Trade.It
 
             var splitIndex = (int)Math.Floor(validationAnchors.Length * 0.80);
             var trainingAnchors = validationAnchors.Take(splitIndex - evaluationHorizon).ToArray();
-            var holdoutAnchors = validationAnchors.Skip(splitIndex).ToArray();
+
+            // Use non-overlapping five-candle windows for the final holdout so
+            // each real target candle is counted once in the independent report.
+            var holdoutAnchors = validationAnchors
+                .Skip(splitIndex)
+                .Where((_, index) => index % evaluationHorizon == 0)
+                .ToArray();
 
             double[] alphas = { 0.30, 0.55, 0.80 };
             double[] betas = { 0.10, 0.25, 0.40 };
@@ -365,20 +380,110 @@ namespace Trade.It
                             ? bestMetrics.HorizonAbsoluteErrorSums[i] / bestMetrics.HorizonValueCounts[i]
                             : double.NaN):F3}%"));
 
+            var sensitivityReport = BuildOnFuMoradiSensitivityReport(
+                best, trainingAnchors, evaluationHorizon);
+
             var report =
                 $"ارزیابی Walk-Forward با افق {evaluationHorizon} کندل" + Environment.NewLine +
-                $"تعداد کندل‌های آزمون مستقل: {bestMetrics.Samples:N0}" + Environment.NewLine +
-                $"MAE چهار مؤلفه OHLC: {bestMetrics.OhlcMaePercent:F3}%" + Environment.NewLine +
-                $"RMSE چهار مؤلفه OHLC: {bestMetrics.OhlcRmsePercent:F3}%" + Environment.NewLine +
+                $"تعداد پنجره‌های آزمون مستقل: {bestMetrics.Samples / evaluationHorizon:N0}" + Environment.NewLine +
+                $"تعداد کندل‌های هدف یکتا: {bestMetrics.Samples:N0}" + Environment.NewLine +
+                $"MAE کل OHLC: {bestMetrics.OhlcMaePercent:F3}%" + Environment.NewLine +
+                $"RMSE کل OHLC: {bestMetrics.OhlcRmsePercent:F3}%" + Environment.NewLine +
+                $"MAE بازشدن (Open): {bestMetrics.ComponentMae(0):F3}%" + Environment.NewLine +
+                $"MAE بیشترین (High): {bestMetrics.ComponentMae(1):F3}%" + Environment.NewLine +
+                $"MAE کمترین (Low): {bestMetrics.ComponentMae(2):F3}%" + Environment.NewLine +
+                $"MAE پایانی (Close): {bestMetrics.ComponentMae(3):F3}%" + Environment.NewLine +
                 $"خطای MAE دامنه High-Low: {bestMetrics.RangeMaePercent:F3}%" + Environment.NewLine +
                 $"درستی جهت کندل: {bestMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
                 "خطای MAE به تفکیک افق:" + Environment.NewLine + horizonReport +
                 Environment.NewLine + Environment.NewLine +
                 $"پارامترهای منتخب: روند={best.Alpha:F2}، شتاب={best.Beta:F2}، " +
-                $"بازگشت={best.Gamma:F2}، محدودیت نوسان={best.Delta:F2}، سایه={best.Epsilon:F2}";
+                $"بازگشت={best.Gamma:F2}، محدودیت نوسان={best.Delta:F2}، سایه={best.Epsilon:F2}" +
+                Environment.NewLine + Environment.NewLine +
+                "بررسی حساسیت (روی داده بهینه‌سازی، نه آزمون مستقل):" + Environment.NewLine +
+                sensitivityReport;
 
             MessageBox.Show(FindForm(), report, "گزارش ارزیابی OnFuMoradi",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private string BuildOnFuMoradiSensitivityReport(
+            (double Alpha, double Beta, double Gamma, double Delta, double Epsilon, int Period) best,
+            int[] trainingAnchors,
+            int evaluationHorizon)
+        {
+            var baseline = new ChartIndicator
+            {
+                Type = ChartIndicatorType.OnFuMoradi,
+                Period = evaluationHorizon,
+                OnFuMoradiAlpha = best.Alpha,
+                OnFuMoradiBeta = best.Beta,
+                OnFuMoradiGamma = best.Gamma,
+                OnFuMoradiDelta = best.Delta,
+                OnFuMoradiEpsilon = best.Epsilon
+            };
+            var baselineScore = EvaluateOnFuMoradiCandidate(baseline, trainingAnchors).CompositeScore;
+            if (!double.IsFinite(baselineScore))
+                return "امکان محاسبه امتیاز مبنا وجود نداشت.";
+
+            var rows = new[]
+            {
+                ("وزن روند", 0, best.Alpha, 0.25, 0.0, 2.0),
+                ("وزن شتاب", 1, best.Beta, 0.15, 0.0, 2.0),
+                ("بازگشت به میانگین", 2, best.Gamma, 0.15, 0.0, 2.0),
+                ("محدودیت نوسان", 3, best.Delta, 0.15, 0.05, 2.0),
+                ("الگوی سایه", 4, best.Epsilon, 0.15, 0.0, 2.0)
+            };
+
+            var lines = new List<string>();
+            foreach (var row in rows)
+            {
+                var lowValue = Math.Max(row.Item5, row.Item3 - row.Item4);
+                var highValue = Math.Min(row.Item6, row.Item3 + row.Item4);
+                var lowCandidate = new ChartIndicator
+                {
+                    Type = ChartIndicatorType.OnFuMoradi,
+                    Period = evaluationHorizon,
+                    OnFuMoradiAlpha = best.Alpha,
+                    OnFuMoradiBeta = best.Beta,
+                    OnFuMoradiGamma = best.Gamma,
+                    OnFuMoradiDelta = best.Delta,
+                    OnFuMoradiEpsilon = best.Epsilon
+                };
+                SetOnFuMoradiSensitivityParameter(lowCandidate, row.Item2, lowValue);
+                var highCandidate = new ChartIndicator
+                {
+                    Type = ChartIndicatorType.OnFuMoradi,
+                    Period = evaluationHorizon,
+                    OnFuMoradiAlpha = best.Alpha,
+                    OnFuMoradiBeta = best.Beta,
+                    OnFuMoradiGamma = best.Gamma,
+                    OnFuMoradiDelta = best.Delta,
+                    OnFuMoradiEpsilon = best.Epsilon
+                };
+                SetOnFuMoradiSensitivityParameter(highCandidate, row.Item2, highValue);
+
+                var lowScore = EvaluateOnFuMoradiCandidate(lowCandidate, trainingAnchors).CompositeScore;
+                var highScore = EvaluateOnFuMoradiCandidate(highCandidate, trainingAnchors).CompositeScore;
+                lines.Add($"{row.Item1}: مقدار کمتر {lowValue:F2} → {lowScore:F3}، مقدار بیشتر {highValue:F2} → {highScore:F3}");
+            }
+
+            lines.Add($"امتیاز مبنا: {baselineScore:F3} (کمتر بهتر است)");
+            lines.Add("تغییر هر بار فقط در یک پارامتر انجام شده؛ این آزمون اثر مستقل محلی را نشان می‌دهد، نه تعامل پارامترها.");
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        private static void SetOnFuMoradiSensitivityParameter(
+            ChartIndicator indicator, int parameterIndex, double value)
+        {
+            switch (parameterIndex)
+            {
+                case 0: indicator.OnFuMoradiAlpha = value; break;
+                case 1: indicator.OnFuMoradiBeta = value; break;
+                case 2: indicator.OnFuMoradiGamma = value; break;
+                case 3: indicator.OnFuMoradiDelta = value; break;
+                case 4: indicator.OnFuMoradiEpsilon = value; break;
+            }
         }
 
         internal bool TryApplyOnFuMoradiManualSettings(
