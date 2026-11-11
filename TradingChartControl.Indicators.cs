@@ -846,6 +846,51 @@ namespace Trade.It
             var initialOffset = -plot.Width * 0.25;
             const double tolerance = 8.0;
 
+            // Forecast candles are rendered beyond the last real candle. Hit-test
+            // their actual wick/body geometry so the OnFuMoradi context menu can
+            // open its dedicated settings dialog.
+            var onFuMoradiIndex = indicators.FindIndex(x => x.Type == ChartIndicatorType.OnFuMoradi);
+            if (onFuMoradiIndex >= 0)
+            {
+                EnsureOnFuMoradiForecast();
+                var forecastAnchor = ResolveOnFuMoradiAnchor();
+                if (onFuMoradiForecast.Count > 0 &&
+                    forecastAnchor >= firstIndex &&
+                    forecastAnchor < firstIndex + displayedCount)
+                {
+                    var normalFutureWidth = step * onFuMoradiForecast.Count;
+                    var availableFutureWidth = plot.Width * 0.235;
+                    var forecastStep = normalFutureWidth > availableFutureWidth && normalFutureWidth > 0
+                        ? step * availableFutureWidth / normalFutureWidth
+                        : step;
+                    var candleWidth = Math.Max(1.5f, (float)(Math.Min(step, forecastStep) * 0.65));
+                    var forecastStartX = plot.Left + step * (forecastAnchor - firstIndex + 1.5) +
+                                         initialOffset + horizontalPanOffset;
+
+                    for (var i = 0; i < onFuMoradiForecast.Count; i++)
+                    {
+                        var item = onFuMoradiForecast[i];
+                        var x = forecastStartX + forecastStep * i;
+                        var highY = PriceToScreen(item.High, plot, min, max);
+                        var lowY = PriceToScreen(item.Low, plot, min, max);
+                        var openY = PriceToScreen(item.Open, plot, min, max);
+                        var closeY = PriceToScreen(item.Close, plot, min, max);
+                        var bodyTop = Math.Min(openY, closeY);
+                        var bodyBottom = Math.Max(openY, closeY);
+                        var nearCandleX = Math.Abs(location.X - x) <= candleWidth / 2.0 + tolerance;
+                        var nearCandleY = location.Y >= Math.Min(highY, lowY) - tolerance &&
+                                          location.Y <= Math.Max(highY, lowY) + tolerance;
+                        var nearBody = location.Y >= bodyTop - tolerance &&
+                                       location.Y <= Math.Max(bodyTop + 1.0, bodyBottom) + tolerance;
+                        if (nearCandleX && (nearCandleY || nearBody))
+                        {
+                            selectedIndicatorIndex = onFuMoradiIndex;
+                            return selectedIndicatorIndex;
+                        }
+                    }
+                }
+            }
+
             var bestIndex = -1;
             var bestDistance = double.MaxValue;
 
