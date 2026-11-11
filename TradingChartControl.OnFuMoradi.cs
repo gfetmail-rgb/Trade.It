@@ -168,6 +168,8 @@ namespace Trade.It
             public int[] ComponentValueCounts { get; } = new int[4];
             public double[] HorizonAbsoluteErrorSums { get; } = new double[5];
             public int[] HorizonValueCounts { get; } = new int[5];
+            public double[,] ComponentHorizonAbsoluteErrorSums { get; } = new double[5, 4];
+            public int[,] ComponentHorizonValueCounts { get; } = new int[5, 4];
 
             public double OhlcMaePercent =>
                 OhlcValueCount > 0 ? AbsoluteOhlcErrorSum / OhlcValueCount : double.NaN;
@@ -190,6 +192,12 @@ namespace Trade.It
             public double ComponentMae(int index) =>
                 ComponentValueCounts[index] > 0
                     ? ComponentAbsoluteErrorSums[index] / ComponentValueCounts[index]
+                    : double.NaN;
+
+            public double ComponentHorizonMae(int horizonIndex, int componentIndex) =>
+                ComponentHorizonValueCounts[horizonIndex, componentIndex] > 0
+                    ? ComponentHorizonAbsoluteErrorSums[horizonIndex, componentIndex] /
+                      ComponentHorizonValueCounts[horizonIndex, componentIndex]
                     : double.NaN;
         }
 
@@ -247,6 +255,8 @@ namespace Trade.It
                         metrics.ComponentValueCounts[component]++;
                         metrics.HorizonAbsoluteErrorSums[step - 1] += absoluteError;
                         metrics.HorizonValueCounts[step - 1]++;
+                        metrics.ComponentHorizonAbsoluteErrorSums[step - 1, component] += absoluteError;
+                        metrics.ComponentHorizonValueCounts[step - 1, component]++;
                     }
 
                     var predictedRange = Math.Max(0, predicted.High - predicted.Low);
@@ -509,6 +519,22 @@ namespace Trade.It
             var sensitivityReport = BuildOnFuMoradiSensitivityReport(
                 best, trainingAnchors, evaluationHorizon);
 
+            var componentNames = new[] { "Open", "High", "Low", "Close" };
+            string BuildDetailedBreakdown(OnFuMoradiEvaluationMetrics metrics)
+            {
+                return string.Join(Environment.NewLine,
+                    Enumerable.Range(0, evaluationHorizon).Select(step =>
+                        $"گام {step + 1}: " + string.Join("، ",
+                            Enumerable.Range(0, componentNames.Length).Select(component =>
+                                $"{componentNames[component]}={metrics.ComponentHorizonMae(step, component):F3}%"))));
+            }
+
+            var detailedBreakdown =
+                "تفکیک خطا برحسب گام و مؤلفه OHLC:" + Environment.NewLine +
+                "OnFuMoradi:" + Environment.NewLine + BuildDetailedBreakdown(bestMetrics) +
+                Environment.NewLine + "تکرار آخرین کندل:" + Environment.NewLine + BuildDetailedBreakdown(persistenceMetrics) +
+                Environment.NewLine + "تداوم آماری:" + Environment.NewLine + BuildDetailedBreakdown(statisticalMetrics);
+
             var report =
                 $"ارزیابی Walk-Forward با افق {evaluationHorizon} کندل" + Environment.NewLine +
                 $"تعداد پنجره‌های آزمون مستقل: {holdoutAnchors.Length:N0}" + Environment.NewLine +
@@ -525,7 +551,8 @@ namespace Trade.It
                 $"تکرار آخرین کندل: MAE={persistenceMetrics.OhlcMaePercent:F3}%، RMSE={persistenceMetrics.OhlcRmsePercent:F3}%، جهت={persistenceMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
                 $"تداوم آماری پنج کندل اخیر: MAE={statisticalMetrics.OhlcMaePercent:F3}%، RMSE={statisticalMetrics.OhlcRmsePercent:F3}%، جهت={statisticalMetrics.DirectionalAccuracyPercent:F1}%" + Environment.NewLine +
                 $"امتیاز ترکیبی کمتر بهتر است | OnFuMoradi={bestMetrics.CompositeScore:F3}، تکرار آخرین کندل={persistenceMetrics.CompositeScore:F3}، تداوم آماری={statisticalMetrics.CompositeScore:F3}" + Environment.NewLine +
-                "خطای MAE به تفکیک افق:" + Environment.NewLine + horizonReport +
+                "خطای MAE کلی به تفکیک افق:" + Environment.NewLine + horizonReport +
+                Environment.NewLine + detailedBreakdown +
                 Environment.NewLine + Environment.NewLine +
                 $"پارامترهای منتخب: روند={best.Alpha:F2}، شتاب={best.Beta:F2}، " +
                 $"بازگشت={best.Gamma:F2}، محدودیت نوسان={best.Delta:F2}، سایه={best.Epsilon:F2}" +
