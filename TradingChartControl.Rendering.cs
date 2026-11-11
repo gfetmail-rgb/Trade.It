@@ -12,14 +12,21 @@ namespace Trade.It
             SyncPriceIndicatorButtons();
             e.Graphics.Clear(BackColor);
             base.OnPaint(e);
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] OnPaint entered: Points={points.Count}, Active={IsOnFuMoradiActive}, Size={Width}x{Height}");
             if (points.Count == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("[OnFuMoradi] OnPaint skipped: no points");
                 return;
+            }
 
             var plot = GetPlotRectangle();
             var naturalEndIndex = Math.Min(points.Count, firstIndex + Math.Max(1, visibleCount));
             var visible = points.Skip(firstIndex).Take(Math.Max(1, naturalEndIndex - firstIndex)).ToList();
             if (visible.Count == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("[OnFuMoradi] OnPaint skipped: visible list is empty");
                 return;
+            }
 
             // Test Mode فقط تعداد کندل‌های نمایش‌داده‌شده را محدود می‌کند؛
             // تمام تبدیل‌های مختصات و مقیاس‌بندی دقیقاً همان حالت عادی است.
@@ -34,7 +41,9 @@ namespace Trade.It
                 ? visible
                 : visible.Take(displayedCount).ToList();
             GetVerticalRange(scaledVisible, out var min, out var max);
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] Before forecast expansion: FirstIndex={firstIndex}, VisibleCount={visibleCount}, DisplayedCount={displayedCount}, Min={min}, Max={max}");
             ExpandPriceRangeForOnFuMoradi(ref min, ref max);
+            System.Diagnostics.Debug.WriteLine($"[OnFuMoradi] After forecast expansion: ForecastCandles={onFuMoradiForecast.Count}, Min={min}, Max={max}");
 
             using var gridPen = new Pen(LineAppearanceSettings.GridColor, LineAppearanceSettings.GridLineWidth) { DashStyle = LineAppearanceSettings.GridLineStyle };
             using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1);
