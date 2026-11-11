@@ -17,6 +17,7 @@ namespace Trade.It
         VolumeWeightedAveragePrice,
         DonchianChannel,
         AwesomeOscillator
+    }
 
     internal sealed class ChartIndicator
     {
