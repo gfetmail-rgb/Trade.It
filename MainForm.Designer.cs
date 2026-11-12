@@ -2232,7 +2232,7 @@
             distanceHighMaxLabel3.Name = "distanceHighMaxLabel3";
             distanceHighMaxLabel3.Size = new Size(155, 24);
             distanceHighMaxLabel3.TabIndex = 0;
-            distanceHighMaxLabel3.Text = "حداکثر فاصله از سقف ٪";
+            distanceHighMaxLabel3.Text = "حداقل فاصله از سقف ٪";
             distanceHighMaxLabel3.TextAlign = ContentAlignment.MiddleRight;
             distanceLowPeriodLabel3.Location = new Point(12, 90);
             distanceLowPeriodLabel3.Name = "distanceLowPeriodLabel3";
@@ -2244,7 +2244,7 @@
             distanceLowMinLabel3.Name = "distanceLowMinLabel3";
             distanceLowMinLabel3.Size = new Size(155, 24);
             distanceLowMinLabel3.TabIndex = 0;
-            distanceLowMinLabel3.Text = "حداقل فاصله از کف ٪";
+            distanceLowMinLabel3.Text = "حداکثر فاصله از کف ٪";
             distanceLowMinLabel3.TextAlign = ContentAlignment.MiddleRight;
             distanceHighPeriod3.Enabled = false;
             distanceHighPeriod3.Location = new Point(12, 58);
