@@ -50,9 +50,9 @@ namespace Trade.It
             if (distanceFilterEnabled3.Checked)
             {
                 ReadPositiveInt(distanceHighPeriod3, "فاصله از سقف، دوره", out _);
-                ReadNonNegative(distanceHighMax3, "حداکثر فاصله از سقف", out _);
+                ReadNonNegative(distanceHighMax3, "حداقل فاصله از سقف", out _);
                 ReadPositiveInt(distanceLowPeriod3, "فاصله از کف، دوره", out _);
-                ReadNonNegative(distanceLowMin3, "حداقل فاصله از کف", out _);
+                ReadNonNegative(distanceLowMin3, "حداکثر فاصله از کف", out _);
             }
 
             if (volumePriceFilterEnabled3.Checked)
@@ -135,8 +135,10 @@ namespace Trade.It
 
                     var distanceFromHigh = Math.Max(0, (recentHigh - close) / close * 100.0);
                     var distanceFromLow = Math.Max(0, (close - recentLow) / close * 100.0);
-                    if (distanceFromHigh > ReadDouble(distanceHighMax3) ||
-                        distanceFromLow < ReadDouble(distanceLowMin3))
+                    // برای ورود، نماد باید به‌اندازه کافی از سقف فاصله داشته باشد
+                    // و در عین حال بیش از حد از کف دور نشده باشد.
+                    if (distanceFromHigh < ReadDouble(distanceHighMax3) ||
+                        distanceFromLow > ReadDouble(distanceLowMin3))
                         return false;
                 }
 
