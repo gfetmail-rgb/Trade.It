@@ -425,7 +425,11 @@ namespace Trade.It
                 VerticalPanOffset = verticalPanOffset,
                 HorizontalPanOffset = horizontalPanOffset,
                 ChartPanCompensation = chartPanCompensation,
-                VolumePanelRatio = volumePanelRatio
+                VolumePanelRatio = volumePanelRatio,
+                VolumePanelVisible = volumePanelVisible,
+                Indicators = indicators.Select(indicator => indicator.Clone()).ToList(),
+                OnFuMoradiAutoMode = onFuMoradiAutoMode,
+                OnFuMoradiHasOptimizedParameters = onFuMoradiHasOptimizedParameters
             };
 
             foreach (var drawing in drawings)
@@ -699,6 +703,31 @@ namespace Trade.It
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
                     Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
                 });
+            }
+
+            // Restore the exact saved indicator layout when the document contains it.
+            // A null list identifies legacy analysis files created before indicators were persisted.
+            volumePanelVisible = document.VolumePanelVisible;
+            if (document.Indicators != null)
+            {
+                indicators.Clear();
+                foreach (var savedIndicator in document.Indicators)
+                {
+                    if (savedIndicator != null)
+                        indicators.Add(savedIndicator.Clone());
+                }
+
+                selectedIndicatorIndex = -1;
+                var hasOnFuMoradi = indicators.Any(indicator => indicator.Type == ChartIndicatorType.OnFuMoradi);
+                onFuMoradiAutoMode = hasOnFuMoradi && document.OnFuMoradiAutoMode;
+                onFuMoradiHasOptimizedParameters = hasOnFuMoradi && document.OnFuMoradiHasOptimizedParameters;
+                onFuMoradiAnchorIndex = -1;
+                onFuMoradiCachedAnchorIndex = -1;
+                onFuMoradiCachedIndicatorIndex = -1;
+                onFuMoradiForecast.Clear();
+
+                SyncPriceIndicatorButtons();
+                SyncOnFuMoradiButtons();
             }
 
             if (restoreView)
