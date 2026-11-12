@@ -22,6 +22,8 @@ namespace Trade.It
 
     internal sealed class ChartIndicator
     {
+        public ChartIndicator Clone() => (ChartIndicator)MemberwiseClone();
+
         public ChartIndicatorType Type { get; init; }
         public int Period { get; set; }
         public bool IsVisible { get; set; } = true;
@@ -150,6 +152,37 @@ namespace Trade.It
         private double[]? vwapCache;
 
         public IReadOnlyList<ChartIndicator> Indicators => indicators;
+
+        internal void CopyIndicatorConfigurationFrom(TradingChartControl source)
+        {
+            if (source == null || ReferenceEquals(source, this))
+                return;
+
+            indicators.Clear();
+            foreach (var indicator in source.indicators)
+                indicators.Add(indicator.Clone());
+
+            selectedIndicatorIndex = -1;
+
+            // Volume is a chart panel rather than an item in the indicator list.
+            // Copy its display settings as part of the new chart's indicator layout.
+            volumePanelVisible = source.volumePanelVisible;
+            volumePanelRatio = source.volumePanelRatio;
+
+            // Copy the OnFuMoradi mode, but not its candle anchor or calculated forecast.
+            onFuMoradiAutoMode = indicators.Any(x => x.Type == ChartIndicatorType.OnFuMoradi) &&
+                                 source.onFuMoradiAutoMode;
+            onFuMoradiHasOptimizedParameters = indicators.Any(x => x.Type == ChartIndicatorType.OnFuMoradi) &&
+                                               source.onFuMoradiHasOptimizedParameters;
+            onFuMoradiAnchorIndex = -1;
+            onFuMoradiCachedAnchorIndex = -1;
+            onFuMoradiCachedIndicatorIndex = -1;
+            onFuMoradiForecast.Clear();
+
+            SyncPriceIndicatorButtons();
+            SyncOnFuMoradiButtons();
+            Invalidate();
+        }
 
         private bool IsPriceOverlayIndicator(ChartIndicator indicator) =>
             indicator.Type == ChartIndicatorType.MovingAverage ||
