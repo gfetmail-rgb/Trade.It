@@ -117,11 +117,7 @@ namespace Trade.It
             marketClearButton.Click += (_, _) =>
             {
                 ClearDisplayedChartIfAny();
-                // با تغییر سبد، فیلتر بازار غیرفعال می‌شود؛ اما انتخاب‌های درخت بازار حفظ می‌شوند.
-            marketFiltersEnabled = false;
-            marketApplyButton.Text = "تایید";
-            SetMarketFiltersLocked(false);
-            ClearAppliedMarketFiltersOnly();
+                ClearMarketSelections();
 
                 if (!string.IsNullOrWhiteSpace(displayedPortfolioName) &&
                     loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
@@ -798,7 +794,11 @@ namespace Trade.It
             filtersApplied = false;
             filters2Applied = false;
             filters3Applied = false;
-            ClearMarketSelections();
+            // با تغییر سبد، فیلتر بازار غیرفعال می‌شود؛ اما انتخاب‌های درخت بازار حفظ می‌شوند.
+            marketFiltersEnabled = false;
+            marketApplyButton.Text = "تایید";
+            SetMarketFiltersLocked(false);
+            ClearAppliedMarketFiltersOnly();
 
             if (portfolioComboBox.SelectedItem is not string name ||
                 !loadedPortfolios.TryGetValue(name, out var definition))
