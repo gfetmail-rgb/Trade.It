@@ -789,7 +789,11 @@ namespace Trade.It
             if (internalPortfolioUpdate)
                 return;
 
-            // با تغییر سبد، فیلترهای بازار سبد قبلی باید کاملاً پاک شوند.
+            // با تغییر سبد، فقط وضعیت اعمال فیلترها خاموش می‌شود؛
+            // مقادیر و انتخاب‌های داخل کنترل‌های فیلتر حفظ می‌شوند.
+            filtersApplied = false;
+            filters2Applied = false;
+            filters3Applied = false;
             ClearMarketSelections();
 
             if (portfolioComboBox.SelectedItem is not string name ||
@@ -798,7 +802,9 @@ namespace Trade.It
                 stocksDataGridView.Rows.Clear();
                 displayedPortfolioName = null;
                 volumeColumn.Visible = false;
+                UpdateFilterControlAvailability();
                 UpdateSelectionControls();
+                UpdateFilterCounts();
                 return;
             }
 
@@ -810,7 +816,10 @@ namespace Trade.It
             try
             {
                 PopulateStocksGrid(definition);
-                if (!string.IsNullOrWhiteSpace(symbolSearchTextBox.Text) || filtersApplied || filters2Applied)
+                UpdateFilterControlAvailability();
+
+                // فیلترهای سه تب در سبد جدید خاموش‌اند؛ فقط جست‌وجوی مستقل نام نماد باقی می‌ماند.
+                if (!string.IsNullOrWhiteSpace(symbolSearchTextBox.Text))
                     ApplyTradingStatusFilter();
                 else
                     UpdateFilterCounts();
