@@ -269,8 +269,10 @@ namespace Trade.It
                 if (isNewTimeframeChart)
                 {
                     chart.SetData(points, symbol, timeFrame, dataIsOrdered: true);
-                    if (currentChart != null)
+                    if (ChartAppearanceSettings.InheritIndicators && currentChart != null)
                         chart.CopyIndicatorConfigurationFrom(currentChart);
+                    else
+                        chart.SetVolumePanelVisible(false);
                 }
 
                 // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
@@ -795,11 +797,15 @@ namespace Trade.It
                     if (savedAnalysis != null)
                         ApplyAnalysisDocument(chart, savedAnalysis);
 
-                    // A saved indicator layout always takes priority. Legacy files
-                    // without indicator data (or symbols with no saved analysis)
-                    // inherit the currently active chart's configuration.
-                    if (savedAnalysis?.Indicators == null && currentChart != null)
-                        chart.CopyIndicatorConfigurationFrom(currentChart);
+                    // A saved indicator layout always takes priority.
+                    // Inheritance applies only when no indicator layout was saved.
+                    if (savedAnalysis?.Indicators == null)
+                    {
+                        if (ChartAppearanceSettings.InheritIndicators && currentChart != null)
+                            chart.CopyIndicatorConfigurationFrom(currentChart);
+                        else
+                            chart.SetVolumePanelVisible(false);
+                    }
                 }
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
