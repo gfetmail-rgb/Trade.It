@@ -22,7 +22,6 @@ namespace Trade.It
 
         private bool chartDrawingToolsInitialized;
         private readonly System.Windows.Forms.Timer drawingStateTimer = new();
-        private readonly System.Windows.Forms.Timer analysisAutoSaveTimer = new();
 
         private void InitializeChartRuntime()
         {
@@ -45,9 +44,6 @@ namespace Trade.It
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
 
-            analysisAutoSaveTimer.Interval = 1000;
-            analysisAutoSaveTimer.Tick += AnalysisAutoSaveTimer_Tick;
-            analysisAutoSaveTimer.Start();
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
             SetToggleButtonState(crossButton, true);
@@ -131,17 +127,6 @@ namespace Trade.It
             var symbol = activeChart.ChartSymbol;
             if (string.IsNullOrWhiteSpace(symbol))
                 return;
-
-            // فقط رسم‌های مشترک ذخیره می‌شوند؛ وضعیت نمای تایم‌فریم نباید
-            // جای وضعیت چارت اصلی نماد را بگیرد.
-            try
-            {
-                SaveAnalysisForChart(activeChart);
-            }
-            catch
-            {
-                // خروج از حالت باید حتی در صورت خطای ذخیره تحلیل ممکن باشد.
-            }
 
             var timeframeCharts = chartControls
                 .Where(pair =>
@@ -262,19 +247,6 @@ namespace Trade.It
                     c.TestMode))
                 {
                     multiTimeframeTestMode = true;
-                }
-
-                if (currentChart != null &&
-                    string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
-                {
-                    try
-                    {
-                        SaveAnalysisForChart(currentChart);
-                    }
-                    catch
-                    {
-                        // ذخیره تحلیل نباید مانع تعویض تایم‌فریم شود.
-                    }
                 }
 
                 var points = LoadChartData(definition, symbol, new[] { file.Value.FilePath });
@@ -504,22 +476,6 @@ namespace Trade.It
                     "ذخیره تحلیل",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-            }
-        }
-
-        private void AnalysisAutoSaveTimer_Tick(object? sender, EventArgs e)
-        {
-            var chart = GetActiveChart();
-            if (chart == null || string.IsNullOrWhiteSpace(chart.ChartSymbol))
-                return;
-
-            try
-            {
-                SaveAnalysisForChart(chart);
-            }
-            catch
-            {
-                // ذخیره خودکار نباید مزاحم کاربر شود.
             }
         }
 
@@ -804,18 +760,6 @@ namespace Trade.It
         private void ShowSymbolChart(string symbol)
         {
             var currentChart = GetActiveChart();
-            if (currentChart != null && !string.Equals(currentChart.ChartSymbol, symbol, StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    SaveAnalysisForChart(currentChart);
-                }
-                catch
-                {
-                    // ذخیره خودکار نباید مانع باز شدن چارت جدید شود.
-                }
-            }
-
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition)) return;
             try
             {
@@ -851,9 +795,10 @@ namespace Trade.It
                     if (savedAnalysis != null)
                         ApplyAnalysisDocument(chart, savedAnalysis);
 
-                    // A new chart inherits the current chart's indicator configuration.
-                    // Existing charts are never synchronized or modified.
-                    if (currentChart != null)
+                    // A saved indicator layout always takes priority. Legacy files
+                    // without indicator data (or symbols with no saved analysis)
+                    // inherit the currently active chart's configuration.
+                    if (savedAnalysis?.Indicators == null && currentChart != null)
                         chart.CopyIndicatorConfigurationFrom(currentChart);
                 }
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
