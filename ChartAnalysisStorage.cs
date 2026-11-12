@@ -1,10 +1,12 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Drawing;
 
 namespace Trade.It
 {
     internal sealed class ChartAnalysisDocument
     {
-        public int Version { get; set; } = 1;
+        public int Version { get; set; } = 2;
         public string Symbol { get; set; } = string.Empty;
         public DateTime SavedAt { get; set; } = DateTime.Now;
         public string ChartType { get; set; } = nameof(TradingChartType.Candlestick);
@@ -19,6 +21,11 @@ namespace Trade.It
         public double HorizontalPanOffset { get; set; }
         public double ChartPanCompensation { get; set; }
         public double VolumePanelRatio { get; set; } = 0.22;
+        public bool VolumePanelVisible { get; set; } = true;
+        // null means a legacy file that predates indicator persistence; an empty list is an intentional empty layout.
+        public List<ChartIndicator>? Indicators { get; set; }
+        public bool OnFuMoradiAutoMode { get; set; }
+        public bool OnFuMoradiHasOptimizedParameters { get; set; }
         public List<ChartAnalysisDrawing> Drawings { get; set; } = new();
         public List<ChartAnalysisDrawing> AdvancedDrawings { get; set; } = new();
         public List<ChartAnalysisDrawing> ExtraDrawings { get; set; } = new();
@@ -39,8 +46,33 @@ namespace Trade.It
         public string? Text { get; set; }
     }
 
+    internal sealed class DrawingColorJsonConverter : JsonConverter<Color>
+    {
+        public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.Number)
+                throw new JsonException("Invalid color value.");
+
+            return Color.FromArgb(reader.GetInt32());
+        }
+
+        public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
+        {
+            writer.WriteNumberValue(value.ToArgb());
+        }
+    }
+
     internal static class ChartAnalysisStorage
     {
+        private static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+
+        private static JsonSerializerOptions CreateSerializerOptions()
+        {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            options.Converters.Add(new DrawingColorJsonConverter());
+            return options;
+        }
+
         private static readonly string FolderPath = Path.Combine(
             AppContext.BaseDirectory,
             "Analysis");
@@ -60,9 +92,7 @@ namespace Trade.It
 
             Directory.CreateDirectory(FolderPath);
 
-            var json = JsonSerializer.Serialize(
-                document,
-                new JsonSerializerOptions { WriteIndented = true });
+            var json = JsonSerializer.Serialize(document, SerializerOptions);
 
             File.WriteAllText(GetFilePath(document.Symbol), json);
         }
@@ -77,7 +107,7 @@ namespace Trade.It
                 return null;
 
             var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<ChartAnalysisDocument>(json);
+            return JsonSerializer.Deserialize<ChartAnalysisDocument>(json, SerializerOptions);
         }
     }
 }
