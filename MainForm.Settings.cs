@@ -32,7 +32,7 @@ namespace Trade.It
 
         private void SettingsMenuItem_Click(object? sender, EventArgs e)
         {
-            using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent, chartTopEmptyPercent);
+            using var form = new SettingsForm(chartDisplayMode, chartRightEmptyPercent, chartTopEmptyPercent, inheritIndicators: ChartAppearanceSettings.InheritIndicators);
             if (form.ShowDialog(this) == DialogResult.OK)
             {
                 chartDisplayMode = form.ChartDisplayMode;
