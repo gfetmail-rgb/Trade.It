@@ -295,7 +295,11 @@ namespace Trade.It
                 // هر تایم‌فریم یک View مستقل دارد. چارت موجود دوباره SetData نمی‌شود،
                 // تا زوم، پن و وضعیت تست خودش را از دست ندهد.
                 if (isNewTimeframeChart)
+                {
                     chart.SetData(points, symbol, timeFrame, dataIsOrdered: true);
+                    if (currentChart != null)
+                        chart.CopyIndicatorConfigurationFrom(currentChart);
+                }
 
                 // هنگام باز کردن تایم‌فریم تازه، وضعیت و زمان مرجع تست مشترک
                 // باید از فضای چندتایم‌فریمی به آن منتقل شود.
@@ -846,6 +850,11 @@ namespace Trade.It
                     var savedAnalysis = ChartAnalysisStorage.Load(symbol);
                     if (savedAnalysis != null)
                         ApplyAnalysisDocument(chart, savedAnalysis);
+
+                    // A new chart inherits the current chart's indicator configuration.
+                    // Existing charts are never synchronized or modified.
+                    if (currentChart != null)
+                        chart.CopyIndicatorConfigurationFrom(currentChart);
                 }
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
