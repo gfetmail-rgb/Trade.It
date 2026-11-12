@@ -12,6 +12,12 @@ namespace Trade.It
     {
         private readonly Dictionary<Button, string> drawingColorKeys = new();
 
+        public bool InheritIndicators
+        {
+            get => inheritIndicatorsCheckBox.Checked;
+            set => inheritIndicatorsCheckBox.Checked = value;
+        }
+
         public ChartDisplayMode ChartDisplayMode
         {
             get => separateTabsRadioButton.Checked ? ChartDisplayMode.SeparateTabs : ChartDisplayMode.SingleTab;
@@ -40,7 +46,7 @@ namespace Trade.It
             set => initialVisibleCandleCountNumeric.Value = Math.Clamp(value, 10, 5000);
         }
 
-        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0, int initialVisibleCandleCount = 200)
+        public SettingsForm(ChartDisplayMode currentMode, double chartRightEmptyPercent = 25.0, double chartTopEmptyPercent = 10.0, int initialVisibleCandleCount = 200, bool inheritIndicators = true)
         {
             InitializeComponent();
             RightToLeft = RightToLeft.Yes;
@@ -49,6 +55,7 @@ namespace Trade.It
             ChartRightEmptyPercent = chartRightEmptyPercent;
             ChartTopEmptyPercent = chartTopEmptyPercent;
             InitialVisibleCandleCount = initialVisibleCandleCount;
+            InheritIndicators = inheritIndicators;
             LoadColorButtons();
             InitializeLineSettingsControls();
             InitializeFibonacciLevelControls();
@@ -283,6 +290,7 @@ namespace Trade.It
             ChartAppearanceSettings.SetChartRightEmptyPercent(ChartRightEmptyPercent);
             ChartAppearanceSettings.SetChartTopEmptyPercent(ChartTopEmptyPercent);
             ChartAppearanceSettings.SetInitialVisibleCandleCount(InitialVisibleCandleCount);
+            ChartAppearanceSettings.SetInheritIndicators(InheritIndicators);
             var fibonacciRetracementMask = GetSelectedFibonacciLevelsMask(fibonacciRetracementCheckBoxes);
             var fibonacciExtensionMask = GetSelectedFibonacciLevelsMask(fibonacciExtensionCheckBoxes);
             if (fibonacciRetracementMask == 0 || fibonacciExtensionMask == 0)
