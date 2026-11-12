@@ -7,6 +7,7 @@ namespace Trade.It
         private System.Windows.Forms.GroupBox chartDisplayGroupBox;
         private System.Windows.Forms.RadioButton separateTabsRadioButton;
         private System.Windows.Forms.RadioButton singleTabRadioButton;
+        private System.Windows.Forms.CheckBox inheritIndicatorsCheckBox;
         private System.Windows.Forms.GroupBox chartMarginGroupBox;
         private System.Windows.Forms.Label chartRightEmptyPercentLabel;
         private System.Windows.Forms.TextBox chartRightEmptyPercentTextBox;
@@ -101,6 +102,7 @@ namespace Trade.It
             chartDisplayGroupBox = new GroupBox();
             separateTabsRadioButton = new RadioButton();
             singleTabRadioButton = new RadioButton();
+            inheritIndicatorsCheckBox = new CheckBox();
             chartMarginGroupBox = new GroupBox();
             initialVisibleCandleCountNumeric = new NumericUpDown();
             initialVisibleCandleCountLabel = new Label();
@@ -200,6 +202,7 @@ namespace Trade.It
             // 
             chartDisplayGroupBox.Controls.Add(separateTabsRadioButton);
             chartDisplayGroupBox.Controls.Add(singleTabRadioButton);
+            chartDisplayGroupBox.Controls.Add(inheritIndicatorsCheckBox);
             chartDisplayGroupBox.Location = new Point(16, 16);
             chartDisplayGroupBox.Name = "chartDisplayGroupBox";
             chartDisplayGroupBox.RightToLeft = RightToLeft.Yes;
@@ -228,6 +231,14 @@ namespace Trade.It
             singleTabRadioButton.TabIndex = 1;
             singleTabRadioButton.Text = "همه چارت‌ها در یک تب واحد";
             // 
+            inheritIndicatorsCheckBox.AutoSize = false;
+            inheritIndicatorsCheckBox.Location = new Point(12, 34);
+            inheritIndicatorsCheckBox.Name = "inheritIndicatorsCheckBox";
+            inheritIndicatorsCheckBox.RightToLeft = RightToLeft.Yes;
+            inheritIndicatorsCheckBox.Size = new Size(180, 29);
+            inheritIndicatorsCheckBox.TabIndex = 2;
+            inheritIndicatorsCheckBox.Text = "ارث‌بری اندیکاتورها";
+            inheritIndicatorsCheckBox.UseVisualStyleBackColor = true;
             // chartMarginGroupBox
             // 
             chartMarginGroupBox.Controls.Add(initialVisibleCandleCountNumeric);
