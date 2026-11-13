@@ -7,6 +7,7 @@ namespace Trade.It
 {
     public partial class MainForm
     {
+        private readonly System.Windows.Forms.Timer analysisSavedFeedbackTimer = new() { Interval = 500 };
         private readonly Dictionary<string, TradingChartControl> chartControls = new(StringComparer.OrdinalIgnoreCase);
         private bool chartRuntimeInitialized;
         private string? activeChartSymbol;
@@ -43,6 +44,13 @@ namespace Trade.It
             printChartButton.Click += PrintChartButton_Click;
             snapshotChartButton.Click += SnapshotChartButton_Click;
             saveAnalysisButton.Click += SaveAnalysisButton_Click;
+            analysisSavedFeedbackTimer.Tick += (_, _) =>
+            {
+                analysisSavedFeedbackTimer.Stop();
+                saveAnalysisButton.Text = "ذخیره تحلیل";
+                saveAnalysisButton.UseVisualStyleBackColor = true;
+                saveAnalysisButton.ForeColor = SystemColors.ControlText;
+            };
 
             if (chartTypeComboBox.SelectedIndex < 0) chartTypeComboBox.SelectedIndex = 0;
             SetToggleButtonState(gridButton, false);
@@ -463,12 +471,13 @@ namespace Trade.It
             {
                 SaveAnalysisForChart(chart);
 
-                MessageBox.Show(
-                    this,
-                    $"تحلیل نماد «{chart.ChartSymbol}» ذخیره شد.",
-                    "ذخیره تحلیل",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                // تأیید ذخیره بدون پنجرهٔ مزاحم؛ دکمه برای مدت کوتاهی سبز می‌شود.
+                analysisSavedFeedbackTimer.Stop();
+                saveAnalysisButton.UseVisualStyleBackColor = false;
+                saveAnalysisButton.BackColor = System.Drawing.Color.FromArgb(198, 239, 206);
+                saveAnalysisButton.ForeColor = System.Drawing.Color.FromArgb(0, 97, 0);
+                saveAnalysisButton.Text = "✓ ذخیره شد";
+                analysisSavedFeedbackTimer.Start();
             }
             catch (Exception ex)
             {
