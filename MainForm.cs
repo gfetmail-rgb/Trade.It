@@ -1289,6 +1289,8 @@ namespace Trade.It
 
         private void CaptureVisibleStockSelections()
         {
+            Debug.WriteLine($"[SelectionTrace] Capture BEGIN rows={stocksDataGridView.Rows.Count}, selectedSet={selectedStockSymbols.Count}, dirty={stocksDataGridView.IsCurrentCellDirty}");
+
             if (stocksDataGridView.IsCurrentCellDirty)
                 stocksDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
 
@@ -1309,10 +1311,24 @@ namespace Trade.It
                 if (isChecked)
                     selectedStockSymbols.Add(symbol);
             }
+
+            Debug.WriteLine($"[SelectionTrace] Capture END selectedSet={selectedStockSymbols.Count}");
         }
 
         private void StocksDataGridView_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex >= 0 && e.RowIndex < stocksDataGridView.Rows.Count &&
+                e.ColumnIndex == selectColumn.Index)
+            {
+                var traceSymbol = Convert.ToString(stocksDataGridView.Rows[e.RowIndex].Cells[symbolColumn.Index].Value)?.Trim();
+                var traceChecked = Convert.ToBoolean(stocksDataGridView.Rows[e.RowIndex].Cells[selectColumn.Index].Value ?? false);
+                Debug.WriteLine($"[SelectionTrace] CellValueChanged symbol={traceSymbol}, checked={traceChecked}, internal={internalPortfolioUpdate}");
+            }
+            else
+            {
+                Debug.WriteLine($"[SelectionTrace] CellValueChanged row={e.RowIndex}, col={e.ColumnIndex}, internal={internalPortfolioUpdate}");
+            }
+
             if (internalPortfolioUpdate || e.RowIndex < 0 || e.ColumnIndex != selectColumn.Index)
                 return;
 
@@ -1326,6 +1342,7 @@ namespace Trade.It
                     selectedStockSymbols.Remove(symbol);
             }
 
+            Debug.WriteLine($"[SelectionTrace] CellValueChanged applied symbol={symbol}, checked={isChecked}, selectedSet={selectedStockSymbols.Count}");
             UpdateSelectionControls();
         }
 
@@ -2097,6 +2114,7 @@ namespace Trade.It
 
         private void ApplyTradingStatusFilter()
         {
+            Debug.WriteLine($"[SelectionTrace] ApplyFilter BEGIN search='{symbolSearchTextBox.Text}', rows={stocksDataGridView.Rows.Count}, selectedSet={selectedStockSymbols.Count}");
             if (string.IsNullOrWhiteSpace(displayedPortfolioName) || !loadedPortfolios.TryGetValue(displayedPortfolioName, out var definition))
             {
                 UpdateFilterCounts();
@@ -2166,6 +2184,7 @@ namespace Trade.It
                 filtered = ApplyFilters3(filtered, definition, filterContext);
 
             var result = filtered.ToList();
+            Debug.WriteLine($"[SelectionTrace] ApplyFilter BEFORE rebuild resultRows={result.Count}, selectedSet={selectedStockSymbols.Count}, selectedInResult={result.Count(symbol => selectedStockSymbols.Contains(symbol))}");
             internalPortfolioUpdate = true;
             try
             {
@@ -2178,6 +2197,9 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
+            var checkedAfterRebuild = stocksDataGridView.Rows.Cast<DataGridViewRow>()
+                .Count(row => Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false));
+            Debug.WriteLine($"[SelectionTrace] ApplyFilter AFTER rebuild checkedRows={checkedAfterRebuild}, selectedSet={selectedStockSymbols.Count}");
             UpdateSelectionControls();
             UpdateFilterCounts();
             var loadVersion = ++latestTradeDateLoadVersion;
