@@ -1296,6 +1296,8 @@ namespace Trade.It
 
             stocksDataGridView.EndEdit();
 
+            // Only merge checked rows here. An unchecked value during a grid rebuild
+            // can be transient; explicit unchecking is handled by CellValueChanged.
             foreach (DataGridViewRow row in stocksDataGridView.Rows)
             {
                 if (row.IsNewRow)
@@ -1308,8 +1310,6 @@ namespace Trade.It
                 var isChecked = Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false);
                 if (isChecked)
                     selectedStockSymbols.Add(symbol);
-                else
-                    selectedStockSymbols.Remove(symbol);
             }
         }
 
