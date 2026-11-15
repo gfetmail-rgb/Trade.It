@@ -1865,8 +1865,9 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
+            // Selection indicators are derived from the rebuilt grid.
+            // Do not assign selectNoneCheckBox here: its CheckedChanged handler
+            // performs a real "deselect all" operation on the current rows.
             UpdateSelectionControls();
             UpdateFilterCounts();
             var loadVersion = ++latestTradeDateLoadVersion;
