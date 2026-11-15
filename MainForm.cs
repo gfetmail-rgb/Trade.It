@@ -1289,6 +1289,30 @@ namespace Trade.It
                 stocksDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
         }
 
+        private void CaptureVisibleStockSelections()
+        {
+            if (stocksDataGridView.IsCurrentCellDirty)
+                stocksDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+            stocksDataGridView.EndEdit();
+
+            foreach (DataGridViewRow row in stocksDataGridView.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                var symbol = Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim();
+                if (string.IsNullOrWhiteSpace(symbol))
+                    continue;
+
+                var isChecked = Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false);
+                if (isChecked)
+                    selectedStockSymbols.Add(symbol);
+                else
+                    selectedStockSymbols.Remove(symbol);
+            }
+        }
+
         private void StocksDataGridView_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
         {
             if (internalPortfolioUpdate || e.RowIndex < 0 || e.ColumnIndex != selectColumn.Index)
@@ -2067,6 +2091,10 @@ namespace Trade.It
                 UpdateFilterCounts();
                 return;
             }
+
+            // Commit any in-progress checkbox edit before rebuilding the grid.
+            // Then synchronize the visible rows into the persistent selection set.
+            CaptureVisibleStockSelections();
 
             var symbols = GetMarketFilteredSymbols(definition)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
