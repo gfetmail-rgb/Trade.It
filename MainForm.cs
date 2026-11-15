@@ -964,7 +964,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < symbols.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, false, null);
+                    stocksDataGridView.Rows.Add(i + 1, symbols[i], string.Empty, selectedStockSymbols.Contains(symbols[i]), null);
             }
             finally
             {
