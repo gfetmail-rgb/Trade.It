@@ -755,6 +755,7 @@ namespace Trade.It
                 loadedPortfolios.Clear();
                 portfolioComboBox.Items.Clear();
                 stocksDataGridView.Rows.Clear();
+                selectedStockSymbols.Clear();
                 displayedPortfolioName = null;
 
                 var folder = Path.Combine(AppContext.BaseDirectory, "Portfolios");
@@ -807,6 +808,7 @@ namespace Trade.It
                 !loadedPortfolios.TryGetValue(name, out var definition))
             {
                 stocksDataGridView.Rows.Clear();
+                selectedStockSymbols.Clear();
                 displayedPortfolioName = null;
                 volumeColumn.Visible = false;
                 UpdateFilterControlAvailability();
@@ -969,8 +971,6 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = true;
             UpdateSelectionControls();
             _ = LoadLatestTradeDatesAsync(definition, symbols, loadVersion);
             _ = LoadLatestVolumesAsync(definition, symbols, loadVersion);
@@ -1848,15 +1848,13 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, null);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, selectedStockSymbols.Contains(result[i]), null);
             }
             finally
             {
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
             var loadVersion = ++latestTradeDateLoadVersion;
@@ -2153,8 +2151,6 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
             var loadVersion = ++latestTradeDateLoadVersion;
@@ -2890,11 +2886,9 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
         }
@@ -3151,10 +3145,10 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
-            selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
+            UpdateSelectionControls();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
