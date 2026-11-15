@@ -969,8 +969,6 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = true;
             UpdateSelectionControls();
             _ = LoadLatestTradeDatesAsync(definition, symbols, loadVersion);
             _ = LoadLatestVolumesAsync(definition, symbols, loadVersion);
@@ -1496,16 +1494,28 @@ namespace Trade.It
 
         private void UpdateSelectionControls()
         {
-            if (stocksDataGridView.Rows.Count == 0)
+            // These checkboxes display the current grid state; changing them here
+            // must never execute the user commands that select/deselect all rows.
+            var previousUpdateState = internalPortfolioUpdate;
+            internalPortfolioUpdate = true;
+            try
             {
-                selectAllCheckBox.Checked = false;
-                selectNoneCheckBox.Checked = false;
-                return;
-            }
+                if (stocksDataGridView.Rows.Count == 0)
+                {
+                    selectAllCheckBox.Checked = false;
+                    selectNoneCheckBox.Checked = false;
+                    return;
+                }
 
-            var selected = stocksDataGridView.Rows.Cast<DataGridViewRow>().Count(row => Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false));
-            selectAllCheckBox.Checked = selected == stocksDataGridView.Rows.Count;
-            selectNoneCheckBox.Checked = selected == 0;
+                var selected = stocksDataGridView.Rows.Cast<DataGridViewRow>()
+                    .Count(row => Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false));
+                selectAllCheckBox.Checked = selected == stocksDataGridView.Rows.Count;
+                selectNoneCheckBox.Checked = selected == 0;
+            }
+            finally
+            {
+                internalPortfolioUpdate = previousUpdateState;
+            }
         }
 
         private static string ToPersianDigits(string value)
@@ -2168,8 +2178,6 @@ namespace Trade.It
                 internalPortfolioUpdate = false;
             }
 
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
             var loadVersion = ++latestTradeDateLoadVersion;
@@ -2908,8 +2916,6 @@ namespace Trade.It
                 for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
-            selectAllCheckBox.Checked = false;
-            selectNoneCheckBox.Checked = result.Count > 0;
             UpdateSelectionControls();
             UpdateFilterCounts();
         }
@@ -3169,7 +3175,7 @@ namespace Trade.It
                 for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
-            selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
+            UpdateSelectionControls();
             var loadVersion = ++latestTradeDateLoadVersion;
             _ = LoadLatestTradeDatesAsync(definition, result, loadVersion);
             _ = LoadLatestVolumesAsync(definition, result, loadVersion);
