@@ -47,6 +47,8 @@ namespace Trade.It
         }
 
         private readonly Dictionary<string, PortfolioDefinition> loadedPortfolios = new(StringComparer.OrdinalIgnoreCase);
+        // انتخاب نمادها مستقل از ردیف‌های قابل‌مشاهده در جست‌وجو نگهداری می‌شود.
+        private readonly HashSet<string> selectedStockSymbols = new(StringComparer.OrdinalIgnoreCase);
         private bool internalPortfolioUpdate;
         private string? displayedPortfolioName;
         private bool tradingStatusFilterInitialized;
@@ -949,6 +951,8 @@ namespace Trade.It
 
         private void PopulateStocksGrid(PortfolioDefinition definition)
         {
+            // بارگذاری مجدد سبد، انتخاب‌های قبلی را پاک می‌کند.
+            selectedStockSymbols.Clear();
             volumeColumn.Visible = HasVolumeColumn(definition);
             var symbols = GetMarketFilteredSymbols(definition);
             var loadVersion = ++latestTradeDateLoadVersion;
@@ -1290,6 +1294,16 @@ namespace Trade.It
             if (internalPortfolioUpdate || e.RowIndex < 0 || e.ColumnIndex != selectColumn.Index)
                 return;
 
+            var symbol = Convert.ToString(stocksDataGridView.Rows[e.RowIndex].Cells[symbolColumn.Index].Value)?.Trim();
+            var isChecked = Convert.ToBoolean(stocksDataGridView.Rows[e.RowIndex].Cells[selectColumn.Index].Value ?? false);
+            if (!string.IsNullOrWhiteSpace(symbol))
+            {
+                if (isChecked)
+                    selectedStockSymbols.Add(symbol);
+                else
+                    selectedStockSymbols.Remove(symbol);
+            }
+
             UpdateSelectionControls();
         }
 
@@ -1302,7 +1316,12 @@ namespace Trade.It
             try
             {
                 foreach (DataGridViewRow row in stocksDataGridView.Rows)
+                {
                     row.Cells[selectColumn.Index].Value = true;
+                    var symbol = Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim();
+                    if (!string.IsNullOrWhiteSpace(symbol))
+                        selectedStockSymbols.Add(symbol);
+                }
                 selectNoneCheckBox.Checked = false;
             }
             finally
@@ -1320,7 +1339,12 @@ namespace Trade.It
             try
             {
                 foreach (DataGridViewRow row in stocksDataGridView.Rows)
+                {
                     row.Cells[selectColumn.Index].Value = false;
+                    var symbol = Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim();
+                    if (!string.IsNullOrWhiteSpace(symbol))
+                        selectedStockSymbols.Remove(symbol);
+                }
                 selectAllCheckBox.Checked = false;
             }
             finally
@@ -1337,11 +1361,8 @@ namespace Trade.It
                 return;
             }
 
-            var selectedSymbols = stocksDataGridView.Rows.Cast<DataGridViewRow>()
-                .Where(row => !row.IsNewRow && Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false))
-                .Select(row => Convert.ToString(row.Cells[symbolColumn.Index].Value) ?? string.Empty)
+            var selectedSymbols = selectedStockSymbols
                 .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             if (selectedSymbols.Count == 0)
@@ -1398,11 +1419,8 @@ namespace Trade.It
                 return;
             }
 
-            var selectedSymbols = stocksDataGridView.Rows.Cast<DataGridViewRow>()
-                .Where(row => !row.IsNewRow && Convert.ToBoolean(row.Cells[selectColumn.Index].Value ?? false))
-                .Select(row => Convert.ToString(row.Cells[symbolColumn.Index].Value) ?? string.Empty)
+            var selectedSymbols = selectedStockSymbols
                 .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             if (selectedSymbols.Count == 0)
@@ -1816,7 +1834,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, null);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, selectedStockSymbols.Contains(result[i]), null);
             }
             finally
             {
@@ -2114,7 +2132,7 @@ namespace Trade.It
             {
                 stocksDataGridView.Rows.Clear();
                 for (var i = 0; i < result.Count; i++)
-                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, false, null);
+                    stocksDataGridView.Rows.Add(i + 1, result[i], string.Empty, selectedStockSymbols.Contains(result[i]), null);
             }
             finally
             {
@@ -2858,7 +2876,7 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false;
@@ -3119,7 +3137,7 @@ namespace Trade.It
             try
             {
                 stocksDataGridView.Rows.Clear();
-                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", false, null);
+                for (var i = 0; i < result.Count; i++) stocksDataGridView.Rows.Add(i + 1, result[i], "", selectedStockSymbols.Contains(result[i]), null);
             }
             finally { internalPortfolioUpdate = false; }
             selectAllCheckBox.Checked = false; selectNoneCheckBox.Checked = result.Count > 0; UpdateSelectionControls();
