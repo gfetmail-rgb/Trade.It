@@ -9,6 +9,18 @@ namespace Trade.It
         private PrintPreviewDialog? symbolsPrintPreviewDialog;
         private int symbolsPrintRowIndex;
 
+        private string GetSymbolsExportBaseFileName()
+        {
+            var portfolioName = string.IsNullOrWhiteSpace(displayedPortfolioName)
+                ? "سبد"
+                : displayedPortfolioName.Trim();
+
+            foreach (var invalidCharacter in Path.GetInvalidFileNameChars())
+                portfolioName = portfolioName.Replace(invalidCharacter, '-');
+
+            return $"{portfolioName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+        }
+
         private void SymbolsPrintButton_Click(object? sender, EventArgs e)
         {
             if (stocksDataGridView.Rows.Count == 0)
@@ -27,7 +39,8 @@ namespace Trade.It
             symbolsPrintDocument?.Dispose();
             symbolsPrintDocument = new PrintDocument
             {
-                DocumentName = "فهرست نمادها و تاریخ آخرین معامله"
+                // Used as the suggested document name by the selected printer/print-to-PDF driver.
+                DocumentName = GetSymbolsExportBaseFileName()
             };
             symbolsPrintDocument.DefaultPageSettings.Landscape = false;
             symbolsPrintDocument.PrintPage += SymbolsPrintDocument_PrintPage;
@@ -76,7 +89,7 @@ namespace Trade.It
                 Filter = "Excel Workbook (*.xlsx)|*.xlsx",
                 DefaultExt = "xlsx",
                 AddExtension = true,
-                FileName = $"فهرست نمادها_{DateTime.Now:yyyyMMdd_HHmm}"
+                FileName = $"{GetSymbolsExportBaseFileName()}.xlsx"
             };
 
             if (dialog.ShowDialog(this) != DialogResult.OK)
