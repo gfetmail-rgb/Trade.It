@@ -163,6 +163,8 @@ namespace Trade.It
             refreshButton.Click += RefreshStocksButton_Click;
             refreshButtonPortfolio.Click += RefreshPortfolioButton_Click;
             deleteButton.Click += DeleteButton_Click;
+            symbolsPrintButton.Click += SymbolsPrintButton_Click;
+            symbolsExcelButton.Click += SymbolsExcelButton_Click;
             selectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged;
             selectNoneCheckBox.CheckedChanged += SelectNoneCheckBox_CheckedChanged;
             stocksDataGridView.CurrentCellDirtyStateChanged += StocksDataGridView_CurrentCellDirtyStateChanged;
