@@ -295,6 +295,7 @@
             stocksGridCountLabel = new Label();
             groupBox2 = new GroupBox();
             symbolsPrintButton = new Button();
+            symbolsExcelButton = new Button();
             navigationButton = new Button();
             selectAllCheckBox = new CheckBox();
             selectNoneCheckBox = new CheckBox();
@@ -867,6 +868,7 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(symbolsExcelButton);
             groupBox2.Controls.Add(symbolsPrintButton);
             groupBox2.Controls.Add(navigationButton);
             groupBox2.Controls.Add(selectAllCheckBox);
@@ -891,6 +893,16 @@
             symbolsPrintButton.TabIndex = 4;
             symbolsPrintButton.Text = "پرینت";
             symbolsPrintButton.UseVisualStyleBackColor = true;
+            // 
+            // symbolsExcelButton
+            // 
+            symbolsExcelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            symbolsExcelButton.Location = new Point(120, 86);
+            symbolsExcelButton.Name = "symbolsExcelButton";
+            symbolsExcelButton.Size = new Size(72, 34);
+            symbolsExcelButton.TabIndex = 5;
+            symbolsExcelButton.Text = "اکسل";
+            symbolsExcelButton.UseVisualStyleBackColor = true;
             // 
             // navigationButton
             // 
@@ -3074,6 +3086,7 @@
         private System.Windows.Forms.Label label2;
         private GroupBox groupBox2;
         private Button symbolsPrintButton;
+        private Button symbolsExcelButton;
         private DataGridViewTextBoxColumn rowColumn;
         private DataGridViewTextBoxColumn symbolColumn;
         private DataGridViewTextBoxColumn lastTradeColumn;
