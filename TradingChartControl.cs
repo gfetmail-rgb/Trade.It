@@ -1109,14 +1109,9 @@ namespace Trade.It
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && selectedDrawingIndex >= 0 && selectedDrawingIndex < drawings.Count)
+            if (e.KeyCode == Keys.Delete && selectedDrawings.Count > 0)
             {
-                drawings.RemoveAt(selectedDrawingIndex);
-                selectedDrawingIndex = -1;
-                AnalysisChanged?.Invoke(this, EventArgs.Empty);
-                draggingDrawingIndex = -1;
-                draggingHandle = 0;
-                Invalidate();
+                DeleteSelectedDrawings();
                 e.Handled = true;
                 e.SuppressKeyPress = true;
                 return;
@@ -1450,6 +1445,11 @@ namespace Trade.It
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
+            if (drawingSelectionInputHandled)
+            {
+                drawingSelectionInputHandled = false;
+                return;
+            }
             if (e.Button == MouseButtons.Right)
             {
                 var indicatorIndex = HitTestIndicator(e.Location);
@@ -1563,10 +1563,17 @@ namespace Trade.It
                 return;
             }
 
+            var controlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
             var handleIndex = HitTestDrawingHandle(e.Location, plot, out var handle);
             if (handleIndex >= 0)
             {
-                selectedDrawingIndex = handleIndex;
+                SelectDrawing(DrawingSelectionKind.Standard, handleIndex, controlPressed);
+                if (controlPressed)
+                {
+                    Focus();
+                    Invalidate();
+                    return;
+                }
                 draggingDrawingIndex = handleIndex;
                 draggingHandle = handle;
                 draggingLastPoint = e.Location;
@@ -1575,15 +1582,21 @@ namespace Trade.It
             var hitIndex = HitTestDrawing(e.Location, plot);
             if (hitIndex >= 0)
             {
-                selectedDrawingIndex = hitIndex;
+                SelectDrawing(DrawingSelectionKind.Standard, hitIndex, controlPressed);
+                if (controlPressed)
+                {
+                    Focus();
+                    Invalidate();
+                    return;
+                }
                 draggingDrawingIndex = hitIndex;
                 draggingHandle = 0;
                 draggingLastPoint = e.Location;
                 Focus(); Capture = true; Cursor = Cursors.SizeAll; Invalidate(); return;
             }
 
-            selectedDrawingIndex = -1;
-            draggingDrawingIndex = -1;
+            ClearDrawingSelection();
+            Invalidate();
             draggingHandle = 0;
             verticalAxisDrag = e.X <= plotLeft && e.Y <= plotBottom;
             if (verticalAxisDrag)
