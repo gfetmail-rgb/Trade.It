@@ -211,21 +211,21 @@ namespace Trade.It
                 var p3 = DateToScreen(d.Date3, d.X3, d.Y3, plot, visibleCountForDrawing, min, max);
 
                 var handle = HitTestHandle(e.Location, p1, p2, p3);
-                if (handle != 0)
+                var bodyHit = handle != 0 || IsExtraDrawingBodyHit(e.Location, d, plot, visibleCountForDrawing, min, max);
+                if (bodyHit)
                 {
-                    StartExtraDrag(i, handle, e.Location);
-                    return;
-                }
-
-                if (IsExtraDrawingBodyHit(e.Location, d, plot, visibleCountForDrawing, min, max))
-                {
-                    // Handle 0 means move the whole drawing, not one anchor.
-                    StartExtraDrag(i, 0, e.Location);
+                    var controlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+                    SelectDrawing(DrawingSelectionKind.Extra, i, controlPressed);
+                    extraInputHandled = true;
+                    if (!controlPressed)
+                        StartExtraDrag(i, handle, e.Location);
+                    else
+                        Invalidate();
                     return;
                 }
             }
 
-            selectedExtraDrawingIndex = -1;
+            ClearDrawingSelection();
             extraDraggingHandle = 0;
             extraDraggingDrawingIndex = -1;
             extraDraggingHandleActive = false;
@@ -398,21 +398,6 @@ namespace Trade.It
 
         private void ExtraDrawing_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && selectedExtraDrawingIndex >= 0 && selectedExtraDrawingIndex < extraDrawings.Count)
-            {
-                extraDrawings.RemoveAt(selectedExtraDrawingIndex);
-                selectedExtraDrawingIndex = -1;
-                AnalysisChanged?.Invoke(this, EventArgs.Empty);
-                extraDraggingHandle = 0;
-                extraDraggingDrawingIndex = -1;
-                extraDraggingHandleActive = false;
-                Capture = false;
-                Invalidate();
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                return;
-            }
-
             if (e.KeyCode == Keys.Escape && ExtraDrawingActive)
             {
                 CancelExtraDrawing();
@@ -477,13 +462,14 @@ namespace Trade.It
             for (var i = 0; i < extraDrawings.Count; i++)
             {
                 var d = extraDrawings[i];
-                var pen = i == selectedExtraDrawingIndex ? selectedPen : normalPen;
+                var isSelected = IsDrawingSelected(DrawingSelectionKind.Extra, i);
+                var pen = isSelected ? selectedPen : normalPen;
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawPitchfork(e.Graphics, pen, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
-                    DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawFibonacciExtension(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.Measure)
-                    DrawMeasure(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawMeasure(e.Graphics, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
             }
 
             if (!extraDrawingInProgress || !ExtraDrawingActive || extraDrawingPoints.Count == 0)
