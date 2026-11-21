@@ -69,6 +69,7 @@ namespace Trade.It
         private double volumePanelRatio = 0.10;
         private double rsiPanelRatio = 0.10;
         private double macdPanelRatio = 0.10;
+        private double awesomeOscillatorPanelRatio = 0.10;
         private double stochasticPanelRatio = 0.10;
         private double stochasticRsiPanelRatio = 0.10;
         private double atrPanelRatio = 0.10;
@@ -80,6 +81,7 @@ namespace Trade.It
         private double lowerPanelResizeStartRsiRatio;
         private double lowerPanelResizeStartVolumeRatio;
         private double lowerPanelResizeStartMacdRatio;
+        private double lowerPanelResizeStartAwesomeOscillatorRatio;
         private double lowerPanelResizeStartStochasticRatio;
         private double lowerPanelResizeStartStochasticRsiRatio;
         private double lowerPanelResizeStartAtrRatio;
@@ -90,6 +92,7 @@ namespace Trade.It
             None,
             PriceRsi,
             PriceMacd,
+            PriceAwesomeOscillator,
             PriceVolume,
             RsiMacd,
             RsiVolume,
@@ -188,6 +191,7 @@ namespace Trade.It
             volumePanelRatio = 0.10;
             rsiPanelRatio = 0.10;
             macdPanelRatio = 0.10;
+            awesomeOscillatorPanelRatio = 0.10;
             stochasticPanelRatio = 0.10;
             stochasticRsiPanelRatio = 0.10;
             atrPanelRatio = 0.10;
@@ -1129,6 +1133,10 @@ namespace Trade.It
                 Math.Abs(y - layout.Macd.Top) <= tolerance)
                 return LowerPanelSplitter.PriceMacd;
 
+            if (HasAwesomeOscillator && !layout.AwesomeOscillator.IsEmpty &&
+                Math.Abs(y - layout.AwesomeOscillator.Top) <= tolerance)
+                return LowerPanelSplitter.PriceAwesomeOscillator;
+
             if (!HasRsiIndicator && !HasMacdIndicator && volumePanelVisible &&
                 !layout.Volume.IsEmpty &&
                 Math.Abs(y - layout.Volume.Top) <= tolerance)
@@ -1202,6 +1210,7 @@ namespace Trade.It
             const int minimumVolumeHeight = 45;
             var gapCount = (HasRsiIndicator ? 1 : 0) +
                            (HasMacdIndicator ? 1 : 0) +
+                           (HasAwesomeOscillator ? 1 : 0) +
                            (HasStochasticIndicator ? 1 : 0) +
                            (HasStochasticRsiIndicator ? 1 : 0) +
                            (HasAtrIndicator ? 1 : 0) +
@@ -1266,6 +1275,27 @@ namespace Trade.It
                         lowerPanelResizeStartMacdRatio - deltaRatio,
                         minMacdRatio,
                         Math.Max(minMacdRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasAwesomeOscillator ? awesomeOscillatorPanelRatio : 0) -
+                            (HasStochasticIndicator ? stochasticPanelRatio : 0) -
+                            (HasStochasticRsiIndicator ? stochasticRsiPanelRatio : 0) -
+                            (HasAtrIndicator ? atrPanelRatio : 0) -
+                            (HasAdxIndicator ? adxPanelRatio : 0) -
+                            (HasObvIndicator ? obvPanelRatio : 0) -
+                            (volumePanelVisible ? volumePanelRatio : 0)));
+                    break;
+
+                case LowerPanelSplitter.PriceAwesomeOscillator when HasAwesomeOscillator:
+                    awesomeOscillatorPanelRatio = Math.Clamp(
+                        lowerPanelResizeStartAwesomeOscillatorRatio - deltaRatio,
+                        minMacdRatio,
+                        Math.Max(minMacdRatio, 1.0 - minPriceRatio - gapRatio -
+                            (HasRsiIndicator ? rsiPanelRatio : 0) -
+                            (HasMacdIndicator ? macdPanelRatio : 0) -
+                            (HasStochasticIndicator ? stochasticPanelRatio : 0) -
+                            (HasStochasticRsiIndicator ? stochasticRsiPanelRatio : 0) -
+                            (HasAtrIndicator ? atrPanelRatio : 0) -
+                            (HasAdxIndicator ? adxPanelRatio : 0) -
+                            (HasObvIndicator ? obvPanelRatio : 0) -
                             (volumePanelVisible ? volumePanelRatio : 0)));
                     break;
 
@@ -1502,6 +1532,7 @@ namespace Trade.It
                 lowerPanelResizeStartRsiRatio = rsiPanelRatio;
                 lowerPanelResizeStartVolumeRatio = volumePanelRatio;
                 lowerPanelResizeStartMacdRatio = macdPanelRatio;
+                lowerPanelResizeStartAwesomeOscillatorRatio = awesomeOscillatorPanelRatio;
                 lowerPanelResizeStartStochasticRatio = stochasticPanelRatio;
                 lowerPanelResizeStartStochasticRsiRatio = stochasticRsiPanelRatio;
                 lowerPanelResizeStartAtrRatio = atrPanelRatio;
