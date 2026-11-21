@@ -333,7 +333,7 @@ namespace Trade.It
                 Text = text,
                 Date1 = DataXToDate(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex)
             });
-            selectedAdvancedDrawingIndex = -1;
+            ClearDrawingSelection();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
