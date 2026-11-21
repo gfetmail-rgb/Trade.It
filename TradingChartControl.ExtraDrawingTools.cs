@@ -130,7 +130,7 @@ namespace Trade.It
                 }
                 else
                 {
-                    selectedExtraDrawingIndex = -1;
+                    ClearDrawingSelection();
                     extraDraggingHandle = 0;
                     extraDraggingDrawingIndex = -1;
                     extraDraggingHandleActive = false;
