@@ -1161,9 +1161,10 @@ namespace Trade.It
                     continue;
 
                 var absoluteIndex = firstIndex + crossIndex;
-                if (absoluteIndex >= 0 && absoluteIndex < values.Length && !double.IsNaN(values[absoluteIndex]))
+                if (absoluteIndex >= 0 && absoluteIndex < values.Length && double.IsFinite(values[absoluteIndex]))
                 {
                     DrawIndicatorPanelTitle(g, rsiPlot, $"RSI({indicator.Period})", titleFont, indicator.RsiLineColor);
+                    DrawIndicatorPanelValue(g, rsiPlot, $"RSI: {values[absoluteIndex]:0.00}", titleFont, indicator.RsiLineColor);
                 }
             }
         }
@@ -1249,9 +1250,16 @@ namespace Trade.It
                 {
                     var absoluteIndex = firstIndex + crossIndex;
                     if (absoluteIndex >= 0 && absoluteIndex < macdHistogramCache!.Length &&
-                        !double.IsNaN(macdHistogramCache[absoluteIndex]))
+                        double.IsFinite(macdHistogramCache[absoluteIndex]))
                     {
                         DrawIndicatorPanelTitle(g, macdPlot, $"MACD({indicator.MacdFastPeriod},{indicator.MacdSlowPeriod},{indicator.MacdSignalPeriod})", titleFont, indicator.MacdLineColor);
+                        if (absoluteIndex < macdLineCache!.Length && absoluteIndex < macdSignalCache!.Length &&
+                            double.IsFinite(macdLineCache[absoluteIndex]) && double.IsFinite(macdSignalCache[absoluteIndex]))
+                        {
+                            DrawIndicatorPanelValue(g, macdPlot,
+                                $"MACD: {macdLineCache[absoluteIndex]:0.####}  Signal: {macdSignalCache[absoluteIndex]:0.####}  Hist: {macdHistogramCache[absoluteIndex]:0.####}",
+                                titleFont, indicator.MacdLineColor);
+                        }
                     }
                 }
             }
@@ -1378,6 +1386,10 @@ namespace Trade.It
             }
 
             DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})", titleFont, indicator.LineColor);
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            if (absoluteIndex >= 0 && absoluteIndex < atrCache!.Length && double.IsFinite(atrCache[absoluteIndex]))
+                DrawIndicatorPanelValue(g, plot, $"ATR: {FormatPrice(atrCache[absoluteIndex], priceDecimalPlaces)}", titleFont, indicator.LineColor);
         }
 
         private static double GetAtrScaleMax(double[] values, int firstIndex, int displayedCount)
@@ -1414,6 +1426,11 @@ namespace Trade.It
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
             DrawIndicatorPanelTitle(g, plot, $"Stochastic({indicator.StochasticPeriod},{indicator.StochasticKPeriod},{indicator.StochasticDPeriod})", font, indicator.StochasticKColor);
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            if (absoluteIndex >= 0 && absoluteIndex < stochasticKCache!.Length && absoluteIndex < stochasticDCache!.Length &&
+                double.IsFinite(stochasticKCache[absoluteIndex]) && double.IsFinite(stochasticDCache[absoluteIndex]))
+                DrawIndicatorPanelValue(g, plot, $"K: {stochasticKCache[absoluteIndex]:0.00}  D: {stochasticDCache[absoluteIndex]:0.00}", font, indicator.StochasticKColor);
         }
 
         private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1460,6 +1477,14 @@ namespace Trade.It
             DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxMinusDiCache!, indicator.ShowAdxMinusDi, indicator.AdxMinusDiColor);
 
             DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})", titleFont, indicator.AdxLineColor);
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            if (absoluteIndex >= 0 && absoluteIndex < adxCache!.Length &&
+                double.IsFinite(adxCache[absoluteIndex]) && double.IsFinite(adxPlusDiCache![absoluteIndex]) &&
+                double.IsFinite(adxMinusDiCache![absoluteIndex]))
+                DrawIndicatorPanelValue(g, plot,
+                    $"ADX: {adxCache[absoluteIndex]:0.0}  +DI: {adxPlusDiCache[absoluteIndex]:0.0}  -DI: {adxMinusDiCache[absoluteIndex]:0.0}",
+                    titleFont, indicator.AdxLineColor);
         }
 
         private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1533,6 +1558,13 @@ namespace Trade.It
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiDCache!, indicator.ShowStochasticRsiD, indicator.StochasticRsiDColor);
 
             DrawIndicatorPanelTitle(g, plot, $"Stochastic RSI({indicator.StochasticRsiRsiPeriod},{indicator.StochasticRsiPeriod},{indicator.StochasticRsiKPeriod},{indicator.StochasticRsiDPeriod})", font, indicator.StochasticRsiKColor);
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            if (absoluteIndex >= 0 && absoluteIndex < stochasticRsiKCache!.Length && absoluteIndex < stochasticRsiDCache!.Length &&
+                double.IsFinite(stochasticRsiKCache[absoluteIndex]) && double.IsFinite(stochasticRsiDCache[absoluteIndex]))
+                DrawIndicatorPanelValue(g, plot,
+                    $"K: {stochasticRsiKCache[absoluteIndex]:0.00}  D: {stochasticRsiDCache[absoluteIndex]:0.00}",
+                    font, indicator.StochasticRsiKColor);
         }
 
         private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
@@ -1572,6 +1604,13 @@ namespace Trade.It
             g.DrawString(title, boldFont, brush, x, y);
         }
 
+        private void DrawIndicatorPanelValue(Graphics g, Rectangle plot, string value, Font font, Color color)
+        {
+            using var valueFont = new Font(font.FontFamily, Math.Max(7f, font.Size), FontStyle.Bold);
+            using var brush = new SolidBrush(color);
+            g.DrawString(value, valueFont, brush, plot.Left + 5f, plot.Top + 1f);
+        }
+
         private void RenderObvPanel(Graphics g, Rectangle plot, List<TradingChartPoint> visible, double step, double initialOffset)
         {
             if (visible.Count == 0 || plot.Width <= 0 || plot.Height <= 0 || !HasObvIndicator) return;
@@ -1599,8 +1638,6 @@ namespace Trade.It
                 using var pen=new Pen(indicator.ObvLineColor,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth));
                 PointF? prev=null;
                 for(var i=0;i<visible.Count;i++){var ai=firstIndex+i;if(ai<0||ai>=obvCache.Length||!double.IsFinite(obvCache[ai])){prev=null;continue;}var pt=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)Y(obvCache[ai]));if(prev.HasValue)g.DrawLine(pen,prev.Value,pt);prev=pt;}
-                var obvCrossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-                var obvAbsoluteIndex = firstIndex + obvCrossIndex;
                 DrawIndicatorPanelTitle(g, plot, "OBV", titleFont, indicator.ObvLineColor);
             }
         }
@@ -1670,6 +1707,11 @@ namespace Trade.It
 
             var minText = minVolume.ToString("N0");
             g.DrawString(minText, labelFont, textBrush, volumePlot.Left + 4f, volumePlot.Bottom - labelFont.GetHeight(g) - 1f);
+
+            var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
+            var absoluteIndex = firstIndex + crossIndex;
+            if (absoluteIndex >= 0 && absoluteIndex < points.Count && double.IsFinite(points[absoluteIndex].Volume))
+                DrawIndicatorPanelValue(g, volumePlot, $"Volume: {points[absoluteIndex].Volume:N0}", labelFont, Color.FromArgb(45, 45, 45));
         }
 
         private void GetVerticalRange(List<TradingChartPoint> visible, out double min, out double max)
