@@ -203,7 +203,7 @@ namespace Trade.It
             crosshairPosition = -1.0;
             syncedCrosshairDate = null;
             CancelDrawing();
-            selectedDrawingIndex = -1;
+            ClearDrawingSelection();
             selectedIndicatorIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
@@ -600,12 +600,7 @@ namespace Trade.It
             extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
             extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
 
-            selectedDrawingIndex = -1;
-            draggingDrawingIndex = -1;
-            selectedAdvancedDrawingIndex = -1;
-            draggingAdvancedDrawingIndex = -1;
-            selectedExtraDrawingIndex = -1;
-            extraDraggingDrawingIndex = -1;
+            ClearDrawingSelection();
 
             Invalidate();
         }
@@ -770,12 +765,7 @@ namespace Trade.It
             extraFirstDate = points.Count > 0 ? points[0].Date : DateTime.MinValue;
             extraLastDate = points.Count > 0 ? points[^1].Date : DateTime.MinValue;
 
-            selectedDrawingIndex = -1;
-            draggingDrawingIndex = -1;
-            selectedAdvancedDrawingIndex = -1;
-            draggingAdvancedDrawingIndex = -1;
-            selectedExtraDrawingIndex = -1;
-            extraDraggingDrawingIndex = -1;
+            ClearDrawingSelection();
 
             Invalidate();
         }
