@@ -126,6 +126,7 @@ namespace Trade.It
 
             if (AdvancedDrawingActive)
             {
+                drawingSelectionInputHandled = true;
                 if (!IsInsidePlot(e.Location))
                     return;
 
@@ -315,7 +316,7 @@ namespace Trade.It
                 Date1 = DataXToDate(x1),
                 Date2 = DataXToDate(x2)
             });
-            selectedAdvancedDrawingIndex = -1;
+            ClearDrawingSelection();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
