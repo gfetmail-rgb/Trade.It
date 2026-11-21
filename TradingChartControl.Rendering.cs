@@ -897,7 +897,7 @@ namespace Trade.It
                 : 0;
 
             var awesomeOscillatorHeight = HasAwesomeOscillator
-                ? Math.Clamp((int)Math.Round(totalHeight * macdPanelRatio), 60, Math.Max(60, totalHeight / 2))
+                ? Math.Clamp((int)Math.Round(totalHeight * awesomeOscillatorPanelRatio), 60, Math.Max(60, totalHeight / 2))
                 : 0;
 
             var stochasticHeight = HasStochasticIndicator ? Math.Clamp((int)Math.Round(totalHeight * stochasticPanelRatio), 60, Math.Max(60, totalHeight / 2)) : 0;
