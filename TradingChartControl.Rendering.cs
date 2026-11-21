@@ -697,8 +697,7 @@ namespace Trade.It
                         break;
                     case ChartDrawingTool.Rectangle:
                         var left = Math.Min(start.X, end.X);
-                        var right = Math.Max(start.X, end.X);
-                        var top = Math.Min(start.Y, end.Y);
+                        var right = Math.Max(start.X, end.X);                        var top = Math.Min(start.Y, end.Y);
                         var bottom = Math.Max(start.Y, end.Y);
                         var rect = new RectangleF(left, top, right - left, bottom - top);
                         if (rect.Contains(location) ||
@@ -1387,9 +1386,10 @@ namespace Trade.It
 
             DrawIndicatorPanelTitle(g, plot, $"ATR({indicator.Period})", titleFont, indicator.LineColor);
             var crossIndex = crosshairIndex >= 0 && crosshairIndex < visible.Count ? crosshairIndex : visible.Count - 1;
-            var absoluteIndex = firstIndex + crossIndex;
-            if (absoluteIndex >= 0 && absoluteIndex < atrCache!.Length && double.IsFinite(atrCache[absoluteIndex]))
-                DrawIndicatorPanelValue(g, plot, $"ATR: {FormatPrice(atrCache[absoluteIndex], priceDecimalPlaces)}", titleFont, indicator.LineColor);
+            var crosshairAbsoluteIndex = firstIndex + crossIndex;
+            var priceDecimalPlaces = GetPriceDecimalPlaces(visible);
+            if (crosshairAbsoluteIndex >= 0 && crosshairAbsoluteIndex < atrCache!.Length && double.IsFinite(atrCache[crosshairAbsoluteIndex]))
+                DrawIndicatorPanelValue(g, plot, $"ATR: {FormatPrice(atrCache[crosshairAbsoluteIndex], priceDecimalPlaces)}", titleFont, indicator.LineColor);
         }
 
         private static double GetAtrScaleMax(double[] values, int firstIndex, int displayedCount)
@@ -1397,8 +1397,7 @@ namespace Trade.It
             var max = 0.0;
             var end = Math.Min(values.Length, firstIndex + displayedCount);
             for (var i = Math.Max(0, firstIndex); i < end; i++)
-                if (!double.IsNaN(values[i]) && !double.IsInfinity(values[i]))
-                    max = Math.Max(max, values[i]);
+                if (!double.IsNaN(values[i]) && !double.IsInfinity(values[i]))                    max = Math.Max(max, values[i]);
             return Math.Max(max * 1.15, 1e-9);
         }
 
