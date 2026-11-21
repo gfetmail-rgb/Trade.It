@@ -615,6 +615,9 @@ namespace Trade.It
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
 
+            // ابزارهای Advanced بازیابی‌شده نیز باید رویدادهای انتخاب، جابه‌جایی و حذف را دریافت کنند.
+            EnsureAdvancedDrawingEvents();
+
             if (!string.IsNullOrWhiteSpace(document.Symbol) &&
                 !string.Equals(document.Symbol.Trim(), chartSymbol.Trim(), StringComparison.OrdinalIgnoreCase))
             {
