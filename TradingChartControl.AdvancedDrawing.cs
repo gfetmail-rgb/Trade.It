@@ -162,19 +162,24 @@ namespace Trade.It
 
             var plot = GetPlotRectangle();
             var hit = HitTestAdvancedDrawing(e.Location, plot, out var hitHandle);
+            var controlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
             if (hit >= 0)
             {
-                selectedAdvancedDrawingIndex = hit;
-                draggingAdvancedDrawingIndex = hit;
-                draggingAdvancedHandle = hitHandle;
-                draggingAdvancedLastPoint = e.Location;
+                SelectDrawing(DrawingSelectionKind.Advanced, hit, controlPressed);
+                drawingSelectionInputHandled = true;
+                if (!controlPressed)
+                {
+                    draggingAdvancedDrawingIndex = hit;
+                    draggingAdvancedHandle = hitHandle;
+                    draggingAdvancedLastPoint = e.Location;
+                    DeferAdvancedMouseState();
+                }
                 Focus();
                 Invalidate();
-                DeferAdvancedMouseState();
             }
-            else
+            else if (!controlPressed)
             {
-                selectedAdvancedDrawingIndex = -1;
+                ClearDrawingSelection();
                 Invalidate();
             }
         }
@@ -257,20 +262,6 @@ namespace Trade.It
 
         private void AdvancedDrawing_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && selectedAdvancedDrawingIndex >= 0 && selectedAdvancedDrawingIndex < advancedDrawings.Count)
-            {
-                advancedDrawings.RemoveAt(selectedAdvancedDrawingIndex);
-                selectedAdvancedDrawingIndex = -1;
-                AnalysisChanged?.Invoke(this, EventArgs.Empty);
-                draggingAdvancedDrawingIndex = -1;
-                draggingAdvancedLastPoint = Point.Empty;
-                draggingAdvancedHandle = 0;
-                Invalidate();
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                return;
-            }
-
             if (e.KeyCode == Keys.Escape && AdvancedDrawingActive)
             {
                 CancelAdvancedDrawing();
@@ -371,7 +362,7 @@ namespace Trade.It
             for (var i = 0; i < advancedDrawings.Count; i++)
             {
                 var d = advancedDrawings[i];
-                var isSelected = i == selectedAdvancedDrawingIndex;
+                var isSelected = IsDrawingSelected(DrawingSelectionKind.Advanced, i);
                 var color = d.Tool == AdvancedDrawingTool.FibonacciRetracement
                     ? ChartAppearanceSettings.FibonacciRetracementColor
                     : ChartAppearanceSettings.TextLabelColor;
@@ -405,7 +396,7 @@ namespace Trade.It
                 if (d.Tool != AdvancedDrawingTool.TextLabel)
                     continue;
 
-                var width = i == selectedAdvancedDrawingIndex ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
+                var width = IsDrawingSelected(DrawingSelectionKind.Advanced, i) ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
                 using var pen = new Pen(ChartAppearanceSettings.TextLabelColor, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
