@@ -41,12 +41,14 @@ namespace Trade.It
                 if (m.Msg == WM_LBUTTONDOWN)
                 {
                     ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, location.X, location.Y, 0));
+                    extraInputHandled = false;
                     return;
                 }
 
                 if (m.Msg == WM_RBUTTONDOWN)
                 {
                     ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Right, 1, location.X, location.Y, 0));
+                    extraInputHandled = false;
                     return;
                 }
 
@@ -70,6 +72,7 @@ namespace Trade.It
                 IsExtraDrawingHit(location))
             {
                 ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, location.X, location.Y, 0));
+                extraInputHandled = false;
                 return;
             }
 
