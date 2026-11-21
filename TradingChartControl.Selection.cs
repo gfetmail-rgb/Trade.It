@@ -33,7 +33,7 @@ namespace Trade.It
 
         private void SelectDrawing(DrawingSelectionKind kind, int index, bool toggle)
         {
-            if (!toggle)
+            if (!toggle && !IsDrawingSelected(kind, index))
                 ClearDrawingSelection();
 
             var key = (kind, index);
