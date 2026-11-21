@@ -1153,7 +1153,7 @@ namespace Trade.It
 
         }
 
-private void RenderMacdPanel(
+        private void RenderMacdPanel(
             Graphics g,
             Rectangle macdPlot,
             List<TradingChartPoint> visible,
@@ -1231,7 +1231,7 @@ private void RenderMacdPanel(
             }
         }
 
-private void DrawMacdLine(
+        private void DrawMacdLine(
             Graphics g,
             Rectangle plot,
             double[] values,
@@ -1391,7 +1391,9 @@ private void DrawMacdLine(
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticKCache!,indicator.ShowStochasticK,indicator.StochasticKColor);
             DrawStochasticLine(g,plot,visible.Count,step,initialOffset,stochasticDCache!,indicator.ShowStochasticD,indicator.StochasticDColor);
             DrawIndicatorPanelTitle(g, plot, $"Stochastic({indicator.StochasticPeriod},{indicator.StochasticKPeriod},{indicator.StochasticDPeriod})", font, indicator.StochasticKColor);
-private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
+        }
+
+        private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
         {
             if(!show) return; using var pen=new Pen(color,Math.Max(1.2f,LineAppearanceSettings.ChartLineWidth)); PointF? previous=null;
             for(var i=0;i<count;i++){var ai=firstIndex+i;if(ai<0||ai>=values.Length||double.IsNaN(values[ai])){previous=null;continue;} var current=new PointF((float)(plot.Left+step*(i+.5)+initialOffset+horizontalPanOffset),(float)IndicatorPercentToScreen(values[ai], plot));if(previous.HasValue)g.DrawLine(pen,previous.Value,current);previous=current;}
@@ -1435,7 +1437,9 @@ private void DrawStochasticLine(Graphics g, Rectangle plot, int count, double st
             DrawAdxLine(g, plot, visible.Count, step, initialOffset, adxMinusDiCache!, indicator.ShowAdxMinusDi, indicator.AdxMinusDiColor);
 
             DrawIndicatorPanelTitle(g, plot, $"ADX({indicator.Period})", titleFont, indicator.AdxLineColor);
-private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
+        }
+
+        private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double step, double initialOffset, double[] values, bool show, Color color)
         {
             if (!show) return;
 
@@ -1506,7 +1510,9 @@ private void DrawAdxLine(Graphics g, Rectangle plot, int displayedCount, double 
             DrawStochasticRsiLine(g, plot, visible.Count, step, initialOffset, stochasticRsiDCache!, indicator.ShowStochasticRsiD, indicator.StochasticRsiDColor);
 
             DrawIndicatorPanelTitle(g, plot, $"Stochastic RSI({indicator.StochasticRsiRsiPeriod},{indicator.StochasticRsiPeriod},{indicator.StochasticRsiKPeriod},{indicator.StochasticRsiDPeriod})", font, indicator.StochasticRsiKColor);
-private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
+        }
+
+        private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double step, double initialOffset, double[] values, bool show, Color color)
         {
             if (!show)
                 return;
@@ -1647,7 +1653,9 @@ private void DrawStochasticRsiLine(Graphics g, Rectangle plot, int count, double
             var minText = minVolume.ToString("N0");
             g.DrawString(minText, labelFont, textBrush, volumePlot.Left + 4f, volumePlot.Bottom - labelFont.GetHeight(g) - 1f);
 
-private void GetVerticalRange(List<TradingChartPoint> visible, out double min, out double max)
+        }
+
+        private void GetVerticalRange(List<TradingChartPoint> visible, out double min, out double max)
         {
             min = visible.Min(x => x.Low);
             max = visible.Max(x => x.High);
