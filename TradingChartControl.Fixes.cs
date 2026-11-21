@@ -67,7 +67,7 @@ namespace Trade.It
             // it is selected must also be handled before the normal chart handler.
             // A blank click then cleanly deselects it instead of starting a pan.
             if (m.Msg == WM_LBUTTONDOWN && !extraInputHandled &&
-                (selectedExtraDrawingIndex >= 0 || IsExtraDrawingHit(location)))
+                IsExtraDrawingHit(location))
             {
                 ExtraDrawing_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, location.X, location.Y, 0));
                 return;
@@ -183,8 +183,7 @@ namespace Trade.It
             advancedDrawings.Clear();
             extraDrawings.Clear();
             drawings.Clear();
-            selectedDrawingIndex = -1;
-            draggingDrawingIndex = -1;
+            ClearDrawingSelection();
             draggingHandle = 0;
             Capture = false;
             Cursor = Cursors.Default;
