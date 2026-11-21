@@ -492,11 +492,12 @@ namespace Trade.It
         {
             for (var i = 0; i < drawings.Count; i++)
             {
-                var selected = i == selectedDrawingIndex;
+                var selected = IsDrawingSelected(DrawingSelectionKind.Standard, i);
                 var color = GetDrawingColor(drawings[i].Tool);
                 var width = selected ? LineAppearanceSettings.DrawingLineWidth + 1.4f : LineAppearanceSettings.DrawingLineWidth;
                 using var drawingPen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
-                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);                if (selected)
+                DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
+                if (selected)
                     DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
             }
         }
