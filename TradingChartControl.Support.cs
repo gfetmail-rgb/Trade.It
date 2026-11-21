@@ -126,12 +126,13 @@ namespace Trade.It
             {
                 var d = extraDrawings[i];
                 var color = GetExtraDrawingColor(d.Tool);
-                var width = i == selectedExtraDrawingIndex ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
+                var isSelected = IsDrawingSelected(DrawingSelectionKind.Extra, i);
+                var width = isSelected ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
                 using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
-                    DrawPitchforkFixed(g, pen, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawPitchforkFixed(g, pen, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)
-                    DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, i == selectedExtraDrawingIndex);
+                    DrawThreePointFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
             }
             if (extraDrawingInProgress && ExtraDrawingActive && extraDrawingPoints.Count > 0)
             {
