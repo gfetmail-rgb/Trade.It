@@ -72,6 +72,10 @@ namespace Trade.It
         {
             InitializeComponent();
 
+            // Runtime-only icon state registration; keep InitializeComponent designer-safe.
+            if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
+                RegisterChartToolbarIcons();
+
             if (System.ComponentModel.LicenseManager.UsageMode != System.ComponentModel.LicenseUsageMode.Designtime)
                 chartTabControl.TabPages.Remove(navigationTabPage);
 
@@ -3228,5 +3232,39 @@ namespace Trade.It
         {
 
         }
+
+        private void RegisterChartToolbarIcons()
+        {
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            ChartToolbarIcons.Register(closeAllChartsToolbarButton, closeAllChartsToolbarButton.Image!, (Image)resources.GetObject("closeAllChartsToolbarButton.ActiveImage")!);
+            ChartToolbarIcons.Register(saveAnalysisButton, saveAnalysisButton.Image!, (Image)resources.GetObject("saveAnalysisButton.ActiveImage")!, (Image)resources.GetObject("saveAnalysisButton.SuccessImage")!);
+            ChartToolbarIcons.Register(gridButton, gridButton.Image!, (Image)resources.GetObject("gridButton.ActiveImage")!);
+            ChartToolbarIcons.Register(crossButton, crossButton.Image!, (Image)resources.GetObject("crossButton.ActiveImage")!);
+            ChartToolbarIcons.Register(indicatorPanelButton, indicatorPanelButton.Image!, (Image)resources.GetObject("indicatorPanelButton.ActiveImage")!);
+            ChartToolbarIcons.Register(testModeButton, testModeButton.Image!, (Image)resources.GetObject("testModeButton.ActiveImage")!);
+            ChartToolbarIcons.Register(testStepBackButton, testStepBackButton.Image!, (Image)resources.GetObject("testStepBackButton.ActiveImage")!);
+            ChartToolbarIcons.Register(testStepForwardButton, testStepForwardButton.Image!, (Image)resources.GetObject("testStepForwardButton.ActiveImage")!);
+            ChartToolbarIcons.Register(zoomInButton, zoomInButton.Image!, (Image)resources.GetObject("zoomInButton.ActiveImage")!);
+            ChartToolbarIcons.Register(zoomOutButton, zoomOutButton.Image!, (Image)resources.GetObject("zoomOutButton.ActiveImage")!);
+            ChartToolbarIcons.Register(resetChartButton, resetChartButton.Image!, (Image)resources.GetObject("resetChartButton.ActiveImage")!);
+            ChartToolbarIcons.Register(hideChartButton, hideChartButton.Image!, (Image)resources.GetObject("hideChartButton.ActiveImage")!);
+            ChartToolbarIcons.Register(hideToolsButton, hideToolsButton.Image!, (Image)resources.GetObject("hideToolsButton.ActiveImage")!);
+            ChartToolbarIcons.Register(printChartButton, printChartButton.Image!, (Image)resources.GetObject("printChartButton.ActiveImage")!);
+            ChartToolbarIcons.Register(snapshotChartButton, snapshotChartButton.Image!, (Image)resources.GetObject("snapshotChartButton.ActiveImage")!);
+            ChartToolbarIcons.Register(fullScreenChartButton, fullScreenChartButton.Image!, (Image)resources.GetObject("fullScreenChartButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawTrendLineButton, drawTrendLineButton.Image!, (Image)resources.GetObject("drawTrendLineButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawTrendChannelButton, drawTrendChannelButton.Image!, (Image)resources.GetObject("drawTrendChannelButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawHorizontalDoubleButton, drawHorizontalDoubleButton.Image!, (Image)resources.GetObject("drawHorizontalDoubleButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawVerticalDoubleButton, drawVerticalDoubleButton.Image!, (Image)resources.GetObject("drawVerticalDoubleButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawHorizontalRayButton, drawHorizontalRayButton.Image!, (Image)resources.GetObject("drawHorizontalRayButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawTrendLineArrowButton, drawTrendLineArrowButton.Image!, (Image)resources.GetObject("drawTrendLineArrowButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawRectangleButton, drawRectangleButton.Image!, (Image)resources.GetObject("drawRectangleButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawFibonacciButton, drawFibonacciButton.Image!, (Image)resources.GetObject("drawFibonacciButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawTextButton, drawTextButton.Image!, (Image)resources.GetObject("drawTextButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawFibonacciExtensionButton, drawFibonacciExtensionButton.Image!, (Image)resources.GetObject("drawFibonacciExtensionButton.ActiveImage")!);
+            ChartToolbarIcons.Register(drawMeasureButton, drawMeasureButton.Image!, (Image)resources.GetObject("drawMeasureButton.ActiveImage")!);
+        }
+
     }
 }
