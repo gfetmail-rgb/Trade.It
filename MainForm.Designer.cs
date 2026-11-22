@@ -1,4 +1,4 @@
-﻿namespace Trade.It
+namespace Trade.It
 {
     partial class MainForm
     {
@@ -251,6 +251,7 @@
 
         private void InitializeComponent()
         {
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2661,7 +2662,11 @@
             closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
             closeAllChartsToolbarButton.Size = new Size(110, 34);
             closeAllChartsToolbarButton.TabIndex = 21;
-            closeAllChartsToolbarButton.Text = "بستن چارتها";
+            closeAllChartsToolbarButton.AutoSize = false;
+            closeAllChartsToolbarButton.Text = string.Empty;
+            closeAllChartsToolbarButton.Image = (Image)resources.GetObject("closeAllChartsToolbarButton.Image")!;
+            closeAllChartsToolbarButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(closeAllChartsToolbarButton, closeAllChartsToolbarButton.Image!, (Image)resources.GetObject("closeAllChartsToolbarButton.ActiveImage")!);
             closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
             // 
             // saveAnalysisButton
@@ -2671,7 +2676,11 @@
             saveAnalysisButton.RightToLeft = RightToLeft.Yes;
             saveAnalysisButton.Size = new Size(88, 34);
             saveAnalysisButton.TabIndex = 11;
-            saveAnalysisButton.Text = "ذخیره تحلیل";
+            saveAnalysisButton.AutoSize = false;
+            saveAnalysisButton.Text = string.Empty;
+            saveAnalysisButton.Image = (Image)resources.GetObject("saveAnalysisButton.Image")!;
+            saveAnalysisButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(saveAnalysisButton, saveAnalysisButton.Image!, (Image)resources.GetObject("saveAnalysisButton.ActiveImage")!, (Image)resources.GetObject("saveAnalysisButton.SuccessImage")!);
             saveAnalysisButton.UseVisualStyleBackColor = true;
             // 
             // chartTypeComboBox
@@ -2689,7 +2698,11 @@
             gridButton.Name = "gridButton";
             gridButton.Size = new Size(60, 34);
             gridButton.TabIndex = 1;
-            gridButton.Text = "گرید";
+            gridButton.AutoSize = false;
+            gridButton.Text = string.Empty;
+            gridButton.Image = (Image)resources.GetObject("gridButton.Image")!;
+            gridButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(gridButton, gridButton.Image!, (Image)resources.GetObject("gridButton.ActiveImage")!);
             // 
             // crossButton
             // 
@@ -2698,7 +2711,11 @@
             crossButton.Name = "crossButton";
             crossButton.Size = new Size(66, 35);
             crossButton.TabIndex = 2;
-            crossButton.Text = "Cross";
+            crossButton.AutoSize = false;
+            crossButton.Text = string.Empty;
+            crossButton.Image = (Image)resources.GetObject("crossButton.Image")!;
+            crossButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(crossButton, crossButton.Image!, (Image)resources.GetObject("crossButton.ActiveImage")!);
             // 
             // indicatorPanelButton
             // 
@@ -2706,7 +2723,11 @@
             indicatorPanelButton.Name = "indicatorPanelButton";
             indicatorPanelButton.Size = new Size(88, 34);
             indicatorPanelButton.TabIndex = 3;
-            indicatorPanelButton.Text = "حجم";
+            indicatorPanelButton.AutoSize = false;
+            indicatorPanelButton.Text = string.Empty;
+            indicatorPanelButton.Image = (Image)resources.GetObject("indicatorPanelButton.Image")!;
+            indicatorPanelButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(indicatorPanelButton, indicatorPanelButton.Image!, (Image)resources.GetObject("indicatorPanelButton.ActiveImage")!);
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
             // testModeButton
@@ -2715,7 +2736,11 @@
             testModeButton.Name = "testModeButton";
             testModeButton.Size = new Size(58, 34);
             testModeButton.TabIndex = 22;
-            testModeButton.Text = "تست";
+            testModeButton.AutoSize = false;
+            testModeButton.Text = string.Empty;
+            testModeButton.Image = (Image)resources.GetObject("testModeButton.Image")!;
+            testModeButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(testModeButton, testModeButton.Image!, (Image)resources.GetObject("testModeButton.ActiveImage")!);
             testModeButton.UseVisualStyleBackColor = true;
             // 
             // testStepBackButton
@@ -2724,7 +2749,11 @@
             testStepBackButton.Name = "testStepBackButton";
             testStepBackButton.Size = new Size(34, 34);
             testStepBackButton.TabIndex = 23;
-            testStepBackButton.Text = "◀";
+            testStepBackButton.AutoSize = false;
+            testStepBackButton.Text = string.Empty;
+            testStepBackButton.Image = (Image)resources.GetObject("testStepBackButton.Image")!;
+            testStepBackButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(testStepBackButton, testStepBackButton.Image!, (Image)resources.GetObject("testStepBackButton.ActiveImage")!);
             testStepBackButton.UseVisualStyleBackColor = true;
             // 
             // testStepForwardButton
@@ -2733,7 +2762,11 @@
             testStepForwardButton.Name = "testStepForwardButton";
             testStepForwardButton.Size = new Size(34, 34);
             testStepForwardButton.TabIndex = 24;
-            testStepForwardButton.Text = "▶";
+            testStepForwardButton.AutoSize = false;
+            testStepForwardButton.Text = string.Empty;
+            testStepForwardButton.Image = (Image)resources.GetObject("testStepForwardButton.Image")!;
+            testStepForwardButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(testStepForwardButton, testStepForwardButton.Image!, (Image)resources.GetObject("testStepForwardButton.ActiveImage")!);
             testStepForwardButton.UseVisualStyleBackColor = true;
             // 
             // zoomInButton
@@ -2742,7 +2775,11 @@
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
             zoomInButton.TabIndex = 4;
-            zoomInButton.Text = "+";
+            zoomInButton.AutoSize = false;
+            zoomInButton.Text = string.Empty;
+            zoomInButton.Image = (Image)resources.GetObject("zoomInButton.Image")!;
+            zoomInButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(zoomInButton, zoomInButton.Image!, (Image)resources.GetObject("zoomInButton.ActiveImage")!);
             // 
             // zoomOutButton
             // 
@@ -2750,7 +2787,11 @@
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
             zoomOutButton.TabIndex = 5;
-            zoomOutButton.Text = "-";
+            zoomOutButton.AutoSize = false;
+            zoomOutButton.Text = string.Empty;
+            zoomOutButton.Image = (Image)resources.GetObject("zoomOutButton.Image")!;
+            zoomOutButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(zoomOutButton, zoomOutButton.Image!, (Image)resources.GetObject("zoomOutButton.ActiveImage")!);
             // 
             // resetChartButton
             // 
@@ -2759,7 +2800,11 @@
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(86, 35);
             resetChartButton.TabIndex = 6;
-            resetChartButton.Text = "بازنشانی";
+            resetChartButton.AutoSize = false;
+            resetChartButton.Text = string.Empty;
+            resetChartButton.Image = (Image)resources.GetObject("resetChartButton.Image")!;
+            resetChartButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(resetChartButton, resetChartButton.Image!, (Image)resources.GetObject("resetChartButton.ActiveImage")!);
             // 
             // hideChartButton
             // 
@@ -2767,7 +2812,11 @@
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(104, 34);
             hideChartButton.TabIndex = 6;
-            hideChartButton.Text = "چارت پنهان";
+            hideChartButton.AutoSize = false;
+            hideChartButton.Text = string.Empty;
+            hideChartButton.Image = (Image)resources.GetObject("hideChartButton.Image")!;
+            hideChartButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(hideChartButton, hideChartButton.Image!, (Image)resources.GetObject("hideChartButton.ActiveImage")!);
             hideChartButton.Click += hideChartButton_Click;
             // 
             // hideToolsButton
@@ -2776,7 +2825,11 @@
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
-            hideToolsButton.Text = "حذف ابزارها";
+            hideToolsButton.AutoSize = false;
+            hideToolsButton.Text = string.Empty;
+            hideToolsButton.Image = (Image)resources.GetObject("hideToolsButton.Image")!;
+            hideToolsButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(hideToolsButton, hideToolsButton.Image!, (Image)resources.GetObject("hideToolsButton.ActiveImage")!);
             // 
             // printChartButton
             // 
@@ -2784,7 +2837,11 @@
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(70, 34);
             printChartButton.TabIndex = 8;
-            printChartButton.Text = "چاپ";
+            printChartButton.AutoSize = false;
+            printChartButton.Text = string.Empty;
+            printChartButton.Image = (Image)resources.GetObject("printChartButton.Image")!;
+            printChartButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(printChartButton, printChartButton.Image!, (Image)resources.GetObject("printChartButton.ActiveImage")!);
             // 
             // snapshotChartButton
             // 
@@ -2792,7 +2849,11 @@
             snapshotChartButton.Name = "snapshotChartButton";
             snapshotChartButton.Size = new Size(79, 34);
             snapshotChartButton.TabIndex = 9;
-            snapshotChartButton.Text = "تصویر";
+            snapshotChartButton.AutoSize = false;
+            snapshotChartButton.Text = string.Empty;
+            snapshotChartButton.Image = (Image)resources.GetObject("snapshotChartButton.Image")!;
+            snapshotChartButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(snapshotChartButton, snapshotChartButton.Image!, (Image)resources.GetObject("snapshotChartButton.ActiveImage")!);
             // 
             // fullScreenChartButton
             // 
@@ -2802,7 +2863,11 @@
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
-            fullScreenChartButton.Text = "تمام صفحه";
+            fullScreenChartButton.AutoSize = false;
+            fullScreenChartButton.Text = string.Empty;
+            fullScreenChartButton.Image = (Image)resources.GetObject("fullScreenChartButton.Image")!;
+            fullScreenChartButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(fullScreenChartButton, fullScreenChartButton.Image!, (Image)resources.GetObject("fullScreenChartButton.ActiveImage")!);
             // 
             // drawTrendLineButton
             // 
@@ -2811,7 +2876,11 @@
             drawTrendLineButton.RightToLeft = RightToLeft.Yes;
             drawTrendLineButton.Size = new Size(82, 34);
             drawTrendLineButton.TabIndex = 20;
-            drawTrendLineButton.Text = "خط روند";
+            drawTrendLineButton.AutoSize = false;
+            drawTrendLineButton.Text = string.Empty;
+            drawTrendLineButton.Image = (Image)resources.GetObject("drawTrendLineButton.Image")!;
+            drawTrendLineButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawTrendLineButton, drawTrendLineButton.Image!, (Image)resources.GetObject("drawTrendLineButton.ActiveImage")!);
             drawTrendLineButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendChannelButton
@@ -2821,7 +2890,11 @@
             drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
             drawTrendChannelButton.Size = new Size(68, 34);
             drawTrendChannelButton.TabIndex = 20;
-            drawTrendChannelButton.Text = "کانال روند";
+            drawTrendChannelButton.AutoSize = false;
+            drawTrendChannelButton.Text = string.Empty;
+            drawTrendChannelButton.Image = (Image)resources.GetObject("drawTrendChannelButton.Image")!;
+            drawTrendChannelButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawTrendChannelButton, drawTrendChannelButton.Image!, (Image)resources.GetObject("drawTrendChannelButton.ActiveImage")!);
             drawTrendChannelButton.UseVisualStyleBackColor = true;
             // 
             // drawHorizontalDoubleButton
@@ -2831,7 +2904,11 @@
             drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
             drawHorizontalDoubleButton.Size = new Size(69, 34);
             drawHorizontalDoubleButton.TabIndex = 20;
-            drawHorizontalDoubleButton.Text = "افقی";
+            drawHorizontalDoubleButton.AutoSize = false;
+            drawHorizontalDoubleButton.Text = string.Empty;
+            drawHorizontalDoubleButton.Image = (Image)resources.GetObject("drawHorizontalDoubleButton.Image")!;
+            drawHorizontalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawHorizontalDoubleButton, drawHorizontalDoubleButton.Image!, (Image)resources.GetObject("drawHorizontalDoubleButton.ActiveImage")!);
             drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
             // 
             // drawVerticalDoubleButton
@@ -2841,7 +2918,11 @@
             drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
             drawVerticalDoubleButton.Size = new Size(74, 34);
             drawVerticalDoubleButton.TabIndex = 20;
-            drawVerticalDoubleButton.Text = "عمودی";
+            drawVerticalDoubleButton.AutoSize = false;
+            drawVerticalDoubleButton.Text = string.Empty;
+            drawVerticalDoubleButton.Image = (Image)resources.GetObject("drawVerticalDoubleButton.Image")!;
+            drawVerticalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawVerticalDoubleButton, drawVerticalDoubleButton.Image!, (Image)resources.GetObject("drawVerticalDoubleButton.ActiveImage")!);
             drawVerticalDoubleButton.UseVisualStyleBackColor = true;
             // 
             // drawHorizontalRayButton
@@ -2851,7 +2932,11 @@
             drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
             drawHorizontalRayButton.Size = new Size(76, 34);
             drawHorizontalRayButton.TabIndex = 20;
-            drawHorizontalRayButton.Text = "نیم خط افقی";
+            drawHorizontalRayButton.AutoSize = false;
+            drawHorizontalRayButton.Text = string.Empty;
+            drawHorizontalRayButton.Image = (Image)resources.GetObject("drawHorizontalRayButton.Image")!;
+            drawHorizontalRayButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawHorizontalRayButton, drawHorizontalRayButton.Image!, (Image)resources.GetObject("drawHorizontalRayButton.ActiveImage")!);
             drawHorizontalRayButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendLineArrowButton
@@ -2861,7 +2946,11 @@
             drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
             drawTrendLineArrowButton.Size = new Size(81, 34);
             drawTrendLineArrowButton.TabIndex = 20;
-            drawTrendLineArrowButton.Text = "فلش";
+            drawTrendLineArrowButton.AutoSize = false;
+            drawTrendLineArrowButton.Text = string.Empty;
+            drawTrendLineArrowButton.Image = (Image)resources.GetObject("drawTrendLineArrowButton.Image")!;
+            drawTrendLineArrowButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawTrendLineArrowButton, drawTrendLineArrowButton.Image!, (Image)resources.GetObject("drawTrendLineArrowButton.ActiveImage")!);
             drawTrendLineArrowButton.UseVisualStyleBackColor = true;
             // 
             // drawRectangleButton
@@ -2871,7 +2960,11 @@
             drawRectangleButton.RightToLeft = RightToLeft.Yes;
             drawRectangleButton.Size = new Size(90, 34);
             drawRectangleButton.TabIndex = 20;
-            drawRectangleButton.Text = "مستطیل";
+            drawRectangleButton.AutoSize = false;
+            drawRectangleButton.Text = string.Empty;
+            drawRectangleButton.Image = (Image)resources.GetObject("drawRectangleButton.Image")!;
+            drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawRectangleButton, drawRectangleButton.Image!, (Image)resources.GetObject("drawRectangleButton.ActiveImage")!);
             drawRectangleButton.UseVisualStyleBackColor = true;
             // 
             // drawFibonacciButton
@@ -2881,7 +2974,11 @@
             drawFibonacciButton.RightToLeft = RightToLeft.Yes;
             drawFibonacciButton.Size = new Size(95, 34);
             drawFibonacciButton.TabIndex = 20;
-            drawFibonacciButton.Text = "فیبو R";
+            drawFibonacciButton.AutoSize = false;
+            drawFibonacciButton.Text = string.Empty;
+            drawFibonacciButton.Image = (Image)resources.GetObject("drawFibonacciButton.Image")!;
+            drawFibonacciButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawFibonacciButton, drawFibonacciButton.Image!, (Image)resources.GetObject("drawFibonacciButton.ActiveImage")!);
             drawFibonacciButton.UseVisualStyleBackColor = true;
             // 
             // drawTextButton
@@ -2891,7 +2988,11 @@
             drawTextButton.RightToLeft = RightToLeft.Yes;
             drawTextButton.Size = new Size(82, 34);
             drawTextButton.TabIndex = 20;
-            drawTextButton.Text = "متن";
+            drawTextButton.AutoSize = false;
+            drawTextButton.Text = string.Empty;
+            drawTextButton.Image = (Image)resources.GetObject("drawTextButton.Image")!;
+            drawTextButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawTextButton, drawTextButton.Image!, (Image)resources.GetObject("drawTextButton.ActiveImage")!);
             drawTextButton.UseVisualStyleBackColor = true;
             // 
             // drawPitchforkButton
@@ -2901,7 +3002,11 @@
             drawPitchforkButton.RightToLeft = RightToLeft.Yes;
             drawPitchforkButton.Size = new Size(65, 34);
             drawPitchforkButton.TabIndex = 20;
-            drawPitchforkButton.Text = "چنگال";
+            drawPitchforkButton.AutoSize = false;
+            drawPitchforkButton.Text = string.Empty;
+            drawPitchforkButton.Image = (Image)resources.GetObject("drawPitchforkButton.Image")!;
+            drawPitchforkButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
             drawPitchforkButton.UseVisualStyleBackColor = true;
             // 
             // drawFibonacciExtensionButton
@@ -2911,7 +3016,11 @@
             drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
             drawFibonacciExtensionButton.Size = new Size(96, 34);
             drawFibonacciExtensionButton.TabIndex = 20;
-            drawFibonacciExtensionButton.Text = "فیبو X";
+            drawFibonacciExtensionButton.AutoSize = false;
+            drawFibonacciExtensionButton.Text = string.Empty;
+            drawFibonacciExtensionButton.Image = (Image)resources.GetObject("drawFibonacciExtensionButton.Image")!;
+            drawFibonacciExtensionButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawFibonacciExtensionButton, drawFibonacciExtensionButton.Image!, (Image)resources.GetObject("drawFibonacciExtensionButton.ActiveImage")!);
             drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
             // 
             // drawMeasureButton
@@ -2921,7 +3030,11 @@
             drawMeasureButton.RightToLeft = RightToLeft.Yes;
             drawMeasureButton.Size = new Size(82, 34);
             drawMeasureButton.TabIndex = 20;
-            drawMeasureButton.Text = "خط کش";
+            drawMeasureButton.AutoSize = false;
+            drawMeasureButton.Text = string.Empty;
+            drawMeasureButton.Image = (Image)resources.GetObject("drawMeasureButton.Image")!;
+            drawMeasureButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ChartToolbarIcons.Register(drawMeasureButton, drawMeasureButton.Image!, (Image)resources.GetObject("drawMeasureButton.ActiveImage")!);
             drawMeasureButton.UseVisualStyleBackColor = true;
             // 
             // marketTypeComboBox

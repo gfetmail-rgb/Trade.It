@@ -71,6 +71,7 @@ namespace Trade.It
             chartTabControl.Visible = true;
 
             fullScreenChartButton.Text = "بازگشت";
+            ChartToolbarIcons.SetActive(fullScreenChartButton, true);
             if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
                 ownerDrawnButton.Active = true;
 
@@ -105,6 +106,7 @@ namespace Trade.It
                 WindowState = savedWindowState;
 
             fullScreenChartButton.Text = "تمام صفحه";
+            ChartToolbarIcons.SetActive(fullScreenChartButton, false);
             if (fullScreenChartButton is FullScreenToggleButton ownerDrawnButton)
                 ownerDrawnButton.Active = false;
 
