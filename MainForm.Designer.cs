@@ -2666,7 +2666,6 @@ namespace Trade.It
             closeAllChartsToolbarButton.Text = string.Empty;
             closeAllChartsToolbarButton.Image = (Image)resources.GetObject("closeAllChartsToolbarButton.Image")!;
             closeAllChartsToolbarButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(closeAllChartsToolbarButton, closeAllChartsToolbarButton.Image!, (Image)resources.GetObject("closeAllChartsToolbarButton.ActiveImage")!);
             closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
             // 
             // saveAnalysisButton
@@ -2680,7 +2679,6 @@ namespace Trade.It
             saveAnalysisButton.Text = string.Empty;
             saveAnalysisButton.Image = (Image)resources.GetObject("saveAnalysisButton.Image")!;
             saveAnalysisButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(saveAnalysisButton, saveAnalysisButton.Image!, (Image)resources.GetObject("saveAnalysisButton.ActiveImage")!, (Image)resources.GetObject("saveAnalysisButton.SuccessImage")!);
             saveAnalysisButton.UseVisualStyleBackColor = true;
             // 
             // chartTypeComboBox
@@ -2702,7 +2700,6 @@ namespace Trade.It
             gridButton.Text = string.Empty;
             gridButton.Image = (Image)resources.GetObject("gridButton.Image")!;
             gridButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(gridButton, gridButton.Image!, (Image)resources.GetObject("gridButton.ActiveImage")!);
             // 
             // crossButton
             // 
@@ -2715,7 +2712,6 @@ namespace Trade.It
             crossButton.Text = string.Empty;
             crossButton.Image = (Image)resources.GetObject("crossButton.Image")!;
             crossButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(crossButton, crossButton.Image!, (Image)resources.GetObject("crossButton.ActiveImage")!);
             // 
             // indicatorPanelButton
             // 
@@ -2727,7 +2723,6 @@ namespace Trade.It
             indicatorPanelButton.Text = string.Empty;
             indicatorPanelButton.Image = (Image)resources.GetObject("indicatorPanelButton.Image")!;
             indicatorPanelButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(indicatorPanelButton, indicatorPanelButton.Image!, (Image)resources.GetObject("indicatorPanelButton.ActiveImage")!);
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
             // testModeButton
@@ -2740,7 +2735,6 @@ namespace Trade.It
             testModeButton.Text = string.Empty;
             testModeButton.Image = (Image)resources.GetObject("testModeButton.Image")!;
             testModeButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(testModeButton, testModeButton.Image!, (Image)resources.GetObject("testModeButton.ActiveImage")!);
             testModeButton.UseVisualStyleBackColor = true;
             // 
             // testStepBackButton
@@ -2753,7 +2747,6 @@ namespace Trade.It
             testStepBackButton.Text = string.Empty;
             testStepBackButton.Image = (Image)resources.GetObject("testStepBackButton.Image")!;
             testStepBackButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(testStepBackButton, testStepBackButton.Image!, (Image)resources.GetObject("testStepBackButton.ActiveImage")!);
             testStepBackButton.UseVisualStyleBackColor = true;
             // 
             // testStepForwardButton
@@ -2766,7 +2759,6 @@ namespace Trade.It
             testStepForwardButton.Text = string.Empty;
             testStepForwardButton.Image = (Image)resources.GetObject("testStepForwardButton.Image")!;
             testStepForwardButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(testStepForwardButton, testStepForwardButton.Image!, (Image)resources.GetObject("testStepForwardButton.ActiveImage")!);
             testStepForwardButton.UseVisualStyleBackColor = true;
             // 
             // zoomInButton
@@ -2779,7 +2771,6 @@ namespace Trade.It
             zoomInButton.Text = string.Empty;
             zoomInButton.Image = (Image)resources.GetObject("zoomInButton.Image")!;
             zoomInButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(zoomInButton, zoomInButton.Image!, (Image)resources.GetObject("zoomInButton.ActiveImage")!);
             // 
             // zoomOutButton
             // 
@@ -2791,7 +2782,6 @@ namespace Trade.It
             zoomOutButton.Text = string.Empty;
             zoomOutButton.Image = (Image)resources.GetObject("zoomOutButton.Image")!;
             zoomOutButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(zoomOutButton, zoomOutButton.Image!, (Image)resources.GetObject("zoomOutButton.ActiveImage")!);
             // 
             // resetChartButton
             // 
@@ -2804,7 +2794,6 @@ namespace Trade.It
             resetChartButton.Text = string.Empty;
             resetChartButton.Image = (Image)resources.GetObject("resetChartButton.Image")!;
             resetChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(resetChartButton, resetChartButton.Image!, (Image)resources.GetObject("resetChartButton.ActiveImage")!);
             // 
             // hideChartButton
             // 
@@ -2816,7 +2805,6 @@ namespace Trade.It
             hideChartButton.Text = string.Empty;
             hideChartButton.Image = (Image)resources.GetObject("hideChartButton.Image")!;
             hideChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(hideChartButton, hideChartButton.Image!, (Image)resources.GetObject("hideChartButton.ActiveImage")!);
             hideChartButton.Click += hideChartButton_Click;
             // 
             // hideToolsButton
@@ -2829,7 +2817,6 @@ namespace Trade.It
             hideToolsButton.Text = string.Empty;
             hideToolsButton.Image = (Image)resources.GetObject("hideToolsButton.Image")!;
             hideToolsButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(hideToolsButton, hideToolsButton.Image!, (Image)resources.GetObject("hideToolsButton.ActiveImage")!);
             // 
             // printChartButton
             // 
@@ -2841,7 +2828,6 @@ namespace Trade.It
             printChartButton.Text = string.Empty;
             printChartButton.Image = (Image)resources.GetObject("printChartButton.Image")!;
             printChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(printChartButton, printChartButton.Image!, (Image)resources.GetObject("printChartButton.ActiveImage")!);
             // 
             // snapshotChartButton
             // 
@@ -2853,7 +2839,6 @@ namespace Trade.It
             snapshotChartButton.Text = string.Empty;
             snapshotChartButton.Image = (Image)resources.GetObject("snapshotChartButton.Image")!;
             snapshotChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(snapshotChartButton, snapshotChartButton.Image!, (Image)resources.GetObject("snapshotChartButton.ActiveImage")!);
             // 
             // fullScreenChartButton
             // 
@@ -2867,7 +2852,6 @@ namespace Trade.It
             fullScreenChartButton.Text = string.Empty;
             fullScreenChartButton.Image = (Image)resources.GetObject("fullScreenChartButton.Image")!;
             fullScreenChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(fullScreenChartButton, fullScreenChartButton.Image!, (Image)resources.GetObject("fullScreenChartButton.ActiveImage")!);
             // 
             // drawTrendLineButton
             // 
@@ -2880,7 +2864,6 @@ namespace Trade.It
             drawTrendLineButton.Text = string.Empty;
             drawTrendLineButton.Image = (Image)resources.GetObject("drawTrendLineButton.Image")!;
             drawTrendLineButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawTrendLineButton, drawTrendLineButton.Image!, (Image)resources.GetObject("drawTrendLineButton.ActiveImage")!);
             drawTrendLineButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendChannelButton
@@ -2894,7 +2877,6 @@ namespace Trade.It
             drawTrendChannelButton.Text = string.Empty;
             drawTrendChannelButton.Image = (Image)resources.GetObject("drawTrendChannelButton.Image")!;
             drawTrendChannelButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawTrendChannelButton, drawTrendChannelButton.Image!, (Image)resources.GetObject("drawTrendChannelButton.ActiveImage")!);
             drawTrendChannelButton.UseVisualStyleBackColor = true;
             // 
             // drawHorizontalDoubleButton
@@ -2908,7 +2890,6 @@ namespace Trade.It
             drawHorizontalDoubleButton.Text = string.Empty;
             drawHorizontalDoubleButton.Image = (Image)resources.GetObject("drawHorizontalDoubleButton.Image")!;
             drawHorizontalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawHorizontalDoubleButton, drawHorizontalDoubleButton.Image!, (Image)resources.GetObject("drawHorizontalDoubleButton.ActiveImage")!);
             drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
             // 
             // drawVerticalDoubleButton
@@ -2922,7 +2903,6 @@ namespace Trade.It
             drawVerticalDoubleButton.Text = string.Empty;
             drawVerticalDoubleButton.Image = (Image)resources.GetObject("drawVerticalDoubleButton.Image")!;
             drawVerticalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawVerticalDoubleButton, drawVerticalDoubleButton.Image!, (Image)resources.GetObject("drawVerticalDoubleButton.ActiveImage")!);
             drawVerticalDoubleButton.UseVisualStyleBackColor = true;
             // 
             // drawHorizontalRayButton
@@ -2936,7 +2916,6 @@ namespace Trade.It
             drawHorizontalRayButton.Text = string.Empty;
             drawHorizontalRayButton.Image = (Image)resources.GetObject("drawHorizontalRayButton.Image")!;
             drawHorizontalRayButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawHorizontalRayButton, drawHorizontalRayButton.Image!, (Image)resources.GetObject("drawHorizontalRayButton.ActiveImage")!);
             drawHorizontalRayButton.UseVisualStyleBackColor = true;
             // 
             // drawTrendLineArrowButton
@@ -2950,7 +2929,6 @@ namespace Trade.It
             drawTrendLineArrowButton.Text = string.Empty;
             drawTrendLineArrowButton.Image = (Image)resources.GetObject("drawTrendLineArrowButton.Image")!;
             drawTrendLineArrowButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawTrendLineArrowButton, drawTrendLineArrowButton.Image!, (Image)resources.GetObject("drawTrendLineArrowButton.ActiveImage")!);
             drawTrendLineArrowButton.UseVisualStyleBackColor = true;
             // 
             // drawRectangleButton
@@ -2964,7 +2942,6 @@ namespace Trade.It
             drawRectangleButton.Text = string.Empty;
             drawRectangleButton.Image = (Image)resources.GetObject("drawRectangleButton.Image")!;
             drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawRectangleButton, drawRectangleButton.Image!, (Image)resources.GetObject("drawRectangleButton.ActiveImage")!);
             drawRectangleButton.UseVisualStyleBackColor = true;
             // 
             // drawFibonacciButton
@@ -2978,7 +2955,6 @@ namespace Trade.It
             drawFibonacciButton.Text = string.Empty;
             drawFibonacciButton.Image = (Image)resources.GetObject("drawFibonacciButton.Image")!;
             drawFibonacciButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawFibonacciButton, drawFibonacciButton.Image!, (Image)resources.GetObject("drawFibonacciButton.ActiveImage")!);
             drawFibonacciButton.UseVisualStyleBackColor = true;
             // 
             // drawTextButton
@@ -2992,7 +2968,6 @@ namespace Trade.It
             drawTextButton.Text = string.Empty;
             drawTextButton.Image = (Image)resources.GetObject("drawTextButton.Image")!;
             drawTextButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawTextButton, drawTextButton.Image!, (Image)resources.GetObject("drawTextButton.ActiveImage")!);
             drawTextButton.UseVisualStyleBackColor = true;
             // 
             // drawPitchforkButton
@@ -3006,7 +2981,6 @@ namespace Trade.It
             drawPitchforkButton.Text = string.Empty;
             drawPitchforkButton.Image = (Image)resources.GetObject("drawPitchforkButton.Image")!;
             drawPitchforkButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
             drawPitchforkButton.UseVisualStyleBackColor = true;
             // 
             // drawFibonacciExtensionButton
@@ -3020,7 +2994,6 @@ namespace Trade.It
             drawFibonacciExtensionButton.Text = string.Empty;
             drawFibonacciExtensionButton.Image = (Image)resources.GetObject("drawFibonacciExtensionButton.Image")!;
             drawFibonacciExtensionButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawFibonacciExtensionButton, drawFibonacciExtensionButton.Image!, (Image)resources.GetObject("drawFibonacciExtensionButton.ActiveImage")!);
             drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
             // 
             // drawMeasureButton
@@ -3034,7 +3007,6 @@ namespace Trade.It
             drawMeasureButton.Text = string.Empty;
             drawMeasureButton.Image = (Image)resources.GetObject("drawMeasureButton.Image")!;
             drawMeasureButton.ImageAlign = ContentAlignment.MiddleCenter;
-            ChartToolbarIcons.Register(drawMeasureButton, drawMeasureButton.Image!, (Image)resources.GetObject("drawMeasureButton.ActiveImage")!);
             drawMeasureButton.UseVisualStyleBackColor = true;
             // 
             // marketTypeComboBox
