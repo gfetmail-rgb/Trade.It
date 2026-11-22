@@ -152,6 +152,7 @@ namespace Trade.It
         private System.Windows.Forms.Button drawPitchforkButton;
         private System.Windows.Forms.Button drawFibonacciExtensionButton;
         private System.Windows.Forms.Button drawMeasureButton;
+        private System.Windows.Forms.ToolTip chartToolsToolTip;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -251,7 +252,9 @@ namespace Trade.It
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            chartToolsToolTip = new System.Windows.Forms.ToolTip(components);
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -3008,6 +3011,19 @@ namespace Trade.It
             drawMeasureButton.Image = ((Image)(resources.GetObject("drawMeasureButton.Image")));
             drawMeasureButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawMeasureButton.UseVisualStyleBackColor = true;
+
+            chartToolsToolTip.SetToolTip(drawTrendLineButton, "رسم خط روند");
+            chartToolsToolTip.SetToolTip(drawTrendChannelButton, "رسم کانال روند");
+            chartToolsToolTip.SetToolTip(drawHorizontalDoubleButton, "رسم خط افقی");
+            chartToolsToolTip.SetToolTip(drawVerticalDoubleButton, "رسم خط عمودی");
+            chartToolsToolTip.SetToolTip(drawHorizontalRayButton, "رسم نیم‌خط افقی");
+            chartToolsToolTip.SetToolTip(drawTrendLineArrowButton, "رسم خط روند فلش‌دار");
+            chartToolsToolTip.SetToolTip(drawRectangleButton, "رسم مستطیل روی نمودار");
+            chartToolsToolTip.SetToolTip(drawFibonacciButton, "رسم سطوح فیبوناچی اصلاحی");
+            chartToolsToolTip.SetToolTip(drawTextButton, "افزودن متن به نمودار");
+            chartToolsToolTip.SetToolTip(drawPitchforkButton, "رسم چنگال اندروز");
+            chartToolsToolTip.SetToolTip(drawFibonacciExtensionButton, "رسم سطوح فیبوناچی گسترشی");
+            chartToolsToolTip.SetToolTip(drawMeasureButton, "اندازه‌گیری تغییرات قیمت و زمان");
             // 
             // marketTypeComboBox
             // 
