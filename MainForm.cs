@@ -628,9 +628,8 @@ namespace Trade.It
         }
         private void ApplyFullScreenChartButtonStyle()
         {
-            // فقط متن دکمه با وضعیت تمام‌صفحه تغییر می‌کند.
-            // ظاهر دکمه همان تنظیمات Designer باقی می‌ماند.
-            fullScreenChartButton.Text = isFullScreenChart ? "بازگشت" : "تمام صفحه";
+            fullScreenChartButton.Active = isFullScreenChart;
+            ChartToolbarIcons.SetActive(fullScreenChartButton, isFullScreenChart);
         }
 
         protected override void OnHandleCreated(EventArgs e)
