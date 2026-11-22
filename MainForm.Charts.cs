@@ -47,7 +47,8 @@ namespace Trade.It
             analysisSavedFeedbackTimer.Tick += (_, _) =>
             {
                 analysisSavedFeedbackTimer.Stop();
-                saveAnalysisButton.Text = "ذخیره تحلیل";
+                saveAnalysisButton.Text = string.Empty;
+                ChartToolbarIcons.SetSaveFeedback(saveAnalysisButton, false);
                 saveAnalysisButton.UseVisualStyleBackColor = true;
                 saveAnalysisButton.ForeColor = SystemColors.ControlText;
             };
@@ -191,8 +192,6 @@ namespace Trade.It
                 // حالت پشتیبان برای زمانی که چارت اصلی از قبل در حافظه نباشد.
                 ShowSymbolChart(symbol);
             }
-
-            testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
             SetToggleButtonState(hideChartButton, false);
         }
@@ -331,7 +330,6 @@ namespace Trade.It
                 }
 
                 testMode = chart.TestMode;
-                testModeButton.Text = "تست";
                 SetToggleButtonState(testModeButton, testMode);
                 SetToggleButtonState(hideChartButton, false);
                 SetToggleButtonState(crossButton, chart.CrosshairVisible);
@@ -379,8 +377,6 @@ namespace Trade.It
             {
                 chart.SetTestMode(testMode);
             }
-
-            testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
         }
 
@@ -449,13 +445,11 @@ namespace Trade.It
         {
             if (chart == null)
             {
-                indicatorPanelButton.Text = "اندیکاتورها";
-                SetToggleButtonState(indicatorPanelButton, false);
+                 SetToggleButtonState(indicatorPanelButton, false);
                 return;
             }
 
-            indicatorPanelButton.Text = "حجم";
-            SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
+             SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
         }
 
         private void SaveAnalysisButton_Click(object? sender, EventArgs e)
@@ -476,7 +470,8 @@ namespace Trade.It
                 saveAnalysisButton.UseVisualStyleBackColor = false;
                 saveAnalysisButton.BackColor = System.Drawing.Color.FromArgb(198, 239, 206);
                 saveAnalysisButton.ForeColor = System.Drawing.Color.FromArgb(0, 97, 0);
-                saveAnalysisButton.Text = "✓ ذخیره شد";
+                saveAnalysisButton.Text = string.Empty;
+                ChartToolbarIcons.SetSaveFeedback(saveAnalysisButton, true);
                 analysisSavedFeedbackTimer.Start();
             }
             catch (Exception ex)
@@ -713,8 +708,6 @@ namespace Trade.It
             {
                 testMode = chart?.TestMode == true;
             }
-
-            testModeButton.Text = "تست";
             SetToggleButtonState(testModeButton, testMode);
 
             ResetDrawingToolButtons();
@@ -819,7 +812,6 @@ namespace Trade.It
                 // حالت تست متعلق به همان چارت فعال است. با تعویض نماد، چارت جدید
                 // نباید وضعیت تست چارت قبلی را به دکمه منتقل کند.
                 testMode = chart.TestMode;
-                testModeButton.Text = "تست";
                 SetToggleButtonState(testModeButton, testMode);
 
                 chart.Visible = true;
@@ -1221,6 +1213,7 @@ namespace Trade.It
                 button.FlatAppearance.BorderSize = 1;
             }
 
+            ChartToolbarIcons.SetActive(button, active);
             button.Invalidate();
         }
 
