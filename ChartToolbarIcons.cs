@@ -136,10 +136,15 @@ namespace Trade.It
                     break;
 
                 case "volume":
+                    // ستون‌های حجم معاملات با ارتفاع‌های متفاوت و خط مبنا
                     Line(3, 21, 21, 21);
-                    Rect(4, 12, 3, 9);
-                    Rect(10, 7, 3, 14);
-                    Rect(16, 3, 3, 18);
+                    using (var volumeBrush = new SolidBrush(color))
+                    {
+                        graphics.FillRectangle(volumeBrush, 4, 14, 3, 7);
+                        graphics.FillRectangle(volumeBrush, 9, 9, 3, 12);
+                        graphics.FillRectangle(volumeBrush, 14, 5, 3, 16);
+                        graphics.FillRectangle(volumeBrush, 19, 12, 2, 9);
+                    }
                     break;
 
                 case "test":
@@ -170,16 +175,18 @@ namespace Trade.It
                     break;
 
                 case "reset":
-                    graphics.DrawArc(pen, 4, 4, 16, 16, 35, 285);
+                    // پیکان چرخشی واضح برای بازنشانی
+                    graphics.DrawArc(pen, 4, 4, 16, 16, 45, 285);
                     Line(4, 4, 4, 10);
                     Line(4, 4, 10, 4);
+                    Line(4, 4, 9, 3);
                     break;
 
                 case "hide-chart":
-                    Rect(3, 4, 18, 16);
-                    Line(6, 16, 10, 11);
-                    Line(10, 11, 13, 14);
-                    Line(13, 14, 18, 8);
+                    // نماد استاندارد چشم خط‌خورده: پنهان‌کردن
+                    graphics.DrawArc(pen, 3, 6, 18, 12, 0, 180);
+                    graphics.DrawArc(pen, 3, 6, 18, 12, 180, 180);
+                    Ellipse(9, 9, 6, 6);
                     Line(3, 21, 21, 3);
                     break;
 
@@ -228,9 +235,9 @@ namespace Trade.It
                     break;
 
                 case "channel":
+                    // دو مرز موازی کانال؛ بدون خط میانی
                     Line(3, 18, 19, 5);
                     Line(5, 21, 21, 8);
-                    Line(3, 12, 13, 3);
                     break;
 
                 case "horizontal":
@@ -246,14 +253,23 @@ namespace Trade.It
                     break;
 
                 case "ray":
-                    Line(3, 12, 21, 12);
-                    Line(16, 7, 21, 12);
-                    Line(16, 17, 21, 12);
+                    // نیم‌خط از نقطهٔ لنگر در سمت چپ به سمت راست
+                    Ellipse(2, 9, 6, 6);
+                    Line(8, 12, 22, 12);
                     break;
 
                 case "arrow-trend":
+                    // خط روند با نوک فلش واقعی در انتهای مسیر
                     Line(3, 19, 19, 5);
-                    ArrowHead(19, 5, true);
+                    using (var arrowBrush = new SolidBrush(color))
+                    {
+                        graphics.FillPolygon(arrowBrush, new[]
+                        {
+                            new PointF(14, 5),
+                            new PointF(21, 3),
+                            new PointF(19, 10)
+                        });
+                    }
                     break;
 
                 case "rectangle":
@@ -276,10 +292,13 @@ namespace Trade.It
                     break;
 
                 case "pitchfork":
-                    Line(12, 20, 4, 4);
-                    Line(12, 20, 12, 4);
-                    Line(12, 20, 20, 4);
-                    Line(7, 10, 17, 10);
+                    // چنگال اندروز: سه خط موازی با سه نقطهٔ شروع مجزا
+                    Line(5, 5, 19, 19);
+                    Line(3, 10, 17, 24);
+                    Line(8, 2, 22, 16);
+                    Ellipse(3, 3, 4, 4);
+                    Ellipse(1, 8, 4, 4);
+                    Ellipse(6, 0, 4, 4);
                     break;
 
                 case "fib-extension":
@@ -300,10 +319,11 @@ namespace Trade.It
                     break;
 
                 case "close-all":
-                    Rect(3, 5, 14, 14);
-                    Rect(7, 3, 14, 14);
-                    Line(14, 8, 19, 13);
-                    Line(19, 8, 14, 13);
+                    // پنجره‌های روی‌هم با علامت ضربدر بزرگ
+                    Rect(3, 5, 13, 14);
+                    Rect(7, 3, 13, 14);
+                    Line(14, 14, 22, 22);
+                    Line(22, 14, 14, 22);
                     break;
 
                 default:
