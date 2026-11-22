@@ -2664,7 +2664,7 @@ namespace Trade.It
             closeAllChartsToolbarButton.TabIndex = 21;
             closeAllChartsToolbarButton.AutoSize = false;
             closeAllChartsToolbarButton.Text = string.Empty;
-            closeAllChartsToolbarButton.Image = (Image)resources.GetObject("closeAllChartsToolbarButton.Image")!;
+            closeAllChartsToolbarButton.Image = (Image)resources.GetObject("closeAllChartsToolbarButton.Image");
             closeAllChartsToolbarButton.ImageAlign = ContentAlignment.MiddleCenter;
             closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
             // 
@@ -2677,7 +2677,7 @@ namespace Trade.It
             saveAnalysisButton.TabIndex = 11;
             saveAnalysisButton.AutoSize = false;
             saveAnalysisButton.Text = string.Empty;
-            saveAnalysisButton.Image = (Image)resources.GetObject("saveAnalysisButton.Image")!;
+            saveAnalysisButton.Image = (Image)resources.GetObject("saveAnalysisButton.Image");
             saveAnalysisButton.ImageAlign = ContentAlignment.MiddleCenter;
             saveAnalysisButton.UseVisualStyleBackColor = true;
             // 
@@ -2698,7 +2698,7 @@ namespace Trade.It
             gridButton.TabIndex = 1;
             gridButton.AutoSize = false;
             gridButton.Text = string.Empty;
-            gridButton.Image = (Image)resources.GetObject("gridButton.Image")!;
+            gridButton.Image = (Image)resources.GetObject("gridButton.Image");
             gridButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // crossButton
@@ -2710,7 +2710,7 @@ namespace Trade.It
             crossButton.TabIndex = 2;
             crossButton.AutoSize = false;
             crossButton.Text = string.Empty;
-            crossButton.Image = (Image)resources.GetObject("crossButton.Image")!;
+            crossButton.Image = (Image)resources.GetObject("crossButton.Image");
             crossButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // indicatorPanelButton
@@ -2721,7 +2721,7 @@ namespace Trade.It
             indicatorPanelButton.TabIndex = 3;
             indicatorPanelButton.AutoSize = false;
             indicatorPanelButton.Text = string.Empty;
-            indicatorPanelButton.Image = (Image)resources.GetObject("indicatorPanelButton.Image")!;
+            indicatorPanelButton.Image = (Image)resources.GetObject("indicatorPanelButton.Image");
             indicatorPanelButton.ImageAlign = ContentAlignment.MiddleCenter;
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
@@ -2733,7 +2733,7 @@ namespace Trade.It
             testModeButton.TabIndex = 22;
             testModeButton.AutoSize = false;
             testModeButton.Text = string.Empty;
-            testModeButton.Image = (Image)resources.GetObject("testModeButton.Image")!;
+            testModeButton.Image = (Image)resources.GetObject("testModeButton.Image");
             testModeButton.ImageAlign = ContentAlignment.MiddleCenter;
             testModeButton.UseVisualStyleBackColor = true;
             // 
@@ -2745,7 +2745,7 @@ namespace Trade.It
             testStepBackButton.TabIndex = 23;
             testStepBackButton.AutoSize = false;
             testStepBackButton.Text = string.Empty;
-            testStepBackButton.Image = (Image)resources.GetObject("testStepBackButton.Image")!;
+            testStepBackButton.Image = (Image)resources.GetObject("testStepBackButton.Image");
             testStepBackButton.ImageAlign = ContentAlignment.MiddleCenter;
             testStepBackButton.UseVisualStyleBackColor = true;
             // 
@@ -2757,7 +2757,7 @@ namespace Trade.It
             testStepForwardButton.TabIndex = 24;
             testStepForwardButton.AutoSize = false;
             testStepForwardButton.Text = string.Empty;
-            testStepForwardButton.Image = (Image)resources.GetObject("testStepForwardButton.Image")!;
+            testStepForwardButton.Image = (Image)resources.GetObject("testStepForwardButton.Image");
             testStepForwardButton.ImageAlign = ContentAlignment.MiddleCenter;
             testStepForwardButton.UseVisualStyleBackColor = true;
             // 
@@ -2769,7 +2769,7 @@ namespace Trade.It
             zoomInButton.TabIndex = 4;
             zoomInButton.AutoSize = false;
             zoomInButton.Text = string.Empty;
-            zoomInButton.Image = (Image)resources.GetObject("zoomInButton.Image")!;
+            zoomInButton.Image = (Image)resources.GetObject("zoomInButton.Image");
             zoomInButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // zoomOutButton
@@ -2780,7 +2780,7 @@ namespace Trade.It
             zoomOutButton.TabIndex = 5;
             zoomOutButton.AutoSize = false;
             zoomOutButton.Text = string.Empty;
-            zoomOutButton.Image = (Image)resources.GetObject("zoomOutButton.Image")!;
+            zoomOutButton.Image = (Image)resources.GetObject("zoomOutButton.Image");
             zoomOutButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // resetChartButton
@@ -2792,7 +2792,7 @@ namespace Trade.It
             resetChartButton.TabIndex = 6;
             resetChartButton.AutoSize = false;
             resetChartButton.Text = string.Empty;
-            resetChartButton.Image = (Image)resources.GetObject("resetChartButton.Image")!;
+            resetChartButton.Image = (Image)resources.GetObject("resetChartButton.Image");
             resetChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // hideChartButton
@@ -2803,7 +2803,7 @@ namespace Trade.It
             hideChartButton.TabIndex = 6;
             hideChartButton.AutoSize = false;
             hideChartButton.Text = string.Empty;
-            hideChartButton.Image = (Image)resources.GetObject("hideChartButton.Image")!;
+            hideChartButton.Image = (Image)resources.GetObject("hideChartButton.Image");
             hideChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             hideChartButton.Click += hideChartButton_Click;
             // 
@@ -2815,7 +2815,7 @@ namespace Trade.It
             hideToolsButton.TabIndex = 7;
             hideToolsButton.AutoSize = false;
             hideToolsButton.Text = string.Empty;
-            hideToolsButton.Image = (Image)resources.GetObject("hideToolsButton.Image")!;
+            hideToolsButton.Image = (Image)resources.GetObject("hideToolsButton.Image");
             hideToolsButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // printChartButton
@@ -2826,7 +2826,7 @@ namespace Trade.It
             printChartButton.TabIndex = 8;
             printChartButton.AutoSize = false;
             printChartButton.Text = string.Empty;
-            printChartButton.Image = (Image)resources.GetObject("printChartButton.Image")!;
+            printChartButton.Image = (Image)resources.GetObject("printChartButton.Image");
             printChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // snapshotChartButton
@@ -2837,7 +2837,7 @@ namespace Trade.It
             snapshotChartButton.TabIndex = 9;
             snapshotChartButton.AutoSize = false;
             snapshotChartButton.Text = string.Empty;
-            snapshotChartButton.Image = (Image)resources.GetObject("snapshotChartButton.Image")!;
+            snapshotChartButton.Image = (Image)resources.GetObject("snapshotChartButton.Image");
             snapshotChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // fullScreenChartButton
@@ -2850,7 +2850,7 @@ namespace Trade.It
             fullScreenChartButton.TabIndex = 10;
             fullScreenChartButton.AutoSize = false;
             fullScreenChartButton.Text = string.Empty;
-            fullScreenChartButton.Image = (Image)resources.GetObject("fullScreenChartButton.Image")!;
+            fullScreenChartButton.Image = (Image)resources.GetObject("fullScreenChartButton.Image");
             fullScreenChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // drawTrendLineButton
@@ -2862,7 +2862,7 @@ namespace Trade.It
             drawTrendLineButton.TabIndex = 20;
             drawTrendLineButton.AutoSize = false;
             drawTrendLineButton.Text = string.Empty;
-            drawTrendLineButton.Image = (Image)resources.GetObject("drawTrendLineButton.Image")!;
+            drawTrendLineButton.Image = (Image)resources.GetObject("drawTrendLineButton.Image");
             drawTrendLineButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawTrendLineButton.UseVisualStyleBackColor = true;
             // 
@@ -2875,7 +2875,7 @@ namespace Trade.It
             drawTrendChannelButton.TabIndex = 20;
             drawTrendChannelButton.AutoSize = false;
             drawTrendChannelButton.Text = string.Empty;
-            drawTrendChannelButton.Image = (Image)resources.GetObject("drawTrendChannelButton.Image")!;
+            drawTrendChannelButton.Image = (Image)resources.GetObject("drawTrendChannelButton.Image");
             drawTrendChannelButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawTrendChannelButton.UseVisualStyleBackColor = true;
             // 
@@ -2888,7 +2888,7 @@ namespace Trade.It
             drawHorizontalDoubleButton.TabIndex = 20;
             drawHorizontalDoubleButton.AutoSize = false;
             drawHorizontalDoubleButton.Text = string.Empty;
-            drawHorizontalDoubleButton.Image = (Image)resources.GetObject("drawHorizontalDoubleButton.Image")!;
+            drawHorizontalDoubleButton.Image = (Image)resources.GetObject("drawHorizontalDoubleButton.Image");
             drawHorizontalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
             // 
@@ -2901,7 +2901,7 @@ namespace Trade.It
             drawVerticalDoubleButton.TabIndex = 20;
             drawVerticalDoubleButton.AutoSize = false;
             drawVerticalDoubleButton.Text = string.Empty;
-            drawVerticalDoubleButton.Image = (Image)resources.GetObject("drawVerticalDoubleButton.Image")!;
+            drawVerticalDoubleButton.Image = (Image)resources.GetObject("drawVerticalDoubleButton.Image");
             drawVerticalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawVerticalDoubleButton.UseVisualStyleBackColor = true;
             // 
@@ -2914,7 +2914,7 @@ namespace Trade.It
             drawHorizontalRayButton.TabIndex = 20;
             drawHorizontalRayButton.AutoSize = false;
             drawHorizontalRayButton.Text = string.Empty;
-            drawHorizontalRayButton.Image = (Image)resources.GetObject("drawHorizontalRayButton.Image")!;
+            drawHorizontalRayButton.Image = (Image)resources.GetObject("drawHorizontalRayButton.Image");
             drawHorizontalRayButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawHorizontalRayButton.UseVisualStyleBackColor = true;
             // 
@@ -2927,7 +2927,7 @@ namespace Trade.It
             drawTrendLineArrowButton.TabIndex = 20;
             drawTrendLineArrowButton.AutoSize = false;
             drawTrendLineArrowButton.Text = string.Empty;
-            drawTrendLineArrowButton.Image = (Image)resources.GetObject("drawTrendLineArrowButton.Image")!;
+            drawTrendLineArrowButton.Image = (Image)resources.GetObject("drawTrendLineArrowButton.Image");
             drawTrendLineArrowButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawTrendLineArrowButton.UseVisualStyleBackColor = true;
             // 
@@ -2940,7 +2940,7 @@ namespace Trade.It
             drawRectangleButton.TabIndex = 20;
             drawRectangleButton.AutoSize = false;
             drawRectangleButton.Text = string.Empty;
-            drawRectangleButton.Image = (Image)resources.GetObject("drawRectangleButton.Image")!;
+            drawRectangleButton.Image = (Image)resources.GetObject("drawRectangleButton.Image");
             drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawRectangleButton.UseVisualStyleBackColor = true;
             // 
@@ -2953,7 +2953,7 @@ namespace Trade.It
             drawFibonacciButton.TabIndex = 20;
             drawFibonacciButton.AutoSize = false;
             drawFibonacciButton.Text = string.Empty;
-            drawFibonacciButton.Image = (Image)resources.GetObject("drawFibonacciButton.Image")!;
+            drawFibonacciButton.Image = (Image)resources.GetObject("drawFibonacciButton.Image");
             drawFibonacciButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawFibonacciButton.UseVisualStyleBackColor = true;
             // 
@@ -2966,7 +2966,7 @@ namespace Trade.It
             drawTextButton.TabIndex = 20;
             drawTextButton.AutoSize = false;
             drawTextButton.Text = string.Empty;
-            drawTextButton.Image = (Image)resources.GetObject("drawTextButton.Image")!;
+            drawTextButton.Image = (Image)resources.GetObject("drawTextButton.Image");
             drawTextButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawTextButton.UseVisualStyleBackColor = true;
             // 
@@ -2979,7 +2979,7 @@ namespace Trade.It
             drawPitchforkButton.TabIndex = 20;
             drawPitchforkButton.AutoSize = false;
             drawPitchforkButton.Text = string.Empty;
-            drawPitchforkButton.Image = (Image)resources.GetObject("drawPitchforkButton.Image")!;
+            drawPitchforkButton.Image = (Image)resources.GetObject("drawPitchforkButton.Image");
             drawPitchforkButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawPitchforkButton.UseVisualStyleBackColor = true;
             // 
@@ -2992,7 +2992,7 @@ namespace Trade.It
             drawFibonacciExtensionButton.TabIndex = 20;
             drawFibonacciExtensionButton.AutoSize = false;
             drawFibonacciExtensionButton.Text = string.Empty;
-            drawFibonacciExtensionButton.Image = (Image)resources.GetObject("drawFibonacciExtensionButton.Image")!;
+            drawFibonacciExtensionButton.Image = (Image)resources.GetObject("drawFibonacciExtensionButton.Image");
             drawFibonacciExtensionButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
             // 
@@ -3005,7 +3005,7 @@ namespace Trade.It
             drawMeasureButton.TabIndex = 20;
             drawMeasureButton.AutoSize = false;
             drawMeasureButton.Text = string.Empty;
-            drawMeasureButton.Image = (Image)resources.GetObject("drawMeasureButton.Image")!;
+            drawMeasureButton.Image = (Image)resources.GetObject("drawMeasureButton.Image");
             drawMeasureButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawMeasureButton.UseVisualStyleBackColor = true;
             // 
