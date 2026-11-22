@@ -175,10 +175,17 @@ namespace Trade.It
                     break;
 
                 case "reset":
-                    // پیکان چرخشی واضح برای بازنشانی
+                    // فلش چرخشی با سرِ فلش مشخص؛ نماد بازگشت نمای نمودار به حالت اولیه
                     graphics.DrawArc(pen, 4, 4, 16, 16, 45, 285);
-                    Line(4, 4, 4, 10);
-                    Line(4, 4, 10, 4);
+                    using (var resetBrush = new SolidBrush(color))
+                    {
+                        graphics.FillPolygon(resetBrush, new[]
+                        {
+                            new PointF(18, 5),
+                            new PointF(12, 3),
+                            new PointF(15, 9)
+                        });
+                    }
                     break;
 
                 case "hide-chart":
