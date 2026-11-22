@@ -270,7 +270,8 @@ namespace Trade.It
 
                 case "text":
                     using (var font = new Font("Segoe UI", 16, FontStyle.Bold, GraphicsUnit.Pixel))
-                        graphics.DrawString("T", font, new SolidBrush(color), 4, 1);
+                    using (var brush = new SolidBrush(color))
+                        graphics.DrawString("T", font, brush, 4, 1);
                     Line(4, 21, 20, 21);
                     break;
 
