@@ -179,7 +179,6 @@ namespace Trade.It
                     graphics.DrawArc(pen, 4, 4, 16, 16, 45, 285);
                     Line(4, 4, 4, 10);
                     Line(4, 4, 10, 4);
-                    Line(4, 4, 9, 3);
                     break;
 
                 case "hide-chart":
@@ -292,13 +291,14 @@ namespace Trade.It
                     break;
 
                 case "pitchfork":
-                    // چنگال اندروز: سه خط موازی با سه نقطهٔ شروع مجزا
-                    Line(5, 5, 19, 19);
-                    Line(3, 10, 17, 24);
-                    Line(8, 2, 22, 16);
-                    Ellipse(3, 3, 4, 4);
-                    Ellipse(1, 8, 4, 4);
-                    Ellipse(6, 0, 4, 4);
+                    // نماد سه‌شاخهٔ چنگال اندروز؛ سه بازوی هم‌راستا و دستهٔ مرکزی
+                    Line(5, 3, 5, 11);
+                    Line(12, 3, 12, 13);
+                    Line(19, 3, 19, 11);
+                    Line(5, 11, 8, 15);
+                    Line(19, 11, 16, 15);
+                    Line(8, 15, 16, 15);
+                    Line(12, 13, 12, 22);
                     break;
 
                 case "fib-extension":
