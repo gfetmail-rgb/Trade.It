@@ -54,15 +54,27 @@ namespace Trade.It
             e.Graphics.FillRectangle(background, rect);
             e.Graphics.DrawRectangle(border, rect);
 
-            TextRenderer.DrawText(
-                e.Graphics,
-                Text,
-                Font,
-                ClientRectangle,
-                foregroundColor,
-                TextFormatFlags.HorizontalCenter |
-                TextFormatFlags.VerticalCenter |
-                TextFormatFlags.SingleLine);
+            if (Image != null)
+            {
+                var imageBounds = new Rectangle(
+                    (ClientRectangle.Width - Image.Width) / 2,
+                    (ClientRectangle.Height - Image.Height) / 2,
+                    Image.Width,
+                    Image.Height);
+                e.Graphics.DrawImage(Image, imageBounds);
+            }
+            else
+            {
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    Text,
+                    Font,
+                    ClientRectangle,
+                    foregroundColor,
+                    TextFormatFlags.HorizontalCenter |
+                    TextFormatFlags.VerticalCenter |
+                    TextFormatFlags.SingleLine);
+            }
         }
     }
 }
