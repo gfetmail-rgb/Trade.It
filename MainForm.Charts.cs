@@ -464,6 +464,7 @@ namespace Trade.It
             try
             {
                 SaveAnalysisForChart(chart);
+                SaveAnalysisButton_MouseEnter(saveAnalysisButton, EventArgs.Empty);
 
                 // تأیید ذخیره بدون پنجرهٔ مزاحم؛ دکمه برای مدت کوتاهی سبز می‌شود.
                 analysisSavedFeedbackTimer.Stop();
