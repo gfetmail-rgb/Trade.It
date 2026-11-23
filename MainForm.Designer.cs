@@ -153,6 +153,11 @@ namespace Trade.It
         private System.Windows.Forms.Button drawFibonacciExtensionButton;
         private System.Windows.Forms.Button drawMeasureButton;
         private System.Windows.Forms.ToolTip chartToolsToolTip;
+        private System.Windows.Forms.ContextMenuStrip drawingShapesMenu;
+        private System.Windows.Forms.ToolStripMenuItem rectangleShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ellipseShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem triangleShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pathShapeMenuItem;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -255,6 +260,11 @@ namespace Trade.It
             components = new System.ComponentModel.Container();
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             chartToolsToolTip = new System.Windows.Forms.ToolTip(components);
+            drawingShapesMenu = new ContextMenuStrip(components);
+            rectangleShapeMenuItem = new ToolStripMenuItem();
+            ellipseShapeMenuItem = new ToolStripMenuItem();
+            triangleShapeMenuItem = new ToolStripMenuItem();
+            pathShapeMenuItem = new ToolStripMenuItem();
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2934,7 +2944,7 @@ namespace Trade.It
             drawTrendLineArrowButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawTrendLineArrowButton.UseVisualStyleBackColor = true;
             // 
-            // drawRectangleButton
+            // drawRectangleButton (shape brush)
             // 
             drawRectangleButton.Location = new Point(456, 46);
             drawRectangleButton.Name = "drawRectangleButton";
@@ -2942,10 +2952,47 @@ namespace Trade.It
             drawRectangleButton.Size = new Size(90, 34);
             drawRectangleButton.TabIndex = 20;
             drawRectangleButton.AutoSize = false;
-            drawRectangleButton.Text = string.Empty;
-            drawRectangleButton.Image = ((Image)(resources.GetObject("drawRectangleButton.Image")));
+            drawRectangleButton.Text = "🖌";
+            drawRectangleButton.Font = new Font("Segoe UI Emoji", 17F, FontStyle.Regular, GraphicsUnit.Point);
+            drawRectangleButton.Image = null;
             drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
+            drawRectangleButton.ContextMenuStrip = drawingShapesMenu;
             drawRectangleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawingShapesMenu
+            // 
+            drawingShapesMenu.RightToLeft = RightToLeft.Yes;
+            drawingShapesMenu.Items.AddRange(new ToolStripItem[] {
+                rectangleShapeMenuItem,
+                ellipseShapeMenuItem,
+                triangleShapeMenuItem,
+                new ToolStripSeparator(),
+                pathShapeMenuItem
+            });
+            // 
+            // rectangleShapeMenuItem
+            // 
+            rectangleShapeMenuItem.Name = "rectangleShapeMenuItem";
+            rectangleShapeMenuItem.Size = new Size(180, 24);
+            rectangleShapeMenuItem.Text = "مستطیل";
+            // 
+            // ellipseShapeMenuItem
+            // 
+            ellipseShapeMenuItem.Name = "ellipseShapeMenuItem";
+            ellipseShapeMenuItem.Size = new Size(180, 24);
+            ellipseShapeMenuItem.Text = "دایره / بیضی";
+            // 
+            // triangleShapeMenuItem
+            // 
+            triangleShapeMenuItem.Name = "triangleShapeMenuItem";
+            triangleShapeMenuItem.Size = new Size(180, 24);
+            triangleShapeMenuItem.Text = "مثلث";
+            // 
+            // pathShapeMenuItem
+            // 
+            pathShapeMenuItem.Name = "pathShapeMenuItem";
+            pathShapeMenuItem.Size = new Size(180, 24);
+            pathShapeMenuItem.Text = "مسیر چندنقطه‌ای";
             // 
             // drawFibonacciButton
             // 
@@ -3018,7 +3065,7 @@ namespace Trade.It
             chartToolsToolTip.SetToolTip(drawVerticalDoubleButton, "رسم خط عمودی");
             chartToolsToolTip.SetToolTip(drawHorizontalRayButton, "رسم نیم‌خط افقی");
             chartToolsToolTip.SetToolTip(drawTrendLineArrowButton, "رسم خط روند فلش‌دار");
-            chartToolsToolTip.SetToolTip(drawRectangleButton, "رسم مستطیل روی نمودار");
+            chartToolsToolTip.SetToolTip(drawRectangleButton, "انتخاب شکل یا مسیر برای رسم روی نمودار");
             chartToolsToolTip.SetToolTip(drawFibonacciButton, "رسم سطوح فیبوناچی اصلاحی");
             chartToolsToolTip.SetToolTip(drawTextButton, "افزودن متن به نمودار");
             chartToolsToolTip.SetToolTip(drawPitchforkButton, "رسم چنگال اندروز");
