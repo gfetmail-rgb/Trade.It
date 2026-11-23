@@ -504,6 +504,11 @@ namespace Trade.It
 
         private void DrawDrawingPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
+            if (activeDrawingTool == ChartDrawingTool.Path)
+            {
+                DrawPathPreview(g, pen, plot, visibleCountForDrawing, min, max);
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.TrendChannel)
             {
                 if (drawingStage == 1)
@@ -515,6 +520,38 @@ namespace Trade.It
                 return;
             }
             DrawSinglePreview(g, pen, activeDrawingTool, drawingStartPoint, drawingCurrentPoint, plot);
+        }
+
+        private void DrawPathPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            if (drawingPathPoints.Count == 0) return;
+            var screenPoints = drawingPathPoints.Select(p =>
+            {
+                var relative = ScreenToDataX(p.X, plot, visibleCountForDrawing);
+                return new PointF(
+                    (float)(plot.Left + (relative + 0.5) * plot.Width / Math.Max(1, visibleCountForDrawing) - plot.Width * 0.25 + horizontalPanOffset),
+                    p.Y);
+            }).ToList();
+            screenPoints.Add(drawingCurrentPoint);
+            if (screenPoints.Count >= 2)
+                g.DrawLines(pen, screenPoints.ToArray());
+            if (screenPoints.Count >= 2)
+                DrawHollowArrowHead(g, pen, screenPoints[^1], screenPoints[^2]);
+        }
+
+        private static void DrawHollowArrowHead(Graphics g, Pen pen, PointF tip, PointF from)
+        {
+            var angle = Math.Atan2(tip.Y - from.Y, tip.X - from.X);
+            const float length = 11f;
+            const float spread = 0.48f;
+            var left = new PointF(
+                tip.X - length * (float)Math.Cos(angle - spread),
+                tip.Y - length * (float)Math.Sin(angle - spread));
+            var right = new PointF(
+                tip.X - length * (float)Math.Cos(angle + spread),
+                tip.Y - length * (float)Math.Sin(angle + spread));
+            g.DrawLine(pen, left, tip);
+            g.DrawLine(pen, tip, right);
         }
 
         private void DrawSelectionHandles(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
@@ -532,6 +569,8 @@ namespace Trade.It
         private List<PointF> GetScreenHandles(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
+            if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
+                return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
             if (drawing.Tool == ChartDrawingTool.Rectangle)
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
@@ -547,6 +586,16 @@ namespace Trade.It
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             switch (drawing.Tool)
             {
+                case ChartDrawingTool.Path:
+                    if (drawing.Points.Count >= 2)
+                    {
+                        var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
+                        g.DrawLines(pen, pathPoints);
+                        DrawHollowArrowHead(g, pen, pathPoints[^1], pathPoints[^2]);
+                    }
+                    break;
+                case ChartDrawingTool.Ellipse:
+                case ChartDrawingTool.Triangle:
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -678,6 +727,14 @@ namespace Trade.It
                 GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
                 switch (drawing.Tool)
                 {
+                    case ChartDrawingTool.Path:
+                        if (drawing.Points.Count >= 2)
+                        {
+                            var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
+                            for (var segment = 1; segment < pathPoints.Length; segment++)
+                                if (DistanceToSegment(location, pathPoints[segment - 1], pathPoints[segment]) <= tolerance) return i;
+                        }
+                        break;
                     case ChartDrawingTool.TrendLine:
                     case ChartDrawingTool.TrendLineWithArrow:
                     case ChartDrawingTool.HorizontalLine:
