@@ -775,10 +775,10 @@ namespace Trade.It
                         break;
                     case ChartDrawingTool.Triangle:
                     {
-                        var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                        var triangleApex = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
                         if (DistanceToSegment(location, start, end) <= tolerance ||
-                            DistanceToSegment(location, end, third) <= tolerance ||
-                            DistanceToSegment(location, third, start) <= tolerance)
+                            DistanceToSegment(location, end, triangleApex) <= tolerance ||
+                            DistanceToSegment(location, triangleApex, start) <= tolerance)
                             return i;
                         break;
                     }
