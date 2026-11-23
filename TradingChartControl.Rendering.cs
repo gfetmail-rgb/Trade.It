@@ -565,7 +565,7 @@ namespace Trade.It
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
-            if (drawing.Tool == ChartDrawingTool.Rectangle)
+            if (drawing.Tool == ChartDrawingTool.Rectangle || drawing.Tool == ChartDrawingTool.Ellipse || drawing.Tool == ChartDrawingTool.Triangle)
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
@@ -589,7 +589,21 @@ namespace Trade.It
                     }
                     break;
                 case ChartDrawingTool.Ellipse:
+                {
+                    var rect = RectangleF.FromLTRB(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y),
+                        Math.Max(start.X, end.X), Math.Max(start.Y, end.Y));
+                    g.DrawEllipse(pen, rect);
+                    break;
+                }
                 case ChartDrawingTool.Triangle:
+                {
+                    var left = Math.Min(start.X, end.X);
+                    var right = Math.Max(start.X, end.X);
+                    var top = Math.Min(start.Y, end.Y);
+                    var bottom = Math.Max(start.Y, end.Y);
+                    g.DrawPolygon(pen, new[] { new PointF((left + right) / 2f, top), new PointF(right, bottom), new PointF(left, bottom) });
+                    break;
+                }
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -632,13 +646,19 @@ namespace Trade.It
                     var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
                     g.DrawLine(pen, start, rayEnd); break;
                 case ChartDrawingTool.Rectangle:
+                case ChartDrawingTool.Ellipse:
+                case ChartDrawingTool.Triangle:
+                {
                     var left = Math.Min(start.X, end.X);
                     var top = Math.Min(start.Y, end.Y);
                     var width = Math.Abs(end.X - start.X);
                     var height = Math.Abs(end.Y - start.Y);
-                    using (var rectanglePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle })
-                        g.DrawRectangle(rectanglePen, left, top, width, height);
+                    using var shapePen = new Pen(pen.Color, pen.Width) { DashStyle = pen.DashStyle };
+                    if (tool == ChartDrawingTool.Rectangle) g.DrawRectangle(shapePen, left, top, width, height);
+                    else if (tool == ChartDrawingTool.Ellipse) g.DrawEllipse(shapePen, left, top, width, height);
+                    else g.DrawPolygon(shapePen, new[] { new PointF(left + width / 2f, top), new PointF(left + width, top + height), new PointF(left, top + height) });
                     break;
+                }
             }
         }
 
@@ -746,6 +766,8 @@ namespace Trade.It
                         var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
                         if (DistanceToSegment(location, start, rayEnd) <= tolerance) return i;
                         break;
+                    case ChartDrawingTool.Ellipse:
+                    case ChartDrawingTool.Triangle:
                     case ChartDrawingTool.Rectangle:
                         var left = Math.Min(start.X, end.X);
                         var right = Math.Max(start.X, end.X);                        var top = Math.Min(start.Y, end.Y);                        var bottom = Math.Max(start.Y, end.Y);
