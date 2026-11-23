@@ -597,11 +597,16 @@ namespace Trade.It
                 }
                 case ChartDrawingTool.Triangle:
                 {
-                    var left = Math.Min(start.X, end.X);
-                    var right = Math.Max(start.X, end.X);
-                    var top = Math.Min(start.Y, end.Y);
-                    var bottom = Math.Max(start.Y, end.Y);
-                    g.DrawPolygon(pen, new[] { new PointF((left + right) / 2f, top), new PointF(right, bottom), new PointF(left, bottom) });
+                    var triangleLeft = Math.Min(start.X, end.X);
+                    var triangleRight = Math.Max(start.X, end.X);
+                    var triangleTop = Math.Min(start.Y, end.Y);
+                    var triangleBottom = Math.Max(start.Y, end.Y);
+                    g.DrawPolygon(pen, new[]
+                    {
+                        new PointF((triangleLeft + triangleRight) / 2f, triangleTop),
+                        new PointF(triangleRight, triangleBottom),
+                        new PointF(triangleLeft, triangleBottom)
+                    });
                     break;
                 }
                 case ChartDrawingTool.TrendLine:
