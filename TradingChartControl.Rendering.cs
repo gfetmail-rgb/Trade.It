@@ -525,13 +525,7 @@ namespace Trade.It
         private void DrawPathPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             if (drawingPathPoints.Count == 0) return;
-            var screenPoints = drawingPathPoints.Select(p =>
-            {
-                var relative = ScreenToDataX(p.X, plot, visibleCountForDrawing);
-                return new PointF(
-                    (float)(plot.Left + (relative + 0.5) * plot.Width / Math.Max(1, visibleCountForDrawing) - plot.Width * 0.25 + horizontalPanOffset),
-                    p.Y);
-            }).ToList();
+            var screenPoints = drawingPathPoints.Select(p => new PointF(p.X, p.Y)).ToList();
             screenPoints.Add(drawingCurrentPoint);
             if (screenPoints.Count >= 2)
                 g.DrawLines(pen, screenPoints.ToArray());
