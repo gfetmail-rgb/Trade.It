@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Drawing;
 
@@ -88,7 +89,7 @@ namespace Trade.It
 
         private static JsonSerializerOptions CreateSerializerOptions()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
             options.Converters.Add(new DrawingColorJsonConverter());
             return options;
         }
