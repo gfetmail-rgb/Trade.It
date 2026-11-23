@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace Trade.It;
 
@@ -22,7 +23,8 @@ public static class MarketStructureStore
 
     private static readonly JsonSerializerOptions Options = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
 
     public static MarketStructureData Load()
