@@ -519,6 +519,11 @@ namespace Trade.It
                 DrawScreenTrendChannel(g, pen, plot, drawingStartPoint, drawingSecondPoint, drawingCurrentPoint);
                 return;
             }
+            if (activeDrawingTool == ChartDrawingTool.Triangle && drawingStage == 2)
+            {
+                g.DrawPolygon(pen, new[] { drawingStartPoint, drawingSecondPoint, drawingCurrentPoint });
+                return;
+            }
             DrawSinglePreview(g, pen, activeDrawingTool, drawingStartPoint, drawingCurrentPoint, plot);
         }
 
@@ -565,7 +570,12 @@ namespace Trade.It
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
-            if (drawing.Tool == ChartDrawingTool.Rectangle || drawing.Tool == ChartDrawingTool.Ellipse || drawing.Tool == ChartDrawingTool.Triangle)
+            if (drawing.Tool == ChartDrawingTool.Triangle)
+            {
+                var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                return new List<PointF> { start, end, third };
+            }
+            if (drawing.Tool == ChartDrawingTool.Rectangle || drawing.Tool == ChartDrawingTool.Ellipse)
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
@@ -597,16 +607,8 @@ namespace Trade.It
                 }
                 case ChartDrawingTool.Triangle:
                 {
-                    var triangleLeft = Math.Min(start.X, end.X);
-                    var triangleRight = Math.Max(start.X, end.X);
-                    var triangleTop = Math.Min(start.Y, end.Y);
-                    var triangleBottom = Math.Max(start.Y, end.Y);
-                    g.DrawPolygon(pen, new[]
-                    {
-                        new PointF((triangleLeft + triangleRight) / 2f, triangleTop),
-                        new PointF(triangleRight, triangleBottom),
-                        new PointF(triangleLeft, triangleBottom)
-                    });
+                    var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                    g.DrawPolygon(pen, new[] { start, end, third });
                     break;
                 }
                 case ChartDrawingTool.TrendLine:
@@ -771,8 +773,16 @@ namespace Trade.It
                         var rayEnd = new PointF(direction > 0 ? plot.Right : plot.Left, start.Y);
                         if (DistanceToSegment(location, start, rayEnd) <= tolerance) return i;
                         break;
-                    case ChartDrawingTool.Ellipse:
                     case ChartDrawingTool.Triangle:
+                    {
+                        var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                        if (DistanceToSegment(location, start, end) <= tolerance ||
+                            DistanceToSegment(location, end, third) <= tolerance ||
+                            DistanceToSegment(location, third, start) <= tolerance)
+                            return i;
+                        break;
+                    }
+                    case ChartDrawingTool.Ellipse:
                     case ChartDrawingTool.Rectangle:
                         var left = Math.Min(start.X, end.X);
                         var right = Math.Max(start.X, end.X);                        var top = Math.Min(start.Y, end.Y);                        var bottom = Math.Max(start.Y, end.Y);
@@ -824,6 +834,57 @@ namespace Trade.It
                 drawing.X1 = x; drawing.X2 = x;
                 drawing.Date1 = GetPointDate((int)Math.Round(x));
                 drawing.Date2 = drawing.Date1;
+                return;
+            }
+            if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
+            {
+                if (handle > 0 && handle <= drawing.Points.Count)
+                {
+                    var point = drawing.Points[handle - 1];
+                    point.X = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
+                    point.Y = ScreenToPrice(location.Y, plot, min, max);
+                    point.Date = GetPointDate((int)Math.Round(point.X));
+                    drawing.X1 = drawing.Points[0].X;
+                    drawing.Y1 = drawing.Points[0].Y;
+                    drawing.X2 = drawing.Points[^1].X;
+                    drawing.Y2 = drawing.Points[^1].Y;
+                    drawing.Date1 = drawing.Points[0].Date;
+                    drawing.Date2 = drawing.Points[^1].Date;
+                    return;
+                }
+
+                var pathDeltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                var pathDeltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
+                foreach (var point in drawing.Points)
+                {
+                    point.X += pathDeltaX;
+                    point.Y += pathDeltaY;
+                    point.Date = GetPointDate((int)Math.Round(point.X));
+                }
+                drawing.X1 = drawing.Points[0].X;
+                drawing.Y1 = drawing.Points[0].Y;
+                drawing.X2 = drawing.Points[^1].X;
+                drawing.Y2 = drawing.Points[^1].Y;
+                drawing.Date1 = drawing.Points[0].Date;
+                drawing.Date2 = drawing.Points[^1].Date;
+                return;
+            }
+            if (drawing.Tool == ChartDrawingTool.Triangle)
+            {
+                if (handle >= 1 && handle <= 3)
+                {
+                    var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
+                    var y = ScreenToPrice(location.Y, plot, min, max);
+                    if (handle == 1) { drawing.X1 = x; drawing.Y1 = y; drawing.Date1 = GetPointDate((int)Math.Round(x)); }
+                    else if (handle == 2) { drawing.X2 = x; drawing.Y2 = y; drawing.Date2 = GetPointDate((int)Math.Round(x)); }
+                    else { drawing.X3 = x; drawing.Y3 = y; drawing.Date3 = GetPointDate((int)Math.Round(x)); }
+                    return;
+                }
+                var triangleDeltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                var triangleDeltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
+                drawing.X1 += triangleDeltaX; drawing.X2 += triangleDeltaX; drawing.X3 += triangleDeltaX;
+                drawing.Y1 += triangleDeltaY; drawing.Y2 += triangleDeltaY; drawing.Y3 += triangleDeltaY;
+                UpdateDrawingDates(drawing);
                 return;
             }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
