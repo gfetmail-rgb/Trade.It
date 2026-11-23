@@ -2953,7 +2953,7 @@ namespace Trade.It
             drawRectangleButton.TabIndex = 20;
             drawRectangleButton.AutoSize = false;
             drawRectangleButton.Text = "🖌";
-            drawRectangleButton.Font = new Font("Segoe UI Emoji", 17F, FontStyle.Regular, GraphicsUnit.Point);
+            drawRectangleButton.Font = new Font("Segoe UI Emoji", 12F, FontStyle.Regular, GraphicsUnit.Point);
             drawRectangleButton.Image = null;
             drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
             drawRectangleButton.ContextMenuStrip = drawingShapesMenu;
