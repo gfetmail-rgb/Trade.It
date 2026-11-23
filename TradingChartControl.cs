@@ -7,7 +7,7 @@ namespace Trade.It
     internal enum ChartDrawingTool
     {
         None, TrendLine, TrendChannel, HorizontalLine, VerticalLine,
-        HorizontalRay, TrendLineWithArrow, Rectangle
+        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path
     }
 
     internal sealed class TradingChartPoint
@@ -136,6 +136,7 @@ namespace Trade.It
             public DateTime? Date1 { get; set; }
             public DateTime? Date2 { get; set; }
             public DateTime? Date3 { get; set; }
+            public List<ChartAnalysisDrawingPoint> Points { get; set; } = new();
         }
 
         public TradingChartControl()
@@ -449,7 +450,13 @@ namespace Trade.It
                     Y3 = drawing.Y3,
                     Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
                     Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
-                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3)),
+                    Points = drawing.Points.Select(p => new ChartAnalysisDrawingPoint
+                    {
+                        X = p.X,
+                        Y = p.Y,
+                        Date = p.Date
+                    }).ToList()
                 });
             }
 
@@ -663,7 +670,13 @@ namespace Trade.It
                     Y3 = item.Y3,
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
-                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)),
+                    Points = (item.Points ?? new List<ChartAnalysisDrawingPoint>()).Select(p => new ChartAnalysisDrawingPoint
+                    {
+                        X = ResolveDrawingIndex(p.Date, p.X, document.FirstIndex),
+                        Y = p.Y,
+                        Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, document.FirstIndex))
+                    }).ToList()
                 });
             }
 
@@ -996,6 +1009,7 @@ namespace Trade.It
             drawingStartPoint = Point.Empty;
             drawingCurrentPoint = Point.Empty;
             drawingSecondPoint = Point.Empty;
+            drawingPathPoints.Clear();
             Focus();
             Cursor = tool == ChartDrawingTool.None ? Cursors.Default : Cursors.Cross;
             Invalidate();
@@ -1009,6 +1023,7 @@ namespace Trade.It
             drawingStartPoint = Point.Empty;
             drawingCurrentPoint = Point.Empty;
             drawingSecondPoint = Point.Empty;
+            drawingPathPoints.Clear();
             Cursor = Cursors.Default;
             Invalidate();
         }
@@ -1482,6 +1497,11 @@ namespace Trade.It
                 }
 
                 selectedIndicatorIndex = -1;
+                if (activeDrawingTool == ChartDrawingTool.Path && drawingInProgress)
+                {
+                    CompletePathDrawing();
+                    return;
+                }
                 CancelDrawing();
                 return;
             }
@@ -1657,6 +1677,26 @@ namespace Trade.It
                 drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
                 activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate(); return;
             }
+            if (activeDrawingTool == ChartDrawingTool.Path)
+            {
+                if (!drawingInProgress)
+                {
+                    drawingStartPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingInProgress = true;
+                    drawingStage = 1;
+                    drawingPathPoints.Clear();
+                    drawingPathPoints.Add(location);
+                    Invalidate();
+                    return;
+                }
+
+                if (drawingPathPoints.Count == 0 || drawingPathPoints[^1] != location)
+                    drawingPathPoints.Add(location);
+                drawingCurrentPoint = location;
+                Invalidate();
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.TrendChannel)
             {
                 if (!drawingInProgress)
@@ -1679,6 +1719,50 @@ namespace Trade.It
             AddDrawing(drawingStartPoint, drawingCurrentPoint);
             drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
             activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate();
+        }
+
+        private readonly List<Point> drawingPathPoints = new();
+
+        private void CompletePathDrawing()
+        {
+            if (drawingPathPoints.Count >= 2)
+            {
+                var plot = GetPlotRectangle();
+                var visibleCountForDrawing = GetDrawingLayoutCount();
+                var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
+                if (visible.Count > 0)
+                {
+                    GetVerticalRange(visible, out var min, out var max);
+                    var path = new ChartDrawing { Tool = ChartDrawingTool.Path };
+                    foreach (var screenPoint in drawingPathPoints)
+                    {
+                        var x = ScreenToDataX(screenPoint.X, plot, visibleCountForDrawing) + firstIndex;
+                        var y = ScreenToPrice(screenPoint.Y, plot, min, max);
+                        path.Points.Add(new ChartAnalysisDrawingPoint
+                        {
+                            X = x,
+                            Y = y,
+                            Date = DataXToDate(x)
+                        });
+                    }
+                    var first = path.Points[0];
+                    var last = path.Points[^1];
+                    path.X1 = first.X; path.Y1 = first.Y;
+                    path.X2 = last.X; path.Y2 = last.Y;
+                    path.Date1 = first.Date; path.Date2 = last.Date;
+                    drawings.Add(path);
+                    AnalysisChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+
+            drawingPathPoints.Clear();
+            drawingInProgress = false;
+            drawingStage = 0;
+            drawingStartPoint = Point.Empty;
+            drawingCurrentPoint = Point.Empty;
+            activeDrawingTool = ChartDrawingTool.None;
+            Cursor = Cursors.Default;
+            Invalidate();
         }
 
         private int GetDrawingLayoutCount()
