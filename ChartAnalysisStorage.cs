@@ -44,6 +44,26 @@ namespace Trade.It
         public double X3 { get; set; }
         public double Y3 { get; set; }
         public string? Text { get; set; }
+
+        // Appearance is captured when a drawing is created so later setting changes
+        // affect only drawings created afterwards.
+        public int? StrokeColorArgb { get; set; }
+        public int? FillColorArgb { get; set; }
+        public float? StrokeWidth { get; set; }
+        public string? StrokeStyle { get; set; }
+
+        // Used by multi-point path drawings. Existing drawings keep an empty list.
+        public List<ChartAnalysisDrawingPoint> Points { get; set; } = new();
+
+        // Target/stop drawings store direction and the three price levels in X/Y fields.
+        public bool? IsLongPosition { get; set; }
+    }
+
+    internal sealed class ChartAnalysisDrawingPoint
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     internal sealed class DrawingColorJsonConverter : JsonConverter<Color>
