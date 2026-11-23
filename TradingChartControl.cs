@@ -1823,6 +1823,15 @@ namespace Trade.It
                 case ChartDrawingTool.TrendLineWithArrow:
                 case ChartDrawingTool.Rectangle:
                 case ChartDrawingTool.Ellipse:
+                    drawings.Add(new ChartDrawing
+                    {
+                        Tool = activeDrawingTool,
+                        X1 = x1, Y1 = y1,
+                        X2 = x2, Y2 = y2,
+                        Date1 = DataXToDate(x1),
+                        Date2 = DataXToDate(x2)
+                    });
+                    break;
                 case ChartDrawingTool.Triangle:
                     if (third == Point.Empty) return;
                     var triangleX3 = ScreenToDataX(third.X, plot, layoutCount) + firstIndex;
