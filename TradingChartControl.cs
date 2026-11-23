@@ -1791,6 +1791,8 @@ namespace Trade.It
                 case ChartDrawingTool.TrendLine:
                 case ChartDrawingTool.TrendLineWithArrow:
                 case ChartDrawingTool.Rectangle:
+                case ChartDrawingTool.Ellipse:
+                case ChartDrawingTool.Triangle:
                     drawings.Add(new ChartDrawing
                     {
                         Tool = activeDrawingTool,
