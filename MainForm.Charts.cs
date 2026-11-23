@@ -553,7 +553,25 @@ namespace Trade.It
             drawVerticalDoubleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.VerticalLine, drawVerticalDoubleButton);
             drawHorizontalRayButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HorizontalRay, drawHorizontalRayButton);
             drawTrendLineArrowButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.TrendLineWithArrow, drawTrendLineArrowButton);
-            drawRectangleButton.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);
+            drawRectangleButton.Click += (_, _) =>
+            {
+                var chart = GetActiveChart();
+                if (chart == null) return;
+
+                if (chart.ActiveDrawingTool is ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse or
+                    ChartDrawingTool.Triangle or ChartDrawingTool.Path)
+                {
+                    chart.CancelDrawing();
+                    ResetDrawingToolButtons();
+                    return;
+                }
+
+                drawingShapesMenu.Show(drawRectangleButton, new Point(0, drawRectangleButton.Height));
+            };
+            rectangleShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Rectangle, drawRectangleButton);
+            ellipseShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Ellipse, drawRectangleButton);
+            triangleShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Triangle, drawRectangleButton);
+            pathShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Path, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);
