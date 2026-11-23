@@ -3259,7 +3259,6 @@ namespace Trade.It
             ChartToolbarIcons.Register(drawVerticalDoubleButton, drawVerticalDoubleButton.Image!, (Image)resources.GetObject("drawVerticalDoubleButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawHorizontalRayButton, drawHorizontalRayButton.Image!, (Image)resources.GetObject("drawHorizontalRayButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawTrendLineArrowButton, drawTrendLineArrowButton.Image!, (Image)resources.GetObject("drawTrendLineArrowButton.ActiveImage")!);
-            ChartToolbarIcons.Register(drawRectangleButton, drawRectangleButton.Image!, (Image)resources.GetObject("drawRectangleButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawFibonacciButton, drawFibonacciButton.Image!, (Image)resources.GetObject("drawFibonacciButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawTextButton, drawTextButton.Image!, (Image)resources.GetObject("drawTextButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
