@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 using System.Xml.Linq;
 
 namespace Trade.It;
@@ -682,7 +683,7 @@ public sealed partial class SymbolDefinitionForm : Form
     public static class SymbolDefinitionStore
     {
         private static string FilePath => Path.Combine(AppContext.BaseDirectory, "Data", "Symbols.json");
-        private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
         public static List<SymbolDefinition> Load()
         {
