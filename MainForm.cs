@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace Trade.It
 {
@@ -1405,7 +1406,7 @@ namespace Trade.It
 
             try
             {
-                var json = JsonSerializer.Serialize(newDefinition, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(newDefinition, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
                 File.WriteAllText(file, json, new UTF8Encoding(false));
                 RefreshPortfolioListAndClearSelection();
                 var index = portfolioComboBox.Items.IndexOf(newName);
@@ -1467,7 +1468,7 @@ namespace Trade.It
                     file = matchingFile ?? file;
                 }
 
-                var json = JsonSerializer.Serialize(current, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(current, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
                 File.WriteAllText(file, json, new UTF8Encoding(false));
                 RefreshPortfolioListAndClearSelection();
                 var index = portfolioComboBox.Items.IndexOf(current.Name);
