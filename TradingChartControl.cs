@@ -1677,6 +1677,37 @@ namespace Trade.It
                 drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
                 activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate(); return;
             }
+            if (activeDrawingTool == ChartDrawingTool.Triangle)
+            {
+                if (!drawingInProgress)
+                {
+                    drawingStartPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingStage = 1;
+                    drawingInProgress = true;
+                    Invalidate();
+                    return;
+                }
+                if (drawingStage == 1)
+                {
+                    drawingSecondPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingStage = 2;
+                    Invalidate();
+                    return;
+                }
+
+                AddDrawing(drawingStartPoint, drawingSecondPoint, location);
+                drawingInProgress = false;
+                drawingStage = 0;
+                drawingStartPoint = Point.Empty;
+                drawingSecondPoint = Point.Empty;
+                drawingCurrentPoint = Point.Empty;
+                activeDrawingTool = ChartDrawingTool.None;
+                Cursor = Cursors.Default;
+                Invalidate();
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.Path)
             {
                 if (!drawingInProgress)
@@ -1793,13 +1824,18 @@ namespace Trade.It
                 case ChartDrawingTool.Rectangle:
                 case ChartDrawingTool.Ellipse:
                 case ChartDrawingTool.Triangle:
+                    if (third == Point.Empty) return;
+                    var triangleX3 = ScreenToDataX(third.X, plot, layoutCount) + firstIndex;
+                    var triangleY3 = ScreenToPrice(third.Y, plot, min, max);
                     drawings.Add(new ChartDrawing
                     {
                         Tool = activeDrawingTool,
                         X1 = x1, Y1 = y1,
                         X2 = x2, Y2 = y2,
+                        X3 = triangleX3, Y3 = triangleY3,
                         Date1 = DataXToDate(x1),
-                        Date2 = DataXToDate(x2)
+                        Date2 = DataXToDate(x2),
+                        Date3 = DataXToDate(triangleX3)
                     });
                     break;
                 case ChartDrawingTool.TrendChannel:
