@@ -505,6 +505,11 @@ namespace Trade.It
 
         private void DrawDrawingPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
+            if (activeDrawingTool == ChartDrawingTool.BezierCurve)
+            {
+                DrawBezierPreview(g, pen);
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.Path)
             {
                 DrawPathPreview(g, pen, plot, visibleCountForDrawing, min, max);
@@ -526,6 +531,20 @@ namespace Trade.It
                 return;
             }
             DrawSinglePreview(g, pen, activeDrawingTool, drawingStartPoint, drawingCurrentPoint, plot);
+        }
+
+        private void DrawBezierPreview(Graphics g, Pen pen)
+        {
+            if (drawingPathPoints.Count == 0) return;
+            if (drawingPathPoints.Count == 1)
+            {
+                g.DrawLine(pen, drawingPathPoints[0], drawingCurrentPoint);
+                return;
+            }
+            var p0 = drawingPathPoints[0];
+            var p1 = drawingPathPoints.Count > 1 ? drawingPathPoints[1] : drawingCurrentPoint;
+            var p2 = drawingPathPoints.Count > 2 ? drawingPathPoints[2] : drawingCurrentPoint;
+            g.DrawBezier(pen, p0, p1, p2, drawingCurrentPoint);
         }
 
         private void DrawPathPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
@@ -570,7 +589,7 @@ namespace Trade.It
         private List<PointF> GetScreenHandles(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-            if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
+            if (drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
             if (drawing.Tool == ChartDrawingTool.Triangle)
             {
@@ -598,6 +617,13 @@ namespace Trade.It
                         var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
                         g.DrawLines(pen, pathPoints);
                         DrawHollowArrowHead(g, pen, pathPoints[^1], pathPoints[^2]);
+                    }
+                    break;
+                case ChartDrawingTool.BezierCurve:
+                    if (drawing.Points.Count == 4)
+                    {
+                        var bezierPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
+                        g.DrawBezier(pen, bezierPoints[0], bezierPoints[1], bezierPoints[2], bezierPoints[3]);
                     }
                     break;
                 case ChartDrawingTool.Ellipse:
@@ -758,6 +784,23 @@ namespace Trade.It
                                 if (DistanceToSegment(location, pathPoints[segment - 1], pathPoints[segment]) <= tolerance) return i;
                         }
                         break;
+                    case ChartDrawingTool.BezierCurve:
+                        if (drawing.Points.Count == 4)
+                        {
+                            var bp = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
+                            var previous = bp[0];
+                            for (var segment = 1; segment <= 32; segment++)
+                            {
+                                var t = segment / 32f;
+                                var u = 1f - t;
+                                var current = new PointF(
+                                    u*u*u*bp[0].X + 3*u*u*t*bp[1].X + 3*u*t*t*bp[2].X + t*t*t*bp[3].X,
+                                    u*u*u*bp[0].Y + 3*u*u*t*bp[1].Y + 3*u*t*t*bp[2].Y + t*t*t*bp[3].Y);
+                                if (DistanceToSegment(location, previous, current) <= tolerance) return i;
+                                previous = current;
+                            }
+                        }
+                        break;
                     case ChartDrawingTool.TrendLine:
                     case ChartDrawingTool.TrendLineWithArrow:
                     case ChartDrawingTool.HorizontalLine:
@@ -838,7 +881,7 @@ namespace Trade.It
                 drawing.Date2 = drawing.Date1;
                 return;
             }
-            if (drawing.Tool == ChartDrawingTool.Path && drawing.Points.Count > 0)
+            if (drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve && drawing.Points.Count > 0)
             {
                 if (handle > 0 && handle <= drawing.Points.Count)
                 {

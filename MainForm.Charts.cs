@@ -559,7 +559,7 @@ namespace Trade.It
                 if (chart == null) return;
 
                 if (chart.ActiveDrawingTool is ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse or
-                    ChartDrawingTool.Triangle or ChartDrawingTool.Path)
+                    ChartDrawingTool.Triangle or ChartDrawingTool.Path or ChartDrawingTool.BezierCurve)
                 {
                     chart.CancelDrawing();
                     ResetDrawingToolButtons();
@@ -572,6 +572,7 @@ namespace Trade.It
             ellipseShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Ellipse, drawRectangleButton);
             triangleShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Triangle, drawRectangleButton);
             pathShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Path, drawRectangleButton);
+            bezierShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.BezierCurve, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);

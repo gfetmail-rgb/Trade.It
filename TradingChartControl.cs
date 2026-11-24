@@ -7,7 +7,7 @@ namespace Trade.It
     internal enum ChartDrawingTool
     {
         None, TrendLine, TrendChannel, HorizontalLine, VerticalLine,
-        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path
+        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path, BezierCurve
     }
 
     internal sealed class TradingChartPoint
@@ -1729,6 +1729,28 @@ namespace Trade.It
                 Invalidate();
                 return;
             }
+            if (activeDrawingTool == ChartDrawingTool.BezierCurve)
+            {
+                if (!drawingInProgress)
+                {
+                    drawingPathPoints.Clear();
+                    drawingPathPoints.Add(location);
+                    drawingStartPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingInProgress = true;
+                    drawingStage = 1;
+                    Invalidate();
+                    return;
+                }
+
+                if (drawingPathPoints.Count < 4)
+                    drawingPathPoints.Add(location);
+                drawingCurrentPoint = location;
+                if (drawingPathPoints.Count == 4)
+                    CompleteBezierDrawing();
+                Invalidate();
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.Path)
             {
                 if (!drawingInProgress)
@@ -1818,6 +1840,43 @@ namespace Trade.It
             activeDrawingTool = ChartDrawingTool.None;
             Cursor = Cursors.Default;
             Invalidate();
+        }
+
+        private void CompleteBezierDrawing()
+        {
+            if (drawingPathPoints.Count != 4)
+                return;
+
+            var plot = GetPlotRectangle();
+            var visibleCountForDrawing = GetDrawingLayoutCount();
+            var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
+            if (visible.Count > 0)
+            {
+                GetVerticalRange(visible, out var min, out var max);
+                var drawing = new ChartDrawing { Tool = ChartDrawingTool.BezierCurve };
+                foreach (var screenPoint in drawingPathPoints)
+                {
+                    var x = ScreenToDataX(screenPoint.X, plot, visibleCountForDrawing) + firstIndex;
+                    var y = ScreenToPrice(screenPoint.Y, plot, min, max);
+                    drawing.Points.Add(new ChartAnalysisDrawingPoint { X = x, Y = y, Date = DataXToDate(x) });
+                }
+                drawing.X1 = drawing.Points[0].X; drawing.Y1 = drawing.Points[0].Y;
+                drawing.X2 = drawing.Points[^1].X; drawing.Y2 = drawing.Points[^1].Y;
+                drawing.Date1 = drawing.Points[0].Date; drawing.Date2 = drawing.Points[^1].Date;
+                drawing.StrokeColor = ChartAppearanceSettings.BezierCurveColor;
+                drawing.StrokeWidth = LineAppearanceSettings.DrawingLineWidth;
+                drawing.StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString();
+                drawings.Add(drawing);
+                AnalysisChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            drawingPathPoints.Clear();
+            drawingInProgress = false;
+            drawingStage = 0;
+            drawingStartPoint = Point.Empty;
+            drawingCurrentPoint = Point.Empty;
+            activeDrawingTool = ChartDrawingTool.None;
+            Cursor = Cursors.Default;
         }
 
         private int GetDrawingLayoutCount()

@@ -31,6 +31,7 @@ namespace Trade.It
             ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse => ChartAppearanceSettings.RectangleColor,
             ChartDrawingTool.Triangle => ChartAppearanceSettings.TriangleColor,
             ChartDrawingTool.Path => ChartAppearanceSettings.PathColor,
+            ChartDrawingTool.BezierCurve => ChartAppearanceSettings.BezierCurveColor,
             _ => ChartAppearanceSettings.TrendLineColor
         };
 

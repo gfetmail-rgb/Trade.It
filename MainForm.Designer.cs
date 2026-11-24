@@ -158,6 +158,7 @@ namespace Trade.It
         private System.Windows.Forms.ToolStripMenuItem ellipseShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem triangleShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pathShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bezierShapeMenuItem;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -265,6 +266,7 @@ namespace Trade.It
             ellipseShapeMenuItem = new ToolStripMenuItem();
             triangleShapeMenuItem = new ToolStripMenuItem();
             pathShapeMenuItem = new ToolStripMenuItem();
+            bezierShapeMenuItem = new ToolStripMenuItem();
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2966,6 +2968,7 @@ namespace Trade.It
                 rectangleShapeMenuItem,
                 ellipseShapeMenuItem,
                 triangleShapeMenuItem,
+                bezierShapeMenuItem,
                 new ToolStripSeparator(),
                 pathShapeMenuItem
             });
@@ -2993,6 +2996,12 @@ namespace Trade.It
             pathShapeMenuItem.Name = "pathShapeMenuItem";
             pathShapeMenuItem.Size = new Size(180, 24);
             pathShapeMenuItem.Text = "مسیر چندنقطه‌ای";
+            // 
+            // bezierShapeMenuItem
+            // 
+            bezierShapeMenuItem.Name = "bezierShapeMenuItem";
+            bezierShapeMenuItem.Size = new Size(180, 24);
+            bezierShapeMenuItem.Text = "منحنی بزیه";
             // 
             // drawFibonacciButton
             // 
