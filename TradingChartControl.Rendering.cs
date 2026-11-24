@@ -541,12 +541,13 @@ namespace Trade.It
             using var textBrush = new SolidBrush(Color.White);
 
             var centerX = (entry.X + target.X) / 2f;
+            var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
             DrawPositionLabel(g, targetText, font, textBrush, targetBrush, plot,
-                new PointF(centerX, target.Y - 19f));
+                new PointF(centerX, target.Y + (isLong ? -19f : 19f)));
             DrawPositionLabel(g, ratioText, font, textBrush, ratioBrush, plot,
                 new PointF(centerX, (entry.Y + stop.Y) / 2f));
             DrawPositionLabel(g, stopText, font, textBrush, stopBrush, plot,
-                new PointF(centerX, stop.Y + 19f));
+                new PointF(centerX, stop.Y + (isLong ? 19f : -19f)));
         }
 
         private static void DrawPositionLabel(Graphics g, string text, Font font, Brush textBrush, Brush backgroundBrush, Rectangle plot, PointF center)
