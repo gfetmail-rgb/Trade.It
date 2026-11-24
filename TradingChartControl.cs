@@ -618,9 +618,9 @@ namespace Trade.It
                     }).ToList(),
                     StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : GetDrawingColor(tool),
                     FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : (tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition ? Color.FromArgb(52, 35, 165, 95) : null),
-                    IsLongPosition = item.IsLongPosition ?? (tool == ChartDrawingTool.LongPosition) ?? (tool == ChartDrawingTool.LongPosition),
-                    StrokeWidth = item.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth,
-                    StrokeStyle = item.StrokeStyle ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString()
+                    IsLongPosition = item.IsLongPosition ?? (tool == ChartDrawingTool.LongPosition),
+                    StrokeWidth = item.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth,
+                    StrokeStyle = item.StrokeStyle ?? LineAppearanceSettings.DrawingLineStyle.ToString()
                 });
             }
 
