@@ -510,7 +510,7 @@ namespace Trade.It
             g.DrawLine(pen, right, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, stop.Y));
         }
 
-        private void DrawPositionLabels(Graphics g, ChartDrawing drawing, Rectangle plot)
+        private void DrawPositionLabels(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             var entryPrice = drawing.Y1;
             var targetPrice = drawing.Y2;
@@ -519,7 +519,6 @@ namespace Trade.It
                 !double.IsFinite(targetPrice) || !double.IsFinite(stopPrice))
                 return;
 
-            var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
             var profitPercent = Math.Abs(targetPrice - entryPrice) / entryPrice * 100.0;
             var lossPercent = Math.Abs(stopPrice - entryPrice) / entryPrice * 100.0;
             var riskReward = lossPercent > 0 ? profitPercent / lossPercent : double.NaN;
@@ -531,23 +530,23 @@ namespace Trade.It
                 ? $"نسبت ریسک به سود: {riskReward.ToString("F2", CultureInfo.InvariantCulture)}"
                 : "نسبت ریسک به سود: —";
 
+            var entry = DataToScreen(drawing.X1 - firstIndex, entryPrice, plot, visibleCountForDrawing, min, max);
+            var target = DataToScreen(drawing.X2 - firstIndex, targetPrice, plot, visibleCountForDrawing, min, max);
+            var stop = DataToScreen(drawing.X3 - firstIndex, stopPrice, plot, visibleCountForDrawing, min, max);
+
             using var font = new Font(Font.FontFamily, Math.Max(8f, Font.Size - 0.5f), FontStyle.Bold);
             using var targetBrush = new SolidBrush(Color.FromArgb(0, 145, 112));
             using var stopBrush = new SolidBrush(Color.FromArgb(220, 35, 50));
             using var ratioBrush = new SolidBrush(Color.FromArgb(220, 35, 50));
             using var textBrush = new SolidBrush(Color.White);
 
-            DrawPositionLabel(g, targetText, font, textBrush, targetBrush,
-                plot, new PointF((plot.Left + plot.Right) / 2f, Math.Min(
-                    DataToScreen(drawing.X2 - firstIndex, targetPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y - 16f,
-                    DataToScreen(drawing.X1 - firstIndex, entryPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y - 44f)));
-
-            var entryY = DataToScreen(drawing.X1 - firstIndex, entryPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y;
-            var stopY = DataToScreen(drawing.X3 - firstIndex, stopPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y;
+            var centerX = (entry.X + target.X) / 2f;
+            DrawPositionLabel(g, targetText, font, textBrush, targetBrush, plot,
+                new PointF(centerX, target.Y - 19f));
             DrawPositionLabel(g, ratioText, font, textBrush, ratioBrush, plot,
-                new PointF((plot.Left + plot.Right) / 2f, (entryY + stopY) / 2f));
+                new PointF(centerX, (entry.Y + stop.Y) / 2f));
             DrawPositionLabel(g, stopText, font, textBrush, stopBrush, plot,
-                new PointF((plot.Left + plot.Right) / 2f, Math.Max(entryY, stopY) + 18f));
+                new PointF(centerX, stop.Y + 19f));
         }
 
         private static void DrawPositionLabel(Graphics g, string text, Font font, Brush textBrush, Brush backgroundBrush, Rectangle plot, PointF center)
@@ -769,7 +768,7 @@ namespace Trade.It
                 case ChartDrawingTool.LongPosition:
                 case ChartDrawingTool.ShortPosition:
                     DrawPositionOutline(g, pen, drawing, plot, visibleCountForDrawing, min, max);
-                    DrawPositionLabels(g, drawing, plot);
+                    DrawPositionLabels(g, drawing, plot, visibleCountForDrawing, min, max);
                     break;
                 case ChartDrawingTool.HollowArrow:
                     g.DrawLine(pen, start, end);
