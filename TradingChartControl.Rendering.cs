@@ -650,6 +650,56 @@ namespace Trade.It
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             if ((drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve) && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
+            if (drawing.Tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+            {
+                var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
+                var y = ScreenToPrice(location.Y, plot, min, max);
+                var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
+                var epsilon = Math.Max(Math.Abs(drawing.Y1) * 0.000001, 0.000001);
+                if (handle == 1)
+                {
+                    drawing.X1 = x;
+                    drawing.Y1 = y;
+                    if (isLong)
+                    {
+                        if (drawing.Y2 <= y) drawing.Y2 = y + epsilon;
+                        if (drawing.Y3 >= y) drawing.Y3 = y - epsilon;
+                    }
+                    else
+                    {
+                        if (drawing.Y2 >= y) drawing.Y2 = y - epsilon;
+                        if (drawing.Y3 <= y) drawing.Y3 = y + epsilon;
+                    }
+                    drawing.Date1 = GetPointDate((int)Math.Round(x));
+                }
+                else if (handle == 2)
+                {
+                    drawing.X2 = x;
+                    drawing.X3 = x;
+                    drawing.Y2 = isLong ? Math.Max(y, drawing.Y1 + epsilon) : Math.Min(y, drawing.Y1 - epsilon);
+                    drawing.Date2 = GetPointDate((int)Math.Round(x));
+                    drawing.Date3 = drawing.Date2;
+                }
+                else if (handle == 3)
+                {
+                    drawing.X3 = drawing.X2;
+                    drawing.Y3 = isLong ? Math.Min(y, drawing.Y1 - epsilon) : Math.Max(y, drawing.Y1 + epsilon);
+                    drawing.Date3 = drawing.Date2;
+                }
+                else
+                {
+                    var deltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                    var deltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
+                    drawing.X1 += deltaX;
+                    drawing.X2 += deltaX;
+                    drawing.X3 += deltaX;
+                    drawing.Y1 += deltaY;
+                    drawing.Y2 += deltaY;
+                    drawing.Y3 += deltaY;
+                    UpdateDrawingDates(drawing);
+                }
+                return;
+            }
             if (drawing.Tool == ChartDrawingTool.Triangle)
             {
                 var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
@@ -801,46 +851,8 @@ namespace Trade.It
         {
             if (drawing.Tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
             {
-                var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
-                var y = ScreenToPrice(location.Y, plot, min, max);
-                var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
-                var epsilon = Math.Max(Math.Abs(drawing.Y1) * 0.000001, 0.000001);
-                if (handle == 1)
-                {
-                    drawing.X1 = x;
-                    drawing.Y1 = y;
-                    if (isLong)
-                    {
-                        if (drawing.Y2 <= y) drawing.Y2 = y + epsilon;
-                        if (drawing.Y3 >= y) drawing.Y3 = y - epsilon;
-                    }
-                    else
-                    {
-                        if (drawing.Y2 >= y) drawing.Y2 = y - epsilon;
-                        if (drawing.Y3 <= y) drawing.Y3 = y + epsilon;
-                    }
-                    drawing.Date1 = GetPointDate(x);
-                }
-                else if (handle == 2)
-                {
-                    drawing.X2 = x; drawing.X3 = x;
-                    drawing.Y2 = isLong ? Math.Max(y, drawing.Y1 + epsilon) : Math.Min(y, drawing.Y1 - epsilon);
-                    drawing.Date2 = GetPointDate(x); drawing.Date3 = drawing.Date2;
-                }
-                else if (handle == 3)
-                {
-                    drawing.X3 = drawing.X2;
-                    drawing.Y3 = isLong ? Math.Min(y, drawing.Y1 - epsilon) : Math.Max(y, drawing.Y1 + epsilon);
-                    drawing.Date3 = drawing.Date2;
-                }
-                else
-                {
-                    var dx = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
-                    var dy = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
-                    drawing.X1 += dx; drawing.X2 += dx; drawing.X3 += dx;
-                    drawing.Y1 += dy; drawing.Y2 += dy; drawing.Y3 += dy;
-                    UpdateDrawingDates(drawing);
-                }
+                start = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+                end = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
                 return;
             }
             if (drawing.Tool == ChartDrawingTool.HorizontalLine)
@@ -926,14 +938,14 @@ namespace Trade.It
                         var entry = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
                         var target = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
                         var stop = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
-                        var left = Math.Min(entry.X, target.X);
-                        var right = Math.Max(entry.X, target.X);
-                        var targetRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, target.Y));
-                        var stopRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, stop.Y), right, Math.Max(entry.Y, stop.Y));
+                        var positionLeft = Math.Min(entry.X, target.X);
+                        var positionRight = Math.Max(entry.X, target.X);
+                        var targetRect = RectangleF.FromLTRB(positionLeft, Math.Min(entry.Y, target.Y), positionRight, Math.Max(entry.Y, target.Y));
+                        var stopRect = RectangleF.FromLTRB(positionLeft, Math.Min(entry.Y, stop.Y), positionRight, Math.Max(entry.Y, stop.Y));
                         if (targetRect.Contains(location) || stopRect.Contains(location) ||
-                            DistanceToSegment(location, new PointF(left, entry.Y), new PointF(right, entry.Y)) <= tolerance ||
-                            DistanceToSegment(location, new PointF(left, target.Y), new PointF(right, target.Y)) <= tolerance ||
-                            DistanceToSegment(location, new PointF(left, stop.Y), new PointF(right, stop.Y)) <= tolerance) return i;
+                            DistanceToSegment(location, new PointF(positionLeft, entry.Y), new PointF(positionRight, entry.Y)) <= tolerance ||
+                            DistanceToSegment(location, new PointF(positionLeft, target.Y), new PointF(positionRight, target.Y)) <= tolerance ||
+                            DistanceToSegment(location, new PointF(positionLeft, stop.Y), new PointF(positionRight, stop.Y)) <= tolerance) return i;
                         break;
                     }
                     case ChartDrawingTool.HollowArrow:
