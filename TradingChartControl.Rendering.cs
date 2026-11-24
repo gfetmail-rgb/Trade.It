@@ -493,9 +493,10 @@ namespace Trade.It
             for (var i = 0; i < drawings.Count; i++)
             {
                 var selected = IsDrawingSelected(DrawingSelectionKind.Standard, i);
-                var color = GetDrawingColor(drawings[i].Tool);
-                var width = selected ? LineAppearanceSettings.DrawingLineWidth + 1.4f : LineAppearanceSettings.DrawingLineWidth;
-                using var drawingPen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+                var color = drawings[i].StrokeColor ?? GetDrawingColor(drawings[i].Tool);
+                var baseWidth = drawings[i].StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
+                var width = selected ? baseWidth + 1.4f : baseWidth;
+                using var drawingPen = new Pen(color, width) { DashStyle = GetDrawingDashStyle(drawings[i].StrokeStyle) };
                 DrawSingleDrawing(g, drawingPen, drawings[i], plot, visibleCountForDrawing, min, max);
                 if (selected)
                     DrawSelectionHandles(g, drawings[i], plot, visibleCountForDrawing, min, max);
@@ -556,7 +557,8 @@ namespace Trade.It
         private void DrawSelectionHandles(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             using var handleBrush = new SolidBrush(Color.White);
-            using var handlePen = new Pen(GetDrawingColor(drawing.Tool), 1.5f);            const float radius = 4f;
+            using var handlePen = new Pen(drawing.StrokeColor ?? GetDrawingColor(drawing.Tool), 1.5f);
+            const float radius = 4f;
             var handles = GetScreenHandles(drawing, plot, visibleCountForDrawing, min, max);
             foreach (var handle in handles)
             {

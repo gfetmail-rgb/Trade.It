@@ -17,6 +17,9 @@ namespace Trade.It
         internal static void LoadChartAppearanceSettings() => ChartAppearanceSettings.Load();
         internal static void SaveChartAppearanceSettings() => ChartAppearanceSettings.Save();
 
+        private static DashStyle GetDrawingDashStyle(string? style) =>
+            Enum.TryParse(style, true, out DashStyle parsed) ? parsed : LineAppearanceSettings.DrawingLineStyle;
+
         private static Color GetDrawingColor(ChartDrawingTool tool) => tool switch
         {
             ChartDrawingTool.TrendLine => ChartAppearanceSettings.TrendLineColor,
@@ -46,11 +49,11 @@ namespace Trade.It
             using var labelBack = new SolidBrush(Color.FromArgb(245, 248, 252));
             foreach (var drawing in advancedDrawings)
             {
-                var color = drawing.Tool == AdvancedDrawingTool.FibonacciRetracement
+                var color = drawing.StrokeColor ?? (drawing.Tool == AdvancedDrawingTool.FibonacciRetracement
                     ? ChartAppearanceSettings.FibonacciRetracementColor
-                    : ChartAppearanceSettings.TextLabelColor;
-                var penWidth = LineAppearanceSettings.DrawingLineWidth;
-                using var pen = new Pen(color, penWidth) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+                    : ChartAppearanceSettings.TextLabelColor);
+                var penWidth = drawing.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
+                using var pen = new Pen(color, penWidth) { DashStyle = GetDrawingDashStyle(drawing.StrokeStyle) };
                 if (drawing.Tool == AdvancedDrawingTool.FibonacciRetracement)
                 {
                     var start = DataToScreen(drawing.X1, drawing.Y1, plot, visibleCountForDrawing, min, max);
@@ -127,10 +130,11 @@ namespace Trade.It
             for (var i = 0; i < extraDrawings.Count; i++)
             {
                 var d = extraDrawings[i];
-                var color = GetExtraDrawingColor(d.Tool);
+                var color = d.StrokeColor ?? GetExtraDrawingColor(d.Tool);
                 var isSelected = IsDrawingSelected(DrawingSelectionKind.Extra, i);
-                var width = isSelected ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
-                using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+                var baseWidth = d.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
+                var width = isSelected ? baseWidth + 0.9f : baseWidth;
+                using var pen = new Pen(color, width) { DashStyle = GetDrawingDashStyle(d.StrokeStyle) };
                 if (d.Tool == ExtraDrawingTool.Pitchfork)
                     DrawPitchforkFixed(g, pen, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else if (d.Tool == ExtraDrawingTool.FibonacciExtension)

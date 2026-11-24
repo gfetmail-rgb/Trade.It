@@ -137,6 +137,9 @@ namespace Trade.It
             public DateTime? Date2 { get; set; }
             public DateTime? Date3 { get; set; }
             public List<ChartAnalysisDrawingPoint> Points { get; set; } = new();
+            public Color? StrokeColor { get; set; }
+            public float? StrokeWidth { get; set; }
+            public string? StrokeStyle { get; set; }
         }
 
         public TradingChartControl()
@@ -456,7 +459,10 @@ namespace Trade.It
                         X = p.X,
                         Y = p.Y,
                         Date = p.Date
-                    }).ToList()
+                    }).ToList(),
+                    StrokeColorArgb = drawing.StrokeColor?.ToArgb(),
+                    StrokeWidth = drawing.StrokeWidth,
+                    StrokeStyle = drawing.StrokeStyle
                 });
             }
 
@@ -471,7 +477,10 @@ namespace Trade.It
                     Y2 = drawing.Y2,
                     Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
                     Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
-                    Text = drawing.Text
+                    Text = drawing.Text,
+                    StrokeColorArgb = drawing.StrokeColor?.ToArgb(),
+                    StrokeWidth = drawing.StrokeWidth,
+                    StrokeStyle = drawing.StrokeStyle
                 });
             }
 
@@ -488,7 +497,10 @@ namespace Trade.It
                     Y3 = drawing.Y3,
                     Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
                     Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
-                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3))
+                    Date3 = drawing.Date3 ?? GetPointDate((int)Math.Round(drawing.X3)),
+                    StrokeColorArgb = drawing.StrokeColor?.ToArgb(),
+                    StrokeWidth = drawing.StrokeWidth,
+                    StrokeStyle = drawing.StrokeStyle
                 });
             }
 
@@ -676,7 +688,10 @@ namespace Trade.It
                         X = ResolveDrawingIndex(p.Date, p.X, document.FirstIndex),
                         Y = p.Y,
                         Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, document.FirstIndex))
-                    }).ToList()
+                    }).ToList(),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
@@ -695,7 +710,10 @@ namespace Trade.It
                     Y2 = item.Y2,
                     Text = item.Text,
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
-                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex))
+                    Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
@@ -716,7 +734,10 @@ namespace Trade.It
                     Y3 = item.Y3,
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
-                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex))
+                    Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
@@ -1781,6 +1802,9 @@ namespace Trade.It
                     path.X1 = first.X; path.Y1 = first.Y;
                     path.X2 = last.X; path.Y2 = last.Y;
                     path.Date1 = first.Date; path.Date2 = last.Date;
+                    path.StrokeColor = GetDrawingColor(path.Tool);
+                    path.StrokeWidth = LineAppearanceSettings.DrawingLineWidth;
+                    path.StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString();
                     drawings.Add(path);
                     AnalysisChanged?.Invoke(this, EventArgs.Empty);
                 }
@@ -1813,6 +1837,7 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var layoutCount = GetDrawingLayoutCount();
+            var drawingCountBefore = drawings.Count;
             var x1 = ScreenToDataX(start.X, plot, layoutCount) + firstIndex;
             var y1 = ScreenToPrice(start.Y, plot, min, max);
             var x2 = ScreenToDataX(end.X, plot, layoutCount) + firstIndex;
@@ -1867,6 +1892,13 @@ namespace Trade.It
                     }); break;
                 case ChartDrawingTool.HorizontalRay:
                     drawings.Add(new ChartDrawing { Tool = activeDrawingTool, X1 = x1, Y1 = y1, X2 = x2, Y2 = y1 }); break;
+            }
+
+            if (drawings.Count > drawingCountBefore)
+            {
+                drawings[^1].StrokeColor = GetDrawingColor(drawings[^1].Tool);
+                drawings[^1].StrokeWidth = LineAppearanceSettings.DrawingLineWidth;
+                drawings[^1].StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString();
             }
 
             AnalysisChanged?.Invoke(this, EventArgs.Empty);

@@ -21,6 +21,9 @@ namespace Trade.It
             public string? Text { get; set; }
             public DateTime? Date1 { get; set; }
             public DateTime? Date2 { get; set; }
+            public Color? StrokeColor { get; set; }
+            public float? StrokeWidth { get; set; }
+            public string? StrokeStyle { get; set; }
         }
 
         private readonly List<AdvancedDrawing> advancedDrawings = new();
@@ -314,7 +317,10 @@ namespace Trade.It
                 X2 = x2,
                 Y2 = y2,
                 Date1 = DataXToDate(x1),
-                Date2 = DataXToDate(x2)
+                Date2 = DataXToDate(x2),
+                StrokeColor = ChartAppearanceSettings.FibonacciRetracementColor,
+                StrokeWidth = LineAppearanceSettings.DrawingLineWidth,
+                StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString()
             });
             ClearDrawingSelection();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -331,7 +337,10 @@ namespace Trade.It
                 X1 = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex,
                 Y1 = ScreenToPrice(location.Y, plot, min, max),
                 Text = text,
-                Date1 = DataXToDate(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex)
+                Date1 = DataXToDate(ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex),
+                StrokeColor = ChartAppearanceSettings.TextLabelColor,
+                StrokeWidth = LineAppearanceSettings.DrawingLineWidth,
+                StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString()
             });
             ClearDrawingSelection();
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
@@ -364,11 +373,12 @@ namespace Trade.It
             {
                 var d = advancedDrawings[i];
                 var isSelected = IsDrawingSelected(DrawingSelectionKind.Advanced, i);
-                var color = d.Tool == AdvancedDrawingTool.FibonacciRetracement
+                var color = d.StrokeColor ?? (d.Tool == AdvancedDrawingTool.FibonacciRetracement
                     ? ChartAppearanceSettings.FibonacciRetracementColor
-                    : ChartAppearanceSettings.TextLabelColor;
-                var width = isSelected ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
-                using var pen = new Pen(color, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+                    : ChartAppearanceSettings.TextLabelColor);
+                var baseWidth = d.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
+                var width = isSelected ? baseWidth + 0.9f : baseWidth;
+                using var pen = new Pen(color, width) { DashStyle = GetDrawingDashStyle(d.StrokeStyle) };
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                     DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
@@ -397,8 +407,9 @@ namespace Trade.It
                 if (d.Tool != AdvancedDrawingTool.TextLabel)
                     continue;
 
-                var width = IsDrawingSelected(DrawingSelectionKind.Advanced, i) ? LineAppearanceSettings.DrawingLineWidth + 0.9f : LineAppearanceSettings.DrawingLineWidth;
-                using var pen = new Pen(ChartAppearanceSettings.TextLabelColor, width) { DashStyle = LineAppearanceSettings.DrawingLineStyle };
+                var baseWidth = d.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
+                var width = IsDrawingSelected(DrawingSelectionKind.Advanced, i) ? baseWidth + 0.9f : baseWidth;
+                using var pen = new Pen(d.StrokeColor ?? ChartAppearanceSettings.TextLabelColor, width) { DashStyle = GetDrawingDashStyle(d.StrokeStyle) };
                 DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
         }

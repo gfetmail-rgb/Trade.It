@@ -24,6 +24,9 @@ namespace Trade.It
             public DateTime? Date1 { get; set; }
             public DateTime? Date2 { get; set; }
             public DateTime? Date3 { get; set; }
+            public Color? StrokeColor { get; set; }
+            public float? StrokeWidth { get; set; }
+            public string? StrokeStyle { get; set; }
         }
 
         private readonly List<ExtraDrawing> extraDrawings = new();
@@ -428,7 +431,10 @@ namespace Trade.It
                 Y3 = ScreenToPrice(p3.Y, plot, min, max),
                 Date1 = DataXToDate(ScreenToDataX(p1.X, plot, visibleCountForDrawing) + firstIndex),
                 Date2 = DataXToDate(ScreenToDataX(p2.X, plot, visibleCountForDrawing) + firstIndex),
-                Date3 = DataXToDate(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex)
+                Date3 = DataXToDate(ScreenToDataX(p3.X, plot, visibleCountForDrawing) + firstIndex),
+                StrokeColor = GetExtraDrawingColor(activeExtraDrawingTool),
+                StrokeWidth = LineAppearanceSettings.DrawingLineWidth,
+                StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString()
             });
 
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
