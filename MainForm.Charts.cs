@@ -36,6 +36,8 @@ namespace Trade.It
             gridButton.Click += GridButton_Click;
             crossButton.Click += CrossButton_Click;
             indicatorPanelButton.Click += IndicatorPanelButton_Click;
+            hideLowerPanelsButton.Click += HideLowerPanelsButton_Click;
+            chartToolsToolTip.SetToolTip(hideLowerPanelsButton, "مخفی/نمایش پنل‌های اندیکاتور زیر نمودار");
             testModeButton.Click += TestModeButton_Click;
             testStepBackButton.Click += TestStepBackButton_Click;
             testStepForwardButton.Click += TestStepForwardButton_Click;
@@ -441,15 +443,27 @@ namespace Trade.It
             SetIndicatorPanelButtonState(chart);
         }
 
+        private void HideLowerPanelsButton_Click(object? sender, EventArgs e)
+        {
+            var chart = GetActiveChart();
+            if (chart == null || !chart.HasLowerPanels)
+                return;
+
+            chart.ToggleLowerPanelsVisibility();
+            SetIndicatorPanelButtonState(chart);
+        }
+
         private void SetIndicatorPanelButtonState(TradingChartControl? chart)
         {
             if (chart == null)
             {
-                 SetToggleButtonState(indicatorPanelButton, false);
+                SetToggleButtonState(indicatorPanelButton, false);
+                SetToggleButtonState(hideLowerPanelsButton, false);
                 return;
             }
 
-             SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
+            SetToggleButtonState(indicatorPanelButton, chart.VolumePanelVisible);
+            SetToggleButtonState(hideLowerPanelsButton, chart.LowerPanelsHidden);
         }
 
         private void SaveAnalysisButton_Click(object? sender, EventArgs e)
