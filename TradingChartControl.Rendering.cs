@@ -741,7 +741,8 @@ namespace Trade.It
                     if (drawing.Points.Count >= 2)
                     {
                         var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
-                        g.DrawLines(pen, pathPoints);
+                        if (pathPoints.Length > 2)
+                            g.DrawLines(pen, pathPoints.Take(pathPoints.Length - 1).ToArray());
                         DrawHollowArrowHead(g, pen, pathPoints[^1], pathPoints[^2]);
                     }
                     break;
@@ -771,13 +772,12 @@ namespace Trade.It
                     DrawPositionLabels(g, drawing, plot, visibleCountForDrawing, min, max);
                     break;
                 case ChartDrawingTool.HollowArrow:
-                    g.DrawLine(pen, start, end);
                     DrawHollowArrowHead(g, pen, end, start);
                     break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
-                    g.DrawLine(pen, start, end); DrawArrowHead(g, pen, end, start); break;
+                    DrawArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendChannel:
                     DrawTrendChannel(g, pen, drawing, plot, visibleCountForDrawing, min, max); break;
                 case ChartDrawingTool.HorizontalLine:
@@ -804,7 +804,7 @@ namespace Trade.It
             switch (tool)
             {
                 case ChartDrawingTool.HollowArrow:
-                    g.DrawLine(pen, start, end); DrawHollowArrowHead(g, pen, end, start); break;
+                    DrawHollowArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
