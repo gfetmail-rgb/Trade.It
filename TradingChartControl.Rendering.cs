@@ -1249,8 +1249,8 @@ namespace Trade.It
             if (length < 0.001)
                 return;
 
-            var headLength = Math.Min(30f, Math.Max(18f, (float)length * 0.22f));
-            var halfWidth = Math.Max(10f, headLength * 0.58f);
+            const float headLength = 19f;
+            const float halfWidth = 9f;
             var ux = (float)(dx / length);
             var uy = (float)(dy / length);
             var px = -uy;
@@ -1259,13 +1259,8 @@ namespace Trade.It
             var left = new PointF(baseCenter.X + px * halfWidth, baseCenter.Y + py * halfWidth);
             var right = new PointF(baseCenter.X - px * halfWidth, baseCenter.Y - py * halfWidth);
             using var headBrush = new SolidBrush(basePen.Color);
-            using var headPen = new Pen(basePen.Color, Math.Max(2.5f, basePen.Width + 1.5f))
-            {
-                LineJoin = System.Drawing.Drawing2D.LineJoin.Round
-            };
             g.DrawLine(basePen, from, baseCenter);
             g.FillPolygon(headBrush, new[] { tip, left, right });
-            g.DrawPolygon(headPen, new[] { tip, left, right });
         }
 
         private static string FormatPrice(double value, int decimalPlaces)
