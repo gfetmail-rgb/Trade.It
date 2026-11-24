@@ -522,11 +522,16 @@ namespace Trade.It
             return points[absoluteIndex].Date;
         }
 
-        private int ResolveDrawingIndex(DateTime? date, double legacyIndex, int fallbackFirstIndex)
+        private DateTime? GetPointDate(double absoluteIndex) =>
+            GetPointDate((int)Math.Round(absoluteIndex));
+
+        private double ResolveDrawingIndex(DateTime? date, double legacyIndex, int fallbackFirstIndex)
         {
             if (date.HasValue && points.Count > 0)
                 return FindNearestPointIndex(date.Value);
-            return (int)Math.Round(legacyIndex);
+            // مختصات خارج از بازه داده‌ها باید دقیقاً حفظ شود؛ گرد کردن X
+            // باعث جابه‌جایی متن و فیبوناچی سه‌نقطه‌ای در فضای آینده چارت می‌شود.
+            return legacyIndex;
         }
 
         public void ApplySharedAnalysisDrawings(ChartAnalysisDocument document)
