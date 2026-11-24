@@ -1993,7 +1993,13 @@ namespace Trade.It
                 return 0;
 
             if (target >= points[^1].Date)
+            {
+                // سازگاری با تحلیل‌های قدیمی: تاریخ آخرین کندل گاهی برای نقطه‌ای
+                // در فضای خالی سمت راست ذخیره شده، اما X اصلی هنوز در فایل وجود دارد.
+                if (target == points[^1].Date && fallbackAbsoluteIndex > points.Count - 1)
+                    return fallbackAbsoluteIndex;
                 return points.Count - 1;
+            }
 
             var lo = 0;
             var hi = points.Count - 1;

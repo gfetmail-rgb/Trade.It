@@ -532,7 +532,13 @@ namespace Trade.It
         private double ResolveDrawingIndex(DateTime? date, double legacyIndex, int fallbackFirstIndex)
         {
             if (date.HasValue && points.Count > 0)
+            {
+                // در تحلیل‌های قدیمی، مختصات آینده به تاریخ آخرین کندل محدود شده بود.
+                // اگر X از آخرین اندیس جلوتر است، همان X ذخیره‌شده معتبرتر از تاریخ محدودشده است.
+                if (legacyIndex > points.Count - 1 && date.Value >= points[^1].Date)
+                    return legacyIndex;
                 return FindNearestPointIndex(date.Value);
+            }
             // مختصات خارج از بازه داده‌ها باید دقیقاً حفظ شود؛ گرد کردن X
             // باعث جابه‌جایی متن و فیبوناچی سه‌نقطه‌ای در فضای آینده چارت می‌شود.
             return legacyIndex;
