@@ -25,7 +25,9 @@ namespace Trade.It
             ChartDrawingTool.VerticalLine => ChartAppearanceSettings.VerticalDoubleArrowColor,
             ChartDrawingTool.HorizontalRay => ChartAppearanceSettings.HorizontalRayColor,
             ChartDrawingTool.TrendLineWithArrow => ChartAppearanceSettings.TrendLineWithArrowColor,
-            ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse or ChartDrawingTool.Triangle or ChartDrawingTool.Path => ChartAppearanceSettings.RectangleColor,
+            ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse => ChartAppearanceSettings.RectangleColor,
+            ChartDrawingTool.Triangle => ChartAppearanceSettings.TriangleColor,
+            ChartDrawingTool.Path => ChartAppearanceSettings.PathColor,
             _ => ChartAppearanceSettings.TrendLineColor
         };
 

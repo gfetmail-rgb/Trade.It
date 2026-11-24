@@ -163,6 +163,9 @@ namespace Trade.It
             drawingColorKeys[horizontalRayColorButton] = nameof(ChartAppearanceSettings.HorizontalRayColor);
             drawingColorKeys[trendLineWithArrowColorButton] = nameof(ChartAppearanceSettings.TrendLineWithArrowColor);
             drawingColorKeys[rectangleColorButton] = nameof(ChartAppearanceSettings.RectangleColor);
+            drawingColorKeys[triangleColorButton] = nameof(ChartAppearanceSettings.TriangleColor);
+            drawingColorKeys[bezierCurveColorButton] = nameof(ChartAppearanceSettings.BezierCurveColor);
+            drawingColorKeys[pathColorButton] = nameof(ChartAppearanceSettings.PathColor);
             drawingColorKeys[fibonacciRetracementColorButton] = nameof(ChartAppearanceSettings.FibonacciRetracementColor);
             drawingColorKeys[textLabelColorButton] = nameof(ChartAppearanceSettings.TextLabelColor);
             drawingColorKeys[pitchforkColorButton] = nameof(ChartAppearanceSettings.PitchforkColor);
@@ -257,6 +260,9 @@ namespace Trade.It
             nameof(ChartAppearanceSettings.HorizontalRayColor) => ChartAppearanceSettings.HorizontalRayColor,
             nameof(ChartAppearanceSettings.TrendLineWithArrowColor) => ChartAppearanceSettings.TrendLineWithArrowColor,
             nameof(ChartAppearanceSettings.RectangleColor) => ChartAppearanceSettings.RectangleColor,
+            nameof(ChartAppearanceSettings.TriangleColor) => ChartAppearanceSettings.TriangleColor,
+            nameof(ChartAppearanceSettings.BezierCurveColor) => ChartAppearanceSettings.BezierCurveColor,
+            nameof(ChartAppearanceSettings.PathColor) => ChartAppearanceSettings.PathColor,
             nameof(ChartAppearanceSettings.FibonacciRetracementColor) => ChartAppearanceSettings.FibonacciRetracementColor,
             nameof(ChartAppearanceSettings.TextLabelColor) => ChartAppearanceSettings.TextLabelColor,
             nameof(ChartAppearanceSettings.PitchforkColor) => ChartAppearanceSettings.PitchforkColor,

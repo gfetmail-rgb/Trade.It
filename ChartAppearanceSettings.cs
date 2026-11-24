@@ -20,6 +20,9 @@ namespace Trade.It
             public int HorizontalRayColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
             public int TrendLineWithArrowColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
             public int RectangleColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
+            public int TriangleColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
+            public int BezierCurveColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
+            public int PathColor { get; set; } = Color.FromArgb(30, 90, 160).ToArgb();
             public int FibonacciRetracementColor { get; set; } = Color.FromArgb(45, 105, 170).ToArgb();
             public int TextLabelColor { get; set; } = Color.FromArgb(45, 105, 170).ToArgb();
             public int PitchforkColor { get; set; } = Color.FromArgb(155, 80, 45).ToArgb();
@@ -48,6 +51,9 @@ namespace Trade.It
         public static Color HorizontalRayColor { get; private set; } = Color.FromArgb(30, 90, 160);
         public static Color TrendLineWithArrowColor { get; private set; } = Color.FromArgb(30, 90, 160);
         public static Color RectangleColor { get; private set; } = Color.FromArgb(30, 90, 160);
+        public static Color TriangleColor { get; private set; } = Color.FromArgb(30, 90, 160);
+        public static Color BezierCurveColor { get; private set; } = Color.FromArgb(30, 90, 160);
+        public static Color PathColor { get; private set; } = Color.FromArgb(30, 90, 160);
         public static Color FibonacciRetracementColor { get; private set; } = Color.FromArgb(45, 105, 170);
         public static Color TextLabelColor { get; private set; } = Color.FromArgb(45, 105, 170);
         public static Color PitchforkColor { get; private set; } = Color.FromArgb(155, 80, 45);
@@ -126,6 +132,9 @@ namespace Trade.It
                     HorizontalRayColor = HorizontalRayColor.ToArgb(),
                     TrendLineWithArrowColor = TrendLineWithArrowColor.ToArgb(),
                     RectangleColor = RectangleColor.ToArgb(),
+                    TriangleColor = TriangleColor.ToArgb(),
+                    BezierCurveColor = BezierCurveColor.ToArgb(),
+                    PathColor = PathColor.ToArgb(),
                     FibonacciRetracementColor = FibonacciRetracementColor.ToArgb(),
                     TextLabelColor = TextLabelColor.ToArgb(),
                     PitchforkColor = PitchforkColor.ToArgb(),
@@ -157,6 +166,9 @@ namespace Trade.It
             HorizontalRayColor = Color.FromArgb(defaults.HorizontalRayColor);
             TrendLineWithArrowColor = Color.FromArgb(defaults.TrendLineWithArrowColor);
             RectangleColor = Color.FromArgb(defaults.RectangleColor);
+            TriangleColor = Color.FromArgb(defaults.TriangleColor);
+            BezierCurveColor = Color.FromArgb(defaults.BezierCurveColor);
+            PathColor = Color.FromArgb(defaults.PathColor);
             FibonacciRetracementColor = Color.FromArgb(defaults.FibonacciRetracementColor);
             TextLabelColor = Color.FromArgb(defaults.TextLabelColor);
             PitchforkColor = Color.FromArgb(defaults.PitchforkColor);
@@ -182,6 +194,9 @@ namespace Trade.It
                 case nameof(HorizontalRayColor): HorizontalRayColor = color; break;
                 case nameof(TrendLineWithArrowColor): TrendLineWithArrowColor = color; break;
                 case nameof(RectangleColor): RectangleColor = color; break;
+                case nameof(TriangleColor): TriangleColor = color; break;
+                case nameof(BezierCurveColor): BezierCurveColor = color; break;
+                case nameof(PathColor): PathColor = color; break;
                 case nameof(FibonacciRetracementColor): FibonacciRetracementColor = color; break;
                 case nameof(TextLabelColor): TextLabelColor = color; break;
                 case nameof(PitchforkColor): PitchforkColor = color; break;
@@ -206,6 +221,9 @@ namespace Trade.It
             HorizontalRayColor = Color.FromArgb(stored.HorizontalRayColor);
             TrendLineWithArrowColor = Color.FromArgb(stored.TrendLineWithArrowColor);
             RectangleColor = Color.FromArgb(stored.RectangleColor);
+            TriangleColor = Color.FromArgb(stored.TriangleColor);
+            BezierCurveColor = Color.FromArgb(stored.BezierCurveColor);
+            PathColor = Color.FromArgb(stored.PathColor);
             FibonacciRetracementColor = Color.FromArgb(stored.FibonacciRetracementColor);
             TextLabelColor = Color.FromArgb(stored.TextLabelColor);
             PitchforkColor = Color.FromArgb(stored.PitchforkColor);

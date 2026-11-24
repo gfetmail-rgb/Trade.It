@@ -514,6 +514,11 @@ namespace Trade.It
             if (points.Count == 0)
                 return null;
 
+            // مختصات فضای خالی سمت راست آخرین کندل نباید به آخرین تاریخ موجود
+            // محدود شود؛ در این حالت null باعث می‌شود DateToDataX از X ذخیره‌شده استفاده کند.
+            if (absoluteX > points.Count - 1)
+                return null;
+
             var x = Math.Clamp(absoluteX, 0.0, points.Count - 1);
             var leftIndex = (int)Math.Floor(x);
             if (leftIndex >= points.Count - 1)

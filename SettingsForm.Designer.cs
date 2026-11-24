@@ -33,6 +33,9 @@ namespace Trade.It
         private System.Windows.Forms.Button horizontalRayColorButton;
         private System.Windows.Forms.Button trendLineWithArrowColorButton;
         private System.Windows.Forms.Button rectangleColorButton;
+        private System.Windows.Forms.Button triangleColorButton;
+        private System.Windows.Forms.Button bezierCurveColorButton;
+        private System.Windows.Forms.Button pathColorButton;
         private System.Windows.Forms.Button fibonacciRetracementColorButton;
         private System.Windows.Forms.Button textLabelColorButton;
         private System.Windows.Forms.Button pitchforkColorButton;
@@ -128,6 +131,9 @@ namespace Trade.It
             horizontalRayColorButton = new Button();
             trendLineWithArrowColorButton = new Button();
             rectangleColorButton = new Button();
+            triangleColorButton = new Button();
+            bezierCurveColorButton = new Button();
+            pathColorButton = new Button();
             fibonacciRetracementColorButton = new Button();
             textLabelColorButton = new Button();
             pitchforkColorButton = new Button();
@@ -431,6 +437,9 @@ namespace Trade.It
             drawingColorsGroupBox.Controls.Add(horizontalRayColorButton);
             drawingColorsGroupBox.Controls.Add(trendLineWithArrowColorButton);
             drawingColorsGroupBox.Controls.Add(rectangleColorButton);
+            drawingColorsGroupBox.Controls.Add(triangleColorButton);
+            drawingColorsGroupBox.Controls.Add(bezierCurveColorButton);
+            drawingColorsGroupBox.Controls.Add(pathColorButton);
             drawingColorsGroupBox.Controls.Add(fibonacciRetracementColorButton);
             drawingColorsGroupBox.Controls.Add(textLabelColorButton);
             drawingColorsGroupBox.Controls.Add(pitchforkColorButton);
@@ -443,7 +452,7 @@ namespace Trade.It
             drawingColorsGroupBox.Controls.Add(drawingLineStyleLabel);
             drawingColorsGroupBox.Location = new Point(16, 420);
             drawingColorsGroupBox.Name = "drawingColorsGroupBox";
-            drawingColorsGroupBox.Size = new Size(760, 224);
+            drawingColorsGroupBox.Size = new Size(760, 270);
             drawingColorsGroupBox.TabIndex = 3;
             drawingColorsGroupBox.TabStop = false;
             drawingColorsGroupBox.Text = "رنگ، ضخامت و استایل شکل‌ها و ابزارهای رسم";
@@ -592,9 +601,45 @@ namespace Trade.It
             measureColorButton.Text = "اندازه‌گیری";
             measureColorButton.UseVisualStyleBackColor = false;
             // 
+            // triangleColorButton
+            // 
+            triangleColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            triangleColorButton.ForeColor = Color.White;
+            triangleColorButton.Location = new Point(565, 168);
+            triangleColorButton.Name = "triangleColorButton";
+            triangleColorButton.RightToLeft = RightToLeft.Yes;
+            triangleColorButton.Size = new Size(175, 36);
+            triangleColorButton.TabIndex = 17;
+            triangleColorButton.Text = "مثلث";
+            triangleColorButton.UseVisualStyleBackColor = false;
+            // 
+            // bezierCurveColorButton
+            // 
+            bezierCurveColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            bezierCurveColorButton.ForeColor = Color.White;
+            bezierCurveColorButton.Location = new Point(375, 168);
+            bezierCurveColorButton.Name = "bezierCurveColorButton";
+            bezierCurveColorButton.RightToLeft = RightToLeft.Yes;
+            bezierCurveColorButton.Size = new Size(175, 36);
+            bezierCurveColorButton.TabIndex = 18;
+            bezierCurveColorButton.Text = "منحنی بزیه";
+            bezierCurveColorButton.UseVisualStyleBackColor = false;
+            // 
+            // pathColorButton
+            // 
+            pathColorButton.BackColor = Color.FromArgb(30, 90, 160);
+            pathColorButton.ForeColor = Color.White;
+            pathColorButton.Location = new Point(185, 168);
+            pathColorButton.Name = "pathColorButton";
+            pathColorButton.RightToLeft = RightToLeft.Yes;
+            pathColorButton.Size = new Size(175, 36);
+            pathColorButton.TabIndex = 19;
+            pathColorButton.Text = "مسیر چندبخشی";
+            pathColorButton.UseVisualStyleBackColor = false;
+            // 
             // resetDrawingColorsButton
             // 
-            resetDrawingColorsButton.Location = new Point(20, 169);
+            resetDrawingColorsButton.Location = new Point(20, 215);
             resetDrawingColorsButton.Name = "resetDrawingColorsButton";
             resetDrawingColorsButton.Size = new Size(90, 44);
             resetDrawingColorsButton.TabIndex = 12;
@@ -605,7 +650,7 @@ namespace Trade.It
             // 
             drawingLineWidthNumeric.DecimalPlaces = 1;
             drawingLineWidthNumeric.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            drawingLineWidthNumeric.Location = new Point(549, 175);
+            drawingLineWidthNumeric.Location = new Point(549, 221);
             drawingLineWidthNumeric.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             drawingLineWidthNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 65536 });
             drawingLineWidthNumeric.Name = "drawingLineWidthNumeric";
@@ -618,7 +663,7 @@ namespace Trade.It
             // 
             drawingLineStyleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             drawingLineStyleCombo.Items.AddRange(new object[] { "یکپارچه", "خط‌چین", "نقطه‌چین", "خط-نقطه", "خط-نقطه-نقطه" });
-            drawingLineStyleCombo.Location = new Point(249, 175);
+            drawingLineStyleCombo.Location = new Point(249, 221);
             drawingLineStyleCombo.Name = "drawingLineStyleCombo";
             drawingLineStyleCombo.RightToLeft = RightToLeft.Yes;
             drawingLineStyleCombo.Size = new Size(130, 33);
@@ -627,7 +672,7 @@ namespace Trade.It
             // drawingLineWidthLabel
             // 
             drawingLineWidthLabel.AutoSize = true;
-            drawingLineWidthLabel.Location = new Point(661, 179);
+            drawingLineWidthLabel.Location = new Point(661, 225);
             drawingLineWidthLabel.Name = "drawingLineWidthLabel";
             drawingLineWidthLabel.Size = new Size(79, 25);
             drawingLineWidthLabel.TabIndex = 15;
@@ -636,7 +681,7 @@ namespace Trade.It
             // drawingLineStyleLabel
             // 
             drawingLineStyleLabel.AutoSize = true;
-            drawingLineStyleLabel.Location = new Point(431, 179);
+            drawingLineStyleLabel.Location = new Point(431, 225);
             drawingLineStyleLabel.Name = "drawingLineStyleLabel";
             drawingLineStyleLabel.Size = new Size(67, 25);
             drawingLineStyleLabel.TabIndex = 16;
@@ -654,7 +699,7 @@ namespace Trade.It
             crosshairGridGroupBox.Controls.Add(gridLineWidthNumeric);
             crosshairGridGroupBox.Controls.Add(gridLineStyleLabel);
             crosshairGridGroupBox.Controls.Add(gridLineStyleCombo);
-            crosshairGridGroupBox.Location = new Point(12, 650);
+            crosshairGridGroupBox.Location = new Point(12, 700);
             crosshairGridGroupBox.Name = "crosshairGridGroupBox";
             crosshairGridGroupBox.RightToLeft = RightToLeft.Yes;
             crosshairGridGroupBox.Size = new Size(1302, 160);
@@ -768,7 +813,7 @@ namespace Trade.It
             // 
             // okButton
             // 
-            okButton.Location = new Point(548, 833);
+            okButton.Location = new Point(548, 883);
             okButton.Name = "okButton";
             okButton.Size = new Size(98, 43);
             okButton.TabIndex = 0;
@@ -777,7 +822,7 @@ namespace Trade.It
             // 
             // cancelButton
             // 
-            cancelButton.Location = new Point(661, 833);
+            cancelButton.Location = new Point(661, 883);
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new Size(98, 43);
             cancelButton.TabIndex = 1;
@@ -1161,7 +1206,7 @@ namespace Trade.It
             AutoScaleDimensions = new SizeF(11F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
-            ClientSize = new Size(1325, 891);
+            ClientSize = new Size(1325, 941);
             Controls.Add(okButton);
             Controls.Add(cancelButton);
             Controls.Add(crosshairGridGroupBox);
