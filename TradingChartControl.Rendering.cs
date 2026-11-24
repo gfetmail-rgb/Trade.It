@@ -1075,6 +1075,52 @@ namespace Trade.It
             if (visible.Count == 0) return;
             GetVerticalRange(visible, out var min, out var max);
             var drawing = drawings[index];
+            if (drawing.Tool == ChartDrawingTool.HollowArrow)
+            {
+                var currentStart = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visible.Count, min, max);
+                var currentEnd = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visible.Count, min, max);
+                var horizontal = Math.Abs(currentEnd.X - currentStart.X) >= Math.Abs(currentEnd.Y - currentStart.Y);
+
+                if (handle == 1)
+                {
+                    var newStart = location;
+                    var snappedEnd = SnapArrowEnd(newStart, new Point((int)Math.Round(currentEnd.X), (int)Math.Round(currentEnd.Y)));
+                    drawing.X1 = ScreenToDataX(newStart.X, plot, visible.Count) + firstIndex;
+                    drawing.Y1 = ScreenToPrice(newStart.Y, plot, min, max);
+                    drawing.X2 = ScreenToDataX(snappedEnd.X, plot, visible.Count) + firstIndex;
+                    drawing.Y2 = ScreenToPrice(snappedEnd.Y, plot, min, max);
+                    UpdateDrawingDates(drawing);
+                    return;
+                }
+                if (handle == 2)
+                {
+                    var snappedEnd = SnapArrowEnd(
+                        new Point((int)Math.Round(currentStart.X), (int)Math.Round(currentStart.Y)), location);
+                    drawing.X2 = ScreenToDataX(snappedEnd.X, plot, visible.Count) + firstIndex;
+                    drawing.Y2 = ScreenToPrice(snappedEnd.Y, plot, min, max);
+                    drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2));
+                    return;
+                }
+                if (handle == 3)
+                {
+                    var centerX = (currentStart.X + currentEnd.X) / 2f;
+                    var centerY = (currentStart.Y + currentEnd.Y) / 2f;
+                    var widthPoint = horizontal
+                        ? new PointF(centerX, location.Y)
+                        : new PointF(location.X, centerY);
+                    drawing.X3 = ScreenToDataX(widthPoint.X, plot, visible.Count) + firstIndex;
+                    drawing.Y3 = ScreenToPrice(widthPoint.Y, plot, min, max);
+                    drawing.Date3 = GetPointDate((int)Math.Round(drawing.X3));
+                    return;
+                }
+
+                var arrowDeltaX = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                var arrowDeltaY = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
+                drawing.X1 += arrowDeltaX; drawing.X2 += arrowDeltaX; drawing.X3 += arrowDeltaX;
+                drawing.Y1 += arrowDeltaY; drawing.Y2 += arrowDeltaY; drawing.Y3 += arrowDeltaY;
+                UpdateDrawingDates(drawing);
+                return;
+            }
             if (drawing.Tool == ChartDrawingTool.HorizontalLine)
             {
                 drawing.Y1 = ScreenToPrice(location.Y, plot, min, max);
