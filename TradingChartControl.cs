@@ -1990,6 +1990,16 @@ namespace Trade.It
                     var positionTargetX = ScreenToDataX(end.X, plot, layoutCount) + firstIndex;
                     var positionStopY = ScreenToPrice(third.Y, plot, min, max);
                     var isLong = activeDrawingTool == ChartDrawingTool.LongPosition;
+                    if (isLong && (y2 <= y1 || positionStopY >= y1))
+                    {
+                        MessageBox.Show(this, "در Long Position، حد سود باید بالاتر از ورود و حد ضرر پایین‌تر از ورود باشد.", "ترسیم موقعیت", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+                    if (!isLong && (y2 >= y1 || positionStopY <= y1))
+                    {
+                        MessageBox.Show(this, "در Short Position، حد سود باید پایین‌تر از ورود و حد ضرر بالاتر از ورود باشد.", "ترسیم موقعیت", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                     drawings.Add(new ChartDrawing
                     {
                         Tool = activeDrawingTool,

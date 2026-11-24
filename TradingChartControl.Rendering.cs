@@ -803,18 +803,35 @@ namespace Trade.It
             {
                 var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
                 var y = ScreenToPrice(location.Y, plot, min, max);
+                var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
+                var epsilon = Math.Max(Math.Abs(drawing.Y1) * 0.000001, 0.000001);
                 if (handle == 1)
                 {
-                    drawing.X1 = x; drawing.Y1 = y; drawing.Date1 = GetPointDate(x);
+                    drawing.X1 = x;
+                    drawing.Y1 = y;
+                    if (isLong)
+                    {
+                        if (drawing.Y2 <= y) drawing.Y2 = y + epsilon;
+                        if (drawing.Y3 >= y) drawing.Y3 = y - epsilon;
+                    }
+                    else
+                    {
+                        if (drawing.Y2 >= y) drawing.Y2 = y - epsilon;
+                        if (drawing.Y3 <= y) drawing.Y3 = y + epsilon;
+                    }
+                    drawing.Date1 = GetPointDate(x);
                 }
                 else if (handle == 2)
                 {
-                    drawing.X2 = x; drawing.Y2 = y; drawing.X3 = x;
+                    drawing.X2 = x; drawing.X3 = x;
+                    drawing.Y2 = isLong ? Math.Max(y, drawing.Y1 + epsilon) : Math.Min(y, drawing.Y1 - epsilon);
                     drawing.Date2 = GetPointDate(x); drawing.Date3 = drawing.Date2;
                 }
                 else if (handle == 3)
                 {
-                    drawing.X3 = drawing.X2; drawing.Y3 = y; drawing.Date3 = drawing.Date2;
+                    drawing.X3 = drawing.X2;
+                    drawing.Y3 = isLong ? Math.Min(y, drawing.Y1 - epsilon) : Math.Max(y, drawing.Y1 + epsilon);
+                    drawing.Date3 = drawing.Date2;
                 }
                 else
                 {
