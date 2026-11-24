@@ -17,8 +17,8 @@ namespace Trade.It
         internal static void LoadChartAppearanceSettings() => ChartAppearanceSettings.Load();
         internal static void SaveChartAppearanceSettings() => ChartAppearanceSettings.Save();
 
-        private static DashStyle GetDrawingDashStyle(string? style) =>
-            Enum.TryParse(style, true, out DashStyle parsed) ? parsed : LineAppearanceSettings.DrawingLineStyle;
+        private static System.Drawing.Drawing2D.DashStyle GetDrawingDashStyle(string? style) =>
+            Enum.TryParse(style, true, out System.Drawing.Drawing2D.DashStyle parsed) ? parsed : LineAppearanceSettings.DrawingLineStyle;
 
         private static Color GetDrawingColor(ChartDrawingTool tool) => tool switch
         {
