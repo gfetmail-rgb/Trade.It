@@ -670,35 +670,58 @@ namespace Trade.It
             if (screenPoints.Count >= 2)
                 g.DrawLines(pen, screenPoints.ToArray());
             if (screenPoints.Count >= 2)
-                DrawHollowArrow(g, pen, screenPoints[^2], screenPoints[^1]);
+                DrawHollowArrow(g, pen, screenPoints[^2], screenPoints[^1], GetArrowWidthHandle(screenPoints[^2], screenPoints[^1], 9f));
         }
 
-        private static void DrawHollowArrow(Graphics g, Pen pen, PointF start, PointF tip)
+        private static Point SnapArrowEnd(Point start, Point end)
         {
-            var dx = tip.X - start.X;
-            var dy = tip.Y - start.Y;
+            var dx = end.X - start.X;
+            var dy = end.Y - start.Y;
+            return Math.Abs(dx) >= Math.Abs(dy)
+                ? new Point(end.X, start.Y)
+                : new Point(start.X, end.Y);
+        }
+
+        private static PointF GetArrowWidthHandle(PointF start, PointF end, float halfWidth)
+        {
+            return Math.Abs(end.X - start.X) >= Math.Abs(end.Y - start.Y)
+                ? new PointF((start.X + end.X) / 2f, (start.Y + end.Y) / 2f + halfWidth)
+                : new PointF((start.X + end.X) / 2f + halfWidth, (start.Y + end.Y) / 2f);
+        }
+
+        private static void DrawHollowArrow(Graphics g, Pen pen, PointF start, PointF rawEnd, PointF widthHandle)
+        {
+            var end = Math.Abs(rawEnd.X - start.X) >= Math.Abs(rawEnd.Y - start.Y)
+                ? new PointF(rawEnd.X, start.Y)
+                : new PointF(start.X, rawEnd.Y);
+            var dx = end.X - start.X;
+            var dy = end.Y - start.Y;
             var length = (float)Math.Sqrt(dx * dx + dy * dy);
-            if (length < 2f)
-                return;
+            if (length < 4f) return;
 
             var ux = dx / length;
             var uy = dy / length;
             var px = -uy;
             var py = ux;
-            var headLength = Math.Min(22f, Math.Max(10f, length * 0.38f));
-            const float shaftHalfWidth = 4f;
-            const float headHalfWidth = 11f;
-            var baseCenter = new PointF(tip.X - ux * headLength, tip.Y - uy * headLength);
+            var centerX = (start.X + end.X) / 2f;
+            var centerY = (start.Y + end.Y) / 2f;
+            var halfWidth = Math.Abs(dx) >= Math.Abs(dy)
+                ? Math.Abs(widthHandle.Y - centerY)
+                : Math.Abs(widthHandle.X - centerX);
+            halfWidth = Math.Clamp(halfWidth, 3f, 32f);
 
-            // چندضلعی بسته با بدنه باریک و سر پهن؛ داخل فلش شفاف باقی می‌ماند.
+            var shaftHalfWidth = halfWidth * 0.42f;
+            var headHalfWidth = halfWidth * 1.45f;
+            var headLength = Math.Min(length * 0.45f, halfWidth * 3.2f);
+            var neck = new PointF(end.X - ux * headLength, end.Y - uy * headLength);
             var polygon = new[]
             {
                 new PointF(start.X + px * shaftHalfWidth, start.Y + py * shaftHalfWidth),
-                new PointF(baseCenter.X + px * shaftHalfWidth, baseCenter.Y + py * shaftHalfWidth),
-                new PointF(baseCenter.X + px * headHalfWidth, baseCenter.Y + py * headHalfWidth),
-                tip,
-                new PointF(baseCenter.X - px * headHalfWidth, baseCenter.Y - py * headHalfWidth),
-                new PointF(baseCenter.X - px * shaftHalfWidth, baseCenter.Y - py * shaftHalfWidth),
+                new PointF(neck.X + px * shaftHalfWidth, neck.Y + py * shaftHalfWidth),
+                new PointF(neck.X + px * headHalfWidth, neck.Y + py * headHalfWidth),
+                end,
+                new PointF(neck.X - px * headHalfWidth, neck.Y - py * headHalfWidth),
+                new PointF(neck.X - px * shaftHalfWidth, neck.Y - py * shaftHalfWidth),
                 new PointF(start.X - px * shaftHalfWidth, start.Y - py * shaftHalfWidth)
             };
             g.DrawPolygon(pen, polygon);
@@ -722,6 +745,11 @@ namespace Trade.It
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
             if ((drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve) && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
+            if (drawing.Tool == ChartDrawingTool.HollowArrow)
+            {
+                var widthHandle = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                return new List<PointF> { start, end, widthHandle };
+            }
             if (drawing.Tool == ChartDrawingTool.Triangle)
             {
                 var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
@@ -754,7 +782,7 @@ namespace Trade.It
                         var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
                         if (pathPoints.Length > 2)
                             g.DrawLines(pen, pathPoints.Take(pathPoints.Length - 1).ToArray());
-                        DrawHollowArrow(g, pen, pathPoints[^2], pathPoints[^1]);
+                        DrawHollowArrow(g, pen, pathPoints[^2], pathPoints[^1], GetArrowWidthHandle(pathPoints[^2], pathPoints[^1], 9f));
                     }
                     break;
                 case ChartDrawingTool.BezierCurve:
@@ -783,8 +811,11 @@ namespace Trade.It
                     DrawPositionLabels(g, drawing, plot, visibleCountForDrawing, min, max);
                     break;
                 case ChartDrawingTool.HollowArrow:
-                    DrawHollowArrow(g, pen, start, end);
+                {
+                    var widthHandle = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                    DrawHollowArrow(g, pen, start, end, widthHandle);
                     break;
+                }
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -815,7 +846,11 @@ namespace Trade.It
             switch (tool)
             {
                 case ChartDrawingTool.HollowArrow:
-                    DrawHollowArrow(g, pen, start, end); break;
+                {
+                    var snappedEnd = SnapArrowEnd(start, end);
+                    DrawHollowArrow(g, pen, start, snappedEnd, GetArrowWidthHandle(start, snappedEnd, 9f));
+                    break;
+                }
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -1165,8 +1200,8 @@ namespace Trade.It
             if (length < 0.001)
                 return;
 
-            const float headLength = 19f;
-            const float halfWidth = 9f;
+            var headLength = Math.Min(30f, Math.Max(18f, (float)length * 0.22f));
+            var halfWidth = Math.Max(10f, headLength * 0.58f);
             var ux = (float)(dx / length);
             var uy = (float)(dy / length);
             var px = -uy;
@@ -1175,8 +1210,13 @@ namespace Trade.It
             var left = new PointF(baseCenter.X + px * halfWidth, baseCenter.Y + py * halfWidth);
             var right = new PointF(baseCenter.X - px * halfWidth, baseCenter.Y - py * halfWidth);
             using var headBrush = new SolidBrush(basePen.Color);
+            using var headPen = new Pen(basePen.Color, Math.Max(2.5f, basePen.Width + 1.5f))
+            {
+                LineJoin = System.Drawing.Drawing2D.LineJoin.Round
+            };
             g.DrawLine(basePen, from, baseCenter);
             g.FillPolygon(headBrush, new[] { tip, left, right });
+            g.DrawPolygon(headPen, new[] { tip, left, right });
         }
 
         private static string FormatPrice(double value, int decimalPlaces)
