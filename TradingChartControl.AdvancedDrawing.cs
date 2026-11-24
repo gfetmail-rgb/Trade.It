@@ -228,7 +228,7 @@ namespace Trade.It
                     var dy = currentY - previousY;
                     var d = advancedDrawings[draggingAdvancedDrawingIndex];
 
-                    if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark && draggingAdvancedHandle > 0)
+                    if ((d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark) && draggingAdvancedHandle > 0)
                     {
                         var resizeDelta = e.Location.X - draggingAdvancedLastPoint.X;
                         d.FontSize = Math.Clamp(d.FontSize + resizeDelta * 0.45f, 12f, 80f);
@@ -438,9 +438,6 @@ namespace Trade.It
                 else if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
                     DrawAdvancedMarker(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
                 else
-                    if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
-                    DrawAdvancedMarker(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, IsDrawingSelected(DrawingSelectionKind.Advanced, i));
-                else
                     DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
 
@@ -468,7 +465,10 @@ namespace Trade.It
                 var baseWidth = d.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
                 var width = IsDrawingSelected(DrawingSelectionKind.Advanced, i) ? baseWidth + 0.9f : baseWidth;
                 using var pen = new Pen(d.StrokeColor ?? ChartAppearanceSettings.TextLabelColor, width) { DashStyle = GetDrawingDashStyle(d.StrokeStyle) };
-                DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
+                if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
+                    DrawAdvancedMarker(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, IsDrawingSelected(DrawingSelectionKind.Advanced, i));
+                else
+                    DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
         }
 
@@ -500,15 +500,17 @@ namespace Trade.It
         {
             var point = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
             using var font = new Font("Segoe UI", Math.Clamp(d.FontSize, 12f, 80f), FontStyle.Bold);
+            using var markerBrush = new SolidBrush(d.StrokeColor ?? ChartAppearanceSettings.TextLabelColor);
             var size = g.MeasureString(d.Text ?? string.Empty, font);
             var bounds = new RectangleF(point.X - size.Width / 2f - 2f, point.Y - size.Height / 2f - 2f, size.Width + 4f, size.Height + 4f);
-            g.DrawString(d.Text ?? string.Empty, font, labelBrush, bounds.X + 2f, bounds.Y + 2f);
+            g.DrawString(d.Text ?? string.Empty, font, markerBrush, bounds.X + 2f, bounds.Y + 2f);
             if (selected)
             {
-                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Top));
-                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Top));
-                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Bottom));
-                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Bottom));
+                var handleColor = d.StrokeColor ?? ChartAppearanceSettings.TextLabelColor;
+                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Top), handleColor);
+                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Top), handleColor);
+                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Bottom), handleColor);
+                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Bottom), handleColor);
             }
         }
 
@@ -544,10 +546,10 @@ namespace Trade.It
             }
         }
 
-        private static void DrawAdvancedHandle(Graphics g, PointF point)
+        private static void DrawAdvancedHandle(Graphics g, PointF point, Color? color = null)
         {
             using var brush = new SolidBrush(Color.White);
-            using var pen = new Pen(ChartAppearanceSettings.FibonacciRetracementColor, 1.3f);
+            using var pen = new Pen(color ?? ChartAppearanceSettings.FibonacciRetracementColor, 1.3f);
             const float r = 4f;
             g.FillEllipse(brush, point.X - r, point.Y - r, r * 2f, r * 2f);
             g.DrawEllipse(pen, point.X - r, point.Y - r, r * 2f, r * 2f);
