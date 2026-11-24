@@ -718,6 +718,8 @@ namespace Trade.It
                         Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, document.FirstIndex))
                     }).ToList(),
                     StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : null,
+                    IsLongPosition = item.IsLongPosition,
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
