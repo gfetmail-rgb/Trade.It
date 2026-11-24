@@ -129,6 +129,7 @@ namespace Trade.It
         private System.Windows.Forms.Button gridButton;
         private System.Windows.Forms.Button crossButton;
         private System.Windows.Forms.Button indicatorPanelButton;
+        private System.Windows.Forms.Button hideLowerPanelsButton;
         private System.Windows.Forms.Button testModeButton;
         private System.Windows.Forms.Button testStepBackButton;
         private System.Windows.Forms.Button testStepForwardButton;
@@ -534,6 +535,7 @@ namespace Trade.It
             gridButton = new Button();
             crossButton = new Button();
             indicatorPanelButton = new Button();
+            hideLowerPanelsButton = new Button();
             testModeButton = new Button();
             testStepBackButton = new Button();
             testStepForwardButton = new Button();
@@ -2605,6 +2607,7 @@ namespace Trade.It
             chartToolbarPanel.Controls.Add(gridButton);
             chartToolbarPanel.Controls.Add(crossButton);
             chartToolbarPanel.Controls.Add(indicatorPanelButton);
+            chartToolbarPanel.Controls.Add(hideLowerPanelsButton);
             chartToolbarPanel.Controls.Add(testModeButton);
             chartToolbarPanel.Controls.Add(testStepBackButton);
             chartToolbarPanel.Controls.Add(testStepForwardButton);
@@ -2749,6 +2752,18 @@ namespace Trade.It
             indicatorPanelButton.Image = ((Image)(resources.GetObject("indicatorPanelButton.Image")));
             indicatorPanelButton.ImageAlign = ContentAlignment.MiddleCenter;
             indicatorPanelButton.UseVisualStyleBackColor = true;
+            // 
+            // hideLowerPanelsButton
+            // 
+            hideLowerPanelsButton.Location = new Point(1140, 7);
+            hideLowerPanelsButton.Name = "hideLowerPanelsButton";
+            hideLowerPanelsButton.Size = new Size(40, 34);
+            hideLowerPanelsButton.TabIndex = 27;
+            hideLowerPanelsButton.AutoSize = false;
+            hideLowerPanelsButton.Text = "↕";
+            hideLowerPanelsButton.Font = new Font("Segoe UI Symbol", 15F, FontStyle.Bold);
+            hideLowerPanelsButton.TextAlign = ContentAlignment.MiddleCenter;
+            hideLowerPanelsButton.UseVisualStyleBackColor = true;
             // 
             // testModeButton
             // 
