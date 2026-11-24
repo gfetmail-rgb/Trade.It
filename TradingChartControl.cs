@@ -587,11 +587,11 @@ namespace Trade.It
                         Y = p.Y,
                         Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, 0))
                     }).ToList(),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
-                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : null,
-                    IsLongPosition = item.IsLongPosition,
-                    StrokeWidth = item.StrokeWidth,
-                    StrokeStyle = item.StrokeStyle
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : GetDrawingColor(tool),
+                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : (tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition ? Color.FromArgb(52, 35, 165, 95) : null),
+                    IsLongPosition = item.IsLongPosition ?? (tool == ChartDrawingTool.LongPosition) ?? (tool == ChartDrawingTool.LongPosition),
+                    StrokeWidth = item.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth ?? LineAppearanceSettings.DrawingLineWidth,
+                    StrokeStyle = item.StrokeStyle ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString() ?? LineAppearanceSettings.DrawingLineStyle.ToString()
                 });
             }
 
@@ -613,7 +613,7 @@ namespace Trade.It
                     FontSize = item.FontSize ?? 26f,
                     Date1 = item.Date1 ?? GetPointDate(x1),
                     Date2 = item.Date2 ?? GetPointDate(x2),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : (tool == AdvancedDrawingTool.FibonacciRetracement ? ChartAppearanceSettings.FibonacciRetracementColor : ChartAppearanceSettings.TextLabelColor),
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
@@ -638,7 +638,7 @@ namespace Trade.It
                     Date1 = item.Date1 ?? GetPointDate(x1),
                     Date2 = item.Date2 ?? GetPointDate(x2),
                     Date3 = item.Date3 ?? GetPointDate(x3),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : GetExtraDrawingColor(tool),
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
@@ -717,8 +717,8 @@ namespace Trade.It
                         Y = p.Y,
                         Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, document.FirstIndex))
                     }).ToList(),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
-                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : null,
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : GetDrawingColor(tool),
+                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : (tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition ? Color.FromArgb(52, 35, 165, 95) : null),
                     IsLongPosition = item.IsLongPosition,
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
@@ -742,7 +742,7 @@ namespace Trade.It
                     FontSize = item.FontSize ?? 26f,
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : (tool == AdvancedDrawingTool.FibonacciRetracement ? ChartAppearanceSettings.FibonacciRetracementColor : ChartAppearanceSettings.TextLabelColor),
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
@@ -766,7 +766,7 @@ namespace Trade.It
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
                     Date3 = item.Date3 ?? GetPointDate((int)ResolveDrawingIndex(item.Date3, item.X3, document.FirstIndex)),
-                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : GetExtraDrawingColor(tool),
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
