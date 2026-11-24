@@ -712,8 +712,6 @@ namespace Trade.It
                     g.DrawLine(pen, start, end);
                     DrawHollowArrowHead(g, pen, end, start);
                     break;
-                case ChartDrawingTool.HollowArrow:
-                    g.DrawLine(pen, start, end); DrawHollowArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -743,6 +741,8 @@ namespace Trade.It
         {
             switch (tool)
             {
+                case ChartDrawingTool.HollowArrow:
+                    g.DrawLine(pen, start, end); DrawHollowArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
