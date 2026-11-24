@@ -3259,7 +3259,9 @@ namespace Trade.It
             ChartToolbarIcons.Register(drawHorizontalDoubleButton, drawHorizontalDoubleButton.Image!, (Image)resources.GetObject("drawHorizontalDoubleButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawVerticalDoubleButton, drawVerticalDoubleButton.Image!, (Image)resources.GetObject("drawVerticalDoubleButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawHorizontalRayButton, drawHorizontalRayButton.Image!, (Image)resources.GetObject("drawHorizontalRayButton.ActiveImage")!);
-            ChartToolbarIcons.Register(drawTrendLineArrowButton, drawTrendLineArrowButton.Image!, (Image)resources.GetObject("drawTrendLineArrowButton.ActiveImage")!);
+            using (var trendLineArrowIcon = ChartToolbarIcons.CreateTrendLineArrowIcon(Color.FromArgb(70, 70, 70)))
+            using (var activeTrendLineArrowIcon = ChartToolbarIcons.CreateTrendLineArrowIcon(Color.FromArgb(0, 120, 215)))
+                ChartToolbarIcons.Register(drawTrendLineArrowButton, trendLineArrowIcon, activeTrendLineArrowIcon);
             ChartToolbarIcons.Register(drawFibonacciButton, drawFibonacciButton.Image!, (Image)resources.GetObject("drawFibonacciButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawTextButton, drawTextButton.Image!, (Image)resources.GetObject("drawTextButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
