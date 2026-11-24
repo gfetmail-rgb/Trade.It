@@ -510,6 +510,58 @@ namespace Trade.It
             g.DrawLine(pen, right, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, stop.Y));
         }
 
+        private void DrawPositionLabels(Graphics g, ChartDrawing drawing, Rectangle plot)
+        {
+            var entryPrice = drawing.Y1;
+            var targetPrice = drawing.Y2;
+            var stopPrice = drawing.Y3;
+            if (entryPrice <= 0 || !double.IsFinite(entryPrice) ||
+                !double.IsFinite(targetPrice) || !double.IsFinite(stopPrice))
+                return;
+
+            var isLong = drawing.Tool == ChartDrawingTool.LongPosition;
+            var profitPercent = Math.Abs(targetPrice - entryPrice) / entryPrice * 100.0;
+            var lossPercent = Math.Abs(stopPrice - entryPrice) / entryPrice * 100.0;
+            var riskReward = lossPercent > 0 ? profitPercent / lossPercent : double.NaN;
+            var decimals = GetPriceDecimalPlaces(points);
+
+            var targetText = $"Target: {FormatPrice(targetPrice, decimals)} ({profitPercent.ToString("F2", CultureInfo.InvariantCulture)}%)";
+            var stopText = $"Stop: {FormatPrice(stopPrice, decimals)} ({lossPercent.ToString("F2", CultureInfo.InvariantCulture)}%)";
+            var ratioText = double.IsFinite(riskReward)
+                ? $"نسبت ریسک به سود: {riskReward.ToString("F2", CultureInfo.InvariantCulture)}"
+                : "نسبت ریسک به سود: —";
+
+            using var font = new Font(Font.FontFamily, Math.Max(8f, Font.Size - 0.5f), FontStyle.Bold);
+            using var targetBrush = new SolidBrush(Color.FromArgb(0, 145, 112));
+            using var stopBrush = new SolidBrush(Color.FromArgb(220, 35, 50));
+            using var ratioBrush = new SolidBrush(Color.FromArgb(220, 35, 50));
+            using var textBrush = new SolidBrush(Color.White);
+
+            DrawPositionLabel(g, targetText, font, textBrush, targetBrush,
+                plot, new PointF((plot.Left + plot.Right) / 2f, Math.Min(
+                    DataToScreen(drawing.X2 - firstIndex, targetPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y - 16f,
+                    DataToScreen(drawing.X1 - firstIndex, entryPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y - 44f)));
+
+            var entryY = DataToScreen(drawing.X1 - firstIndex, entryPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y;
+            var stopY = DataToScreen(drawing.X3 - firstIndex, stopPrice, plot, Math.Max(1, GetDrawingLayoutCount()), GetCurrentVerticalMin(), GetCurrentVerticalMax()).Y;
+            DrawPositionLabel(g, ratioText, font, textBrush, ratioBrush, plot,
+                new PointF((plot.Left + plot.Right) / 2f, (entryY + stopY) / 2f));
+            DrawPositionLabel(g, stopText, font, textBrush, stopBrush, plot,
+                new PointF((plot.Left + plot.Right) / 2f, Math.Max(entryY, stopY) + 18f));
+        }
+
+        private static void DrawPositionLabel(Graphics g, string text, Font font, Brush textBrush, Brush backgroundBrush, Rectangle plot, PointF center)
+        {
+            var measured = g.MeasureString(text, font);
+            var width = measured.Width + 18f;
+            var height = measured.Height + 8f;
+            var x = Math.Clamp(center.X - width / 2f, plot.Left + 2f, Math.Max(plot.Left + 2f, plot.Right - width - 2f));
+            var y = Math.Clamp(center.Y - height / 2f, plot.Top + 2f, Math.Max(plot.Top + 2f, plot.Bottom - height - 2f));
+            var rect = new RectangleF(x, y, width, height);
+            g.FillRectangle(backgroundBrush, rect);
+            g.DrawString(text, font, textBrush, rect.X + 9f, rect.Y + 4f);
+        }
+
         private void DrawPositionPreview(Graphics g, Pen pen)
         {
             var entry = drawingStartPoint;
@@ -619,17 +671,27 @@ namespace Trade.It
 
         private static void DrawHollowArrowHead(Graphics g, Pen pen, PointF tip, PointF from)
         {
-            var angle = Math.Atan2(tip.Y - from.Y, tip.X - from.X);
-            const float length = 11f;
-            const float spread = 0.48f;
-            var left = new PointF(
-                tip.X - length * (float)Math.Cos(angle - spread),
-                tip.Y - length * (float)Math.Sin(angle - spread));
-            var right = new PointF(
-                tip.X - length * (float)Math.Cos(angle + spread),
-                tip.Y - length * (float)Math.Sin(angle + spread));
-            g.DrawLine(pen, left, tip);
-            g.DrawLine(pen, tip, right);
+            var dx = tip.X - from.X;
+            var dy = tip.Y - from.Y;
+            var length = Math.Sqrt(dx * dx + dy * dy);
+            if (length < 0.001)
+                return;
+
+            const float headLength = 14f;
+            const float halfWidth = 6.5f;
+            var ux = (float)(dx / length);
+            var uy = (float)(dy / length);
+            var px = -uy;
+            var py = ux;
+            var baseCenter = new PointF(tip.X - ux * headLength, tip.Y - uy * headLength);
+            var left = new PointF(baseCenter.X + px * halfWidth, baseCenter.Y + py * halfWidth);
+            var right = new PointF(baseCenter.X - px * halfWidth, baseCenter.Y - py * halfWidth);
+
+            // بدنه تا مرکز قاعده فلش امتداد می‌یابد؛ سر فلش یک مثلث توخالی و بسته است.
+            g.DrawLine(pen, from, baseCenter);
+            g.DrawLine(pen, tip, left);
+            g.DrawLine(pen, left, right);
+            g.DrawLine(pen, right, tip);
         }
 
         private void DrawSelectionHandles(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
@@ -707,6 +769,7 @@ namespace Trade.It
                 case ChartDrawingTool.LongPosition:
                 case ChartDrawingTool.ShortPosition:
                     DrawPositionOutline(g, pen, drawing, plot, visibleCountForDrawing, min, max);
+                    DrawPositionLabels(g, drawing, plot);
                     break;
                 case ChartDrawingTool.HollowArrow:
                     g.DrawLine(pen, start, end);
@@ -1089,16 +1152,21 @@ namespace Trade.It
             var dx = tip.X - from.X;
             var dy = tip.Y - from.Y;
             var length = Math.Sqrt(dx * dx + dy * dy);
-            if (length < 0.001) return;
-            const float size = 9f;
+            if (length < 0.001)
+                return;
+
+            const float headLength = 12f;
+            const float halfWidth = 5.5f;
             var ux = (float)(dx / length);
             var uy = (float)(dy / length);
             var px = -uy;
             var py = ux;
-            var left = new PointF(tip.X - ux * size + px * size * 0.45f, tip.Y - uy * size + py * size * 0.45f);
-            var right = new PointF(tip.X - ux * size - px * size * 0.45f, tip.Y - uy * size - py * size * 0.45f);
-            g.DrawLine(basePen, tip, left);
-            g.DrawLine(basePen, tip, right);
+            var baseCenter = new PointF(tip.X - ux * headLength, tip.Y - uy * headLength);
+            var left = new PointF(baseCenter.X + px * halfWidth, baseCenter.Y + py * halfWidth);
+            var right = new PointF(baseCenter.X - px * halfWidth, baseCenter.Y - py * halfWidth);
+            using var headBrush = new SolidBrush(basePen.Color);
+            g.DrawLine(basePen, from, baseCenter);
+            g.FillPolygon(headBrush, new[] { tip, left, right });
         }
 
         private static string FormatPrice(double value, int decimalPlaces)
