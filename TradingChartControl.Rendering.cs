@@ -1084,7 +1084,9 @@ namespace Trade.It
                 if (handle == 1)
                 {
                     var newStart = location;
-                    var snappedEnd = SnapArrowEnd(newStart, new Point((int)Math.Round(currentEnd.X), (int)Math.Round(currentEnd.Y)));
+                    var snappedEnd = horizontal
+                        ? new Point((int)Math.Round(currentEnd.X), newStart.Y)
+                        : new Point(newStart.X, (int)Math.Round(currentEnd.Y));
                     drawing.X1 = ScreenToDataX(newStart.X, plot, visible.Count) + firstIndex;
                     drawing.Y1 = ScreenToPrice(newStart.Y, plot, min, max);
                     drawing.X2 = ScreenToDataX(snappedEnd.X, plot, visible.Count) + firstIndex;
@@ -1094,8 +1096,9 @@ namespace Trade.It
                 }
                 if (handle == 2)
                 {
-                    var snappedEnd = SnapArrowEnd(
-                        new Point((int)Math.Round(currentStart.X), (int)Math.Round(currentStart.Y)), location);
+                    var snappedEnd = horizontal
+                        ? new Point(location.X, (int)Math.Round(currentStart.Y))
+                        : new Point((int)Math.Round(currentStart.X), location.Y);
                     drawing.X2 = ScreenToDataX(snappedEnd.X, plot, visible.Count) + firstIndex;
                     drawing.Y2 = ScreenToPrice(snappedEnd.Y, plot, min, max);
                     drawing.Date2 = GetPointDate((int)Math.Round(drawing.X2));
