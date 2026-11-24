@@ -571,7 +571,16 @@ namespace Trade.It
                     X3 = x3, Y3 = item.Y3,
                     Date1 = item.Date1 ?? GetPointDate(x1),
                     Date2 = item.Date2 ?? GetPointDate(x2),
-                    Date3 = item.Date3 ?? GetPointDate(x3)
+                    Date3 = item.Date3 ?? GetPointDate(x3),
+                    Points = (item.Points ?? new List<ChartAnalysisDrawingPoint>()).Select(p => new ChartAnalysisDrawingPoint
+                    {
+                        X = ResolveDrawingIndex(p.Date, p.X, 0),
+                        Y = p.Y,
+                        Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, 0))
+                    }).ToList(),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
@@ -592,7 +601,10 @@ namespace Trade.It
                     Text = item.Text,
                     FontSize = item.FontSize ?? 26f,
                     Date1 = item.Date1 ?? GetPointDate(x1),
-                    Date2 = item.Date2 ?? GetPointDate(x2)
+                    Date2 = item.Date2 ?? GetPointDate(x2),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
@@ -614,7 +626,10 @@ namespace Trade.It
                     X3 = x3, Y3 = item.Y3,
                     Date1 = item.Date1 ?? GetPointDate(x1),
                     Date2 = item.Date2 ?? GetPointDate(x2),
-                    Date3 = item.Date3 ?? GetPointDate(x3)
+                    Date3 = item.Date3 ?? GetPointDate(x3),
+                    StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    StrokeWidth = item.StrokeWidth,
+                    StrokeStyle = item.StrokeStyle
                 });
             }
 
