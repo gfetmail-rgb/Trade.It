@@ -1200,6 +1200,15 @@ namespace Trade.It
 
             var overallBottom = Math.Max(top + 1, Height - 55);
             var totalHeight = Math.Max(1, overallBottom - top);
+
+            if (lowerPanelsHidden)
+            {
+                return new LowerPanelLayout
+                {
+                    Price = Rectangle.FromLTRB(left, top, right, overallBottom),
+                    OverallBottom = overallBottom
+                };
+            }
             var gap = Math.Clamp(volumePanelGap, 2, 30);
 
             var rsiHeight = HasRsiIndicator
