@@ -112,6 +112,7 @@ namespace Trade.It
         }
         private LowerPanelSplitter activeLowerPanelSplitter;
         private bool volumePanelVisible = true;
+        private bool lowerPanelsHidden;
         private bool testMode;
         private bool testStartSelected;
         private int testEndIndex = -1;
@@ -217,6 +218,28 @@ namespace Trade.It
             selectedIndicatorIndex = -1;
             draggingDrawingIndex = -1;
             draggingHandle = 0;
+            Invalidate();
+        }
+
+        public bool LowerPanelsHidden => lowerPanelsHidden;
+
+        public bool HasLowerPanels =>
+            volumePanelVisible ||
+            HasRsiIndicator ||
+            HasMacdIndicator ||
+            HasAwesomeOscillator ||
+            HasStochasticIndicator ||
+            HasStochasticRsiIndicator ||
+            HasAtrIndicator ||
+            HasAdxIndicator ||
+            HasObvIndicator;
+
+        public void ToggleLowerPanelsVisibility()
+        {
+            if (!HasLowerPanels && !lowerPanelsHidden)
+                return;
+
+            lowerPanelsHidden = !lowerPanelsHidden;
             Invalidate();
         }
 
