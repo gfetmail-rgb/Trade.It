@@ -8,7 +8,9 @@ namespace Trade.It
         {
             None,
             FibonacciRetracement,
-            TextLabel
+            TextLabel,
+            QuestionMark,
+            ExclamationMark
         }
 
         private sealed class AdvancedDrawing
@@ -24,6 +26,7 @@ namespace Trade.It
             public Color? StrokeColor { get; set; }
             public float? StrokeWidth { get; set; }
             public string? StrokeStyle { get; set; }
+            public float FontSize { get; set; } = 26f;
         }
 
         private readonly List<AdvancedDrawing> advancedDrawings = new();
@@ -67,6 +70,21 @@ namespace Trade.It
                 : AdvancedDrawingTool.TextLabel;
             advancedDrawingInProgress = false;
             Cursor = Cursors.Default;
+            Focus();
+            Invalidate();
+        }
+
+        public void ActivateQuestionMark() => ActivateAdvancedMarker(AdvancedDrawingTool.QuestionMark);
+        public void ActivateExclamationMark() => ActivateAdvancedMarker(AdvancedDrawingTool.ExclamationMark);
+
+        private void ActivateAdvancedMarker(AdvancedDrawingTool tool)
+        {
+            EnsureAdvancedDrawingEvents();
+            CancelDrawing();
+            CancelExtraDrawing();
+            activeAdvancedDrawingTool = activeAdvancedDrawingTool == tool ? AdvancedDrawingTool.None : tool;
+            advancedDrawingInProgress = false;
+            Cursor = activeAdvancedDrawingTool == AdvancedDrawingTool.None ? Cursors.Default : Cursors.Cross;
             Focus();
             Invalidate();
         }
@@ -147,6 +165,14 @@ namespace Trade.It
                     return;
                 }
 
+                if (activeAdvancedDrawingTool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
+                {
+                    AddAdvancedMarker(e.Location, activeAdvancedDrawingTool);
+                    CancelAdvancedDrawing();
+                    DeferAdvancedMouseState();
+                    return;
+                }
+
                 if (!advancedDrawingInProgress)
                 {
                     advancedDrawingStartPoint = e.Location;
@@ -202,7 +228,12 @@ namespace Trade.It
                     var dy = currentY - previousY;
                     var d = advancedDrawings[draggingAdvancedDrawingIndex];
 
-                    if (d.Tool == AdvancedDrawingTool.FibonacciRetracement && draggingAdvancedHandle == 1)
+                    if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark && draggingAdvancedHandle > 0)
+                    {
+                        var resizeDelta = e.Location.X - draggingAdvancedLastPoint.X;
+                        d.FontSize = Math.Clamp(d.FontSize + resizeDelta * 0.45f, 12f, 80f);
+                    }
+                    else if (d.Tool == AdvancedDrawingTool.FibonacciRetracement && draggingAdvancedHandle == 1)
                     {
                         d.X1 = currentX;
                         d.Y1 = currentY;
@@ -326,6 +357,28 @@ namespace Trade.It
             AnalysisChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        private void AddAdvancedMarker(Point location, AdvancedDrawingTool tool)
+        {
+            if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
+                return;
+
+            var x = ScreenToDataX(location.X, plot, visibleCountForDrawing) + firstIndex;
+            advancedDrawings.Add(new AdvancedDrawing
+            {
+                Tool = tool,
+                X1 = x,
+                Y1 = ScreenToPrice(location.Y, plot, min, max),
+                Text = tool == AdvancedDrawingTool.QuestionMark ? "؟" : "!",
+                Date1 = DataXToDate(x),
+                FontSize = 28f,
+                StrokeColor = ChartAppearanceSettings.TextLabelColor,
+                StrokeWidth = LineAppearanceSettings.DrawingLineWidth,
+                StrokeStyle = LineAppearanceSettings.DrawingLineStyle.ToString()
+            });
+            ClearDrawingSelection();
+            AnalysisChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private void AddAdvancedText(Point location, string text)
         {
             if (!TryGetAdvancedContext(out var plot, out var visibleCountForDrawing, out var min, out var max))
@@ -382,6 +435,11 @@ namespace Trade.It
 
                 if (d.Tool == AdvancedDrawingTool.FibonacciRetracement)
                     DrawAdvancedFibonacci(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
+                else if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
+                    DrawAdvancedMarker(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, isSelected);
+                else
+                    if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
+                    DrawAdvancedMarker(g, pen, labelBrush, d, plot, visibleCountForDrawing, min, max, IsDrawingSelected(DrawingSelectionKind.Advanced, i));
                 else
                     DrawAdvancedText(g, pen, labelBrush, labelBack, d, plot, visibleCountForDrawing, min, max);
             }
@@ -404,7 +462,7 @@ namespace Trade.It
             for (var i = 0; i < advancedDrawings.Count; i++)
             {
                 var d = advancedDrawings[i];
-                if (d.Tool != AdvancedDrawingTool.TextLabel)
+                if (d.Tool is not (AdvancedDrawingTool.TextLabel or AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark))
                     continue;
 
                 var baseWidth = d.StrokeWidth ?? LineAppearanceSettings.DrawingLineWidth;
@@ -436,6 +494,22 @@ namespace Trade.It
             g.FillRectangle(labelBack, rect);
             g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
             g.DrawString(text, font, labelBrush, point.X + 4f, point.Y - size.Height + 3f);
+        }
+
+        private void DrawAdvancedMarker(Graphics g, Pen pen, Brush labelBrush, AdvancedDrawing d, Rectangle plot, int visibleCountForDrawing, double min, double max, bool selected)
+        {
+            var point = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+            using var font = new Font("Segoe UI", Math.Clamp(d.FontSize, 12f, 80f), FontStyle.Bold);
+            var size = g.MeasureString(d.Text ?? string.Empty, font);
+            var bounds = new RectangleF(point.X - size.Width / 2f - 2f, point.Y - size.Height / 2f - 2f, size.Width + 4f, size.Height + 4f);
+            g.DrawString(d.Text ?? string.Empty, font, labelBrush, bounds.X + 2f, bounds.Y + 2f);
+            if (selected)
+            {
+                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Top));
+                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Top));
+                DrawAdvancedHandle(g, new PointF(bounds.Right, bounds.Bottom));
+                DrawAdvancedHandle(g, new PointF(bounds.Left, bounds.Bottom));
+            }
         }
 
         private static void DrawFibonacciLevels(Graphics g, Pen pen, Brush labelBrush, PointF start, PointF end)
@@ -489,6 +563,25 @@ namespace Trade.It
             {
                 var d = advancedDrawings[i];
                 var p1 = DateToScreen(d.Date1, d.X1, d.Y1, plot, visibleCountForDrawing, min, max);
+                if (d.Tool is AdvancedDrawingTool.QuestionMark or AdvancedDrawingTool.ExclamationMark)
+                {
+                    using var markerFont = new Font("Segoe UI", Math.Clamp(d.FontSize, 12f, 80f), FontStyle.Bold);
+                    var markerSize = MeasureText(d.Text ?? string.Empty, markerFont);
+                    var markerBounds = new RectangleF(p1.X - markerSize.Width / 2f - 2f, p1.Y - markerSize.Height / 2f - 2f, markerSize.Width + 4f, markerSize.Height + 4f);
+                    var corners = new[] { new PointF(markerBounds.Left, markerBounds.Top), new PointF(markerBounds.Right, markerBounds.Top), new PointF(markerBounds.Right, markerBounds.Bottom), new PointF(markerBounds.Left, markerBounds.Bottom) };
+                    for (var corner = 0; corner < corners.Length; corner++)
+                    {
+                        if (DistanceToPoint(location, corners[corner]) <= 9f)
+                        {
+                            handle = corner + 1;
+                            return i;
+                        }
+                    }
+                    if (markerBounds.Contains(location))
+                        return i;
+                    continue;
+                }
+
                 if (DistanceToPoint(location, p1) <= 10f)
                 {
                     handle = d.Tool == AdvancedDrawingTool.FibonacciRetracement ? 1 : 0;

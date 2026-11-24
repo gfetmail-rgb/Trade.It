@@ -159,6 +159,8 @@ namespace Trade.It
         private System.Windows.Forms.ToolStripMenuItem triangleShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pathShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bezierShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem questionMarkShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exclamationMarkShapeMenuItem;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -267,6 +269,8 @@ namespace Trade.It
             triangleShapeMenuItem = new ToolStripMenuItem();
             pathShapeMenuItem = new ToolStripMenuItem();
             bezierShapeMenuItem = new ToolStripMenuItem();
+            questionMarkShapeMenuItem = new ToolStripMenuItem();
+            exclamationMarkShapeMenuItem = new ToolStripMenuItem();
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2969,6 +2973,8 @@ namespace Trade.It
                 ellipseShapeMenuItem,
                 triangleShapeMenuItem,
                 bezierShapeMenuItem,
+                questionMarkShapeMenuItem,
+                exclamationMarkShapeMenuItem,
                 new ToolStripSeparator(),
                 pathShapeMenuItem
             });
@@ -3002,6 +3008,18 @@ namespace Trade.It
             bezierShapeMenuItem.Name = "bezierShapeMenuItem";
             bezierShapeMenuItem.Size = new Size(180, 24);
             bezierShapeMenuItem.Text = "منحنی بزیه";
+            // 
+            // questionMarkShapeMenuItem
+            // 
+            questionMarkShapeMenuItem.Name = "questionMarkShapeMenuItem";
+            questionMarkShapeMenuItem.Size = new Size(180, 24);
+            questionMarkShapeMenuItem.Text = "علامت سؤال (؟)";
+            // 
+            // exclamationMarkShapeMenuItem
+            // 
+            exclamationMarkShapeMenuItem.Name = "exclamationMarkShapeMenuItem";
+            exclamationMarkShapeMenuItem.Size = new Size(180, 24);
+            exclamationMarkShapeMenuItem.Text = "علامت تعجب (!)";
             // 
             // drawFibonacciButton
             // 

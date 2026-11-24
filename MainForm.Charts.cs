@@ -573,6 +573,8 @@ namespace Trade.It
             triangleShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Triangle, drawRectangleButton);
             pathShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.Path, drawRectangleButton);
             bezierShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.BezierCurve, drawRectangleButton);
+            questionMarkShapeMenuItem.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.QuestionMark, drawRectangleButton);
+            exclamationMarkShapeMenuItem.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.ExclamationMark, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);
@@ -605,7 +607,9 @@ namespace Trade.It
         private enum AdvancedDrawingSelection
         {
             Fibonacci,
-            Text
+            Text,
+            QuestionMark,
+            ExclamationMark
         }
 
         private enum ExtraDrawingSelection
@@ -648,10 +652,21 @@ namespace Trade.It
             chart.CancelExtraDrawing();
             chart.EnableExtraDrawingMouseSafety();
 
-            if (selection == AdvancedDrawingSelection.Fibonacci)
-                chart.ActivateFibonacciRetracement();
-            else
-                chart.ActivateTextLabel();
+            switch (selection)
+            {
+                case AdvancedDrawingSelection.Fibonacci:
+                    chart.ActivateFibonacciRetracement();
+                    break;
+                case AdvancedDrawingSelection.Text:
+                    chart.ActivateTextLabel();
+                    break;
+                case AdvancedDrawingSelection.QuestionMark:
+                    chart.ActivateQuestionMark();
+                    break;
+                case AdvancedDrawingSelection.ExclamationMark:
+                    chart.ActivateExclamationMark();
+                    break;
+            }
 
             ResetDrawingToolButtons();
             SetToggleButtonState(selectedButton, chart.AdvancedDrawingActive);

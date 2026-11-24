@@ -52,6 +52,7 @@ namespace Trade.It
         public int? FillColorArgb { get; set; }
         public float? StrokeWidth { get; set; }
         public string? StrokeStyle { get; set; }
+        public float? FontSize { get; set; }
 
         // Used by multi-point path drawings. Existing drawings keep an empty list.
         public List<ChartAnalysisDrawingPoint> Points { get; set; } = new();

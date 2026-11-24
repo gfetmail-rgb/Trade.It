@@ -589,7 +589,7 @@ namespace Trade.It
         private List<PointF> GetScreenHandles(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
             GetDrawingScreenPoints(drawing, plot, visibleCountForDrawing, min, max, out var start, out var end);
-            if (drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve && drawing.Points.Count > 0)
+            if ((drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve) && drawing.Points.Count > 0)
                 return drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToList();
             if (drawing.Tool == ChartDrawingTool.Triangle)
             {
@@ -881,7 +881,7 @@ namespace Trade.It
                 drawing.Date2 = drawing.Date1;
                 return;
             }
-            if (drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve && drawing.Points.Count > 0)
+            if ((drawing.Tool is ChartDrawingTool.Path or ChartDrawingTool.BezierCurve) && drawing.Points.Count > 0)
             {
                 if (handle > 0 && handle <= drawing.Points.Count)
                 {

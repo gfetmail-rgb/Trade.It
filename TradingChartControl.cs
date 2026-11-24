@@ -478,6 +478,7 @@ namespace Trade.It
                     Date1 = drawing.Date1 ?? GetPointDate((int)Math.Round(drawing.X1)),
                     Date2 = drawing.Date2 ?? GetPointDate((int)Math.Round(drawing.X2)),
                     Text = drawing.Text,
+                    FontSize = drawing.FontSize,
                     StrokeColorArgb = drawing.StrokeColor?.ToArgb(),
                     StrokeWidth = drawing.StrokeWidth,
                     StrokeStyle = drawing.StrokeStyle
@@ -589,6 +590,7 @@ namespace Trade.It
                     X1 = x1, Y1 = item.Y1,
                     X2 = x2, Y2 = item.Y2,
                     Text = item.Text,
+                    FontSize = item.FontSize ?? 26f,
                     Date1 = item.Date1 ?? GetPointDate(x1),
                     Date2 = item.Date2 ?? GetPointDate(x2)
                 });
@@ -709,6 +711,7 @@ namespace Trade.It
                     X2 = ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex),
                     Y2 = item.Y2,
                     Text = item.Text,
+                    FontSize = item.FontSize ?? 26f,
                     Date1 = item.Date1 ?? GetPointDate((int)ResolveDrawingIndex(item.Date1, item.X1, document.FirstIndex)),
                     Date2 = item.Date2 ?? GetPointDate((int)ResolveDrawingIndex(item.Date2, item.X2, document.FirstIndex)),
                     StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
