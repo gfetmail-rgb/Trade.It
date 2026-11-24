@@ -1995,7 +1995,6 @@ namespace Trade.It
             {
                 case ChartDrawingTool.TrendLine:
                 case ChartDrawingTool.TrendLineWithArrow:
-                case ChartDrawingTool.HollowArrow:
                 case ChartDrawingTool.Rectangle:
                 case ChartDrawingTool.Ellipse:
                     drawings.Add(new ChartDrawing
@@ -2007,6 +2006,26 @@ namespace Trade.It
                         Date2 = DataXToDate(x2)
                     });
                     break;
+                case ChartDrawingTool.HollowArrow:
+                {
+                    var snappedEnd = SnapArrowEnd(start, end);
+                    x2 = ScreenToDataX(snappedEnd.X, plot, layoutCount) + firstIndex;
+                    y2 = ScreenToPrice(snappedEnd.Y, plot, min, max);
+                    var widthHandle = GetArrowWidthHandle(start, snappedEnd, 9f);
+                    var x3 = ScreenToDataX(widthHandle.X, plot, layoutCount) + firstIndex;
+                    var y3 = ScreenToPrice(widthHandle.Y, plot, min, max);
+                    drawings.Add(new ChartDrawing
+                    {
+                        Tool = activeDrawingTool,
+                        X1 = x1, Y1 = y1,
+                        X2 = x2, Y2 = y2,
+                        X3 = x3, Y3 = y3,
+                        Date1 = DataXToDate(x1),
+                        Date2 = DataXToDate(x2),
+                        Date3 = DataXToDate(x3)
+                    });
+                    break;
+                }
                 case ChartDrawingTool.LongPosition:
                 case ChartDrawingTool.ShortPosition:
                     if (third == Point.Empty) return;
