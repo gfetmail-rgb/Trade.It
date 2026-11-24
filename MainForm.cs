@@ -3265,6 +3265,9 @@ namespace Trade.It
             ChartToolbarIcons.Register(drawPitchforkButton, drawPitchforkButton.Image!, (Image)resources.GetObject("drawPitchforkButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawFibonacciExtensionButton, drawFibonacciExtensionButton.Image!, (Image)resources.GetObject("drawFibonacciExtensionButton.ActiveImage")!);
             ChartToolbarIcons.Register(drawMeasureButton, drawMeasureButton.Image!, (Image)resources.GetObject("drawMeasureButton.ActiveImage")!);
+
+            // مقیاس آیکون‌های باقی‌مانده نوار ابزار نیز یکسان‌سازی می‌شود.
+            ChartToolbarIcons.FitImages(chartToolbarPanel);
         }
 
     }
