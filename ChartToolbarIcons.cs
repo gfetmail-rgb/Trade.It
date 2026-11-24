@@ -76,6 +76,32 @@ namespace Trade.It
             return result;
         }
 
+        public static Image CreateTrendLineArrowIcon(Color color)
+        {
+            var bitmap = new Bitmap(24, 24, PixelFormat.Format32bppArgb);
+            using var graphics = Graphics.FromImage(bitmap);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.Clear(Color.Transparent);
+
+            using var pen = new Pen(color, 2.1f)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round,
+                LineJoin = LineJoin.Round
+            };
+            using var brush = new SolidBrush(color);
+
+            var start = new PointF(3.5f, 20.5f);
+            var tip = new PointF(20.5f, 3.5f);
+            var baseCenter = new PointF(13.2f, 10.8f);
+            var left = new PointF(10.0f, 4.4f);
+            var right = new PointF(19.6f, 14.0f);
+
+            graphics.DrawLine(pen, start, baseCenter);
+            graphics.FillPolygon(brush, new[] { tip, left, right });
+            return bitmap;
+        }
+
         public static void SetActive(Button button, bool active)
         {
             if (!Icons.TryGetValue(button, out var set))
