@@ -7,7 +7,7 @@ namespace Trade.It
     internal enum ChartDrawingTool
     {
         None, TrendLine, TrendChannel, HorizontalLine, VerticalLine,
-        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path, BezierCurve
+        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path, BezierCurve, LongPosition, ShortPosition
     }
 
     internal sealed class TradingChartPoint
@@ -140,6 +140,8 @@ namespace Trade.It
             public Color? StrokeColor { get; set; }
             public float? StrokeWidth { get; set; }
             public string? StrokeStyle { get; set; }
+            public Color? FillColor { get; set; }
+            public bool? IsLongPosition { get; set; }
         }
 
         public TradingChartControl()
@@ -461,6 +463,8 @@ namespace Trade.It
                         Date = p.Date
                     }).ToList(),
                     StrokeColorArgb = drawing.StrokeColor?.ToArgb(),
+                    FillColorArgb = drawing.FillColor?.ToArgb(),
+                    IsLongPosition = drawing.IsLongPosition,
                     StrokeWidth = drawing.StrokeWidth,
                     StrokeStyle = drawing.StrokeStyle
                 });
@@ -584,6 +588,8 @@ namespace Trade.It
                         Date = p.Date ?? GetPointDate((int)ResolveDrawingIndex(p.Date, p.X, 0))
                     }).ToList(),
                     StrokeColor = item.StrokeColorArgb.HasValue ? Color.FromArgb(item.StrokeColorArgb.Value) : null,
+                    FillColor = item.FillColorArgb.HasValue ? Color.FromArgb(item.FillColorArgb.Value) : null,
+                    IsLongPosition = item.IsLongPosition,
                     StrokeWidth = item.StrokeWidth,
                     StrokeStyle = item.StrokeStyle
                 });
@@ -1721,6 +1727,36 @@ namespace Trade.It
                 drawingInProgress = false; drawingStage = 0; drawingStartPoint = Point.Empty; drawingCurrentPoint = Point.Empty;
                 activeDrawingTool = ChartDrawingTool.None; Cursor = Cursors.Default; Invalidate(); return;
             }
+            if (activeDrawingTool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+            {
+                if (!drawingInProgress)
+                {
+                    drawingStartPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingStage = 1;
+                    drawingInProgress = true;
+                    Invalidate();
+                    return;
+                }
+                if (drawingStage == 1)
+                {
+                    drawingSecondPoint = location;
+                    drawingCurrentPoint = location;
+                    drawingStage = 2;
+                    Invalidate();
+                    return;
+                }
+                AddDrawing(drawingStartPoint, drawingSecondPoint, location);
+                drawingInProgress = false;
+                drawingStage = 0;
+                drawingStartPoint = Point.Empty;
+                drawingSecondPoint = Point.Empty;
+                drawingCurrentPoint = Point.Empty;
+                activeDrawingTool = ChartDrawingTool.None;
+                Cursor = Cursors.Default;
+                Invalidate();
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.Triangle)
             {
                 if (!drawingInProgress)
@@ -1937,6 +1973,25 @@ namespace Trade.It
                         X2 = x2, Y2 = y2,
                         Date1 = DataXToDate(x1),
                         Date2 = DataXToDate(x2)
+                    });
+                    break;
+                case ChartDrawingTool.LongPosition:
+                case ChartDrawingTool.ShortPosition:
+                    if (third == Point.Empty) return;
+                    var positionTargetX = ScreenToDataX(end.X, plot, layoutCount) + firstIndex;
+                    var positionStopY = ScreenToPrice(third.Y, plot, min, max);
+                    var isLong = activeDrawingTool == ChartDrawingTool.LongPosition;
+                    drawings.Add(new ChartDrawing
+                    {
+                        Tool = activeDrawingTool,
+                        X1 = x1, Y1 = y1,
+                        X2 = positionTargetX, Y2 = y2,
+                        X3 = positionTargetX, Y3 = positionStopY,
+                        Date1 = DataXToDate(x1),
+                        Date2 = DataXToDate(positionTargetX),
+                        Date3 = DataXToDate(positionTargetX),
+                        IsLongPosition = isLong,
+                        FillColor = Color.FromArgb(52, 35, 165, 95)
                     });
                     break;
                 case ChartDrawingTool.Triangle:

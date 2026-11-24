@@ -462,6 +462,11 @@ namespace Trade.It
             using var fill = new SolidBrush(Color.FromArgb(242, 248, 255));
             foreach (var drawing in drawings)
             {
+                if (drawing.Tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+                {
+                    DrawPositionFill(g, drawing, plot, visibleCountForDrawing, min, max);
+                    continue;
+                }
                 if (drawing.Tool != ChartDrawingTool.Rectangle)
                     continue;
 
@@ -473,6 +478,55 @@ namespace Trade.It
                 if (right > left && bottom > top)
                     g.FillRectangle(fill, RectangleF.FromLTRB(left, top, right, bottom));
             }
+        }
+
+        private void DrawPositionFill(Graphics g, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            var entry = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            var target = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            var stop = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+            var left = Math.Min(entry.X, target.X);
+            var right = Math.Max(entry.X, target.X);
+            if (right <= left) return;
+            using var targetBrush = new SolidBrush(drawing.FillColor ?? Color.FromArgb(52, 35, 165, 95));
+            using var stopBrush = new SolidBrush(Color.FromArgb(52, 205, 65, 65));
+            var targetRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, target.Y));
+            var stopRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, stop.Y), right, Math.Max(entry.Y, stop.Y));
+            if (targetRect.Height > 0) g.FillRectangle(targetBrush, targetRect);
+            if (stopRect.Height > 0) g.FillRectangle(stopBrush, stopRect);
+        }
+
+        private void DrawPositionOutline(Graphics g, Pen pen, ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max)
+        {
+            var entry = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+            var target = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+            var stop = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+            var left = Math.Min(entry.X, target.X);
+            var right = Math.Max(entry.X, target.X);
+            g.DrawLine(pen, left, target.Y, right, target.Y);
+            g.DrawLine(pen, left, entry.Y, right, entry.Y);
+            g.DrawLine(pen, left, stop.Y, right, stop.Y);
+            g.DrawLine(pen, left, Math.Min(entry.Y, target.Y), left, Math.Max(entry.Y, stop.Y));
+            g.DrawLine(pen, right, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, stop.Y));
+        }
+
+        private void DrawPositionPreview(Graphics g, Pen pen)
+        {
+            var entry = drawingStartPoint;
+            var target = drawingStage >= 2 ? drawingSecondPoint : drawingCurrentPoint;
+            var stop = drawingCurrentPoint;
+            var left = Math.Min(entry.X, target.X);
+            var right = Math.Max(entry.X, target.X);
+            if (right <= left) return;
+            using var targetBrush = new SolidBrush(Color.FromArgb(52, 35, 165, 95));
+            using var stopBrush = new SolidBrush(Color.FromArgb(52, 205, 65, 65));
+            var targetRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, target.Y));
+            var stopRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, stop.Y), right, Math.Max(entry.Y, stop.Y));
+            if (targetRect.Height > 0) g.FillRectangle(targetBrush, targetRect);
+            if (stopRect.Height > 0) g.FillRectangle(stopBrush, stopRect);
+            g.DrawLine(pen, left, target.Y, right, target.Y);
+            g.DrawLine(pen, left, entry.Y, right, entry.Y);
+            g.DrawLine(pen, left, stop.Y, right, stop.Y);
         }
 
         private static void DrawRectanglePreviewFillBehindChart(Graphics g, Point start, Point end)
@@ -505,6 +559,11 @@ namespace Trade.It
 
         private void DrawDrawingPreview(Graphics g, Pen pen, Rectangle plot, int visibleCountForDrawing, double min, double max)
         {
+            if (activeDrawingTool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+            {
+                DrawPositionPreview(g, pen);
+                return;
+            }
             if (activeDrawingTool == ChartDrawingTool.BezierCurve)
             {
                 DrawBezierPreview(g, pen);
@@ -598,6 +657,12 @@ namespace Trade.It
             }
             if (drawing.Tool == ChartDrawingTool.Rectangle || drawing.Tool == ChartDrawingTool.Ellipse)
                 return new List<PointF> { new(start.X, start.Y), new(end.X, start.Y), new(end.X, end.Y), new(start.X, end.Y) };
+            if (drawing.Tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+            {
+                var target = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+                var stop = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                return new List<PointF> { start, target, stop };
+            }
             if (drawing.Tool == ChartDrawingTool.TrendChannel)
             {
                 var third = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
@@ -639,6 +704,10 @@ namespace Trade.It
                     g.DrawPolygon(pen, new[] { start, end, third });
                     break;
                 }
+                case ChartDrawingTool.LongPosition:
+                case ChartDrawingTool.ShortPosition:
+                    DrawPositionOutline(g, pen, drawing, plot, visibleCountForDrawing, min, max);
+                    break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -724,6 +793,33 @@ namespace Trade.It
 
         private void GetDrawingScreenPoints(ChartDrawing drawing, Rectangle plot, int visibleCountForDrawing, double min, double max, out PointF start, out PointF end)
         {
+            if (drawing.Tool is ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+            {
+                var x = ScreenToDataX(location.X, plot, visible.Count) + firstIndex;
+                var y = ScreenToPrice(location.Y, plot, min, max);
+                if (handle == 1)
+                {
+                    drawing.X1 = x; drawing.Y1 = y; drawing.Date1 = GetPointDate(x);
+                }
+                else if (handle == 2)
+                {
+                    drawing.X2 = x; drawing.Y2 = y; drawing.X3 = x;
+                    drawing.Date2 = GetPointDate(x); drawing.Date3 = drawing.Date2;
+                }
+                else if (handle == 3)
+                {
+                    drawing.X3 = drawing.X2; drawing.Y3 = y; drawing.Date3 = drawing.Date2;
+                }
+                else
+                {
+                    var dx = ScreenToDataX(location.X, plot, visible.Count) - ScreenToDataX(draggingLastPoint.X, plot, visible.Count);
+                    var dy = ScreenToPrice(location.Y, plot, min, max) - ScreenToPrice(draggingLastPoint.Y, plot, min, max);
+                    drawing.X1 += dx; drawing.X2 += dx; drawing.X3 += dx;
+                    drawing.Y1 += dy; drawing.Y2 += dy; drawing.Y3 += dy;
+                    UpdateDrawingDates(drawing);
+                }
+                return;
+            }
             if (drawing.Tool == ChartDrawingTool.HorizontalLine)
             {
                 var y = PriceToScreen(drawing.Y1, plot, min, max);
@@ -801,6 +897,22 @@ namespace Trade.It
                             }
                         }
                         break;
+                    case ChartDrawingTool.LongPosition:
+                    case ChartDrawingTool.ShortPosition:
+                    {
+                        var entry = DataToScreen(drawing.X1 - firstIndex, drawing.Y1, plot, visibleCountForDrawing, min, max);
+                        var target = DataToScreen(drawing.X2 - firstIndex, drawing.Y2, plot, visibleCountForDrawing, min, max);
+                        var stop = DataToScreen(drawing.X3 - firstIndex, drawing.Y3, plot, visibleCountForDrawing, min, max);
+                        var left = Math.Min(entry.X, target.X);
+                        var right = Math.Max(entry.X, target.X);
+                        var targetRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, target.Y), right, Math.Max(entry.Y, target.Y));
+                        var stopRect = RectangleF.FromLTRB(left, Math.Min(entry.Y, stop.Y), right, Math.Max(entry.Y, stop.Y));
+                        if (targetRect.Contains(location) || stopRect.Contains(location) ||
+                            DistanceToSegment(location, new PointF(left, entry.Y), new PointF(right, entry.Y)) <= tolerance ||
+                            DistanceToSegment(location, new PointF(left, target.Y), new PointF(right, target.Y)) <= tolerance ||
+                            DistanceToSegment(location, new PointF(left, stop.Y), new PointF(right, stop.Y)) <= tolerance) return i;
+                        break;
+                    }
                     case ChartDrawingTool.TrendLine:
                     case ChartDrawingTool.TrendLineWithArrow:
                     case ChartDrawingTool.HorizontalLine:

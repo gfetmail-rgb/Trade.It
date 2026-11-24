@@ -559,7 +559,8 @@ namespace Trade.It
                 if (chart == null) return;
 
                 if (chart.ActiveDrawingTool is ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse or
-                    ChartDrawingTool.Triangle or ChartDrawingTool.Path or ChartDrawingTool.BezierCurve)
+                    ChartDrawingTool.Triangle or ChartDrawingTool.Path or ChartDrawingTool.BezierCurve or
+                    ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
                 {
                     chart.CancelDrawing();
                     ResetDrawingToolButtons();
@@ -575,6 +576,8 @@ namespace Trade.It
             bezierShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.BezierCurve, drawRectangleButton);
             questionMarkShapeMenuItem.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.QuestionMark, drawRectangleButton);
             exclamationMarkShapeMenuItem.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.ExclamationMark, drawRectangleButton);
+            longPositionShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.LongPosition, drawRectangleButton);
+            shortPositionShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.ShortPosition, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);

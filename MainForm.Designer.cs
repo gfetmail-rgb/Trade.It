@@ -161,6 +161,8 @@ namespace Trade.It
         private System.Windows.Forms.ToolStripMenuItem bezierShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem questionMarkShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exclamationMarkShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem longPositionShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shortPositionShapeMenuItem;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -271,6 +273,8 @@ namespace Trade.It
             bezierShapeMenuItem = new ToolStripMenuItem();
             questionMarkShapeMenuItem = new ToolStripMenuItem();
             exclamationMarkShapeMenuItem = new ToolStripMenuItem();
+            longPositionShapeMenuItem = new ToolStripMenuItem();
+            shortPositionShapeMenuItem = new ToolStripMenuItem();
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2976,6 +2980,9 @@ namespace Trade.It
                 questionMarkShapeMenuItem,
                 exclamationMarkShapeMenuItem,
                 new ToolStripSeparator(),
+                longPositionShapeMenuItem,
+                shortPositionShapeMenuItem,
+                new ToolStripSeparator(),
                 pathShapeMenuItem
             });
             // 
@@ -3020,6 +3027,18 @@ namespace Trade.It
             exclamationMarkShapeMenuItem.Name = "exclamationMarkShapeMenuItem";
             exclamationMarkShapeMenuItem.Size = new Size(180, 24);
             exclamationMarkShapeMenuItem.Text = "علامت تعجب (!)";
+            // 
+            // longPositionShapeMenuItem
+            // 
+            longPositionShapeMenuItem.Name = "longPositionShapeMenuItem";
+            longPositionShapeMenuItem.Size = new Size(180, 24);
+            longPositionShapeMenuItem.Text = "موقعیت خرید (Long)";
+            // 
+            // shortPositionShapeMenuItem
+            // 
+            shortPositionShapeMenuItem.Name = "shortPositionShapeMenuItem";
+            shortPositionShapeMenuItem.Size = new Size(180, 24);
+            shortPositionShapeMenuItem.Text = "موقعیت فروش (Short)";
             // 
             // drawFibonacciButton
             // 

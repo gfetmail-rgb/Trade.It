@@ -32,6 +32,8 @@ namespace Trade.It
             ChartDrawingTool.Triangle => ChartAppearanceSettings.TriangleColor,
             ChartDrawingTool.Path => ChartAppearanceSettings.PathColor,
             ChartDrawingTool.BezierCurve => ChartAppearanceSettings.BezierCurveColor,
+            ChartDrawingTool.LongPosition => Color.FromArgb(46, 160, 90),
+            ChartDrawingTool.ShortPosition => Color.FromArgb(190, 65, 65),
             _ => ChartAppearanceSettings.TrendLineColor
         };
 
