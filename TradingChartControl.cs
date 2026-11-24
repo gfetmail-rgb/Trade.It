@@ -7,7 +7,7 @@ namespace Trade.It
     internal enum ChartDrawingTool
     {
         None, TrendLine, TrendChannel, HorizontalLine, VerticalLine,
-        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path, BezierCurve, LongPosition, ShortPosition
+        HorizontalRay, TrendLineWithArrow, Rectangle, Ellipse, Triangle, Path, BezierCurve, LongPosition, ShortPosition, HollowArrow
     }
 
     internal sealed class TradingChartPoint
@@ -1964,6 +1964,7 @@ namespace Trade.It
             {
                 case ChartDrawingTool.TrendLine:
                 case ChartDrawingTool.TrendLineWithArrow:
+                case ChartDrawingTool.HollowArrow:
                 case ChartDrawingTool.Rectangle:
                 case ChartDrawingTool.Ellipse:
                     drawings.Add(new ChartDrawing

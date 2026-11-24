@@ -560,7 +560,7 @@ namespace Trade.It
 
                 if (chart.ActiveDrawingTool is ChartDrawingTool.Rectangle or ChartDrawingTool.Ellipse or
                     ChartDrawingTool.Triangle or ChartDrawingTool.Path or ChartDrawingTool.BezierCurve or
-                    ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition)
+                    ChartDrawingTool.LongPosition or ChartDrawingTool.ShortPosition or ChartDrawingTool.HollowArrow)
                 {
                     chart.CancelDrawing();
                     ResetDrawingToolButtons();
@@ -578,6 +578,7 @@ namespace Trade.It
             exclamationMarkShapeMenuItem.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.ExclamationMark, drawRectangleButton);
             longPositionShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.LongPosition, drawRectangleButton);
             shortPositionShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.ShortPosition, drawRectangleButton);
+            hollowArrowShapeMenuItem.Click += (_, _) => ActivateDrawingTool(ChartDrawingTool.HollowArrow, drawRectangleButton);
             drawFibonacciButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Fibonacci, drawFibonacciButton);
             drawTextButton.Click += (_, _) => ActivateAdvancedDrawingTool(AdvancedDrawingSelection.Text, drawTextButton);
             drawPitchforkButton.Click += (_, _) => ActivateExtraDrawingTool(ExtraDrawingSelection.Pitchfork, drawPitchforkButton);

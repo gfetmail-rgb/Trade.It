@@ -708,6 +708,12 @@ namespace Trade.It
                 case ChartDrawingTool.ShortPosition:
                     DrawPositionOutline(g, pen, drawing, plot, visibleCountForDrawing, min, max);
                     break;
+                case ChartDrawingTool.HollowArrow:
+                    g.DrawLine(pen, start, end);
+                    DrawHollowArrowHead(g, pen, end, start);
+                    break;
+                case ChartDrawingTool.HollowArrow:
+                    g.DrawLine(pen, start, end); DrawHollowArrowHead(g, pen, end, start); break;
                 case ChartDrawingTool.TrendLine:
                     g.DrawLine(pen, start, end); break;
                 case ChartDrawingTool.TrendLineWithArrow:
@@ -913,6 +919,7 @@ namespace Trade.It
                             DistanceToSegment(location, new PointF(left, stop.Y), new PointF(right, stop.Y)) <= tolerance) return i;
                         break;
                     }
+                    case ChartDrawingTool.HollowArrow:
                     case ChartDrawingTool.TrendLine:
                     case ChartDrawingTool.TrendLineWithArrow:
                     case ChartDrawingTool.HorizontalLine:

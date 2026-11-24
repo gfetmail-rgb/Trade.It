@@ -163,6 +163,7 @@ namespace Trade.It
         private System.Windows.Forms.ToolStripMenuItem exclamationMarkShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem longPositionShapeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem shortPositionShapeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hollowArrowShapeMenuItem;
         private System.Windows.Forms.TabControl chartTabControl;
         private System.Windows.Forms.TabPage chartTabPage;
         private System.Windows.Forms.TabPage navigationTabPage;
@@ -275,6 +276,7 @@ namespace Trade.It
             exclamationMarkShapeMenuItem = new ToolStripMenuItem();
             longPositionShapeMenuItem = new ToolStripMenuItem();
             shortPositionShapeMenuItem = new ToolStripMenuItem();
+            hollowArrowShapeMenuItem = new ToolStripMenuItem();
             mainMenuStrip = new MenuStrip();
             portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
@@ -2982,6 +2984,7 @@ namespace Trade.It
                 new ToolStripSeparator(),
                 longPositionShapeMenuItem,
                 shortPositionShapeMenuItem,
+                hollowArrowShapeMenuItem,
                 new ToolStripSeparator(),
                 pathShapeMenuItem
             });
@@ -3039,6 +3042,12 @@ namespace Trade.It
             shortPositionShapeMenuItem.Name = "shortPositionShapeMenuItem";
             shortPositionShapeMenuItem.Size = new Size(180, 24);
             shortPositionShapeMenuItem.Text = "موقعیت فروش (Short)";
+            // 
+            // hollowArrowShapeMenuItem
+            // 
+            hollowArrowShapeMenuItem.Name = "hollowArrowShapeMenuItem";
+            hollowArrowShapeMenuItem.Size = new Size(180, 24);
+            hollowArrowShapeMenuItem.Text = "فلش توخالی (قابل تعیین جهت)";
             // 
             // drawFibonacciButton
             // 
