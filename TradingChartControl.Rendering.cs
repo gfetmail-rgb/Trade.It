@@ -669,8 +669,6 @@ namespace Trade.It
             screenPoints.Add(drawingCurrentPoint);
             if (screenPoints.Count >= 2)
                 g.DrawLines(pen, screenPoints.ToArray());
-            if (screenPoints.Count >= 2)
-                DrawHollowArrow(g, pen, screenPoints[^2], screenPoints[^1], GetArrowWidthHandle(screenPoints[^2], screenPoints[^1], 9f));
         }
 
         private static Point SnapArrowEnd(Point start, Point end)
@@ -780,9 +778,7 @@ namespace Trade.It
                     if (drawing.Points.Count >= 2)
                     {
                         var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
-                        if (pathPoints.Length > 2)
-                            g.DrawLines(pen, pathPoints.Take(pathPoints.Length - 1).ToArray());
-                        DrawHollowArrow(g, pen, pathPoints[^2], pathPoints[^1], GetArrowWidthHandle(pathPoints[^2], pathPoints[^1], 9f));
+                        g.DrawLines(pen, pathPoints);
                     }
                     break;
                 case ChartDrawingTool.BezierCurve:
