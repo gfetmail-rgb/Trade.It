@@ -19,12 +19,23 @@ namespace Trade.It
 
         private static readonly Dictionary<Button, IconSet> Icons = new();
 
-        public static void Register(Button button, Image normal, Image active, Image? success = null)
+        public static void Register(Button button, Image? normal, Image? active, Image? success = null)
         {
+            if (button == null)
+                throw new ArgumentNullException(nameof(button));
+
+            if (normal == null)
+                throw new InvalidOperationException(
+                    $"Normal image is missing for toolbar button: {button.Name}");
+
+            // منابع ActiveImage و SuccessImage در MainForm.resx تعریف نشده‌اند.
+            // در صورت نبود تصویر جایگزین، از تصویر عادی استفاده می‌کنیم تا فرم هنگام اجرا متوقف نشود.
+            var normalImage = FitImage(normal);
+
             var set = new IconSet
             {
-                Normal = FitImage(normal),
-                Active = FitImage(active),
+                Normal = normalImage,
+                Active = active == null ? normalImage : FitImage(active),
                 Success = success == null ? null : FitImage(success)
             };
 
@@ -53,6 +64,9 @@ namespace Trade.It
 
         private static Image FitImage(Image source)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             var scale = Math.Min(
                 1.0,
                 Math.Min(MaxIconSize / (double)source.Width, MaxIconSize / (double)source.Height));
