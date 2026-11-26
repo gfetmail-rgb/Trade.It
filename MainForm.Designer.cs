@@ -321,6 +321,7 @@ namespace Trade.It
             stocksTabPage = new TabPage();
             stocksGridCountLabel = new Label();
             groupBox2 = new GroupBox();
+            codalButton = new Button();
             symbolsPrintButton = new Button();
             symbolsExcelButton = new Button();
             navigationButton = new Button();
@@ -897,6 +898,7 @@ namespace Trade.It
             // 
             groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(symbolsExcelButton);
+            groupBox2.Controls.Add(codalButton);
             groupBox2.Controls.Add(symbolsPrintButton);
             groupBox2.Controls.Add(navigationButton);
             groupBox2.Controls.Add(selectAllCheckBox);
@@ -912,6 +914,14 @@ namespace Trade.It
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             // 
+            codalButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            codalButton.Location = new Point(38, 86);
+            codalButton.Name = "codalButton";
+            codalButton.Size = new Size(72, 34);
+            codalButton.TabIndex = 6;
+            codalButton.Text = "کدال";
+            codalButton.UseVisualStyleBackColor = true;
+            codalButton.Click += codalButton_Click;
             // symbolsPrintButton
             // 
             symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -3303,6 +3313,7 @@ namespace Trade.It
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private GroupBox groupBox2;
+        private Button codalButton;
         private Button symbolsPrintButton;
         private Button symbolsExcelButton;
         private DataGridViewTextBoxColumn rowColumn;
