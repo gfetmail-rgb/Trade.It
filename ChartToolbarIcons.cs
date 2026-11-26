@@ -35,13 +35,41 @@ namespace Trade.It
             var set = new IconSet
             {
                 Normal = normalImage,
-                Active = active == null ? normalImage : FitImage(active),
+                Active = active == null ? CreateActiveImage(normalImage) : FitImage(active),
                 Success = success == null ? null : FitImage(success)
             };
 
             Icons[button] = set;
             button.Image = set.Normal;
             button.ImageAlign = ContentAlignment.MiddleCenter;
+        }
+
+        // در نبود تصویر Active اختصاصی، نسخه آبی‌رنگی از آیکون عادی می‌سازیم.
+        // شفافیت و جزئیات روشنایی تصویر اصلی حفظ می‌شوند.
+        private static Image CreateActiveImage(Image source)
+        {
+            var bitmap = new Bitmap(source);
+            const double originalWeight = 0.20;
+            const double blueWeight = 0.80;
+            var accent = Color.FromArgb(0, 120, 215);
+
+            for (var y = 0; y < bitmap.Height; y++)
+            {
+                for (var x = 0; x < bitmap.Width; x++)
+                {
+                    var pixel = bitmap.GetPixel(x, y);
+                    if (pixel.A == 0)
+                        continue;
+
+                    var red = (int)Math.Round(pixel.R * originalWeight + accent.R * blueWeight);
+                    var green = (int)Math.Round(pixel.G * originalWeight + accent.G * blueWeight);
+                    var blue = (int)Math.Round(pixel.B * originalWeight + accent.B * blueWeight);
+
+                    bitmap.SetPixel(x, y, Color.FromArgb(pixel.A, red, green, blue));
+                }
+            }
+
+            return bitmap;
         }
 
         // آیکون تمام دکمه‌های نوار ابزار، حتی دکمه‌هایی که حالت فعال ندارند،
