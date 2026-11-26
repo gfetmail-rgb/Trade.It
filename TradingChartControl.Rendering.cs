@@ -779,6 +779,7 @@ namespace Trade.It
                     {
                         var pathPoints = drawing.Points.Select(p => DataToScreen(p.X - firstIndex, p.Y, plot, visibleCountForDrawing, min, max)).ToArray();
                         g.DrawLines(pen, pathPoints);
+                        DrawArrowHead(g, pen, pathPoints[^1], pathPoints[^2]);
                     }
                     break;
                 case ChartDrawingTool.BezierCurve:
