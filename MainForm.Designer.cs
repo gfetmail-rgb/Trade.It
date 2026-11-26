@@ -265,42 +265,34 @@ namespace Trade.It
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            chartToolsToolTip = new System.Windows.Forms.ToolTip(components);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            chartToolsToolTip = new ToolTip(components);
+            drawTrendLineButton = new Button();
+            drawTrendChannelButton = new Button();
+            drawHorizontalDoubleButton = new Button();
+            drawVerticalDoubleButton = new Button();
+            drawHorizontalRayButton = new Button();
+            drawTrendLineArrowButton = new Button();
+            drawRectangleButton = new Button();
             drawingShapesMenu = new ContextMenuStrip(components);
             rectangleShapeMenuItem = new ToolStripMenuItem();
             ellipseShapeMenuItem = new ToolStripMenuItem();
             triangleShapeMenuItem = new ToolStripMenuItem();
-            pathShapeMenuItem = new ToolStripMenuItem();
             bezierShapeMenuItem = new ToolStripMenuItem();
             questionMarkShapeMenuItem = new ToolStripMenuItem();
             exclamationMarkShapeMenuItem = new ToolStripMenuItem();
             longPositionShapeMenuItem = new ToolStripMenuItem();
             shortPositionShapeMenuItem = new ToolStripMenuItem();
             hollowArrowShapeMenuItem = new ToolStripMenuItem();
+            pathShapeMenuItem = new ToolStripMenuItem();
+            drawFibonacciButton = new Button();
+            drawTextButton = new Button();
+            drawPitchforkButton = new Button();
+            drawFibonacciExtensionButton = new Button();
+            drawMeasureButton = new Button();
             mainMenuStrip = new MenuStrip();
-            portfolioDefinitionMenuItem = new ToolStripMenuItem();
             multiTimeframeAnalysisMenuItem = new ToolStripMenuItem();
-            indicatorsMenuItem = new ToolStripMenuItem();
-            indicatorMaMenuItem = new ToolStripMenuItem();
-            indicatorEmaMenuItem = new ToolStripMenuItem();
-            indicatorIchimokuMenuItem = new ToolStripMenuItem();
-            indicatorRsiMenuItem = new ToolStripMenuItem();
-            indicatorMacdMenuItem = new ToolStripMenuItem();
-            indicatorStochasticMenuItem = new ToolStripMenuItem();
-            indicatorStochasticRsiMenuItem = new ToolStripMenuItem();
-            indicatorAtrMenuItem = new ToolStripMenuItem();
-            indicatorAdxMenuItem = new ToolStripMenuItem();
-            indicatorBollingerMenuItem = new ToolStripMenuItem();
-            indicatorObvMenuItem = new ToolStripMenuItem();
-            indicatorVwapMenuItem = new ToolStripMenuItem();
-            indicatorDonchianMenuItem = new ToolStripMenuItem();
-            indicatorAwesomeOscillatorMenuItem = new ToolStripMenuItem();
-            indicatorOnFuMoradiMenuItem = new ToolStripMenuItem();
-            indicatorClearMenuItem = new ToolStripMenuItem();
-            indicatorContextMenuStrip = new ContextMenuStrip();
-            indicatorSettingsMenuItem = new ToolStripMenuItem();
-            indicatorDeleteMenuItem = new ToolStripMenuItem();
             analysisM1MenuItem = new ToolStripMenuItem();
             analysisM5MenuItem = new ToolStripMenuItem();
             analysisM15MenuItem = new ToolStripMenuItem();
@@ -312,18 +304,39 @@ namespace Trade.It
             analysisMMenuItem = new ToolStripMenuItem();
             analysisYMenuItem = new ToolStripMenuItem();
             exitMultiTimeframeMenuItem = new ToolStripMenuItem();
+            indicatorsMenuItem = new ToolStripMenuItem();
+            indicatorMaMenuItem = new ToolStripMenuItem();
+            indicatorEmaMenuItem = new ToolStripMenuItem();
+            indicatorIchimokuMenuItem = new ToolStripMenuItem();
+            indicatorBollingerMenuItem = new ToolStripMenuItem();
+            indicatorDonchianMenuItem = new ToolStripMenuItem();
+            indicatorRsiMenuItem = new ToolStripMenuItem();
+            indicatorStochasticMenuItem = new ToolStripMenuItem();
+            indicatorStochasticRsiMenuItem = new ToolStripMenuItem();
+            indicatorMacdMenuItem = new ToolStripMenuItem();
+            indicatorAwesomeOscillatorMenuItem = new ToolStripMenuItem();
+            indicatorOnFuMoradiMenuItem = new ToolStripMenuItem();
+            indicatorAtrMenuItem = new ToolStripMenuItem();
+            indicatorAdxMenuItem = new ToolStripMenuItem();
+            indicatorObvMenuItem = new ToolStripMenuItem();
+            indicatorVwapMenuItem = new ToolStripMenuItem();
+            indicatorClearMenuItem = new ToolStripMenuItem();
+            portfolioDefinitionMenuItem = new ToolStripMenuItem();
             portfolioManagementMenuItem = new ToolStripMenuItem();
-            settingsMenuItem = new ToolStripMenuItem();
             symbolDefinitionMenuItem = new ToolStripMenuItem();
             marketStructureMenuItem = new ToolStripMenuItem();
+            settingsMenuItem = new ToolStripMenuItem();
+            indicatorContextMenuStrip = new ContextMenuStrip(components);
+            indicatorSettingsMenuItem = new ToolStripMenuItem();
+            indicatorDeleteMenuItem = new ToolStripMenuItem();
             mainSplitContainer = new SplitContainer();
             controlTabControl = new TabControl();
             stocksTabPage = new TabPage();
             stocksGridCountLabel = new Label();
             groupBox2 = new GroupBox();
+            symbolsExcelButton = new Button();
             codalButton = new Button();
             symbolsPrintButton = new Button();
-            symbolsExcelButton = new Button();
             navigationButton = new Button();
             selectAllCheckBox = new CheckBox();
             selectNoneCheckBox = new CheckBox();
@@ -338,121 +351,11 @@ namespace Trade.It
             lastTradeColumn = new DataGridViewTextBoxColumn();
             selectColumn = new DataGridViewCheckBoxColumn();
             volumeColumn = new DataGridViewTextBoxColumn();
-            portfolioComboBox = new ComboBox();
             symbolSearchTextBox = new TextBox();
             symbolSearchClearButton = new Button();
+            portfolioComboBox = new ComboBox();
             portfolioLabel = new Label();
             tabPage2 = new TabPage();
-            tabPageFilters2 = new TabPage();
-            tabPageFilters3 = new TabPage();
-            filterApplyButton3 = new Button();
-            clearFiltersButton3 = new Button();
-            filterCountLabel3 = new Label();
-            maFilterGroup3 = new GroupBox();
-            maFilterEnabled3 = new CheckBox();
-            maFilterMode3 = new ComboBox();
-            maPriceMode3 = new ComboBox();
-            maFilterPeriod1_3 = new TextBox();
-            maFilterPeriod2_3 = new TextBox();
-            maPeriod1Label3 = new Label();
-            maPeriod2Label3 = new Label();
-            rsiFilterGroup3 = new GroupBox();
-            rsiFilterEnabled3 = new CheckBox();
-            rsiPeriod3 = new TextBox();
-            rsiOperator3 = new ComboBox();
-            rsiMinimum3 = new TextBox();
-            rsiMaximum3 = new TextBox();
-            rsiPeriodLabel3 = new Label();
-            rsiConditionLabel3 = new Label();
-            rsiMinimumLabel3 = new Label();
-            rsiMaximumLabel3 = new Label();
-            distanceFilterGroup3 = new GroupBox();
-            distanceFilterEnabled3 = new CheckBox();
-            distanceHighPeriod3 = new TextBox();
-            distanceHighMax3 = new TextBox();
-            distanceLowPeriod3 = new TextBox();
-            distanceLowMin3 = new TextBox();
-            distanceHighPeriodLabel3 = new Label();
-            distanceHighMaxLabel3 = new Label();
-            distanceLowPeriodLabel3 = new Label();
-            distanceLowMinLabel3 = new Label();
-            volumePriceFilterGroup3 = new GroupBox();
-            volumePriceFilterEnabled3 = new CheckBox();
-            volumePricePeriod3 = new TextBox();
-            volumePriceRatio3 = new TextBox();
-            volumePriceDirection3 = new ComboBox();
-            volumePeriodLabel3 = new Label();
-            volumeRatioLabel3 = new Label();
-            volumeDirectionLabel3 = new Label();
-            trendStrengthFilterGroup3 = new GroupBox();
-            trendStrengthFilterEnabled3 = new CheckBox();
-            adxPeriod3 = new TextBox();
-            adxMinimum3 = new TextBox();
-            adxDirection3 = new ComboBox();
-            adxPeriodLabel3 = new Label();
-            adxMinimumLabel3 = new Label();
-            comparison2Group1 = new GroupBox();
-            comparison2FirstComboBox1 = new ComboBox();
-            comparison2OperatorComboBox1 = new ComboBox();
-            comparison2SecondComboBox1 = new ComboBox();
-            comparison2FirstOffsetTextBox1 = new TextBox();
-            comparison2SecondOffsetTextBox1 = new TextBox();
-            comparison2LabelFirst1 = new Label();
-            comparison2LabelSecond1 = new Label();
-            comparison2LabelPrice1 = new Label();
-            comparison2Group2 = new GroupBox();
-            comparison2FirstComboBox2 = new ComboBox();
-            comparison2OperatorComboBox2 = new ComboBox();
-            comparison2SecondComboBox2 = new ComboBox();
-            comparison2FirstOffsetTextBox2 = new TextBox();
-            comparison2SecondOffsetTextBox2 = new TextBox();
-            comparison2LabelFirst2 = new Label();
-            comparison2LabelSecond2 = new Label();
-            comparison2LabelPrice2 = new Label();
-            comparison2Group3 = new GroupBox();
-            comparison2FirstComboBox3 = new ComboBox();
-            comparison2OperatorComboBox3 = new ComboBox();
-            comparison2SecondComboBox3 = new ComboBox();
-            comparison2FirstOffsetTextBox3 = new TextBox();
-            comparison2SecondOffsetTextBox3 = new TextBox();
-            comparison2LabelFirst3 = new Label();
-            comparison2LabelSecond3 = new Label();
-            comparison2LabelPrice3 = new Label();
-            comparisonRangeGroup1 = new GroupBox();
-            comparisonRangeFirstComboBox1 = new ComboBox();
-            comparisonRangeOperatorComboBox1 = new ComboBox();
-            comparisonRangeSecondComboBox1 = new ComboBox();
-            comparisonRangeOffsetTextBox1 = new TextBox();
-            comparisonRangeLabelPrice1 = new Label();
-            comparisonRangeLabelLatest1 = new Label();
-            comparisonRangeLabelPrior1 = new Label();
-            comparisonRangeGroup2 = new GroupBox();
-            comparisonRangeFirstComboBox2 = new ComboBox();
-            comparisonRangeOperatorComboBox2 = new ComboBox();
-            comparisonRangeSecondComboBox2 = new ComboBox();
-            comparisonRangeOffsetTextBox2 = new TextBox();
-            comparisonRangeLabelPrice2 = new Label();
-            comparisonRangeLabelLatest2 = new Label();
-            comparisonRangeLabelPrior2 = new Label();
-            comparisonRangeGroup3 = new GroupBox();
-            comparisonRangeFirstComboBox3 = new ComboBox();
-            comparisonRangeOperatorComboBox3 = new ComboBox();
-            comparisonRangeSecondComboBox3 = new ComboBox();
-            comparisonRangeOffsetTextBox3 = new TextBox();
-            comparisonRangeLabelPrice3 = new Label();
-            comparisonRangeLabelLatest3 = new Label();
-            comparisonRangeLabelPrior3 = new Label();
-                        comparisonRangeGroup4 = new GroupBox();
-            comparisonRangeFirstComboBox4 = new ComboBox();
-            comparisonRangeOperatorComboBox4 = new ComboBox();
-            comparisonRangeSecondComboBox4 = new ComboBox();
-            comparisonRangeOffsetTextBox4 = new TextBox();
-            comparisonRangeLabelPrice4 = new Label();
-            comparisonRangeLabelLatest4 = new Label();
-            comparisonRangeLabelPrior4 = new Label();
-            clearFiltersButton2 = new Button();
-            filterApplyButton2 = new Button();
-            filterCountLabel2 = new Label();
             textBox2 = new TextBox();
             groupBox3 = new GroupBox();
             label7 = new Label();
@@ -511,6 +414,116 @@ namespace Trade.It
             statusAllRadio = new RadioButton();
             statusPositiveRadio = new RadioButton();
             statusNegativeRadio = new RadioButton();
+            tabPageFilters2 = new TabPage();
+            filterCountLabel2 = new Label();
+            clearFiltersButton2 = new Button();
+            filterApplyButton2 = new Button();
+            comparisonRangeGroup4 = new GroupBox();
+            comparisonRangeFirstComboBox4 = new ComboBox();
+            comparisonRangeOperatorComboBox4 = new ComboBox();
+            comparisonRangeSecondComboBox4 = new ComboBox();
+            comparisonRangeOffsetTextBox4 = new TextBox();
+            comparisonRangeLabelPrice4 = new Label();
+            comparisonRangeLabelLatest4 = new Label();
+            comparisonRangeLabelPrior4 = new Label();
+            comparisonRangeGroup3 = new GroupBox();
+            comparisonRangeFirstComboBox3 = new ComboBox();
+            comparisonRangeOperatorComboBox3 = new ComboBox();
+            comparisonRangeSecondComboBox3 = new ComboBox();
+            comparisonRangeOffsetTextBox3 = new TextBox();
+            comparisonRangeLabelPrice3 = new Label();
+            comparisonRangeLabelLatest3 = new Label();
+            comparisonRangeLabelPrior3 = new Label();
+            comparisonRangeGroup2 = new GroupBox();
+            comparisonRangeFirstComboBox2 = new ComboBox();
+            comparisonRangeOperatorComboBox2 = new ComboBox();
+            comparisonRangeSecondComboBox2 = new ComboBox();
+            comparisonRangeOffsetTextBox2 = new TextBox();
+            comparisonRangeLabelPrice2 = new Label();
+            comparisonRangeLabelLatest2 = new Label();
+            comparisonRangeLabelPrior2 = new Label();
+            comparisonRangeGroup1 = new GroupBox();
+            comparisonRangeFirstComboBox1 = new ComboBox();
+            comparisonRangeOperatorComboBox1 = new ComboBox();
+            comparisonRangeSecondComboBox1 = new ComboBox();
+            comparisonRangeOffsetTextBox1 = new TextBox();
+            comparisonRangeLabelPrice1 = new Label();
+            comparisonRangeLabelLatest1 = new Label();
+            comparisonRangeLabelPrior1 = new Label();
+            comparison2Group3 = new GroupBox();
+            comparison2FirstComboBox3 = new ComboBox();
+            comparison2OperatorComboBox3 = new ComboBox();
+            comparison2SecondComboBox3 = new ComboBox();
+            comparison2FirstOffsetTextBox3 = new TextBox();
+            comparison2SecondOffsetTextBox3 = new TextBox();
+            comparison2LabelFirst3 = new Label();
+            comparison2LabelSecond3 = new Label();
+            comparison2LabelPrice3 = new Label();
+            comparison2Group2 = new GroupBox();
+            comparison2FirstComboBox2 = new ComboBox();
+            comparison2OperatorComboBox2 = new ComboBox();
+            comparison2SecondComboBox2 = new ComboBox();
+            comparison2FirstOffsetTextBox2 = new TextBox();
+            comparison2SecondOffsetTextBox2 = new TextBox();
+            comparison2LabelFirst2 = new Label();
+            comparison2LabelSecond2 = new Label();
+            comparison2LabelPrice2 = new Label();
+            comparison2Group1 = new GroupBox();
+            comparison2FirstComboBox1 = new ComboBox();
+            comparison2OperatorComboBox1 = new ComboBox();
+            comparison2SecondComboBox1 = new ComboBox();
+            comparison2FirstOffsetTextBox1 = new TextBox();
+            comparison2SecondOffsetTextBox1 = new TextBox();
+            comparison2LabelFirst1 = new Label();
+            comparison2LabelSecond1 = new Label();
+            comparison2LabelPrice1 = new Label();
+            tabPageFilters3 = new TabPage();
+            maFilterGroup3 = new GroupBox();
+            maFilterEnabled3 = new CheckBox();
+            maPeriod1Label3 = new Label();
+            maPeriod2Label3 = new Label();
+            maFilterPeriod1_3 = new TextBox();
+            maFilterPeriod2_3 = new TextBox();
+            maFilterMode3 = new ComboBox();
+            maPriceMode3 = new ComboBox();
+            rsiFilterGroup3 = new GroupBox();
+            rsiFilterEnabled3 = new CheckBox();
+            rsiPeriodLabel3 = new Label();
+            rsiConditionLabel3 = new Label();
+            rsiMinimumLabel3 = new Label();
+            rsiMaximumLabel3 = new Label();
+            rsiPeriod3 = new TextBox();
+            rsiOperator3 = new ComboBox();
+            rsiMinimum3 = new TextBox();
+            rsiMaximum3 = new TextBox();
+            distanceFilterGroup3 = new GroupBox();
+            distanceFilterEnabled3 = new CheckBox();
+            distanceHighPeriodLabel3 = new Label();
+            distanceHighMaxLabel3 = new Label();
+            distanceLowPeriodLabel3 = new Label();
+            distanceLowMinLabel3 = new Label();
+            distanceHighPeriod3 = new TextBox();
+            distanceHighMax3 = new TextBox();
+            distanceLowPeriod3 = new TextBox();
+            distanceLowMin3 = new TextBox();
+            volumePriceFilterGroup3 = new GroupBox();
+            volumePriceFilterEnabled3 = new CheckBox();
+            volumePeriodLabel3 = new Label();
+            volumeRatioLabel3 = new Label();
+            volumeDirectionLabel3 = new Label();
+            volumePricePeriod3 = new TextBox();
+            volumePriceRatio3 = new TextBox();
+            volumePriceDirection3 = new ComboBox();
+            trendStrengthFilterGroup3 = new GroupBox();
+            trendStrengthFilterEnabled3 = new CheckBox();
+            adxPeriodLabel3 = new Label();
+            adxMinimumLabel3 = new Label();
+            adxPeriod3 = new TextBox();
+            adxMinimum3 = new TextBox();
+            adxDirection3 = new ComboBox();
+            filterApplyButton3 = new Button();
+            clearFiltersButton3 = new Button();
+            filterCountLabel3 = new Label();
             marketsTabPage = new TabPage();
             marketCountLabel = new Label();
             marketClearButton = new Button();
@@ -520,10 +533,10 @@ namespace Trade.It
             chartPanel = new Panel();
             chartTabControl = new TabControl();
             chartTabPage = new TabPage();
-            navigationTabPage = new TabPage();
             chartInfoPanel = new Panel();
             chartInfoLabel = new Label();
             chartPlaceholderLabel = new Label();
+            navigationTabPage = new TabPage();
             chartToolbarPanel = new Panel();
             label20 = new Label();
             label19 = new Label();
@@ -548,18 +561,6 @@ namespace Trade.It
             printChartButton = new Button();
             snapshotChartButton = new Button();
             fullScreenChartButton = new FullScreenToggleButton();
-            drawTrendLineButton = new Button();
-            drawTrendChannelButton = new Button();
-            drawHorizontalDoubleButton = new Button();
-            drawVerticalDoubleButton = new Button();
-            drawHorizontalRayButton = new Button();
-            drawTrendLineArrowButton = new Button();
-            drawRectangleButton = new Button();
-            drawFibonacciButton = new Button();
-            drawTextButton = new Button();
-            drawPitchforkButton = new Button();
-            drawFibonacciExtensionButton = new Button();
-            drawMeasureButton = new Button();
             marketTypeComboBox = new ComboBox();
             marketBoardComboBox = new ComboBox();
             marketAssetComboBox = new ComboBox();
@@ -568,7 +569,9 @@ namespace Trade.It
             marketExchangeComboBox = new ComboBox();
             groupBox1 = new GroupBox();
             refreshButtonPortfolio = new Button();
+            drawingShapesMenu.SuspendLayout();
             mainMenuStrip.SuspendLayout();
+            indicatorContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
             mainSplitContainer.Panel1.SuspendLayout();
             mainSplitContainer.Panel2.SuspendLayout();
@@ -578,18 +581,6 @@ namespace Trade.It
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).BeginInit();
             tabPage2.SuspendLayout();
-            tabPageFilters2.SuspendLayout();
-            tabPageFilters3.SuspendLayout();
-            maFilterGroup3.SuspendLayout();
-            rsiFilterGroup3.SuspendLayout();
-            distanceFilterGroup3.SuspendLayout();
-            volumePriceFilterGroup3.SuspendLayout();
-            trendStrengthFilterGroup3.SuspendLayout();
-            comparison2Group1.SuspendLayout();
-            comparison2Group2.SuspendLayout();
-            comparison2Group3.SuspendLayout();
-            comparisonRangeGroup1.SuspendLayout();
-            comparisonRangeGroup2.SuspendLayout();
             groupBox3.SuspendLayout();
             ohlcChangeFilterGroup.SuspendLayout();
             comparisonGroup8.SuspendLayout();
@@ -598,6 +589,20 @@ namespace Trade.It
             volumeRatioGroup.SuspendLayout();
             nameFilterGroup.SuspendLayout();
             tradingStatusGroup.SuspendLayout();
+            tabPageFilters2.SuspendLayout();
+            comparisonRangeGroup4.SuspendLayout();
+            comparisonRangeGroup3.SuspendLayout();
+            comparisonRangeGroup2.SuspendLayout();
+            comparisonRangeGroup1.SuspendLayout();
+            comparison2Group3.SuspendLayout();
+            comparison2Group2.SuspendLayout();
+            comparison2Group1.SuspendLayout();
+            tabPageFilters3.SuspendLayout();
+            maFilterGroup3.SuspendLayout();
+            rsiFilterGroup3.SuspendLayout();
+            distanceFilterGroup3.SuspendLayout();
+            volumePriceFilterGroup3.SuspendLayout();
+            trendStrengthFilterGroup3.SuspendLayout();
             marketsTabPage.SuspendLayout();
             chartPanel.SuspendLayout();
             chartTabControl.SuspendLayout();
@@ -605,6 +610,208 @@ namespace Trade.It
             chartInfoPanel.SuspendLayout();
             chartToolbarPanel.SuspendLayout();
             SuspendLayout();
+            // 
+            // drawTrendLineButton
+            // 
+            drawTrendLineButton.Image = (Image)resources.GetObject("drawTrendLineButton.Image");
+            drawTrendLineButton.Location = new Point(8, 46);
+            drawTrendLineButton.Name = "drawTrendLineButton";
+            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineButton.Size = new Size(82, 34);
+            drawTrendLineButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawTrendLineButton, "رسم خط روند");
+            drawTrendLineButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendChannelButton
+            // 
+            drawTrendChannelButton.Image = (Image)resources.GetObject("drawTrendChannelButton.Image");
+            drawTrendChannelButton.Location = new Point(91, 46);
+            drawTrendChannelButton.Name = "drawTrendChannelButton";
+            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
+            drawTrendChannelButton.Size = new Size(68, 34);
+            drawTrendChannelButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawTrendChannelButton, "رسم کانال روند");
+            drawTrendChannelButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalDoubleButton
+            // 
+            drawHorizontalDoubleButton.Image = (Image)resources.GetObject("drawHorizontalDoubleButton.Image");
+            drawHorizontalDoubleButton.Location = new Point(159, 46);
+            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
+            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalDoubleButton.Size = new Size(69, 34);
+            drawHorizontalDoubleButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawHorizontalDoubleButton, "رسم خط افقی");
+            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawVerticalDoubleButton
+            // 
+            drawVerticalDoubleButton.Image = (Image)resources.GetObject("drawVerticalDoubleButton.Image");
+            drawVerticalDoubleButton.Location = new Point(227, 46);
+            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
+            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
+            drawVerticalDoubleButton.Size = new Size(74, 34);
+            drawVerticalDoubleButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawVerticalDoubleButton, "رسم خط عمودی");
+            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawHorizontalRayButton
+            // 
+            drawHorizontalRayButton.Image = (Image)resources.GetObject("drawHorizontalRayButton.Image");
+            drawHorizontalRayButton.Location = new Point(300, 46);
+            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
+            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
+            drawHorizontalRayButton.Size = new Size(76, 34);
+            drawHorizontalRayButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawHorizontalRayButton, "رسم نیم‌خط افقی");
+            drawHorizontalRayButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTrendLineArrowButton
+            // 
+            drawTrendLineArrowButton.Image = (Image)resources.GetObject("drawTrendLineArrowButton.Image");
+            drawTrendLineArrowButton.Location = new Point(375, 46);
+            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
+            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
+            drawTrendLineArrowButton.Size = new Size(81, 34);
+            drawTrendLineArrowButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawTrendLineArrowButton, "رسم خط روند فلش‌دار");
+            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
+            // 
+            // drawRectangleButton
+            // 
+            drawRectangleButton.ContextMenuStrip = drawingShapesMenu;
+            drawRectangleButton.Font = new Font("Segoe UI Emoji", 8F);
+            drawRectangleButton.Location = new Point(456, 46);
+            drawRectangleButton.Name = "drawRectangleButton";
+            drawRectangleButton.RightToLeft = RightToLeft.Yes;
+            drawRectangleButton.Size = new Size(90, 34);
+            drawRectangleButton.TabIndex = 20;
+            drawRectangleButton.Text = "🖌";
+            chartToolsToolTip.SetToolTip(drawRectangleButton, "انتخاب شکل یا مسیر برای رسم روی نمودار");
+            drawRectangleButton.UseVisualStyleBackColor = true;
+            // 
+            // drawingShapesMenu
+            // 
+            drawingShapesMenu.ImageScalingSize = new Size(24, 24);
+            drawingShapesMenu.Items.AddRange(new ToolStripItem[] { rectangleShapeMenuItem, ellipseShapeMenuItem, triangleShapeMenuItem, bezierShapeMenuItem, questionMarkShapeMenuItem, exclamationMarkShapeMenuItem, longPositionShapeMenuItem, shortPositionShapeMenuItem, hollowArrowShapeMenuItem, pathShapeMenuItem });
+            drawingShapesMenu.Name = "drawingShapesMenu";
+            drawingShapesMenu.RightToLeft = RightToLeft.Yes;
+            drawingShapesMenu.Size = new Size(313, 336);
+            // 
+            // rectangleShapeMenuItem
+            // 
+            rectangleShapeMenuItem.Name = "rectangleShapeMenuItem";
+            rectangleShapeMenuItem.Size = new Size(312, 32);
+            rectangleShapeMenuItem.Text = "مستطیل";
+            // 
+            // ellipseShapeMenuItem
+            // 
+            ellipseShapeMenuItem.Name = "ellipseShapeMenuItem";
+            ellipseShapeMenuItem.Size = new Size(312, 32);
+            ellipseShapeMenuItem.Text = "دایره / بیضی";
+            // 
+            // triangleShapeMenuItem
+            // 
+            triangleShapeMenuItem.Name = "triangleShapeMenuItem";
+            triangleShapeMenuItem.Size = new Size(312, 32);
+            triangleShapeMenuItem.Text = "مثلث";
+            // 
+            // bezierShapeMenuItem
+            // 
+            bezierShapeMenuItem.Name = "bezierShapeMenuItem";
+            bezierShapeMenuItem.Size = new Size(312, 32);
+            bezierShapeMenuItem.Text = "منحنی بزیه";
+            // 
+            // questionMarkShapeMenuItem
+            // 
+            questionMarkShapeMenuItem.Name = "questionMarkShapeMenuItem";
+            questionMarkShapeMenuItem.Size = new Size(312, 32);
+            questionMarkShapeMenuItem.Text = "علامت سؤال (؟)";
+            // 
+            // exclamationMarkShapeMenuItem
+            // 
+            exclamationMarkShapeMenuItem.Name = "exclamationMarkShapeMenuItem";
+            exclamationMarkShapeMenuItem.Size = new Size(312, 32);
+            exclamationMarkShapeMenuItem.Text = "علامت تعجب (!)";
+            // 
+            // longPositionShapeMenuItem
+            // 
+            longPositionShapeMenuItem.Name = "longPositionShapeMenuItem";
+            longPositionShapeMenuItem.Size = new Size(312, 32);
+            longPositionShapeMenuItem.Text = "موقعیت خرید (Long)";
+            // 
+            // shortPositionShapeMenuItem
+            // 
+            shortPositionShapeMenuItem.Name = "shortPositionShapeMenuItem";
+            shortPositionShapeMenuItem.Size = new Size(312, 32);
+            shortPositionShapeMenuItem.Text = "موقعیت فروش (Short)";
+            // 
+            // hollowArrowShapeMenuItem
+            // 
+            hollowArrowShapeMenuItem.Name = "hollowArrowShapeMenuItem";
+            hollowArrowShapeMenuItem.Size = new Size(312, 32);
+            hollowArrowShapeMenuItem.Text = "فلش توخالی (قابل تعیین جهت)";
+            // 
+            // pathShapeMenuItem
+            // 
+            pathShapeMenuItem.Name = "pathShapeMenuItem";
+            pathShapeMenuItem.Size = new Size(312, 32);
+            pathShapeMenuItem.Text = "مسیر چندنقطه‌ای";
+            // 
+            // drawFibonacciButton
+            // 
+            drawFibonacciButton.Image = (Image)resources.GetObject("drawFibonacciButton.Image");
+            drawFibonacciButton.Location = new Point(610, 46);
+            drawFibonacciButton.Name = "drawFibonacciButton";
+            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciButton.Size = new Size(95, 34);
+            drawFibonacciButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawFibonacciButton, "رسم سطوح فیبوناچی اصلاحی");
+            drawFibonacciButton.UseVisualStyleBackColor = true;
+            // 
+            // drawTextButton
+            // 
+            drawTextButton.Image = (Image)resources.GetObject("drawTextButton.Image");
+            drawTextButton.Location = new Point(801, 46);
+            drawTextButton.Name = "drawTextButton";
+            drawTextButton.RightToLeft = RightToLeft.Yes;
+            drawTextButton.Size = new Size(82, 34);
+            drawTextButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawTextButton, "افزودن متن به نمودار");
+            drawTextButton.UseVisualStyleBackColor = true;
+            // 
+            // drawPitchforkButton
+            // 
+            drawPitchforkButton.Image = (Image)resources.GetObject("drawPitchforkButton.Image");
+            drawPitchforkButton.Location = new Point(545, 46);
+            drawPitchforkButton.Name = "drawPitchforkButton";
+            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
+            drawPitchforkButton.Size = new Size(65, 34);
+            drawPitchforkButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawPitchforkButton, "رسم چنگال اندروز");
+            drawPitchforkButton.UseVisualStyleBackColor = true;
+            // 
+            // drawFibonacciExtensionButton
+            // 
+            drawFibonacciExtensionButton.Image = (Image)resources.GetObject("drawFibonacciExtensionButton.Image");
+            drawFibonacciExtensionButton.Location = new Point(705, 46);
+            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
+            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
+            drawFibonacciExtensionButton.Size = new Size(96, 34);
+            drawFibonacciExtensionButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawFibonacciExtensionButton, "رسم سطوح فیبوناچی گسترشی");
+            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
+            // 
+            // drawMeasureButton
+            // 
+            drawMeasureButton.Image = (Image)resources.GetObject("drawMeasureButton.Image");
+            drawMeasureButton.Location = new Point(883, 46);
+            drawMeasureButton.Name = "drawMeasureButton";
+            drawMeasureButton.RightToLeft = RightToLeft.Yes;
+            drawMeasureButton.Size = new Size(82, 34);
+            drawMeasureButton.TabIndex = 20;
+            chartToolsToolTip.SetToolTip(drawMeasureButton, "اندازه‌گیری تغییرات قیمت و زمان");
+            drawMeasureButton.UseVisualStyleBackColor = true;
             // 
             // mainMenuStrip
             // 
@@ -617,203 +824,204 @@ namespace Trade.It
             mainMenuStrip.TabIndex = 0;
             mainMenuStrip.TabStop = true;
             // 
-            // portfolioDefinitionMenuItem
-            // 
-            portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
-            portfolioDefinitionMenuItem.Size = new Size(114, 29);
-            portfolioDefinitionMenuItem.Text = "تعریف سبد";
-            // 
             // multiTimeframeAnalysisMenuItem
             // 
-            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem, new ToolStripSeparator(), exitMultiTimeframeMenuItem });
+            multiTimeframeAnalysisMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analysisM1MenuItem, analysisM5MenuItem, analysisM15MenuItem, analysisM30MenuItem, analysis1HMenuItem, analysis4HMenuItem, analysisDMenuItem, analysisWMenuItem, analysisMMenuItem, analysisYMenuItem, exitMultiTimeframeMenuItem });
             multiTimeframeAnalysisMenuItem.Name = "multiTimeframeAnalysisMenuItem";
-            multiTimeframeAnalysisMenuItem.Size = new Size(170, 29);
+            multiTimeframeAnalysisMenuItem.Size = new Size(184, 29);
             multiTimeframeAnalysisMenuItem.Text = "تحلیل چند تایم‌فریمی";
             multiTimeframeAnalysisMenuItem.DropDownOpening += MultiTimeframeAnalysisMenuItem_DropDownOpening;
-            // 
-            // indicatorsMenuItem
-            // 
-            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, new ToolStripSeparator(), indicatorBollingerMenuItem, indicatorDonchianMenuItem, new ToolStripSeparator(), indicatorRsiMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorMacdMenuItem, indicatorAwesomeOscillatorMenuItem, indicatorOnFuMoradiMenuItem, new ToolStripSeparator(), indicatorAtrMenuItem, indicatorAdxMenuItem, new ToolStripSeparator(), indicatorObvMenuItem, indicatorVwapMenuItem, new ToolStripSeparator(), indicatorClearMenuItem });
-            indicatorsMenuItem.Name = "indicatorsMenuItem";
-            indicatorsMenuItem.Size = new Size(105, 29);
-            indicatorsMenuItem.Text = "اندیکاتورها";
-            // 
-            // indicatorMaMenuItem
-            // 
-            indicatorMaMenuItem.Name = "indicatorMaMenuItem";
-            indicatorMaMenuItem.Size = new Size(190, 22);
-            indicatorMaMenuItem.Text = "MA";
-            // 
-            // indicatorEmaMenuItem
-            // 
-            indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
-            indicatorEmaMenuItem.Size = new Size(190, 22);
-            indicatorEmaMenuItem.Text = "EMA";
-            // 
-            // indicatorIchimokuMenuItem
-            // 
-            indicatorIchimokuMenuItem.Name = "indicatorIchimokuMenuItem";
-            indicatorIchimokuMenuItem.Size = new Size(190, 22);
-            indicatorIchimokuMenuItem.Text = "Ichimoku";
-            // 
-            // indicatorRsiMenuItem
-            // 
-            indicatorRsiMenuItem.Name = "indicatorRsiMenuItem";
-            indicatorRsiMenuItem.Size = new Size(180, 34);
-            indicatorRsiMenuItem.Text = "RSI";
-            // indicatorStochasticMenuItem
-            indicatorStochasticMenuItem.Name = "indicatorStochasticMenuItem";
-            indicatorStochasticMenuItem.Size = new Size(180, 34);
-            indicatorStochasticMenuItem.Text = "Stochastic";
-            // indicatorStochasticRsiMenuItem
-            indicatorStochasticRsiMenuItem.Name = "indicatorStochasticRsiMenuItem";
-            indicatorStochasticRsiMenuItem.Size = new Size(180, 34);
-            indicatorStochasticRsiMenuItem.Text = "Stochastic RSI";
-            // indicatorMacdMenuItem
-            // 
-            indicatorMacdMenuItem.Name = "indicatorMacdMenuItem";
-            indicatorMacdMenuItem.Size = new Size(180, 34);
-            indicatorMacdMenuItem.Text = "MACD";
-            // 
-            // indicatorAtrMenuItem
-            //
-            indicatorAtrMenuItem.Name = "indicatorAtrMenuItem";
-            indicatorAtrMenuItem.Size = new Size(180, 34);
-            indicatorAtrMenuItem.Text = "ATR";
-            // indicatorAdxMenuItem
-            //
-            indicatorAdxMenuItem.Name = "indicatorAdxMenuItem";
-            indicatorAdxMenuItem.Size = new Size(180, 34);
-            indicatorAdxMenuItem.Text = "ADX";
-            indicatorBollingerMenuItem.Text = "بولینگر";
-            indicatorObvMenuItem.Text = "OBV";
-            // indicatorVwapMenuItem
-            indicatorVwapMenuItem.Name = "indicatorVwapMenuItem";
-            indicatorVwapMenuItem.Size = new Size(180, 34);
-            indicatorVwapMenuItem.Text = "VWAP";
-            // indicatorDonchianMenuItem
-            indicatorDonchianMenuItem.Name = "indicatorDonchianMenuItem";
-            indicatorDonchianMenuItem.Size = new Size(190, 22);
-            indicatorDonchianMenuItem.Text = "دونچیان";
-            // indicatorAwesomeOscillatorMenuItem
-            indicatorAwesomeOscillatorMenuItem.Name = "indicatorAwesomeOscillatorMenuItem";
-            indicatorAwesomeOscillatorMenuItem.Size = new Size(190, 22);
-            indicatorAwesomeOscillatorMenuItem.Text = "Awesome Oscillator";
-            // indicatorOnFuMoradiMenuItem
-            indicatorOnFuMoradiMenuItem.Name = "indicatorOnFuMoradiMenuItem";
-            indicatorOnFuMoradiMenuItem.Size = new Size(190, 22);
-            indicatorOnFuMoradiMenuItem.Text = "OnFuMoradi";
-            // indicatorClearMenuItem
-            // 
-            indicatorClearMenuItem.Name = "indicatorClearMenuItem";
-            indicatorClearMenuItem.Size = new Size(190, 22);
-            indicatorClearMenuItem.Text = "حذف همه اندیکاتورها";
-            // 
-            // indicatorContextMenuStrip
-            // 
-            indicatorContextMenuStrip.Items.AddRange(new ToolStripItem[] { indicatorSettingsMenuItem, indicatorDeleteMenuItem });
-            indicatorContextMenuStrip.Name = "indicatorContextMenuStrip";
-            indicatorContextMenuStrip.Size = new Size(180, 48);
-            // 
-            // indicatorSettingsMenuItem
-            // 
-            indicatorSettingsMenuItem.Name = "indicatorSettingsMenuItem";
-            indicatorSettingsMenuItem.Size = new Size(179, 22);
-            indicatorSettingsMenuItem.Text = "تنظیمات";
-            // 
-            // indicatorDeleteMenuItem
-            // 
-            indicatorDeleteMenuItem.Name = "indicatorDeleteMenuItem";
-            indicatorDeleteMenuItem.Size = new Size(179, 22);
-            indicatorDeleteMenuItem.Text = "حذف";
             // 
             // analysisM1MenuItem
             // 
             analysisM1MenuItem.Name = "analysisM1MenuItem";
-            analysisM1MenuItem.Size = new Size(180, 22);
+            analysisM1MenuItem.Size = new Size(332, 34);
             analysisM1MenuItem.Text = "M1";
             analysisM1MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisM5MenuItem
             // 
             analysisM5MenuItem.Name = "analysisM5MenuItem";
-            analysisM5MenuItem.Size = new Size(180, 22);
+            analysisM5MenuItem.Size = new Size(332, 34);
             analysisM5MenuItem.Text = "M5";
             analysisM5MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisM15MenuItem
             // 
             analysisM15MenuItem.Name = "analysisM15MenuItem";
-            analysisM15MenuItem.Size = new Size(180, 22);
+            analysisM15MenuItem.Size = new Size(332, 34);
             analysisM15MenuItem.Text = "M15";
             analysisM15MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisM30MenuItem
             // 
             analysisM30MenuItem.Name = "analysisM30MenuItem";
-            analysisM30MenuItem.Size = new Size(180, 22);
+            analysisM30MenuItem.Size = new Size(332, 34);
             analysisM30MenuItem.Text = "M30";
             analysisM30MenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysis1HMenuItem
             // 
             analysis1HMenuItem.Name = "analysis1HMenuItem";
-            analysis1HMenuItem.Size = new Size(180, 22);
+            analysis1HMenuItem.Size = new Size(332, 34);
             analysis1HMenuItem.Text = "H1";
             analysis1HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysis4HMenuItem
             // 
             analysis4HMenuItem.Name = "analysis4HMenuItem";
-            analysis4HMenuItem.Size = new Size(180, 22);
+            analysis4HMenuItem.Size = new Size(332, 34);
             analysis4HMenuItem.Text = "H4";
             analysis4HMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisDMenuItem
             // 
             analysisDMenuItem.Name = "analysisDMenuItem";
-            analysisDMenuItem.Size = new Size(180, 22);
+            analysisDMenuItem.Size = new Size(332, 34);
             analysisDMenuItem.Text = "D";
             analysisDMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
-            // 
-            // analysisMMenuItem
-            // 
-            analysisMMenuItem.Name = "analysisMMenuItem";
-            analysisMMenuItem.Size = new Size(180, 22);
-            analysisMMenuItem.Text = "M";
-            analysisMMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisWMenuItem
             // 
             analysisWMenuItem.Name = "analysisWMenuItem";
-            analysisWMenuItem.Size = new Size(180, 22);
+            analysisWMenuItem.Size = new Size(332, 34);
             analysisWMenuItem.Text = "W";
             analysisWMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
+            // 
+            // analysisMMenuItem
+            // 
+            analysisMMenuItem.Name = "analysisMMenuItem";
+            analysisMMenuItem.Size = new Size(332, 34);
+            analysisMMenuItem.Text = "M";
+            analysisMMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // analysisYMenuItem
             // 
             analysisYMenuItem.Name = "analysisYMenuItem";
-            analysisYMenuItem.Size = new Size(180, 22);
+            analysisYMenuItem.Size = new Size(332, 34);
             analysisYMenuItem.Text = "Y";
             analysisYMenuItem.Click += MultiTimeframeAnalysisMenuItem_Click;
             // 
             // exitMultiTimeframeMenuItem
             // 
             exitMultiTimeframeMenuItem.Name = "exitMultiTimeframeMenuItem";
-            exitMultiTimeframeMenuItem.Size = new Size(180, 22);
+            exitMultiTimeframeMenuItem.Size = new Size(332, 34);
             exitMultiTimeframeMenuItem.Text = "خروج از تحلیل چند تایم‌فریمی";
+            // 
+            // indicatorsMenuItem
+            // 
+            indicatorsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { indicatorMaMenuItem, indicatorEmaMenuItem, indicatorIchimokuMenuItem, indicatorBollingerMenuItem, indicatorDonchianMenuItem, indicatorRsiMenuItem, indicatorStochasticMenuItem, indicatorStochasticRsiMenuItem, indicatorMacdMenuItem, indicatorAwesomeOscillatorMenuItem, indicatorOnFuMoradiMenuItem, indicatorAtrMenuItem, indicatorAdxMenuItem, indicatorObvMenuItem, indicatorVwapMenuItem, indicatorClearMenuItem });
+            indicatorsMenuItem.Name = "indicatorsMenuItem";
+            indicatorsMenuItem.Size = new Size(106, 29);
+            indicatorsMenuItem.Text = "اندیکاتورها";
+            // 
+            // indicatorMaMenuItem
+            // 
+            indicatorMaMenuItem.Name = "indicatorMaMenuItem";
+            indicatorMaMenuItem.Size = new Size(272, 34);
+            indicatorMaMenuItem.Text = "MA";
+            // 
+            // indicatorEmaMenuItem
+            // 
+            indicatorEmaMenuItem.Name = "indicatorEmaMenuItem";
+            indicatorEmaMenuItem.Size = new Size(272, 34);
+            indicatorEmaMenuItem.Text = "EMA";
+            // 
+            // indicatorIchimokuMenuItem
+            // 
+            indicatorIchimokuMenuItem.Name = "indicatorIchimokuMenuItem";
+            indicatorIchimokuMenuItem.Size = new Size(272, 34);
+            indicatorIchimokuMenuItem.Text = "Ichimoku";
+            // 
+            // indicatorBollingerMenuItem
+            // 
+            indicatorBollingerMenuItem.Name = "indicatorBollingerMenuItem";
+            indicatorBollingerMenuItem.Size = new Size(272, 34);
+            indicatorBollingerMenuItem.Text = "بولینگر";
+            // 
+            // indicatorDonchianMenuItem
+            // 
+            indicatorDonchianMenuItem.Name = "indicatorDonchianMenuItem";
+            indicatorDonchianMenuItem.Size = new Size(272, 34);
+            indicatorDonchianMenuItem.Text = "دونچیان";
+            // 
+            // indicatorRsiMenuItem
+            // 
+            indicatorRsiMenuItem.Name = "indicatorRsiMenuItem";
+            indicatorRsiMenuItem.Size = new Size(272, 34);
+            indicatorRsiMenuItem.Text = "RSI";
+            // 
+            // indicatorStochasticMenuItem
+            // 
+            indicatorStochasticMenuItem.Name = "indicatorStochasticMenuItem";
+            indicatorStochasticMenuItem.Size = new Size(272, 34);
+            indicatorStochasticMenuItem.Text = "Stochastic";
+            // 
+            // indicatorStochasticRsiMenuItem
+            // 
+            indicatorStochasticRsiMenuItem.Name = "indicatorStochasticRsiMenuItem";
+            indicatorStochasticRsiMenuItem.Size = new Size(272, 34);
+            indicatorStochasticRsiMenuItem.Text = "Stochastic RSI";
+            // 
+            // indicatorMacdMenuItem
+            // 
+            indicatorMacdMenuItem.Name = "indicatorMacdMenuItem";
+            indicatorMacdMenuItem.Size = new Size(272, 34);
+            indicatorMacdMenuItem.Text = "MACD";
+            // 
+            // indicatorAwesomeOscillatorMenuItem
+            // 
+            indicatorAwesomeOscillatorMenuItem.Name = "indicatorAwesomeOscillatorMenuItem";
+            indicatorAwesomeOscillatorMenuItem.Size = new Size(272, 34);
+            indicatorAwesomeOscillatorMenuItem.Text = "Awesome Oscillator";
+            // 
+            // indicatorOnFuMoradiMenuItem
+            // 
+            indicatorOnFuMoradiMenuItem.Name = "indicatorOnFuMoradiMenuItem";
+            indicatorOnFuMoradiMenuItem.Size = new Size(272, 34);
+            indicatorOnFuMoradiMenuItem.Text = "OnFuMoradi";
+            // 
+            // indicatorAtrMenuItem
+            // 
+            indicatorAtrMenuItem.Name = "indicatorAtrMenuItem";
+            indicatorAtrMenuItem.Size = new Size(272, 34);
+            indicatorAtrMenuItem.Text = "ATR";
+            // 
+            // indicatorAdxMenuItem
+            // 
+            indicatorAdxMenuItem.Name = "indicatorAdxMenuItem";
+            indicatorAdxMenuItem.Size = new Size(272, 34);
+            indicatorAdxMenuItem.Text = "ADX";
+            // 
+            // indicatorObvMenuItem
+            // 
+            indicatorObvMenuItem.Name = "indicatorObvMenuItem";
+            indicatorObvMenuItem.Size = new Size(272, 34);
+            indicatorObvMenuItem.Text = "OBV";
+            // 
+            // indicatorVwapMenuItem
+            // 
+            indicatorVwapMenuItem.Name = "indicatorVwapMenuItem";
+            indicatorVwapMenuItem.Size = new Size(272, 34);
+            indicatorVwapMenuItem.Text = "VWAP";
+            // 
+            // indicatorClearMenuItem
+            // 
+            indicatorClearMenuItem.Name = "indicatorClearMenuItem";
+            indicatorClearMenuItem.Size = new Size(272, 34);
+            indicatorClearMenuItem.Text = "حذف همه اندیکاتورها";
+            // 
+            // portfolioDefinitionMenuItem
+            // 
+            portfolioDefinitionMenuItem.Name = "portfolioDefinitionMenuItem";
+            portfolioDefinitionMenuItem.Size = new Size(114, 29);
+            portfolioDefinitionMenuItem.Text = "تعریف سبد";
             // 
             // portfolioManagementMenuItem
             // 
             portfolioManagementMenuItem.Name = "portfolioManagementMenuItem";
             portfolioManagementMenuItem.Size = new Size(122, 29);
             portfolioManagementMenuItem.Text = "مدیریت سبد";
-            // 
-            // settingsMenuItem
-            // 
-            settingsMenuItem.Name = "settingsMenuItem";
-            settingsMenuItem.Size = new Size(94, 29);
-            settingsMenuItem.Text = "تنظیمات";
             // 
             // symbolDefinitionMenuItem
             // 
@@ -827,6 +1035,31 @@ namespace Trade.It
             marketStructureMenuItem.Name = "marketStructureMenuItem";
             marketStructureMenuItem.Size = new Size(129, 29);
             marketStructureMenuItem.Text = "تعریف بازارها";
+            // 
+            // settingsMenuItem
+            // 
+            settingsMenuItem.Name = "settingsMenuItem";
+            settingsMenuItem.Size = new Size(94, 29);
+            settingsMenuItem.Text = "تنظیمات";
+            // 
+            // indicatorContextMenuStrip
+            // 
+            indicatorContextMenuStrip.ImageScalingSize = new Size(24, 24);
+            indicatorContextMenuStrip.Items.AddRange(new ToolStripItem[] { indicatorSettingsMenuItem, indicatorDeleteMenuItem });
+            indicatorContextMenuStrip.Name = "indicatorContextMenuStrip";
+            indicatorContextMenuStrip.Size = new Size(151, 68);
+            // 
+            // indicatorSettingsMenuItem
+            // 
+            indicatorSettingsMenuItem.Name = "indicatorSettingsMenuItem";
+            indicatorSettingsMenuItem.Size = new Size(150, 32);
+            indicatorSettingsMenuItem.Text = "تنظیمات";
+            // 
+            // indicatorDeleteMenuItem
+            // 
+            indicatorDeleteMenuItem.Name = "indicatorDeleteMenuItem";
+            indicatorDeleteMenuItem.Size = new Size(150, 32);
+            indicatorDeleteMenuItem.Text = "حذف";
             // 
             // mainSplitContainer
             // 
@@ -886,7 +1119,7 @@ namespace Trade.It
             // 
             stocksGridCountLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             stocksGridCountLabel.AutoSize = true;
-            stocksGridCountLabel.Location = new Point(149, 743);
+            stocksGridCountLabel.Location = new Point(160, 667);
             stocksGridCountLabel.Name = "stocksGridCountLabel";
             stocksGridCountLabel.RightToLeft = RightToLeft.Yes;
             stocksGridCountLabel.Size = new Size(77, 25);
@@ -908,44 +1141,47 @@ namespace Trade.It
             groupBox2.Controls.Add(deleteButton);
             groupBox2.Controls.Add(newPortfolioButton);
             groupBox2.Controls.Add(navigationSpeedTextBox);
-            groupBox2.Location = new Point(8, 764);
+            groupBox2.Location = new Point(8, 719);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(371, 131);
+            groupBox2.Size = new Size(371, 176);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             // 
-            codalButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            codalButton.Location = new Point(38, 86);
-            codalButton.Name = "codalButton";
-            codalButton.Size = new Size(72, 34);
-            codalButton.TabIndex = 6;
-            codalButton.Text = "کدال";
-            codalButton.UseVisualStyleBackColor = true;
-            codalButton.Click += codalButton_Click;
-            // symbolsPrintButton
-            // 
-            symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            symbolsPrintButton.Location = new Point(202, 86);
-            symbolsPrintButton.Name = "symbolsPrintButton";
-            symbolsPrintButton.Size = new Size(72, 34);
-            symbolsPrintButton.TabIndex = 4;
-            symbolsPrintButton.Text = "پرینت";
-            symbolsPrintButton.UseVisualStyleBackColor = true;
-            // 
             // symbolsExcelButton
             // 
-            symbolsExcelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            symbolsExcelButton.Location = new Point(120, 86);
+            symbolsExcelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            symbolsExcelButton.Location = new Point(157, 131);
             symbolsExcelButton.Name = "symbolsExcelButton";
             symbolsExcelButton.Size = new Size(72, 34);
             symbolsExcelButton.TabIndex = 5;
             symbolsExcelButton.Text = "اکسل";
             symbolsExcelButton.UseVisualStyleBackColor = true;
             // 
+            // codalButton
+            // 
+            codalButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            codalButton.Location = new Point(53, 91);
+            codalButton.Name = "codalButton";
+            codalButton.Size = new Size(72, 34);
+            codalButton.TabIndex = 6;
+            codalButton.Text = "کدال";
+            codalButton.UseVisualStyleBackColor = true;
+            codalButton.Click += codalButton_Click;
+            // 
+            // symbolsPrintButton
+            // 
+            symbolsPrintButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            symbolsPrintButton.Location = new Point(260, 131);
+            symbolsPrintButton.Name = "symbolsPrintButton";
+            symbolsPrintButton.Size = new Size(72, 34);
+            symbolsPrintButton.TabIndex = 4;
+            symbolsPrintButton.Text = "پرینت";
+            symbolsPrintButton.UseVisualStyleBackColor = true;
+            // 
             // navigationButton
             // 
             navigationButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            navigationButton.Location = new Point(243, 18);
+            navigationButton.Location = new Point(243, 21);
             navigationButton.Name = "navigationButton";
             navigationButton.Size = new Size(87, 34);
             navigationButton.TabIndex = 0;
@@ -955,7 +1191,7 @@ namespace Trade.It
             // 
             selectAllCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             selectAllCheckBox.AutoSize = true;
-            selectAllCheckBox.Location = new Point(260, 51);
+            selectAllCheckBox.Location = new Point(260, 54);
             selectAllCheckBox.Name = "selectAllCheckBox";
             selectAllCheckBox.Size = new Size(70, 29);
             selectAllCheckBox.TabIndex = 0;
@@ -965,7 +1201,7 @@ namespace Trade.It
             // 
             selectNoneCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             selectNoneCheckBox.AutoSize = true;
-            selectNoneCheckBox.Location = new Point(53, 51);
+            selectNoneCheckBox.Location = new Point(53, 54);
             selectNoneCheckBox.Name = "selectNoneCheckBox";
             selectNoneCheckBox.Size = new Size(101, 29);
             selectNoneCheckBox.TabIndex = 1;
@@ -975,7 +1211,7 @@ namespace Trade.It
             // 
             speedLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             speedLabel.AutoSize = true;
-            speedLabel.Location = new Point(141, 19);
+            speedLabel.Location = new Point(141, 22);
             speedLabel.Name = "speedLabel";
             speedLabel.Size = new Size(64, 25);
             speedLabel.TabIndex = 2;
@@ -983,8 +1219,8 @@ namespace Trade.It
             // 
             // refreshButton
             // 
-            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            refreshButton.Location = new Point(114, 86);
+            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            refreshButton.Location = new Point(154, 91);
             refreshButton.Name = "refreshButton";
             refreshButton.Size = new Size(75, 34);
             refreshButton.TabIndex = 2;
@@ -993,7 +1229,7 @@ namespace Trade.It
             // deleteButton
             // 
             deleteButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            deleteButton.Location = new Point(24, 86);
+            deleteButton.Location = new Point(53, 131);
             deleteButton.Name = "deleteButton";
             deleteButton.Size = new Size(73, 34);
             deleteButton.TabIndex = 3;
@@ -1002,7 +1238,7 @@ namespace Trade.It
             // newPortfolioButton
             // 
             newPortfolioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            newPortfolioButton.Location = new Point(287, 86);
+            newPortfolioButton.Location = new Point(260, 91);
             newPortfolioButton.Name = "newPortfolioButton";
             newPortfolioButton.Size = new Size(69, 34);
             newPortfolioButton.TabIndex = 1;
@@ -1011,7 +1247,7 @@ namespace Trade.It
             // navigationSpeedTextBox
             // 
             navigationSpeedTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            navigationSpeedTextBox.Location = new Point(53, 18);
+            navigationSpeedTextBox.Location = new Point(53, 21);
             navigationSpeedTextBox.Name = "navigationSpeedTextBox";
             navigationSpeedTextBox.Size = new Size(87, 31);
             navigationSpeedTextBox.TabIndex = 3;
@@ -1031,7 +1267,7 @@ namespace Trade.It
             stocksDataGridView.Name = "stocksDataGridView";
             stocksDataGridView.RowHeadersVisible = false;
             stocksDataGridView.RowHeadersWidth = 62;
-            stocksDataGridView.Size = new Size(368, 648);
+            stocksDataGridView.Size = new Size(368, 580);
             stocksDataGridView.TabIndex = 0;
             // 
             // rowColumn
@@ -1067,13 +1303,12 @@ namespace Trade.It
             // 
             // volumeColumn
             // 
+            dataGridViewCellStyle1.Format = "N0";
+            volumeColumn.DefaultCellStyle = dataGridViewCellStyle1;
             volumeColumn.HeaderText = "حجم";
             volumeColumn.MinimumWidth = 8;
             volumeColumn.Name = "volumeColumn";
             volumeColumn.ReadOnly = true;
-            volumeColumn.ValueType = typeof(double);
-            volumeColumn.Width = 100;
-            volumeColumn.DefaultCellStyle.Format = "N0";
             volumeColumn.Visible = false;
             // 
             // symbolSearchTextBox
@@ -1097,6 +1332,7 @@ namespace Trade.It
             symbolSearchClearButton.UseVisualStyleBackColor = true;
             // 
             // portfolioComboBox
+            // 
             portfolioComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             portfolioComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             portfolioComboBox.Location = new Point(11, 6);
@@ -1725,7 +1961,10 @@ namespace Trade.It
             statusNegativeRadio.Size = new Size(81, 33);
             statusNegativeRadio.TabIndex = 2;
             statusNegativeRadio.Text = "ندارد";
+            // 
             // tabPageFilters2
+            // 
+            tabPageFilters2.AutoScroll = true;
             tabPageFilters2.Controls.Add(filterCountLabel2);
             tabPageFilters2.Controls.Add(clearFiltersButton2);
             tabPageFilters2.Controls.Add(filterApplyButton2);
@@ -1736,7 +1975,6 @@ namespace Trade.It
             tabPageFilters2.Controls.Add(comparison2Group3);
             tabPageFilters2.Controls.Add(comparison2Group2);
             tabPageFilters2.Controls.Add(comparison2Group1);
-            tabPageFilters2.AutoScroll = true;
             tabPageFilters2.Location = new Point(4, 34);
             tabPageFilters2.Name = "tabPageFilters2";
             tabPageFilters2.Padding = new Padding(8);
@@ -1744,108 +1982,355 @@ namespace Trade.It
             tabPageFilters2.Size = new Size(387, 911);
             tabPageFilters2.TabIndex = 2;
             tabPageFilters2.Text = "فیلترها2";
-
-            // comparison2Group1
-            comparison2Group1.Controls.Add(comparison2FirstComboBox1);
-            comparison2Group1.Controls.Add(comparison2OperatorComboBox1);
-            comparison2Group1.Controls.Add(comparison2SecondComboBox1);
-            comparison2Group1.Controls.Add(comparison2FirstOffsetTextBox1);
-            comparison2Group1.Controls.Add(comparison2SecondOffsetTextBox1);
-            comparison2Group1.Controls.Add(comparison2LabelFirst1);
-            comparison2Group1.Controls.Add(comparison2LabelSecond1);
-            comparison2Group1.Controls.Add(comparison2LabelPrice1);
-            comparison2Group1.Dock = DockStyle.Top;
-            comparison2Group1.Name = "comparison2Group1";
-            comparison2Group1.Size = new Size(371, 112);
-            comparison2Group1.TabStop = false;
-            comparison2Group1.Text = "مقایسه قیمت:";
-            comparison2FirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2FirstComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparison2FirstComboBox1.Location = new Point(234, 28);
-            comparison2FirstComboBox1.Name = "comparison2FirstComboBox1";
-            comparison2FirstComboBox1.Size = new Size(75, 33);
-            comparison2OperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2OperatorComboBox1.Items.AddRange(new object[] { "=", ">", "<" });
-            comparison2OperatorComboBox1.Location = new Point(5, 30);
-            comparison2OperatorComboBox1.Name = "comparison2OperatorComboBox1";
-            comparison2OperatorComboBox1.Size = new Size(65, 33);
-            comparison2SecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2SecondComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparison2SecondComboBox1.Location = new Point(234, 68);
-            comparison2SecondComboBox1.Name = "comparison2SecondComboBox1";
-            comparison2SecondComboBox1.Size = new Size(75, 33);
-            comparison2FirstOffsetTextBox1.Location = new Point(164, 29);
-            comparison2FirstOffsetTextBox1.Name = "comparison2FirstOffsetTextBox1";
-            comparison2FirstOffsetTextBox1.Size = new Size(62, 31);
-            comparison2FirstOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
-            comparison2SecondOffsetTextBox1.Location = new Point(164, 69);
-            comparison2SecondOffsetTextBox1.Name = "comparison2SecondOffsetTextBox1";
-            comparison2SecondOffsetTextBox1.Size = new Size(62, 31);
-            comparison2SecondOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
-            comparison2LabelFirst1.AutoSize = true;
-            comparison2LabelFirst1.Location = new Point(72, 31);
-            comparison2LabelFirst1.Name = "comparison2LabelFirst1";
-            comparison2LabelFirst1.Text = "کندل قبل";
-            comparison2LabelSecond1.AutoSize = true;
-            comparison2LabelSecond1.Location = new Point(72, 71);
-            comparison2LabelSecond1.Name = "comparison2LabelSecond1";
-            comparison2LabelSecond1.Text = "کندل قبل";
-            comparison2LabelPrice1.AutoSize = true;
-            comparison2LabelPrice1.Location = new Point(309, 31);
-            comparison2LabelPrice1.Name = "comparison2LabelPrice1";
-            comparison2LabelPrice1.Text = "قیمت";
-
-            // comparison2Group2
-            comparison2Group2.Controls.Add(comparison2FirstComboBox2);
-            comparison2Group2.Controls.Add(comparison2OperatorComboBox2);
-            comparison2Group2.Controls.Add(comparison2SecondComboBox2);
-            comparison2Group2.Controls.Add(comparison2FirstOffsetTextBox2);
-            comparison2Group2.Controls.Add(comparison2SecondOffsetTextBox2);
-            comparison2Group2.Controls.Add(comparison2LabelFirst2);
-            comparison2Group2.Controls.Add(comparison2LabelSecond2);
-            comparison2Group2.Controls.Add(comparison2LabelPrice2);
-            comparison2Group2.Dock = DockStyle.Top;
-            comparison2Group2.Name = "comparison2Group2";
-            comparison2Group2.Size = new Size(371, 112);
-            comparison2Group2.TabStop = false;
-            comparison2Group2.Text = "مقایسه قیمت:";
-            comparison2FirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2FirstComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparison2FirstComboBox2.Location = new Point(234, 28);
-            comparison2FirstComboBox2.Name = "comparison2FirstComboBox2";
-            comparison2FirstComboBox2.Size = new Size(75, 33);
-            comparison2OperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2OperatorComboBox2.Items.AddRange(new object[] { "=", ">", "<" });
-            comparison2OperatorComboBox2.Location = new Point(5, 30);
-            comparison2OperatorComboBox2.Name = "comparison2OperatorComboBox2";
-            comparison2OperatorComboBox2.Size = new Size(65, 33);
-            comparison2SecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparison2SecondComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparison2SecondComboBox2.Location = new Point(234, 68);
-            comparison2SecondComboBox2.Name = "comparison2SecondComboBox2";
-            comparison2SecondComboBox2.Size = new Size(75, 33);
-            comparison2FirstOffsetTextBox2.Location = new Point(164, 29);
-            comparison2FirstOffsetTextBox2.Name = "comparison2FirstOffsetTextBox2";
-            comparison2FirstOffsetTextBox2.Size = new Size(62, 31);
-            comparison2FirstOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
-            comparison2SecondOffsetTextBox2.Location = new Point(164, 69);
-            comparison2SecondOffsetTextBox2.Name = "comparison2SecondOffsetTextBox2";
-            comparison2SecondOffsetTextBox2.Size = new Size(62, 31);
-            comparison2SecondOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
-            comparison2LabelFirst2.AutoSize = true;
-            comparison2LabelFirst2.Location = new Point(72, 31);
-            comparison2LabelFirst2.Name = "comparison2LabelFirst2";
-            comparison2LabelFirst2.Text = "کندل قبل";
-            comparison2LabelSecond2.AutoSize = true;
-            comparison2LabelSecond2.Location = new Point(72, 71);
-            comparison2LabelSecond2.Name = "comparison2LabelSecond2";
-            comparison2LabelSecond2.Text = "کندل قبل";
-            comparison2LabelPrice2.AutoSize = true;
-            comparison2LabelPrice2.Location = new Point(309, 31);
-            comparison2LabelPrice2.Name = "comparison2LabelPrice2";
-            comparison2LabelPrice2.Text = "قیمت";
-
+            // 
+            // filterCountLabel2
+            // 
+            filterCountLabel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            filterCountLabel2.Location = new Point(74, 868);
+            filterCountLabel2.Name = "filterCountLabel2";
+            filterCountLabel2.Size = new Size(237, 36);
+            filterCountLabel2.TabIndex = 11;
+            filterCountLabel2.Text = "کل: ۰    پیدا شده: ۰";
+            filterCountLabel2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // clearFiltersButton2
+            // 
+            clearFiltersButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            clearFiltersButton2.Location = new Point(8, 868);
+            clearFiltersButton2.Name = "clearFiltersButton2";
+            clearFiltersButton2.Size = new Size(60, 36);
+            clearFiltersButton2.TabIndex = 9;
+            clearFiltersButton2.Text = "پاک";
+            clearFiltersButton2.UseVisualStyleBackColor = true;
+            // 
+            // filterApplyButton2
+            // 
+            filterApplyButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            filterApplyButton2.Location = new Point(301, 868);
+            filterApplyButton2.Name = "filterApplyButton2";
+            filterApplyButton2.Size = new Size(78, 36);
+            filterApplyButton2.TabIndex = 10;
+            filterApplyButton2.Text = "تایید";
+            filterApplyButton2.UseVisualStyleBackColor = true;
+            // 
+            // comparisonRangeGroup4
+            // 
+            comparisonRangeGroup4.Controls.Add(comparisonRangeFirstComboBox4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeOperatorComboBox4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeSecondComboBox4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeOffsetTextBox4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelPrice4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelLatest4);
+            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelPrior4);
+            comparisonRangeGroup4.Dock = DockStyle.Top;
+            comparisonRangeGroup4.Location = new Point(8, 680);
+            comparisonRangeGroup4.Name = "comparisonRangeGroup4";
+            comparisonRangeGroup4.Size = new Size(371, 112);
+            comparisonRangeGroup4.TabIndex = 12;
+            comparisonRangeGroup4.TabStop = false;
+            comparisonRangeGroup4.Text = "مقایسه قیمت بازه";
+            // 
+            // comparisonRangeFirstComboBox4
+            // 
+            comparisonRangeFirstComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeFirstComboBox4.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeFirstComboBox4.Location = new Point(234, 28);
+            comparisonRangeFirstComboBox4.Name = "comparisonRangeFirstComboBox4";
+            comparisonRangeFirstComboBox4.Size = new Size(75, 33);
+            comparisonRangeFirstComboBox4.TabIndex = 0;
+            // 
+            // comparisonRangeOperatorComboBox4
+            // 
+            comparisonRangeOperatorComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeOperatorComboBox4.Items.AddRange(new object[] { "=", ">", "<" });
+            comparisonRangeOperatorComboBox4.Location = new Point(5, 30);
+            comparisonRangeOperatorComboBox4.Name = "comparisonRangeOperatorComboBox4";
+            comparisonRangeOperatorComboBox4.Size = new Size(65, 33);
+            comparisonRangeOperatorComboBox4.TabIndex = 1;
+            // 
+            // comparisonRangeSecondComboBox4
+            // 
+            comparisonRangeSecondComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeSecondComboBox4.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeSecondComboBox4.Location = new Point(234, 68);
+            comparisonRangeSecondComboBox4.Name = "comparisonRangeSecondComboBox4";
+            comparisonRangeSecondComboBox4.Size = new Size(75, 33);
+            comparisonRangeSecondComboBox4.TabIndex = 2;
+            // 
+            // comparisonRangeOffsetTextBox4
+            // 
+            comparisonRangeOffsetTextBox4.Location = new Point(164, 69);
+            comparisonRangeOffsetTextBox4.Name = "comparisonRangeOffsetTextBox4";
+            comparisonRangeOffsetTextBox4.Size = new Size(62, 31);
+            comparisonRangeOffsetTextBox4.TabIndex = 3;
+            comparisonRangeOffsetTextBox4.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparisonRangeLabelPrice4
+            // 
+            comparisonRangeLabelPrice4.AutoSize = true;
+            comparisonRangeLabelPrice4.Location = new Point(309, 31);
+            comparisonRangeLabelPrice4.Name = "comparisonRangeLabelPrice4";
+            comparisonRangeLabelPrice4.Size = new Size(55, 25);
+            comparisonRangeLabelPrice4.TabIndex = 4;
+            comparisonRangeLabelPrice4.Text = "قیمت";
+            // 
+            // comparisonRangeLabelLatest4
+            // 
+            comparisonRangeLabelLatest4.AutoSize = true;
+            comparisonRangeLabelLatest4.Location = new Point(72, 31);
+            comparisonRangeLabelLatest4.Name = "comparisonRangeLabelLatest4";
+            comparisonRangeLabelLatest4.Size = new Size(97, 25);
+            comparisonRangeLabelLatest4.TabIndex = 5;
+            comparisonRangeLabelLatest4.Text = "آخرین کندل";
+            // 
+            // comparisonRangeLabelPrior4
+            // 
+            comparisonRangeLabelPrior4.AutoSize = true;
+            comparisonRangeLabelPrior4.Location = new Point(72, 71);
+            comparisonRangeLabelPrior4.Name = "comparisonRangeLabelPrior4";
+            comparisonRangeLabelPrior4.Size = new Size(80, 25);
+            comparisonRangeLabelPrior4.TabIndex = 6;
+            comparisonRangeLabelPrior4.Text = "کندل قبل";
+            // 
+            // comparisonRangeGroup3
+            // 
+            comparisonRangeGroup3.Controls.Add(comparisonRangeFirstComboBox3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeOperatorComboBox3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeSecondComboBox3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeOffsetTextBox3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelPrice3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelLatest3);
+            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelPrior3);
+            comparisonRangeGroup3.Dock = DockStyle.Top;
+            comparisonRangeGroup3.Location = new Point(8, 568);
+            comparisonRangeGroup3.Name = "comparisonRangeGroup3";
+            comparisonRangeGroup3.Size = new Size(371, 112);
+            comparisonRangeGroup3.TabIndex = 13;
+            comparisonRangeGroup3.TabStop = false;
+            comparisonRangeGroup3.Text = "مقایسه قیمت بازه";
+            // 
+            // comparisonRangeFirstComboBox3
+            // 
+            comparisonRangeFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeFirstComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeFirstComboBox3.Location = new Point(234, 28);
+            comparisonRangeFirstComboBox3.Name = "comparisonRangeFirstComboBox3";
+            comparisonRangeFirstComboBox3.Size = new Size(75, 33);
+            comparisonRangeFirstComboBox3.TabIndex = 0;
+            // 
+            // comparisonRangeOperatorComboBox3
+            // 
+            comparisonRangeOperatorComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeOperatorComboBox3.Items.AddRange(new object[] { "=", ">", "<" });
+            comparisonRangeOperatorComboBox3.Location = new Point(5, 30);
+            comparisonRangeOperatorComboBox3.Name = "comparisonRangeOperatorComboBox3";
+            comparisonRangeOperatorComboBox3.Size = new Size(65, 33);
+            comparisonRangeOperatorComboBox3.TabIndex = 1;
+            // 
+            // comparisonRangeSecondComboBox3
+            // 
+            comparisonRangeSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeSecondComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeSecondComboBox3.Location = new Point(234, 68);
+            comparisonRangeSecondComboBox3.Name = "comparisonRangeSecondComboBox3";
+            comparisonRangeSecondComboBox3.Size = new Size(75, 33);
+            comparisonRangeSecondComboBox3.TabIndex = 2;
+            // 
+            // comparisonRangeOffsetTextBox3
+            // 
+            comparisonRangeOffsetTextBox3.Location = new Point(164, 69);
+            comparisonRangeOffsetTextBox3.Name = "comparisonRangeOffsetTextBox3";
+            comparisonRangeOffsetTextBox3.Size = new Size(62, 31);
+            comparisonRangeOffsetTextBox3.TabIndex = 3;
+            comparisonRangeOffsetTextBox3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparisonRangeLabelPrice3
+            // 
+            comparisonRangeLabelPrice3.AutoSize = true;
+            comparisonRangeLabelPrice3.Location = new Point(309, 31);
+            comparisonRangeLabelPrice3.Name = "comparisonRangeLabelPrice3";
+            comparisonRangeLabelPrice3.Size = new Size(55, 25);
+            comparisonRangeLabelPrice3.TabIndex = 4;
+            comparisonRangeLabelPrice3.Text = "قیمت";
+            // 
+            // comparisonRangeLabelLatest3
+            // 
+            comparisonRangeLabelLatest3.AutoSize = true;
+            comparisonRangeLabelLatest3.Location = new Point(72, 31);
+            comparisonRangeLabelLatest3.Name = "comparisonRangeLabelLatest3";
+            comparisonRangeLabelLatest3.Size = new Size(97, 25);
+            comparisonRangeLabelLatest3.TabIndex = 5;
+            comparisonRangeLabelLatest3.Text = "آخرین کندل";
+            // 
+            // comparisonRangeLabelPrior3
+            // 
+            comparisonRangeLabelPrior3.AutoSize = true;
+            comparisonRangeLabelPrior3.Location = new Point(72, 71);
+            comparisonRangeLabelPrior3.Name = "comparisonRangeLabelPrior3";
+            comparisonRangeLabelPrior3.Size = new Size(80, 25);
+            comparisonRangeLabelPrior3.TabIndex = 6;
+            comparisonRangeLabelPrior3.Text = "کندل قبل";
+            // 
+            // comparisonRangeGroup2
+            // 
+            comparisonRangeGroup2.Controls.Add(comparisonRangeFirstComboBox2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeOperatorComboBox2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeSecondComboBox2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeOffsetTextBox2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelPrice2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelLatest2);
+            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelPrior2);
+            comparisonRangeGroup2.Dock = DockStyle.Top;
+            comparisonRangeGroup2.Location = new Point(8, 456);
+            comparisonRangeGroup2.Name = "comparisonRangeGroup2";
+            comparisonRangeGroup2.Size = new Size(371, 112);
+            comparisonRangeGroup2.TabIndex = 14;
+            comparisonRangeGroup2.TabStop = false;
+            comparisonRangeGroup2.Text = "مقایسه قیمت بازه";
+            // 
+            // comparisonRangeFirstComboBox2
+            // 
+            comparisonRangeFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeFirstComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeFirstComboBox2.Location = new Point(234, 28);
+            comparisonRangeFirstComboBox2.Name = "comparisonRangeFirstComboBox2";
+            comparisonRangeFirstComboBox2.Size = new Size(75, 33);
+            comparisonRangeFirstComboBox2.TabIndex = 0;
+            // 
+            // comparisonRangeOperatorComboBox2
+            // 
+            comparisonRangeOperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeOperatorComboBox2.Items.AddRange(new object[] { "=", ">", "<" });
+            comparisonRangeOperatorComboBox2.Location = new Point(5, 30);
+            comparisonRangeOperatorComboBox2.Name = "comparisonRangeOperatorComboBox2";
+            comparisonRangeOperatorComboBox2.Size = new Size(65, 33);
+            comparisonRangeOperatorComboBox2.TabIndex = 1;
+            // 
+            // comparisonRangeSecondComboBox2
+            // 
+            comparisonRangeSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeSecondComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeSecondComboBox2.Location = new Point(234, 68);
+            comparisonRangeSecondComboBox2.Name = "comparisonRangeSecondComboBox2";
+            comparisonRangeSecondComboBox2.Size = new Size(75, 33);
+            comparisonRangeSecondComboBox2.TabIndex = 2;
+            // 
+            // comparisonRangeOffsetTextBox2
+            // 
+            comparisonRangeOffsetTextBox2.Location = new Point(164, 69);
+            comparisonRangeOffsetTextBox2.Name = "comparisonRangeOffsetTextBox2";
+            comparisonRangeOffsetTextBox2.Size = new Size(62, 31);
+            comparisonRangeOffsetTextBox2.TabIndex = 3;
+            comparisonRangeOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparisonRangeLabelPrice2
+            // 
+            comparisonRangeLabelPrice2.AutoSize = true;
+            comparisonRangeLabelPrice2.Location = new Point(309, 31);
+            comparisonRangeLabelPrice2.Name = "comparisonRangeLabelPrice2";
+            comparisonRangeLabelPrice2.Size = new Size(55, 25);
+            comparisonRangeLabelPrice2.TabIndex = 4;
+            comparisonRangeLabelPrice2.Text = "قیمت";
+            // 
+            // comparisonRangeLabelLatest2
+            // 
+            comparisonRangeLabelLatest2.AutoSize = true;
+            comparisonRangeLabelLatest2.Location = new Point(72, 31);
+            comparisonRangeLabelLatest2.Name = "comparisonRangeLabelLatest2";
+            comparisonRangeLabelLatest2.Size = new Size(97, 25);
+            comparisonRangeLabelLatest2.TabIndex = 5;
+            comparisonRangeLabelLatest2.Text = "آخرین کندل";
+            // 
+            // comparisonRangeLabelPrior2
+            // 
+            comparisonRangeLabelPrior2.AutoSize = true;
+            comparisonRangeLabelPrior2.Location = new Point(72, 71);
+            comparisonRangeLabelPrior2.Name = "comparisonRangeLabelPrior2";
+            comparisonRangeLabelPrior2.Size = new Size(80, 25);
+            comparisonRangeLabelPrior2.TabIndex = 6;
+            comparisonRangeLabelPrior2.Text = "کندل قبل";
+            // 
+            // comparisonRangeGroup1
+            // 
+            comparisonRangeGroup1.Controls.Add(comparisonRangeFirstComboBox1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeOperatorComboBox1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeSecondComboBox1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeOffsetTextBox1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelPrice1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelLatest1);
+            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelPrior1);
+            comparisonRangeGroup1.Dock = DockStyle.Top;
+            comparisonRangeGroup1.Location = new Point(8, 344);
+            comparisonRangeGroup1.Name = "comparisonRangeGroup1";
+            comparisonRangeGroup1.Size = new Size(371, 112);
+            comparisonRangeGroup1.TabIndex = 15;
+            comparisonRangeGroup1.TabStop = false;
+            comparisonRangeGroup1.Text = "مقایسه قیمت بازه";
+            // 
+            // comparisonRangeFirstComboBox1
+            // 
+            comparisonRangeFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeFirstComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeFirstComboBox1.Location = new Point(234, 28);
+            comparisonRangeFirstComboBox1.Name = "comparisonRangeFirstComboBox1";
+            comparisonRangeFirstComboBox1.Size = new Size(75, 33);
+            comparisonRangeFirstComboBox1.TabIndex = 0;
+            // 
+            // comparisonRangeOperatorComboBox1
+            // 
+            comparisonRangeOperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeOperatorComboBox1.Items.AddRange(new object[] { "=", ">", "<" });
+            comparisonRangeOperatorComboBox1.Location = new Point(5, 30);
+            comparisonRangeOperatorComboBox1.Name = "comparisonRangeOperatorComboBox1";
+            comparisonRangeOperatorComboBox1.Size = new Size(65, 33);
+            comparisonRangeOperatorComboBox1.TabIndex = 1;
+            // 
+            // comparisonRangeSecondComboBox1
+            // 
+            comparisonRangeSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparisonRangeSecondComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparisonRangeSecondComboBox1.Location = new Point(234, 68);
+            comparisonRangeSecondComboBox1.Name = "comparisonRangeSecondComboBox1";
+            comparisonRangeSecondComboBox1.Size = new Size(75, 33);
+            comparisonRangeSecondComboBox1.TabIndex = 2;
+            // 
+            // comparisonRangeOffsetTextBox1
+            // 
+            comparisonRangeOffsetTextBox1.Location = new Point(164, 69);
+            comparisonRangeOffsetTextBox1.Name = "comparisonRangeOffsetTextBox1";
+            comparisonRangeOffsetTextBox1.Size = new Size(62, 31);
+            comparisonRangeOffsetTextBox1.TabIndex = 3;
+            comparisonRangeOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparisonRangeLabelPrice1
+            // 
+            comparisonRangeLabelPrice1.AutoSize = true;
+            comparisonRangeLabelPrice1.Location = new Point(309, 31);
+            comparisonRangeLabelPrice1.Name = "comparisonRangeLabelPrice1";
+            comparisonRangeLabelPrice1.Size = new Size(55, 25);
+            comparisonRangeLabelPrice1.TabIndex = 4;
+            comparisonRangeLabelPrice1.Text = "قیمت";
+            // 
+            // comparisonRangeLabelLatest1
+            // 
+            comparisonRangeLabelLatest1.AutoSize = true;
+            comparisonRangeLabelLatest1.Location = new Point(72, 31);
+            comparisonRangeLabelLatest1.Name = "comparisonRangeLabelLatest1";
+            comparisonRangeLabelLatest1.Size = new Size(97, 25);
+            comparisonRangeLabelLatest1.TabIndex = 5;
+            comparisonRangeLabelLatest1.Text = "آخرین کندل";
+            // 
+            // comparisonRangeLabelPrior1
+            // 
+            comparisonRangeLabelPrior1.AutoSize = true;
+            comparisonRangeLabelPrior1.Location = new Point(72, 71);
+            comparisonRangeLabelPrior1.Name = "comparisonRangeLabelPrior1";
+            comparisonRangeLabelPrior1.Size = new Size(80, 25);
+            comparisonRangeLabelPrior1.TabIndex = 6;
+            comparisonRangeLabelPrior1.Text = "کندل قبل";
+            // 
             // comparison2Group3
+            // 
             comparison2Group3.Controls.Add(comparison2FirstComboBox3);
             comparison2Group3.Controls.Add(comparison2OperatorComboBox3);
             comparison2Group3.Controls.Add(comparison2SecondComboBox3);
@@ -1855,316 +2340,347 @@ namespace Trade.It
             comparison2Group3.Controls.Add(comparison2LabelSecond3);
             comparison2Group3.Controls.Add(comparison2LabelPrice3);
             comparison2Group3.Dock = DockStyle.Top;
+            comparison2Group3.Location = new Point(8, 232);
             comparison2Group3.Name = "comparison2Group3";
             comparison2Group3.Size = new Size(371, 112);
+            comparison2Group3.TabIndex = 16;
             comparison2Group3.TabStop = false;
             comparison2Group3.Text = "مقایسه قیمت:";
+            // 
+            // comparison2FirstComboBox3
+            // 
             comparison2FirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparison2FirstComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
             comparison2FirstComboBox3.Location = new Point(234, 28);
             comparison2FirstComboBox3.Name = "comparison2FirstComboBox3";
             comparison2FirstComboBox3.Size = new Size(75, 33);
+            comparison2FirstComboBox3.TabIndex = 0;
+            // 
+            // comparison2OperatorComboBox3
+            // 
             comparison2OperatorComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparison2OperatorComboBox3.Items.AddRange(new object[] { "=", ">", "<" });
             comparison2OperatorComboBox3.Location = new Point(5, 30);
             comparison2OperatorComboBox3.Name = "comparison2OperatorComboBox3";
             comparison2OperatorComboBox3.Size = new Size(65, 33);
+            comparison2OperatorComboBox3.TabIndex = 1;
+            // 
+            // comparison2SecondComboBox3
+            // 
             comparison2SecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
             comparison2SecondComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
             comparison2SecondComboBox3.Location = new Point(234, 68);
             comparison2SecondComboBox3.Name = "comparison2SecondComboBox3";
             comparison2SecondComboBox3.Size = new Size(75, 33);
+            comparison2SecondComboBox3.TabIndex = 2;
+            // 
+            // comparison2FirstOffsetTextBox3
+            // 
             comparison2FirstOffsetTextBox3.Location = new Point(164, 29);
             comparison2FirstOffsetTextBox3.Name = "comparison2FirstOffsetTextBox3";
             comparison2FirstOffsetTextBox3.Size = new Size(62, 31);
+            comparison2FirstOffsetTextBox3.TabIndex = 3;
             comparison2FirstOffsetTextBox3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2SecondOffsetTextBox3
+            // 
             comparison2SecondOffsetTextBox3.Location = new Point(164, 69);
             comparison2SecondOffsetTextBox3.Name = "comparison2SecondOffsetTextBox3";
             comparison2SecondOffsetTextBox3.Size = new Size(62, 31);
+            comparison2SecondOffsetTextBox3.TabIndex = 4;
             comparison2SecondOffsetTextBox3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2LabelFirst3
+            // 
             comparison2LabelFirst3.AutoSize = true;
             comparison2LabelFirst3.Location = new Point(72, 31);
             comparison2LabelFirst3.Name = "comparison2LabelFirst3";
+            comparison2LabelFirst3.Size = new Size(80, 25);
+            comparison2LabelFirst3.TabIndex = 5;
             comparison2LabelFirst3.Text = "کندل قبل";
+            // 
+            // comparison2LabelSecond3
+            // 
             comparison2LabelSecond3.AutoSize = true;
             comparison2LabelSecond3.Location = new Point(72, 71);
             comparison2LabelSecond3.Name = "comparison2LabelSecond3";
+            comparison2LabelSecond3.Size = new Size(80, 25);
+            comparison2LabelSecond3.TabIndex = 6;
             comparison2LabelSecond3.Text = "کندل قبل";
+            // 
+            // comparison2LabelPrice3
+            // 
             comparison2LabelPrice3.AutoSize = true;
             comparison2LabelPrice3.Location = new Point(309, 31);
             comparison2LabelPrice3.Name = "comparison2LabelPrice3";
+            comparison2LabelPrice3.Size = new Size(55, 25);
+            comparison2LabelPrice3.TabIndex = 7;
             comparison2LabelPrice3.Text = "قیمت";
-
-            // comparisonRangeGroup1
-            comparisonRangeGroup1.Controls.Add(comparisonRangeFirstComboBox1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeOperatorComboBox1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeSecondComboBox1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeOffsetTextBox1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelPrice1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelLatest1);
-            comparisonRangeGroup1.Controls.Add(comparisonRangeLabelPrior1);
-            comparisonRangeGroup1.Dock = DockStyle.Top;
-            comparisonRangeGroup1.Name = "comparisonRangeGroup1";
-            comparisonRangeGroup1.Size = new Size(371, 112);
-            comparisonRangeGroup1.TabStop = false;
-            comparisonRangeGroup1.Text = "مقایسه قیمت بازه";
-            comparisonRangeFirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeFirstComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeFirstComboBox1.Location = new Point(234, 28);
-            comparisonRangeFirstComboBox1.Name = "comparisonRangeFirstComboBox1";
-            comparisonRangeFirstComboBox1.Size = new Size(75, 33);
-            comparisonRangeOperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeOperatorComboBox1.Items.AddRange(new object[] { "=", ">", "<" });
-            comparisonRangeOperatorComboBox1.Location = new Point(5, 30);
-            comparisonRangeOperatorComboBox1.Name = "comparisonRangeOperatorComboBox1";
-            comparisonRangeOperatorComboBox1.Size = new Size(65, 33);
-            comparisonRangeSecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeSecondComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeSecondComboBox1.Location = new Point(234, 68);
-            comparisonRangeSecondComboBox1.Name = "comparisonRangeSecondComboBox1";
-            comparisonRangeSecondComboBox1.Size = new Size(75, 33);
-            comparisonRangeOffsetTextBox1.Location = new Point(164, 69);
-            comparisonRangeOffsetTextBox1.Name = "comparisonRangeOffsetTextBox1";
-            comparisonRangeOffsetTextBox1.Size = new Size(62, 31);
-            comparisonRangeOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
-            comparisonRangeLabelPrice1.AutoSize = true;
-            comparisonRangeLabelPrice1.Location = new Point(309, 31);
-            comparisonRangeLabelPrice1.Name = "comparisonRangeLabelPrice1";
-            comparisonRangeLabelPrice1.Text = "قیمت";
-            comparisonRangeLabelLatest1.AutoSize = true;
-            comparisonRangeLabelLatest1.Location = new Point(72, 31);
-            comparisonRangeLabelLatest1.Name = "comparisonRangeLabelLatest1";
-            comparisonRangeLabelLatest1.Text = "آخرین کندل";
-            comparisonRangeLabelPrior1.AutoSize = true;
-            comparisonRangeLabelPrior1.Location = new Point(72, 71);
-            comparisonRangeLabelPrior1.Name = "comparisonRangeLabelPrior1";
-            comparisonRangeLabelPrior1.Text = "کندل قبل";
-
-            // comparisonRangeGroup2
-            comparisonRangeGroup2.Controls.Add(comparisonRangeFirstComboBox2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeOperatorComboBox2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeSecondComboBox2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeOffsetTextBox2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelPrice2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelLatest2);
-            comparisonRangeGroup2.Controls.Add(comparisonRangeLabelPrior2);
-            comparisonRangeGroup2.Dock = DockStyle.Top;
-            comparisonRangeGroup2.Name = "comparisonRangeGroup2";
-            comparisonRangeGroup2.Size = new Size(371, 112);
-            comparisonRangeGroup2.TabStop = false;
-            comparisonRangeGroup2.Text = "مقایسه قیمت بازه";
-            comparisonRangeFirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeFirstComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeFirstComboBox2.Location = new Point(234, 28);
-            comparisonRangeFirstComboBox2.Name = "comparisonRangeFirstComboBox2";
-            comparisonRangeFirstComboBox2.Size = new Size(75, 33);
-            comparisonRangeOperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeOperatorComboBox2.Items.AddRange(new object[] { "=", ">", "<" });
-            comparisonRangeOperatorComboBox2.Location = new Point(5, 30);
-            comparisonRangeOperatorComboBox2.Name = "comparisonRangeOperatorComboBox2";
-            comparisonRangeOperatorComboBox2.Size = new Size(65, 33);
-            comparisonRangeSecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeSecondComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeSecondComboBox2.Location = new Point(234, 68);
-            comparisonRangeSecondComboBox2.Name = "comparisonRangeSecondComboBox2";
-            comparisonRangeSecondComboBox2.Size = new Size(75, 33);
-            comparisonRangeOffsetTextBox2.Location = new Point(164, 69);
-            comparisonRangeOffsetTextBox2.Name = "comparisonRangeOffsetTextBox2";
-            comparisonRangeOffsetTextBox2.Size = new Size(62, 31);
-            comparisonRangeOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
-            comparisonRangeLabelPrice2.AutoSize = true;
-            comparisonRangeLabelPrice2.Location = new Point(309, 31);
-            comparisonRangeLabelPrice2.Name = "comparisonRangeLabelPrice2";
-            comparisonRangeLabelPrice2.Text = "قیمت";
-            comparisonRangeLabelLatest2.AutoSize = true;
-            comparisonRangeLabelLatest2.Location = new Point(72, 31);
-            comparisonRangeLabelLatest2.Name = "comparisonRangeLabelLatest2";
-            comparisonRangeLabelLatest2.Text = "آخرین کندل";
-            comparisonRangeLabelPrior2.AutoSize = true;
-            comparisonRangeLabelPrior2.Location = new Point(72, 71);
-            comparisonRangeLabelPrior2.Name = "comparisonRangeLabelPrior2";
-            comparisonRangeLabelPrior2.Text = "کندل قبل";
-
-            // filterApplyButton2
-            filterApplyButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            filterApplyButton2.Location = new Point(301, 868);
-            filterApplyButton2.Name = "filterApplyButton2";
-            filterApplyButton2.Size = new Size(78, 36);
-            filterApplyButton2.TabIndex = 10;
-            filterApplyButton2.Text = "تایید";
-            filterApplyButton2.UseVisualStyleBackColor = true;
-            // comparisonRangeGroup3
-            comparisonRangeGroup3.Controls.Add(comparisonRangeFirstComboBox3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeOperatorComboBox3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeSecondComboBox3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeOffsetTextBox3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelPrice3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelLatest3);
-            comparisonRangeGroup3.Controls.Add(comparisonRangeLabelPrior3);
-            comparisonRangeGroup3.Dock = DockStyle.Top;
-            comparisonRangeGroup3.Name = "comparisonRangeGroup3";
-            comparisonRangeGroup3.Size = new Size(371, 112);
-            comparisonRangeGroup3.TabStop = false;
-            comparisonRangeGroup3.Text = "مقایسه قیمت بازه";
-            comparisonRangeFirstComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeFirstComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeFirstComboBox3.Location = new Point(234, 28);
-            comparisonRangeFirstComboBox3.Name = "comparisonRangeFirstComboBox3";
-            comparisonRangeFirstComboBox3.Size = new Size(75, 33);
-            comparisonRangeOperatorComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeOperatorComboBox3.Items.AddRange(new object[] { "=", ">", "<" });
-            comparisonRangeOperatorComboBox3.Location = new Point(5, 30);
-            comparisonRangeOperatorComboBox3.Name = "comparisonRangeOperatorComboBox3";
-            comparisonRangeOperatorComboBox3.Size = new Size(65, 33);
-            comparisonRangeSecondComboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeSecondComboBox3.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeSecondComboBox3.Location = new Point(234, 68);
-            comparisonRangeSecondComboBox3.Name = "comparisonRangeSecondComboBox3";
-            comparisonRangeSecondComboBox3.Size = new Size(75, 33);
-            comparisonRangeOffsetTextBox3.Location = new Point(164, 69);
-            comparisonRangeOffsetTextBox3.Name = "comparisonRangeOffsetTextBox3";
-            comparisonRangeOffsetTextBox3.Size = new Size(62, 31);
-            comparisonRangeOffsetTextBox3.TextAlign = HorizontalAlignment.Center;
-            comparisonRangeLabelPrice3.AutoSize = true;
-            comparisonRangeLabelPrice3.Location = new Point(309, 31);
-            comparisonRangeLabelPrice3.Name = "comparisonRangeLabelPrice3";
-            comparisonRangeLabelPrice3.Text = "قیمت";
-            comparisonRangeLabelLatest3.AutoSize = true;
-            comparisonRangeLabelLatest3.Location = new Point(72, 31);
-            comparisonRangeLabelLatest3.Name = "comparisonRangeLabelLatest3";
-            comparisonRangeLabelLatest3.Text = "آخرین کندل";
-            comparisonRangeLabelPrior3.AutoSize = true;
-            comparisonRangeLabelPrior3.Location = new Point(72, 71);
-            comparisonRangeLabelPrior3.Name = "comparisonRangeLabelPrior3";
-            comparisonRangeLabelPrior3.Text = "کندل قبل";
-
-            // filterApplyButton2
-            filterApplyButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            filterApplyButton2.Location = new Point(301, 868);
-            filterApplyButton2.Name = "filterApplyButton2";
-            filterApplyButton2.Size = new Size(78, 36);
-            filterApplyButton2.TabIndex = 10;
-            filterApplyButton2.Text = "تایید";
-            filterApplyButton2.UseVisualStyleBackColor = true;
-
-            // comparisonRangeGroup4
-            comparisonRangeGroup4.Controls.Add(comparisonRangeFirstComboBox4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeOperatorComboBox4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeSecondComboBox4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeOffsetTextBox4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelPrice4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelLatest4);
-            comparisonRangeGroup4.Controls.Add(comparisonRangeLabelPrior4);
-            comparisonRangeGroup4.Dock = DockStyle.Top;
-            comparisonRangeGroup4.Name = "comparisonRangeGroup4";
-            comparisonRangeGroup4.Size = new Size(371, 112);
-            comparisonRangeGroup4.TabStop = false;
-            comparisonRangeGroup4.Text = "مقایسه قیمت بازه";
-            comparisonRangeFirstComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeFirstComboBox4.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeFirstComboBox4.Location = new Point(234, 28);
-            comparisonRangeFirstComboBox4.Name = "comparisonRangeFirstComboBox4";
-            comparisonRangeFirstComboBox4.Size = new Size(75, 33);
-            comparisonRangeOperatorComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeOperatorComboBox4.Items.AddRange(new object[] { "=", ">", "<" });
-            comparisonRangeOperatorComboBox4.Location = new Point(5, 30);
-            comparisonRangeOperatorComboBox4.Name = "comparisonRangeOperatorComboBox4";
-            comparisonRangeOperatorComboBox4.Size = new Size(65, 33);
-            comparisonRangeSecondComboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
-            comparisonRangeSecondComboBox4.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
-            comparisonRangeSecondComboBox4.Location = new Point(234, 68);
-            comparisonRangeSecondComboBox4.Name = "comparisonRangeSecondComboBox4";
-            comparisonRangeSecondComboBox4.Size = new Size(75, 33);
-            comparisonRangeOffsetTextBox4.Location = new Point(164, 69);
-            comparisonRangeOffsetTextBox4.Name = "comparisonRangeOffsetTextBox4";
-            comparisonRangeOffsetTextBox4.Size = new Size(62, 31);
-            comparisonRangeOffsetTextBox4.TextAlign = HorizontalAlignment.Center;
-            comparisonRangeLabelPrice4.AutoSize = true;
-            comparisonRangeLabelPrice4.Location = new Point(309, 31);
-            comparisonRangeLabelPrice4.Name = "comparisonRangeLabelPrice4";
-            comparisonRangeLabelPrice4.Text = "قیمت";
-            comparisonRangeLabelLatest4.AutoSize = true;
-            comparisonRangeLabelLatest4.Location = new Point(72, 31);
-            comparisonRangeLabelLatest4.Name = "comparisonRangeLabelLatest4";
-            comparisonRangeLabelLatest4.Text = "آخرین کندل";
-            comparisonRangeLabelPrior4.AutoSize = true;
-            comparisonRangeLabelPrior4.Location = new Point(72, 71);
-            comparisonRangeLabelPrior4.Name = "comparisonRangeLabelPrior4";
-            comparisonRangeLabelPrior4.Text = "کندل قبل";
-
-            // filterApplyButton2
-            filterApplyButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            filterApplyButton2.Location = new Point(301, 868);
-            filterApplyButton2.Name = "filterApplyButton2";
-            filterApplyButton2.Size = new Size(78, 36);
-            filterApplyButton2.TabIndex = 10;
-            filterApplyButton2.Text = "تایید";
-            filterApplyButton2.UseVisualStyleBackColor = true;
-            // clearFiltersButton2
-            clearFiltersButton2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            clearFiltersButton2.Location = new Point(8, 868);
-            clearFiltersButton2.Name = "clearFiltersButton2";
-            clearFiltersButton2.Size = new Size(60, 36);
-            clearFiltersButton2.TabIndex = 9;
-            clearFiltersButton2.Text = "پاک";
-            clearFiltersButton2.UseVisualStyleBackColor = true;
-            // filterCountLabel2
-            filterCountLabel2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            filterCountLabel2.Location = new Point(74, 868);
-            filterCountLabel2.Name = "filterCountLabel2";
-            filterCountLabel2.Size = new Size(237, 36);
-            filterCountLabel2.TabIndex = 11;
-            filterCountLabel2.Text = "کل: ۰    پیدا شده: ۰";
-            filterCountLabel2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // comparison2Group2
+            // 
+            comparison2Group2.Controls.Add(comparison2FirstComboBox2);
+            comparison2Group2.Controls.Add(comparison2OperatorComboBox2);
+            comparison2Group2.Controls.Add(comparison2SecondComboBox2);
+            comparison2Group2.Controls.Add(comparison2FirstOffsetTextBox2);
+            comparison2Group2.Controls.Add(comparison2SecondOffsetTextBox2);
+            comparison2Group2.Controls.Add(comparison2LabelFirst2);
+            comparison2Group2.Controls.Add(comparison2LabelSecond2);
+            comparison2Group2.Controls.Add(comparison2LabelPrice2);
+            comparison2Group2.Dock = DockStyle.Top;
+            comparison2Group2.Location = new Point(8, 120);
+            comparison2Group2.Name = "comparison2Group2";
+            comparison2Group2.Size = new Size(371, 112);
+            comparison2Group2.TabIndex = 17;
+            comparison2Group2.TabStop = false;
+            comparison2Group2.Text = "مقایسه قیمت:";
+            // 
+            // comparison2FirstComboBox2
+            // 
+            comparison2FirstComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2FirstComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparison2FirstComboBox2.Location = new Point(234, 28);
+            comparison2FirstComboBox2.Name = "comparison2FirstComboBox2";
+            comparison2FirstComboBox2.Size = new Size(75, 33);
+            comparison2FirstComboBox2.TabIndex = 0;
+            // 
+            // comparison2OperatorComboBox2
+            // 
+            comparison2OperatorComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2OperatorComboBox2.Items.AddRange(new object[] { "=", ">", "<" });
+            comparison2OperatorComboBox2.Location = new Point(5, 30);
+            comparison2OperatorComboBox2.Name = "comparison2OperatorComboBox2";
+            comparison2OperatorComboBox2.Size = new Size(65, 33);
+            comparison2OperatorComboBox2.TabIndex = 1;
+            // 
+            // comparison2SecondComboBox2
+            // 
+            comparison2SecondComboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2SecondComboBox2.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparison2SecondComboBox2.Location = new Point(234, 68);
+            comparison2SecondComboBox2.Name = "comparison2SecondComboBox2";
+            comparison2SecondComboBox2.Size = new Size(75, 33);
+            comparison2SecondComboBox2.TabIndex = 2;
+            // 
+            // comparison2FirstOffsetTextBox2
+            // 
+            comparison2FirstOffsetTextBox2.Location = new Point(164, 29);
+            comparison2FirstOffsetTextBox2.Name = "comparison2FirstOffsetTextBox2";
+            comparison2FirstOffsetTextBox2.Size = new Size(62, 31);
+            comparison2FirstOffsetTextBox2.TabIndex = 3;
+            comparison2FirstOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2SecondOffsetTextBox2
+            // 
+            comparison2SecondOffsetTextBox2.Location = new Point(164, 69);
+            comparison2SecondOffsetTextBox2.Name = "comparison2SecondOffsetTextBox2";
+            comparison2SecondOffsetTextBox2.Size = new Size(62, 31);
+            comparison2SecondOffsetTextBox2.TabIndex = 4;
+            comparison2SecondOffsetTextBox2.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2LabelFirst2
+            // 
+            comparison2LabelFirst2.AutoSize = true;
+            comparison2LabelFirst2.Location = new Point(72, 31);
+            comparison2LabelFirst2.Name = "comparison2LabelFirst2";
+            comparison2LabelFirst2.Size = new Size(80, 25);
+            comparison2LabelFirst2.TabIndex = 5;
+            comparison2LabelFirst2.Text = "کندل قبل";
+            // 
+            // comparison2LabelSecond2
+            // 
+            comparison2LabelSecond2.AutoSize = true;
+            comparison2LabelSecond2.Location = new Point(72, 71);
+            comparison2LabelSecond2.Name = "comparison2LabelSecond2";
+            comparison2LabelSecond2.Size = new Size(80, 25);
+            comparison2LabelSecond2.TabIndex = 6;
+            comparison2LabelSecond2.Text = "کندل قبل";
+            // 
+            // comparison2LabelPrice2
+            // 
+            comparison2LabelPrice2.AutoSize = true;
+            comparison2LabelPrice2.Location = new Point(309, 31);
+            comparison2LabelPrice2.Name = "comparison2LabelPrice2";
+            comparison2LabelPrice2.Size = new Size(55, 25);
+            comparison2LabelPrice2.TabIndex = 7;
+            comparison2LabelPrice2.Text = "قیمت";
+            // 
+            // comparison2Group1
+            // 
+            comparison2Group1.Controls.Add(comparison2FirstComboBox1);
+            comparison2Group1.Controls.Add(comparison2OperatorComboBox1);
+            comparison2Group1.Controls.Add(comparison2SecondComboBox1);
+            comparison2Group1.Controls.Add(comparison2FirstOffsetTextBox1);
+            comparison2Group1.Controls.Add(comparison2SecondOffsetTextBox1);
+            comparison2Group1.Controls.Add(comparison2LabelFirst1);
+            comparison2Group1.Controls.Add(comparison2LabelSecond1);
+            comparison2Group1.Controls.Add(comparison2LabelPrice1);
+            comparison2Group1.Dock = DockStyle.Top;
+            comparison2Group1.Location = new Point(8, 8);
+            comparison2Group1.Name = "comparison2Group1";
+            comparison2Group1.Size = new Size(371, 112);
+            comparison2Group1.TabIndex = 18;
+            comparison2Group1.TabStop = false;
+            comparison2Group1.Text = "مقایسه قیمت:";
+            // 
+            // comparison2FirstComboBox1
+            // 
+            comparison2FirstComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2FirstComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparison2FirstComboBox1.Location = new Point(234, 28);
+            comparison2FirstComboBox1.Name = "comparison2FirstComboBox1";
+            comparison2FirstComboBox1.Size = new Size(75, 33);
+            comparison2FirstComboBox1.TabIndex = 0;
+            // 
+            // comparison2OperatorComboBox1
+            // 
+            comparison2OperatorComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2OperatorComboBox1.Items.AddRange(new object[] { "=", ">", "<" });
+            comparison2OperatorComboBox1.Location = new Point(5, 30);
+            comparison2OperatorComboBox1.Name = "comparison2OperatorComboBox1";
+            comparison2OperatorComboBox1.Size = new Size(65, 33);
+            comparison2OperatorComboBox1.TabIndex = 1;
+            // 
+            // comparison2SecondComboBox1
+            // 
+            comparison2SecondComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comparison2SecondComboBox1.Items.AddRange(new object[] { "اولین", "بیشترین", "کمترین", "آخرین" });
+            comparison2SecondComboBox1.Location = new Point(234, 68);
+            comparison2SecondComboBox1.Name = "comparison2SecondComboBox1";
+            comparison2SecondComboBox1.Size = new Size(75, 33);
+            comparison2SecondComboBox1.TabIndex = 2;
+            // 
+            // comparison2FirstOffsetTextBox1
+            // 
+            comparison2FirstOffsetTextBox1.Location = new Point(164, 29);
+            comparison2FirstOffsetTextBox1.Name = "comparison2FirstOffsetTextBox1";
+            comparison2FirstOffsetTextBox1.Size = new Size(62, 31);
+            comparison2FirstOffsetTextBox1.TabIndex = 3;
+            comparison2FirstOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2SecondOffsetTextBox1
+            // 
+            comparison2SecondOffsetTextBox1.Location = new Point(164, 69);
+            comparison2SecondOffsetTextBox1.Name = "comparison2SecondOffsetTextBox1";
+            comparison2SecondOffsetTextBox1.Size = new Size(62, 31);
+            comparison2SecondOffsetTextBox1.TabIndex = 4;
+            comparison2SecondOffsetTextBox1.TextAlign = HorizontalAlignment.Center;
+            // 
+            // comparison2LabelFirst1
+            // 
+            comparison2LabelFirst1.AutoSize = true;
+            comparison2LabelFirst1.Location = new Point(72, 31);
+            comparison2LabelFirst1.Name = "comparison2LabelFirst1";
+            comparison2LabelFirst1.Size = new Size(80, 25);
+            comparison2LabelFirst1.TabIndex = 5;
+            comparison2LabelFirst1.Text = "کندل قبل";
+            // 
+            // comparison2LabelSecond1
+            // 
+            comparison2LabelSecond1.AutoSize = true;
+            comparison2LabelSecond1.Location = new Point(72, 71);
+            comparison2LabelSecond1.Name = "comparison2LabelSecond1";
+            comparison2LabelSecond1.Size = new Size(80, 25);
+            comparison2LabelSecond1.TabIndex = 6;
+            comparison2LabelSecond1.Text = "کندل قبل";
+            // 
+            // comparison2LabelPrice1
+            // 
+            comparison2LabelPrice1.AutoSize = true;
+            comparison2LabelPrice1.Location = new Point(309, 31);
+            comparison2LabelPrice1.Name = "comparison2LabelPrice1";
+            comparison2LabelPrice1.Size = new Size(55, 25);
+            comparison2LabelPrice1.TabIndex = 7;
+            comparison2LabelPrice1.Text = "قیمت";
+            // 
             // tabPageFilters3
+            // 
             tabPageFilters3.AutoScroll = true;
+            tabPageFilters3.Controls.Add(maFilterGroup3);
+            tabPageFilters3.Controls.Add(rsiFilterGroup3);
+            tabPageFilters3.Controls.Add(distanceFilterGroup3);
+            tabPageFilters3.Controls.Add(volumePriceFilterGroup3);
+            tabPageFilters3.Controls.Add(trendStrengthFilterGroup3);
+            tabPageFilters3.Controls.Add(filterApplyButton3);
+            tabPageFilters3.Controls.Add(clearFiltersButton3);
+            tabPageFilters3.Controls.Add(filterCountLabel3);
+            tabPageFilters3.Location = new Point(4, 34);
             tabPageFilters3.Name = "tabPageFilters3";
             tabPageFilters3.Padding = new Padding(8);
             tabPageFilters3.RightToLeft = RightToLeft.Yes;
             tabPageFilters3.Size = new Size(387, 911);
             tabPageFilters3.TabIndex = 4;
             tabPageFilters3.Text = "فیلترها 3";
+            // 
+            // maFilterGroup3
+            // 
+            maFilterGroup3.Controls.Add(maFilterEnabled3);
+            maFilterGroup3.Controls.Add(maPeriod1Label3);
+            maFilterGroup3.Controls.Add(maPeriod2Label3);
+            maFilterGroup3.Controls.Add(maFilterPeriod1_3);
+            maFilterGroup3.Controls.Add(maFilterPeriod2_3);
+            maFilterGroup3.Controls.Add(maFilterMode3);
+            maFilterGroup3.Controls.Add(maPriceMode3);
             maFilterGroup3.Location = new Point(8, 8);
             maFilterGroup3.Name = "maFilterGroup3";
             maFilterGroup3.RightToLeft = RightToLeft.Yes;
             maFilterGroup3.Size = new Size(365, 180);
+            maFilterGroup3.TabIndex = 0;
             maFilterGroup3.TabStop = false;
             maFilterGroup3.Text = "میانگین متحرک";
+            // 
+            // maFilterEnabled3
+            // 
             maFilterEnabled3.AutoSize = true;
-            maFilterEnabled3.Checked = false;
             maFilterEnabled3.Location = new Point(265, 20);
             maFilterEnabled3.Name = "maFilterEnabled3";
             maFilterEnabled3.RightToLeft = RightToLeft.Yes;
-            maFilterEnabled3.Size = new Size(65, 29);
+            maFilterEnabled3.Size = new Size(75, 29);
             maFilterEnabled3.TabIndex = 0;
             maFilterEnabled3.Text = "فعال";
             maFilterEnabled3.UseVisualStyleBackColor = true;
+            maFilterEnabled3.CheckedChanged += maFilterEnabled3_CheckedChanged;
+            // 
+            // maPeriod1Label3
+            // 
             maPeriod1Label3.Location = new Point(12, 48);
             maPeriod1Label3.Name = "maPeriod1Label3";
             maPeriod1Label3.Size = new Size(82, 24);
             maPeriod1Label3.TabIndex = 0;
             maPeriod1Label3.Text = "کوتاه";
             maPeriod1Label3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // maPeriod2Label3
+            // 
             maPeriod2Label3.Location = new Point(105, 48);
             maPeriod2Label3.Name = "maPeriod2Label3";
             maPeriod2Label3.Size = new Size(82, 24);
             maPeriod2Label3.TabIndex = 0;
             maPeriod2Label3.Text = "بلند";
             maPeriod2Label3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // maFilterPeriod1_3
+            // 
             maFilterPeriod1_3.Enabled = false;
             maFilterPeriod1_3.Location = new Point(12, 72);
             maFilterPeriod1_3.Name = "maFilterPeriod1_3";
-            maFilterPeriod1_3.Size = new Size(82, 25);
+            maFilterPeriod1_3.Size = new Size(82, 31);
             maFilterPeriod1_3.TabIndex = 0;
             maFilterPeriod1_3.Text = "20";
             maFilterPeriod1_3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // maFilterPeriod2_3
+            // 
             maFilterPeriod2_3.Enabled = false;
             maFilterPeriod2_3.Location = new Point(105, 72);
             maFilterPeriod2_3.Name = "maFilterPeriod2_3";
-            maFilterPeriod2_3.Size = new Size(82, 25);
+            maFilterPeriod2_3.Size = new Size(82, 31);
             maFilterPeriod2_3.TabIndex = 0;
             maFilterPeriod2_3.Text = "50";
             maFilterPeriod2_3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // maFilterMode3
+            // 
             maFilterMode3.DropDownStyle = ComboBoxStyle.DropDownList;
             maFilterMode3.Enabled = false;
             maFilterMode3.FormattingEnabled = true;
@@ -2172,9 +2688,11 @@ namespace Trade.It
             maFilterMode3.Location = new Point(12, 105);
             maFilterMode3.Name = "maFilterMode3";
             maFilterMode3.RightToLeft = RightToLeft.Yes;
-            maFilterMode3.Size = new Size(335, 25);
+            maFilterMode3.Size = new Size(335, 33);
             maFilterMode3.TabIndex = 0;
-            maFilterMode3.SelectedIndex = 0;
+            // 
+            // maPriceMode3
+            // 
             maPriceMode3.DropDownStyle = ComboBoxStyle.DropDownList;
             maPriceMode3.Enabled = false;
             maPriceMode3.FormattingEnabled = true;
@@ -2182,56 +2700,88 @@ namespace Trade.It
             maPriceMode3.Location = new Point(12, 137);
             maPriceMode3.Name = "maPriceMode3";
             maPriceMode3.RightToLeft = RightToLeft.Yes;
-            maPriceMode3.Size = new Size(335, 25);
+            maPriceMode3.Size = new Size(335, 33);
             maPriceMode3.TabIndex = 0;
-            maPriceMode3.SelectedIndex = 0;
-            maFilterGroup3.Controls.AddRange(new System.Windows.Forms.Control[] { maFilterEnabled3, maPeriod1Label3, maPeriod2Label3, maFilterPeriod1_3, maFilterPeriod2_3, maFilterMode3, maPriceMode3 });
+            // 
+            // rsiFilterGroup3
+            // 
+            rsiFilterGroup3.Controls.Add(rsiFilterEnabled3);
+            rsiFilterGroup3.Controls.Add(rsiPeriodLabel3);
+            rsiFilterGroup3.Controls.Add(rsiConditionLabel3);
+            rsiFilterGroup3.Controls.Add(rsiMinimumLabel3);
+            rsiFilterGroup3.Controls.Add(rsiMaximumLabel3);
+            rsiFilterGroup3.Controls.Add(rsiPeriod3);
+            rsiFilterGroup3.Controls.Add(rsiOperator3);
+            rsiFilterGroup3.Controls.Add(rsiMinimum3);
+            rsiFilterGroup3.Controls.Add(rsiMaximum3);
             rsiFilterGroup3.Location = new Point(8, 206);
             rsiFilterGroup3.Name = "rsiFilterGroup3";
             rsiFilterGroup3.RightToLeft = RightToLeft.Yes;
             rsiFilterGroup3.Size = new Size(365, 145);
+            rsiFilterGroup3.TabIndex = 1;
             rsiFilterGroup3.TabStop = false;
             rsiFilterGroup3.Text = "شاخص قدرت نسبی (RSI)";
+            // 
+            // rsiFilterEnabled3
+            // 
             rsiFilterEnabled3.AutoSize = true;
-            rsiFilterEnabled3.Checked = false;
             rsiFilterEnabled3.Location = new Point(265, 20);
             rsiFilterEnabled3.Name = "rsiFilterEnabled3";
             rsiFilterEnabled3.RightToLeft = RightToLeft.Yes;
-            rsiFilterEnabled3.Size = new Size(65, 29);
+            rsiFilterEnabled3.Size = new Size(75, 29);
             rsiFilterEnabled3.TabIndex = 0;
             rsiFilterEnabled3.Text = "فعال";
             rsiFilterEnabled3.UseVisualStyleBackColor = true;
+            rsiFilterEnabled3.CheckedChanged += rsiFilterEnabled3_CheckedChanged;
+            // 
+            // rsiPeriodLabel3
+            // 
             rsiPeriodLabel3.Location = new Point(12, 39);
             rsiPeriodLabel3.Name = "rsiPeriodLabel3";
             rsiPeriodLabel3.Size = new Size(65, 24);
             rsiPeriodLabel3.TabIndex = 0;
             rsiPeriodLabel3.Text = "دوره";
             rsiPeriodLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // rsiConditionLabel3
+            // 
             rsiConditionLabel3.Location = new Point(92, 39);
             rsiConditionLabel3.Name = "rsiConditionLabel3";
             rsiConditionLabel3.Size = new Size(112, 24);
             rsiConditionLabel3.TabIndex = 0;
             rsiConditionLabel3.Text = "شرط";
             rsiConditionLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // rsiMinimumLabel3
+            // 
             rsiMinimumLabel3.Location = new Point(218, 94);
             rsiMinimumLabel3.Name = "rsiMinimumLabel3";
             rsiMinimumLabel3.Size = new Size(55, 24);
             rsiMinimumLabel3.TabIndex = 0;
             rsiMinimumLabel3.Text = "حداقل";
             rsiMinimumLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // rsiMaximumLabel3
+            // 
             rsiMaximumLabel3.Location = new Point(290, 94);
             rsiMaximumLabel3.Name = "rsiMaximumLabel3";
             rsiMaximumLabel3.Size = new Size(55, 24);
             rsiMaximumLabel3.TabIndex = 0;
             rsiMaximumLabel3.Text = "حداکثر";
             rsiMaximumLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // rsiPeriod3
+            // 
             rsiPeriod3.Enabled = false;
             rsiPeriod3.Location = new Point(12, 66);
             rsiPeriod3.Name = "rsiPeriod3";
-            rsiPeriod3.Size = new Size(65, 25);
+            rsiPeriod3.Size = new Size(65, 31);
             rsiPeriod3.TabIndex = 0;
             rsiPeriod3.Text = "14";
             rsiPeriod3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // rsiOperator3
+            // 
             rsiOperator3.DropDownStyle = ComboBoxStyle.DropDownList;
             rsiOperator3.Enabled = false;
             rsiOperator3.FormattingEnabled = true;
@@ -2239,139 +2789,214 @@ namespace Trade.It
             rsiOperator3.Location = new Point(92, 66);
             rsiOperator3.Name = "rsiOperator3";
             rsiOperator3.RightToLeft = RightToLeft.Yes;
-            rsiOperator3.Size = new Size(112, 25);
+            rsiOperator3.Size = new Size(112, 33);
             rsiOperator3.TabIndex = 0;
-            rsiOperator3.SelectedIndex = 0;
+            // 
+            // rsiMinimum3
+            // 
             rsiMinimum3.Enabled = false;
             rsiMinimum3.Location = new Point(218, 66);
             rsiMinimum3.Name = "rsiMinimum3";
-            rsiMinimum3.Size = new Size(55, 25);
+            rsiMinimum3.Size = new Size(55, 31);
             rsiMinimum3.TabIndex = 0;
             rsiMinimum3.Text = "30";
             rsiMinimum3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // rsiMaximum3
+            // 
             rsiMaximum3.Enabled = false;
             rsiMaximum3.Location = new Point(290, 66);
             rsiMaximum3.Name = "rsiMaximum3";
-            rsiMaximum3.Size = new Size(55, 25);
+            rsiMaximum3.Size = new Size(55, 31);
             rsiMaximum3.TabIndex = 0;
             rsiMaximum3.Text = "70";
             rsiMaximum3.TextAlign = HorizontalAlignment.Center;
-            rsiFilterGroup3.Controls.AddRange(new System.Windows.Forms.Control[] { rsiFilterEnabled3, rsiPeriodLabel3, rsiConditionLabel3, rsiMinimumLabel3, rsiMaximumLabel3, rsiPeriod3, rsiOperator3, rsiMinimum3, rsiMaximum3 });
+            // 
+            // distanceFilterGroup3
+            // 
+            distanceFilterGroup3.Controls.Add(distanceFilterEnabled3);
+            distanceFilterGroup3.Controls.Add(distanceHighPeriodLabel3);
+            distanceFilterGroup3.Controls.Add(distanceHighMaxLabel3);
+            distanceFilterGroup3.Controls.Add(distanceLowPeriodLabel3);
+            distanceFilterGroup3.Controls.Add(distanceLowMinLabel3);
+            distanceFilterGroup3.Controls.Add(distanceHighPeriod3);
+            distanceFilterGroup3.Controls.Add(distanceHighMax3);
+            distanceFilterGroup3.Controls.Add(distanceLowPeriod3);
+            distanceFilterGroup3.Controls.Add(distanceLowMin3);
             distanceFilterGroup3.Location = new Point(8, 369);
             distanceFilterGroup3.Name = "distanceFilterGroup3";
             distanceFilterGroup3.RightToLeft = RightToLeft.Yes;
             distanceFilterGroup3.Size = new Size(365, 175);
+            distanceFilterGroup3.TabIndex = 2;
             distanceFilterGroup3.TabStop = false;
             distanceFilterGroup3.Text = "فاصله قیمت از سقف و کف اخیر";
+            // 
+            // distanceFilterEnabled3
+            // 
             distanceFilterEnabled3.AutoSize = true;
-            distanceFilterEnabled3.Checked = false;
             distanceFilterEnabled3.Location = new Point(265, 20);
             distanceFilterEnabled3.Name = "distanceFilterEnabled3";
             distanceFilterEnabled3.RightToLeft = RightToLeft.Yes;
-            distanceFilterEnabled3.Size = new Size(65, 29);
+            distanceFilterEnabled3.Size = new Size(75, 29);
             distanceFilterEnabled3.TabIndex = 0;
             distanceFilterEnabled3.Text = "فعال";
             distanceFilterEnabled3.UseVisualStyleBackColor = true;
+            distanceFilterEnabled3.CheckedChanged += distanceFilterEnabled3_CheckedChanged;
+            // 
+            // distanceHighPeriodLabel3
+            // 
             distanceHighPeriodLabel3.Location = new Point(12, 25);
             distanceHighPeriodLabel3.Name = "distanceHighPeriodLabel3";
             distanceHighPeriodLabel3.Size = new Size(150, 24);
             distanceHighPeriodLabel3.TabIndex = 0;
             distanceHighPeriodLabel3.Text = "دوره سقف";
             distanceHighPeriodLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // distanceHighMaxLabel3
+            // 
             distanceHighMaxLabel3.Location = new Point(190, 25);
             distanceHighMaxLabel3.Name = "distanceHighMaxLabel3";
             distanceHighMaxLabel3.Size = new Size(155, 24);
             distanceHighMaxLabel3.TabIndex = 0;
             distanceHighMaxLabel3.Text = "حداقل فاصله از سقف ٪";
             distanceHighMaxLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // distanceLowPeriodLabel3
+            // 
             distanceLowPeriodLabel3.Location = new Point(12, 90);
             distanceLowPeriodLabel3.Name = "distanceLowPeriodLabel3";
             distanceLowPeriodLabel3.Size = new Size(150, 24);
             distanceLowPeriodLabel3.TabIndex = 0;
             distanceLowPeriodLabel3.Text = "دوره کف";
             distanceLowPeriodLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // distanceLowMinLabel3
+            // 
             distanceLowMinLabel3.Location = new Point(190, 90);
             distanceLowMinLabel3.Name = "distanceLowMinLabel3";
             distanceLowMinLabel3.Size = new Size(155, 24);
             distanceLowMinLabel3.TabIndex = 0;
             distanceLowMinLabel3.Text = "حداکثر فاصله از کف ٪";
             distanceLowMinLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // distanceHighPeriod3
+            // 
             distanceHighPeriod3.Enabled = false;
             distanceHighPeriod3.Location = new Point(12, 58);
             distanceHighPeriod3.Name = "distanceHighPeriod3";
-            distanceHighPeriod3.Size = new Size(82, 25);
+            distanceHighPeriod3.Size = new Size(82, 31);
             distanceHighPeriod3.TabIndex = 0;
             distanceHighPeriod3.Text = "20";
             distanceHighPeriod3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // distanceHighMax3
+            // 
             distanceHighMax3.Enabled = false;
             distanceHighMax3.Location = new Point(190, 58);
             distanceHighMax3.Name = "distanceHighMax3";
-            distanceHighMax3.Size = new Size(82, 25);
+            distanceHighMax3.Size = new Size(82, 31);
             distanceHighMax3.TabIndex = 0;
             distanceHighMax3.Text = "8";
             distanceHighMax3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // distanceLowPeriod3
+            // 
             distanceLowPeriod3.Enabled = false;
             distanceLowPeriod3.Location = new Point(12, 119);
             distanceLowPeriod3.Name = "distanceLowPeriod3";
-            distanceLowPeriod3.Size = new Size(82, 25);
+            distanceLowPeriod3.Size = new Size(82, 31);
             distanceLowPeriod3.TabIndex = 0;
             distanceLowPeriod3.Text = "20";
             distanceLowPeriod3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // distanceLowMin3
+            // 
             distanceLowMin3.Enabled = false;
             distanceLowMin3.Location = new Point(190, 119);
             distanceLowMin3.Name = "distanceLowMin3";
-            distanceLowMin3.Size = new Size(82, 25);
+            distanceLowMin3.Size = new Size(82, 31);
             distanceLowMin3.TabIndex = 0;
             distanceLowMin3.Text = "2";
             distanceLowMin3.TextAlign = HorizontalAlignment.Center;
-            distanceFilterGroup3.Controls.AddRange(new System.Windows.Forms.Control[] { distanceFilterEnabled3, distanceHighPeriodLabel3, distanceHighMaxLabel3, distanceLowPeriodLabel3, distanceLowMinLabel3, distanceHighPeriod3, distanceHighMax3, distanceLowPeriod3, distanceLowMin3 });
+            // 
+            // volumePriceFilterGroup3
+            // 
+            volumePriceFilterGroup3.Controls.Add(volumePriceFilterEnabled3);
+            volumePriceFilterGroup3.Controls.Add(volumePeriodLabel3);
+            volumePriceFilterGroup3.Controls.Add(volumeRatioLabel3);
+            volumePriceFilterGroup3.Controls.Add(volumeDirectionLabel3);
+            volumePriceFilterGroup3.Controls.Add(volumePricePeriod3);
+            volumePriceFilterGroup3.Controls.Add(volumePriceRatio3);
+            volumePriceFilterGroup3.Controls.Add(volumePriceDirection3);
             volumePriceFilterGroup3.Location = new Point(8, 562);
             volumePriceFilterGroup3.Name = "volumePriceFilterGroup3";
             volumePriceFilterGroup3.RightToLeft = RightToLeft.Yes;
             volumePriceFilterGroup3.Size = new Size(365, 145);
+            volumePriceFilterGroup3.TabIndex = 3;
             volumePriceFilterGroup3.TabStop = false;
             volumePriceFilterGroup3.Text = "افزایش حجم همراه با تغییر قیمت";
+            // 
+            // volumePriceFilterEnabled3
+            // 
             volumePriceFilterEnabled3.AutoSize = true;
-            volumePriceFilterEnabled3.Checked = false;
             volumePriceFilterEnabled3.Location = new Point(265, 20);
             volumePriceFilterEnabled3.Name = "volumePriceFilterEnabled3";
             volumePriceFilterEnabled3.RightToLeft = RightToLeft.Yes;
-            volumePriceFilterEnabled3.Size = new Size(65, 29);
+            volumePriceFilterEnabled3.Size = new Size(75, 29);
             volumePriceFilterEnabled3.TabIndex = 0;
             volumePriceFilterEnabled3.Text = "فعال";
             volumePriceFilterEnabled3.UseVisualStyleBackColor = true;
+            volumePriceFilterEnabled3.CheckedChanged += volumePriceFilterEnabled3_CheckedChanged;
+            // 
+            // volumePeriodLabel3
+            // 
             volumePeriodLabel3.Location = new Point(12, 39);
             volumePeriodLabel3.Name = "volumePeriodLabel3";
             volumePeriodLabel3.Size = new Size(110, 24);
             volumePeriodLabel3.TabIndex = 0;
             volumePeriodLabel3.Text = "دوره میانگین حجم";
             volumePeriodLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // volumeRatioLabel3
+            // 
             volumeRatioLabel3.Location = new Point(132, 39);
             volumeRatioLabel3.Name = "volumeRatioLabel3";
             volumeRatioLabel3.Size = new Size(105, 24);
             volumeRatioLabel3.TabIndex = 0;
             volumeRatioLabel3.Text = "حداقل نسبت حجم";
             volumeRatioLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // volumeDirectionLabel3
+            // 
             volumeDirectionLabel3.Location = new Point(245, 39);
             volumeDirectionLabel3.Name = "volumeDirectionLabel3";
             volumeDirectionLabel3.Size = new Size(100, 24);
             volumeDirectionLabel3.TabIndex = 0;
             volumeDirectionLabel3.Text = "جهت تغییر قیمت";
             volumeDirectionLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // volumePricePeriod3
+            // 
             volumePricePeriod3.Enabled = false;
             volumePricePeriod3.Location = new Point(12, 66);
             volumePricePeriod3.Name = "volumePricePeriod3";
-            volumePricePeriod3.Size = new Size(82, 25);
+            volumePricePeriod3.Size = new Size(82, 31);
             volumePricePeriod3.TabIndex = 0;
             volumePricePeriod3.Text = "20";
             volumePricePeriod3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // volumePriceRatio3
+            // 
             volumePriceRatio3.Enabled = false;
             volumePriceRatio3.Location = new Point(132, 66);
             volumePriceRatio3.Name = "volumePriceRatio3";
-            volumePriceRatio3.Size = new Size(82, 25);
+            volumePriceRatio3.Size = new Size(82, 31);
             volumePriceRatio3.TabIndex = 0;
             volumePriceRatio3.Text = "1.3";
             volumePriceRatio3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // volumePriceDirection3
+            // 
             volumePriceDirection3.DropDownStyle = ComboBoxStyle.DropDownList;
             volumePriceDirection3.Enabled = false;
             volumePriceDirection3.FormattingEnabled = true;
@@ -2379,51 +3004,77 @@ namespace Trade.It
             volumePriceDirection3.Location = new Point(245, 66);
             volumePriceDirection3.Name = "volumePriceDirection3";
             volumePriceDirection3.RightToLeft = RightToLeft.Yes;
-            volumePriceDirection3.Size = new Size(100, 25);
+            volumePriceDirection3.Size = new Size(100, 33);
             volumePriceDirection3.TabIndex = 0;
-            volumePriceDirection3.SelectedIndex = 0;
-            volumePriceFilterGroup3.Controls.AddRange(new System.Windows.Forms.Control[] { volumePriceFilterEnabled3, volumePeriodLabel3, volumeRatioLabel3, volumeDirectionLabel3, volumePricePeriod3, volumePriceRatio3, volumePriceDirection3 });
+            // 
+            // trendStrengthFilterGroup3
+            // 
+            trendStrengthFilterGroup3.Controls.Add(trendStrengthFilterEnabled3);
+            trendStrengthFilterGroup3.Controls.Add(adxPeriodLabel3);
+            trendStrengthFilterGroup3.Controls.Add(adxMinimumLabel3);
+            trendStrengthFilterGroup3.Controls.Add(adxPeriod3);
+            trendStrengthFilterGroup3.Controls.Add(adxMinimum3);
+            trendStrengthFilterGroup3.Controls.Add(adxDirection3);
             trendStrengthFilterGroup3.Location = new Point(8, 725);
             trendStrengthFilterGroup3.Name = "trendStrengthFilterGroup3";
             trendStrengthFilterGroup3.RightToLeft = RightToLeft.Yes;
             trendStrengthFilterGroup3.Size = new Size(365, 140);
+            trendStrengthFilterGroup3.TabIndex = 4;
             trendStrengthFilterGroup3.TabStop = false;
             trendStrengthFilterGroup3.Text = "قدرت روند (ADX)";
+            // 
+            // trendStrengthFilterEnabled3
+            // 
             trendStrengthFilterEnabled3.AutoSize = true;
-            trendStrengthFilterEnabled3.Checked = false;
             trendStrengthFilterEnabled3.Location = new Point(265, 20);
             trendStrengthFilterEnabled3.Name = "trendStrengthFilterEnabled3";
             trendStrengthFilterEnabled3.RightToLeft = RightToLeft.Yes;
-            trendStrengthFilterEnabled3.Size = new Size(65, 29);
+            trendStrengthFilterEnabled3.Size = new Size(75, 29);
             trendStrengthFilterEnabled3.TabIndex = 0;
             trendStrengthFilterEnabled3.Text = "فعال";
             trendStrengthFilterEnabled3.UseVisualStyleBackColor = true;
+            trendStrengthFilterEnabled3.CheckedChanged += trendStrengthFilterEnabled3_CheckedChanged;
+            // 
+            // adxPeriodLabel3
+            // 
             adxPeriodLabel3.Location = new Point(12, 39);
             adxPeriodLabel3.Name = "adxPeriodLabel3";
             adxPeriodLabel3.Size = new Size(150, 24);
             adxPeriodLabel3.TabIndex = 0;
             adxPeriodLabel3.Text = "دوره ADX";
             adxPeriodLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // adxMinimumLabel3
+            // 
             adxMinimumLabel3.Location = new Point(190, 39);
             adxMinimumLabel3.Name = "adxMinimumLabel3";
             adxMinimumLabel3.Size = new Size(155, 24);
             adxMinimumLabel3.TabIndex = 0;
             adxMinimumLabel3.Text = "حداقل قدرت روند";
             adxMinimumLabel3.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // adxPeriod3
+            // 
             adxPeriod3.Enabled = false;
             adxPeriod3.Location = new Point(12, 66);
             adxPeriod3.Name = "adxPeriod3";
-            adxPeriod3.Size = new Size(82, 25);
+            adxPeriod3.Size = new Size(82, 31);
             adxPeriod3.TabIndex = 0;
             adxPeriod3.Text = "14";
             adxPeriod3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // adxMinimum3
+            // 
             adxMinimum3.Enabled = false;
             adxMinimum3.Location = new Point(190, 66);
             adxMinimum3.Name = "adxMinimum3";
-            adxMinimum3.Size = new Size(82, 25);
+            adxMinimum3.Size = new Size(82, 31);
             adxMinimum3.TabIndex = 0;
             adxMinimum3.Text = "20";
             adxMinimum3.TextAlign = HorizontalAlignment.Center;
+            // 
+            // adxDirection3
+            // 
             adxDirection3.DropDownStyle = ComboBoxStyle.DropDownList;
             adxDirection3.Enabled = false;
             adxDirection3.FormattingEnabled = true;
@@ -2431,10 +3082,11 @@ namespace Trade.It
             adxDirection3.Location = new Point(12, 100);
             adxDirection3.Name = "adxDirection3";
             adxDirection3.RightToLeft = RightToLeft.Yes;
-            adxDirection3.Size = new Size(333, 25);
+            adxDirection3.Size = new Size(333, 33);
             adxDirection3.TabIndex = 0;
-            adxDirection3.SelectedIndex = 0;
-            trendStrengthFilterGroup3.Controls.AddRange(new System.Windows.Forms.Control[] { trendStrengthFilterEnabled3, adxPeriodLabel3, adxMinimumLabel3, adxPeriod3, adxMinimum3, adxDirection3 });
+            // 
+            // filterApplyButton3
+            // 
             filterApplyButton3.Location = new Point(270, 882);
             filterApplyButton3.Name = "filterApplyButton3";
             filterApplyButton3.Size = new Size(100, 34);
@@ -2442,6 +3094,9 @@ namespace Trade.It
             filterApplyButton3.Text = "تایید";
             filterApplyButton3.UseVisualStyleBackColor = true;
             filterApplyButton3.Click += FilterApplyButton_Click;
+            // 
+            // clearFiltersButton3
+            // 
             clearFiltersButton3.Location = new Point(185, 882);
             clearFiltersButton3.Name = "clearFiltersButton3";
             clearFiltersButton3.Size = new Size(75, 34);
@@ -2449,17 +3104,14 @@ namespace Trade.It
             clearFiltersButton3.Text = "پاک";
             clearFiltersButton3.UseVisualStyleBackColor = true;
             clearFiltersButton3.Click += ClearFiltersButton_Click;
+            // 
+            // filterCountLabel3
+            // 
             filterCountLabel3.Location = new Point(8, 924);
             filterCountLabel3.Name = "filterCountLabel3";
             filterCountLabel3.Size = new Size(350, 25);
             filterCountLabel3.TabIndex = 2;
             filterCountLabel3.TextAlign = ContentAlignment.MiddleRight;
-            tabPageFilters3.Controls.AddRange(new System.Windows.Forms.Control[] { maFilterGroup3, rsiFilterGroup3, distanceFilterGroup3, volumePriceFilterGroup3, trendStrengthFilterGroup3, filterApplyButton3, clearFiltersButton3, filterCountLabel3 });
-            maFilterEnabled3.CheckedChanged += maFilterEnabled3_CheckedChanged;
-            rsiFilterEnabled3.CheckedChanged += rsiFilterEnabled3_CheckedChanged;
-            distanceFilterEnabled3.CheckedChanged += distanceFilterEnabled3_CheckedChanged;
-            volumePriceFilterEnabled3.CheckedChanged += volumePriceFilterEnabled3_CheckedChanged;
-            trendStrengthFilterEnabled3.CheckedChanged += trendStrengthFilterEnabled3_CheckedChanged;
             // 
             // marketsTabPage
             // 
@@ -2549,17 +3201,6 @@ namespace Trade.It
             chartTabControl.Size = new Size(1227, 859);
             chartTabControl.TabIndex = 0;
             // 
-            // navigationTabPage
-            // 
-            navigationTabPage.Location = new Point(4, 34);
-            navigationTabPage.Name = "navigationTabPage";
-            navigationTabPage.Padding = new Padding(3);
-            navigationTabPage.RightToLeft = RightToLeft.Yes;
-            navigationTabPage.Size = new Size(1219, 821);
-            navigationTabPage.TabIndex = 1;
-            navigationTabPage.Text = "پیمایش خودکار";
-            navigationTabPage.UseVisualStyleBackColor = true;
-            // 
             // chartTabPage
             // 
             chartTabPage.Controls.Add(chartInfoPanel);
@@ -2602,6 +3243,17 @@ namespace Trade.It
             chartPlaceholderLabel.TabIndex = 1;
             chartPlaceholderLabel.Text = "ناحیه رسم چارت";
             chartPlaceholderLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // navigationTabPage
+            // 
+            navigationTabPage.Location = new Point(4, 34);
+            navigationTabPage.Name = "navigationTabPage";
+            navigationTabPage.Padding = new Padding(3);
+            navigationTabPage.RightToLeft = RightToLeft.Yes;
+            navigationTabPage.Size = new Size(1219, 821);
+            navigationTabPage.TabIndex = 1;
+            navigationTabPage.Text = "پیمایش خودکار";
+            navigationTabPage.UseVisualStyleBackColor = true;
             // 
             // chartToolbarPanel
             // 
@@ -2696,27 +3348,21 @@ namespace Trade.It
             // 
             // closeAllChartsToolbarButton
             // 
+            closeAllChartsToolbarButton.Image = (Image)resources.GetObject("closeAllChartsToolbarButton.Image");
             closeAllChartsToolbarButton.Location = new Point(936, 7);
             closeAllChartsToolbarButton.Name = "closeAllChartsToolbarButton";
             closeAllChartsToolbarButton.Size = new Size(110, 34);
             closeAllChartsToolbarButton.TabIndex = 21;
-            closeAllChartsToolbarButton.AutoSize = false;
-            closeAllChartsToolbarButton.Text = string.Empty;
-            closeAllChartsToolbarButton.Image = ((Image)(resources.GetObject("closeAllChartsToolbarButton.Image")));
-            closeAllChartsToolbarButton.ImageAlign = ContentAlignment.MiddleCenter;
             closeAllChartsToolbarButton.UseVisualStyleBackColor = true;
             // 
             // saveAnalysisButton
             // 
+            saveAnalysisButton.Image = (Image)resources.GetObject("saveAnalysisButton.Image");
             saveAnalysisButton.Location = new Point(1116, 46);
             saveAnalysisButton.Name = "saveAnalysisButton";
             saveAnalysisButton.RightToLeft = RightToLeft.Yes;
             saveAnalysisButton.Size = new Size(88, 34);
             saveAnalysisButton.TabIndex = 11;
-            saveAnalysisButton.AutoSize = false;
-            saveAnalysisButton.Text = string.Empty;
-            saveAnalysisButton.Image = ((Image)(resources.GetObject("saveAnalysisButton.Image")));
-            saveAnalysisButton.ImageAlign = ContentAlignment.MiddleCenter;
             saveAnalysisButton.UseVisualStyleBackColor = true;
             // 
             // chartTypeComboBox
@@ -2730,427 +3376,132 @@ namespace Trade.It
             // 
             // gridButton
             // 
+            gridButton.Image = (Image)resources.GetObject("gridButton.Image");
             gridButton.Location = new Point(94, 7);
             gridButton.Name = "gridButton";
             gridButton.Size = new Size(60, 34);
             gridButton.TabIndex = 1;
-            gridButton.AutoSize = false;
-            gridButton.Text = string.Empty;
-            gridButton.Image = ((Image)(resources.GetObject("gridButton.Image")));
-            gridButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // crossButton
             // 
-            crossButton.AutoSize = true;
+            crossButton.Image = (Image)resources.GetObject("crossButton.Image");
             crossButton.Location = new Point(156, 7);
             crossButton.Name = "crossButton";
             crossButton.Size = new Size(66, 35);
             crossButton.TabIndex = 2;
-            crossButton.AutoSize = false;
-            crossButton.Text = string.Empty;
-            crossButton.Image = ((Image)(resources.GetObject("crossButton.Image")));
-            crossButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // indicatorPanelButton
             // 
+            indicatorPanelButton.Image = (Image)resources.GetObject("indicatorPanelButton.Image");
             indicatorPanelButton.Location = new Point(1049, 7);
             indicatorPanelButton.Name = "indicatorPanelButton";
             indicatorPanelButton.Size = new Size(88, 34);
             indicatorPanelButton.TabIndex = 3;
-            indicatorPanelButton.AutoSize = false;
-            indicatorPanelButton.Text = string.Empty;
-            indicatorPanelButton.Image = ((Image)(resources.GetObject("indicatorPanelButton.Image")));
-            indicatorPanelButton.ImageAlign = ContentAlignment.MiddleCenter;
             indicatorPanelButton.UseVisualStyleBackColor = true;
             // 
             // hideLowerPanelsButton
             // 
+            hideLowerPanelsButton.Font = new Font("Segoe UI Symbol", 15F, FontStyle.Bold);
             hideLowerPanelsButton.Location = new Point(1140, 7);
             hideLowerPanelsButton.Name = "hideLowerPanelsButton";
             hideLowerPanelsButton.Size = new Size(40, 34);
             hideLowerPanelsButton.TabIndex = 27;
-            hideLowerPanelsButton.AutoSize = false;
             hideLowerPanelsButton.Text = "↕";
-            hideLowerPanelsButton.Font = new Font("Segoe UI Symbol", 15F, FontStyle.Bold);
-            hideLowerPanelsButton.TextAlign = ContentAlignment.MiddleCenter;
             hideLowerPanelsButton.UseVisualStyleBackColor = true;
             // 
             // testModeButton
             // 
+            testModeButton.Image = (Image)resources.GetObject("testModeButton.Image");
             testModeButton.Location = new Point(1011, 46);
             testModeButton.Name = "testModeButton";
             testModeButton.Size = new Size(58, 34);
             testModeButton.TabIndex = 22;
-            testModeButton.AutoSize = false;
-            testModeButton.Text = string.Empty;
-            testModeButton.Image = ((Image)(resources.GetObject("testModeButton.Image")));
-            testModeButton.ImageAlign = ContentAlignment.MiddleCenter;
             testModeButton.UseVisualStyleBackColor = true;
             // 
             // testStepBackButton
             // 
+            testStepBackButton.Image = (Image)resources.GetObject("testStepBackButton.Image");
             testStepBackButton.Location = new Point(971, 46);
             testStepBackButton.Name = "testStepBackButton";
             testStepBackButton.Size = new Size(34, 34);
             testStepBackButton.TabIndex = 23;
-            testStepBackButton.AutoSize = false;
-            testStepBackButton.Text = string.Empty;
-            testStepBackButton.Image = ((Image)(resources.GetObject("testStepBackButton.Image")));
-            testStepBackButton.ImageAlign = ContentAlignment.MiddleCenter;
             testStepBackButton.UseVisualStyleBackColor = true;
             // 
             // testStepForwardButton
             // 
+            testStepForwardButton.Image = (Image)resources.GetObject("testStepForwardButton.Image");
             testStepForwardButton.Location = new Point(1075, 46);
             testStepForwardButton.Name = "testStepForwardButton";
             testStepForwardButton.Size = new Size(34, 34);
             testStepForwardButton.TabIndex = 24;
-            testStepForwardButton.AutoSize = false;
-            testStepForwardButton.Text = string.Empty;
-            testStepForwardButton.Image = ((Image)(resources.GetObject("testStepForwardButton.Image")));
-            testStepForwardButton.ImageAlign = ContentAlignment.MiddleCenter;
             testStepForwardButton.UseVisualStyleBackColor = true;
             // 
             // zoomInButton
             // 
+            zoomInButton.Image = (Image)resources.GetObject("zoomInButton.Image");
             zoomInButton.Location = new Point(233, 7);
             zoomInButton.Name = "zoomInButton";
             zoomInButton.Size = new Size(54, 34);
             zoomInButton.TabIndex = 4;
-            zoomInButton.AutoSize = false;
-            zoomInButton.Text = string.Empty;
-            zoomInButton.Image = ((Image)(resources.GetObject("zoomInButton.Image")));
-            zoomInButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // zoomOutButton
             // 
+            zoomOutButton.Image = (Image)resources.GetObject("zoomOutButton.Image");
             zoomOutButton.Location = new Point(288, 7);
             zoomOutButton.Name = "zoomOutButton";
             zoomOutButton.Size = new Size(54, 34);
             zoomOutButton.TabIndex = 5;
-            zoomOutButton.AutoSize = false;
-            zoomOutButton.Text = string.Empty;
-            zoomOutButton.Image = ((Image)(resources.GetObject("zoomOutButton.Image")));
-            zoomOutButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // resetChartButton
             // 
-            resetChartButton.AutoSize = true;
+            resetChartButton.Image = (Image)resources.GetObject("resetChartButton.Image");
             resetChartButton.Location = new Point(343, 7);
             resetChartButton.Name = "resetChartButton";
             resetChartButton.Size = new Size(86, 35);
             resetChartButton.TabIndex = 6;
-            resetChartButton.AutoSize = false;
-            resetChartButton.Text = string.Empty;
-            resetChartButton.Image = ((Image)(resources.GetObject("resetChartButton.Image")));
-            resetChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // hideChartButton
             // 
+            hideChartButton.Image = (Image)resources.GetObject("hideChartButton.Image");
             hideChartButton.Location = new Point(829, 7);
             hideChartButton.Name = "hideChartButton";
             hideChartButton.Size = new Size(104, 34);
             hideChartButton.TabIndex = 6;
-            hideChartButton.AutoSize = false;
-            hideChartButton.Text = string.Empty;
-            hideChartButton.Image = ((Image)(resources.GetObject("hideChartButton.Image")));
-            hideChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             hideChartButton.Click += hideChartButton_Click;
             // 
             // hideToolsButton
             // 
+            hideToolsButton.Image = (Image)resources.GetObject("hideToolsButton.Image");
             hideToolsButton.Location = new Point(707, 7);
             hideToolsButton.Name = "hideToolsButton";
             hideToolsButton.Size = new Size(120, 34);
             hideToolsButton.TabIndex = 7;
-            hideToolsButton.AutoSize = false;
-            hideToolsButton.Text = string.Empty;
-            hideToolsButton.Image = ((Image)(resources.GetObject("hideToolsButton.Image")));
-            hideToolsButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // printChartButton
             // 
+            printChartButton.Image = (Image)resources.GetObject("printChartButton.Image");
             printChartButton.Location = new Point(441, 7);
             printChartButton.Name = "printChartButton";
             printChartButton.Size = new Size(70, 34);
             printChartButton.TabIndex = 8;
-            printChartButton.AutoSize = false;
-            printChartButton.Text = string.Empty;
-            printChartButton.Image = ((Image)(resources.GetObject("printChartButton.Image")));
-            printChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // snapshotChartButton
             // 
+            snapshotChartButton.Image = (Image)resources.GetObject("snapshotChartButton.Image");
             snapshotChartButton.Location = new Point(514, 7);
             snapshotChartButton.Name = "snapshotChartButton";
             snapshotChartButton.Size = new Size(79, 34);
             snapshotChartButton.TabIndex = 9;
-            snapshotChartButton.AutoSize = false;
-            snapshotChartButton.Text = string.Empty;
-            snapshotChartButton.Image = ((Image)(resources.GetObject("snapshotChartButton.Image")));
-            snapshotChartButton.ImageAlign = ContentAlignment.MiddleCenter;
             // 
             // fullScreenChartButton
             // 
             fullScreenChartButton.Active = false;
             fullScreenChartButton.FlatStyle = FlatStyle.Flat;
+            fullScreenChartButton.Image = (Image)resources.GetObject("fullScreenChartButton.Image");
             fullScreenChartButton.Location = new Point(595, 7);
             fullScreenChartButton.Name = "fullScreenChartButton";
             fullScreenChartButton.Size = new Size(106, 34);
             fullScreenChartButton.TabIndex = 10;
-            fullScreenChartButton.AutoSize = false;
-            fullScreenChartButton.Text = string.Empty;
-            fullScreenChartButton.Image = ((Image)(resources.GetObject("fullScreenChartButton.Image")));
-            fullScreenChartButton.ImageAlign = ContentAlignment.MiddleCenter;
-            // 
-            // drawTrendLineButton
-            // 
-            drawTrendLineButton.Location = new Point(8, 46);
-            drawTrendLineButton.Name = "drawTrendLineButton";
-            drawTrendLineButton.RightToLeft = RightToLeft.Yes;
-            drawTrendLineButton.Size = new Size(82, 34);
-            drawTrendLineButton.TabIndex = 20;
-            drawTrendLineButton.AutoSize = false;
-            drawTrendLineButton.Text = string.Empty;
-            drawTrendLineButton.Image = ((Image)(resources.GetObject("drawTrendLineButton.Image")));
-            drawTrendLineButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawTrendLineButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTrendChannelButton
-            // 
-            drawTrendChannelButton.Location = new Point(91, 46);
-            drawTrendChannelButton.Name = "drawTrendChannelButton";
-            drawTrendChannelButton.RightToLeft = RightToLeft.Yes;
-            drawTrendChannelButton.Size = new Size(68, 34);
-            drawTrendChannelButton.TabIndex = 20;
-            drawTrendChannelButton.AutoSize = false;
-            drawTrendChannelButton.Text = string.Empty;
-            drawTrendChannelButton.Image = ((Image)(resources.GetObject("drawTrendChannelButton.Image")));
-            drawTrendChannelButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawTrendChannelButton.UseVisualStyleBackColor = true;
-            // 
-            // drawHorizontalDoubleButton
-            // 
-            drawHorizontalDoubleButton.Location = new Point(159, 46);
-            drawHorizontalDoubleButton.Name = "drawHorizontalDoubleButton";
-            drawHorizontalDoubleButton.RightToLeft = RightToLeft.Yes;
-            drawHorizontalDoubleButton.Size = new Size(69, 34);
-            drawHorizontalDoubleButton.TabIndex = 20;
-            drawHorizontalDoubleButton.AutoSize = false;
-            drawHorizontalDoubleButton.Text = string.Empty;
-            drawHorizontalDoubleButton.Image = ((Image)(resources.GetObject("drawHorizontalDoubleButton.Image")));
-            drawHorizontalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawHorizontalDoubleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawVerticalDoubleButton
-            // 
-            drawVerticalDoubleButton.Location = new Point(227, 46);
-            drawVerticalDoubleButton.Name = "drawVerticalDoubleButton";
-            drawVerticalDoubleButton.RightToLeft = RightToLeft.Yes;
-            drawVerticalDoubleButton.Size = new Size(74, 34);
-            drawVerticalDoubleButton.TabIndex = 20;
-            drawVerticalDoubleButton.AutoSize = false;
-            drawVerticalDoubleButton.Text = string.Empty;
-            drawVerticalDoubleButton.Image = ((Image)(resources.GetObject("drawVerticalDoubleButton.Image")));
-            drawVerticalDoubleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawVerticalDoubleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawHorizontalRayButton
-            // 
-            drawHorizontalRayButton.Location = new Point(300, 46);
-            drawHorizontalRayButton.Name = "drawHorizontalRayButton";
-            drawHorizontalRayButton.RightToLeft = RightToLeft.Yes;
-            drawHorizontalRayButton.Size = new Size(76, 34);
-            drawHorizontalRayButton.TabIndex = 20;
-            drawHorizontalRayButton.AutoSize = false;
-            drawHorizontalRayButton.Text = string.Empty;
-            drawHorizontalRayButton.Image = ((Image)(resources.GetObject("drawHorizontalRayButton.Image")));
-            drawHorizontalRayButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawHorizontalRayButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTrendLineArrowButton
-            // 
-            drawTrendLineArrowButton.Location = new Point(375, 46);
-            drawTrendLineArrowButton.Name = "drawTrendLineArrowButton";
-            drawTrendLineArrowButton.RightToLeft = RightToLeft.Yes;
-            drawTrendLineArrowButton.Size = new Size(81, 34);
-            drawTrendLineArrowButton.TabIndex = 20;
-            drawTrendLineArrowButton.AutoSize = false;
-            drawTrendLineArrowButton.Text = string.Empty;
-            drawTrendLineArrowButton.Image = ((Image)(resources.GetObject("drawTrendLineArrowButton.Image")));
-            drawTrendLineArrowButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawTrendLineArrowButton.UseVisualStyleBackColor = true;
-            // 
-            // drawRectangleButton (shape brush)
-            // 
-            drawRectangleButton.Location = new Point(456, 46);
-            drawRectangleButton.Name = "drawRectangleButton";
-            drawRectangleButton.RightToLeft = RightToLeft.Yes;
-            drawRectangleButton.Size = new Size(90, 34);
-            drawRectangleButton.TabIndex = 20;
-            drawRectangleButton.AutoSize = false;
-            drawRectangleButton.Text = "🖌";
-            drawRectangleButton.Font = new Font("Segoe UI Emoji", 8F, FontStyle.Regular, GraphicsUnit.Point);
-            drawRectangleButton.Image = null;
-            drawRectangleButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawRectangleButton.ContextMenuStrip = drawingShapesMenu;
-            drawRectangleButton.UseVisualStyleBackColor = true;
-            // 
-            // drawingShapesMenu
-            // 
-            drawingShapesMenu.RightToLeft = RightToLeft.Yes;
-            drawingShapesMenu.Items.AddRange(new ToolStripItem[] {
-                rectangleShapeMenuItem,
-                ellipseShapeMenuItem,
-                triangleShapeMenuItem,
-                bezierShapeMenuItem,
-                questionMarkShapeMenuItem,
-                exclamationMarkShapeMenuItem,
-                new ToolStripSeparator(),
-                longPositionShapeMenuItem,
-                shortPositionShapeMenuItem,
-                hollowArrowShapeMenuItem,
-                new ToolStripSeparator(),
-                pathShapeMenuItem
-            });
-            // 
-            // rectangleShapeMenuItem
-            // 
-            rectangleShapeMenuItem.Name = "rectangleShapeMenuItem";
-            rectangleShapeMenuItem.Size = new Size(180, 24);
-            rectangleShapeMenuItem.Text = "مستطیل";
-            // 
-            // ellipseShapeMenuItem
-            // 
-            ellipseShapeMenuItem.Name = "ellipseShapeMenuItem";
-            ellipseShapeMenuItem.Size = new Size(180, 24);
-            ellipseShapeMenuItem.Text = "دایره / بیضی";
-            // 
-            // triangleShapeMenuItem
-            // 
-            triangleShapeMenuItem.Name = "triangleShapeMenuItem";
-            triangleShapeMenuItem.Size = new Size(180, 24);
-            triangleShapeMenuItem.Text = "مثلث";
-            // 
-            // pathShapeMenuItem
-            // 
-            pathShapeMenuItem.Name = "pathShapeMenuItem";
-            pathShapeMenuItem.Size = new Size(180, 24);
-            pathShapeMenuItem.Text = "مسیر چندنقطه‌ای";
-            // 
-            // bezierShapeMenuItem
-            // 
-            bezierShapeMenuItem.Name = "bezierShapeMenuItem";
-            bezierShapeMenuItem.Size = new Size(180, 24);
-            bezierShapeMenuItem.Text = "منحنی بزیه";
-            // 
-            // questionMarkShapeMenuItem
-            // 
-            questionMarkShapeMenuItem.Name = "questionMarkShapeMenuItem";
-            questionMarkShapeMenuItem.Size = new Size(180, 24);
-            questionMarkShapeMenuItem.Text = "علامت سؤال (؟)";
-            // 
-            // exclamationMarkShapeMenuItem
-            // 
-            exclamationMarkShapeMenuItem.Name = "exclamationMarkShapeMenuItem";
-            exclamationMarkShapeMenuItem.Size = new Size(180, 24);
-            exclamationMarkShapeMenuItem.Text = "علامت تعجب (!)";
-            // 
-            // longPositionShapeMenuItem
-            // 
-            longPositionShapeMenuItem.Name = "longPositionShapeMenuItem";
-            longPositionShapeMenuItem.Size = new Size(180, 24);
-            longPositionShapeMenuItem.Text = "موقعیت خرید (Long)";
-            // 
-            // shortPositionShapeMenuItem
-            // 
-            shortPositionShapeMenuItem.Name = "shortPositionShapeMenuItem";
-            shortPositionShapeMenuItem.Size = new Size(180, 24);
-            shortPositionShapeMenuItem.Text = "موقعیت فروش (Short)";
-            // 
-            // hollowArrowShapeMenuItem
-            // 
-            hollowArrowShapeMenuItem.Name = "hollowArrowShapeMenuItem";
-            hollowArrowShapeMenuItem.Size = new Size(180, 24);
-            hollowArrowShapeMenuItem.Text = "فلش توخالی (قابل تعیین جهت)";
-            // 
-            // drawFibonacciButton
-            // 
-            drawFibonacciButton.Location = new Point(610, 46);
-            drawFibonacciButton.Name = "drawFibonacciButton";
-            drawFibonacciButton.RightToLeft = RightToLeft.Yes;
-            drawFibonacciButton.Size = new Size(95, 34);
-            drawFibonacciButton.TabIndex = 20;
-            drawFibonacciButton.AutoSize = false;
-            drawFibonacciButton.Text = string.Empty;
-            drawFibonacciButton.Image = ((Image)(resources.GetObject("drawFibonacciButton.Image")));
-            drawFibonacciButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawFibonacciButton.UseVisualStyleBackColor = true;
-            // 
-            // drawTextButton
-            // 
-            drawTextButton.Location = new Point(801, 46);
-            drawTextButton.Name = "drawTextButton";
-            drawTextButton.RightToLeft = RightToLeft.Yes;
-            drawTextButton.Size = new Size(82, 34);
-            drawTextButton.TabIndex = 20;
-            drawTextButton.AutoSize = false;
-            drawTextButton.Text = string.Empty;
-            drawTextButton.Image = ((Image)(resources.GetObject("drawTextButton.Image")));
-            drawTextButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawTextButton.UseVisualStyleBackColor = true;
-            // 
-            // drawPitchforkButton
-            // 
-            drawPitchforkButton.Location = new Point(545, 46);
-            drawPitchforkButton.Name = "drawPitchforkButton";
-            drawPitchforkButton.RightToLeft = RightToLeft.Yes;
-            drawPitchforkButton.Size = new Size(65, 34);
-            drawPitchforkButton.TabIndex = 20;
-            drawPitchforkButton.AutoSize = false;
-            drawPitchforkButton.Text = string.Empty;
-            drawPitchforkButton.Image = ((Image)(resources.GetObject("drawPitchforkButton.Image")));
-            drawPitchforkButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawPitchforkButton.UseVisualStyleBackColor = true;
-            // 
-            // drawFibonacciExtensionButton
-            // 
-            drawFibonacciExtensionButton.Location = new Point(705, 46);
-            drawFibonacciExtensionButton.Name = "drawFibonacciExtensionButton";
-            drawFibonacciExtensionButton.RightToLeft = RightToLeft.Yes;
-            drawFibonacciExtensionButton.Size = new Size(96, 34);
-            drawFibonacciExtensionButton.TabIndex = 20;
-            drawFibonacciExtensionButton.AutoSize = false;
-            drawFibonacciExtensionButton.Text = string.Empty;
-            drawFibonacciExtensionButton.Image = ((Image)(resources.GetObject("drawFibonacciExtensionButton.Image")));
-            drawFibonacciExtensionButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawFibonacciExtensionButton.UseVisualStyleBackColor = true;
-            // 
-            // drawMeasureButton
-            // 
-            drawMeasureButton.Location = new Point(883, 46);
-            drawMeasureButton.Name = "drawMeasureButton";
-            drawMeasureButton.RightToLeft = RightToLeft.Yes;
-            drawMeasureButton.Size = new Size(82, 34);
-            drawMeasureButton.TabIndex = 20;
-            drawMeasureButton.AutoSize = false;
-            drawMeasureButton.Text = string.Empty;
-            drawMeasureButton.Image = ((Image)(resources.GetObject("drawMeasureButton.Image")));
-            drawMeasureButton.ImageAlign = ContentAlignment.MiddleCenter;
-            drawMeasureButton.UseVisualStyleBackColor = true;
-
-            chartToolsToolTip.SetToolTip(drawTrendLineButton, "رسم خط روند");
-            chartToolsToolTip.SetToolTip(drawTrendChannelButton, "رسم کانال روند");
-            chartToolsToolTip.SetToolTip(drawHorizontalDoubleButton, "رسم خط افقی");
-            chartToolsToolTip.SetToolTip(drawVerticalDoubleButton, "رسم خط عمودی");
-            chartToolsToolTip.SetToolTip(drawHorizontalRayButton, "رسم نیم‌خط افقی");
-            chartToolsToolTip.SetToolTip(drawTrendLineArrowButton, "رسم خط روند فلش‌دار");
-            chartToolsToolTip.SetToolTip(drawRectangleButton, "انتخاب شکل یا مسیر برای رسم روی نمودار");
-            chartToolsToolTip.SetToolTip(drawFibonacciButton, "رسم سطوح فیبوناچی اصلاحی");
-            chartToolsToolTip.SetToolTip(drawTextButton, "افزودن متن به نمودار");
-            chartToolsToolTip.SetToolTip(drawPitchforkButton, "رسم چنگال اندروز");
-            chartToolsToolTip.SetToolTip(drawFibonacciExtensionButton, "رسم سطوح فیبوناچی گسترشی");
-            chartToolsToolTip.SetToolTip(drawMeasureButton, "اندازه‌گیری تغییرات قیمت و زمان");
             // 
             // marketTypeComboBox
             // 
@@ -3239,8 +3590,10 @@ namespace Trade.It
             Text = "Trade.It";
             WindowState = FormWindowState.Maximized;
             Load += MainForm_Load;
+            drawingShapesMenu.ResumeLayout(false);
             mainMenuStrip.ResumeLayout(false);
             mainMenuStrip.PerformLayout();
+            indicatorContextMenuStrip.ResumeLayout(false);
             mainSplitContainer.Panel1.ResumeLayout(false);
             mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
@@ -3253,22 +3606,6 @@ namespace Trade.It
             ((System.ComponentModel.ISupportInitialize)stocksDataGridView).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
-            comparison2Group1.ResumeLayout(false);
-            comparison2Group1.PerformLayout();
-            comparison2Group2.ResumeLayout(false);
-            comparison2Group2.PerformLayout();
-            comparison2Group3.ResumeLayout(false);
-            comparison2Group3.PerformLayout();
-            comparisonRangeGroup1.ResumeLayout(false);
-            comparisonRangeGroup1.PerformLayout();
-            comparisonRangeGroup2.ResumeLayout(false);
-            comparisonRangeGroup2.PerformLayout();
-            comparisonRangeGroup3.ResumeLayout(false);
-            comparisonRangeGroup3.PerformLayout();
-            comparisonRangeGroup4.ResumeLayout(false);
-            comparisonRangeGroup4.PerformLayout();
-            tabPageFilters2.ResumeLayout(false);
-            tabPageFilters2.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ohlcChangeFilterGroup.ResumeLayout(false);
@@ -3284,6 +3621,22 @@ namespace Trade.It
             nameFilterGroup.ResumeLayout(false);
             nameFilterGroup.PerformLayout();
             tradingStatusGroup.ResumeLayout(false);
+            tabPageFilters2.ResumeLayout(false);
+            comparisonRangeGroup4.ResumeLayout(false);
+            comparisonRangeGroup4.PerformLayout();
+            comparisonRangeGroup3.ResumeLayout(false);
+            comparisonRangeGroup3.PerformLayout();
+            comparisonRangeGroup2.ResumeLayout(false);
+            comparisonRangeGroup2.PerformLayout();
+            comparisonRangeGroup1.ResumeLayout(false);
+            comparisonRangeGroup1.PerformLayout();
+            comparison2Group3.ResumeLayout(false);
+            comparison2Group3.PerformLayout();
+            comparison2Group2.ResumeLayout(false);
+            comparison2Group2.PerformLayout();
+            comparison2Group1.ResumeLayout(false);
+            comparison2Group1.PerformLayout();
+            tabPageFilters3.ResumeLayout(false);
             maFilterGroup3.ResumeLayout(false);
             maFilterGroup3.PerformLayout();
             rsiFilterGroup3.ResumeLayout(false);
@@ -3294,16 +3647,12 @@ namespace Trade.It
             volumePriceFilterGroup3.PerformLayout();
             trendStrengthFilterGroup3.ResumeLayout(false);
             trendStrengthFilterGroup3.PerformLayout();
-            tabPageFilters3.ResumeLayout(false);
-            tabPageFilters3.PerformLayout();
             marketsTabPage.ResumeLayout(false);
-            marketsTabPage.PerformLayout();
             chartPanel.ResumeLayout(false);
             chartTabControl.ResumeLayout(false);
             chartTabPage.ResumeLayout(false);
             chartInfoPanel.ResumeLayout(false);
             chartToolbarPanel.ResumeLayout(false);
-            chartToolbarPanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
