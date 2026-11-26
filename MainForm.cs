@@ -3272,8 +3272,6 @@ namespace Trade.It
             ChartToolbarIcons.FitImages(chartToolbarPanel);
         }
 
-    }
-
         private void codalButton_Click(object? sender, EventArgs e)
         {
             var row = stocksDataGridView.CurrentRow;
