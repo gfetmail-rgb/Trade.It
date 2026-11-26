@@ -3238,7 +3238,7 @@ namespace Trade.It
         private void RegisterChartToolbarIcons()
         {
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            ChartToolbarIcons.Register(closeAllChartsToolbarButton, closeAllChartsToolbarButton.Image!, (Image)resources.GetObject("closeAllChartsToolbarButton.ActiveImage")!);
+            ChartToolbarIcons.Register(closeAllChartsToolbarButton, closeAllChartsToolbarButton.Image!, closeAllChartsToolbarButton.Image!);
             ChartToolbarIcons.Register(saveAnalysisButton, saveAnalysisButton.Image!, (Image)resources.GetObject("saveAnalysisButton.ActiveImage")!, (Image)resources.GetObject("saveAnalysisButton.SuccessImage")!);
             ChartToolbarIcons.Register(gridButton, gridButton.Image!, (Image)resources.GetObject("gridButton.ActiveImage")!);
             ChartToolbarIcons.Register(crossButton, crossButton.Image!, (Image)resources.GetObject("crossButton.ActiveImage")!);
