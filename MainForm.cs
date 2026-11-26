@@ -3273,4 +3273,19 @@ namespace Trade.It
         }
 
     }
+
+        private void codalButton_Click(object? sender, EventArgs e)
+        {
+            var row = stocksDataGridView.CurrentRow;
+            if (row == null || row.IsNewRow) return;
+            var symbol = Convert.ToString(row.Cells[symbolColumn.Index].Value)?.Trim();
+            if (string.IsNullOrWhiteSpace(symbol)) return;
+            var url = "https://codal.ir/ReportList.aspx?search&Symbol=" + Uri.EscapeDataString(symbol);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+    }
 }
