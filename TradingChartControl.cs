@@ -1580,7 +1580,7 @@ namespace Trade.It
                 selectedIndicatorIndex = -1;
                 if (activeDrawingTool == ChartDrawingTool.Path && drawingInProgress)
                 {
-                    CompletePathDrawing();
+                    CompletePathDrawing(e.Location);
                     return;
                 }
                 CancelDrawing();
@@ -1887,11 +1887,19 @@ namespace Trade.It
 
         private readonly List<Point> drawingPathPoints = new();
 
-        private void CompletePathDrawing()
+        private void CompletePathDrawing(Point completionPoint)
         {
+            var plot = GetPlotRectangle();
+            // نقطهٔ راست‌کلیک، انتهای واقعی مسیر است؛ حتی اگر از آخرین
+            // نقطه‌ای که با کلیک چپ ثبت شده فاصله داشته باشد.
+            if (plot.Contains(completionPoint) &&
+                (drawingPathPoints.Count == 0 || drawingPathPoints[^1] != completionPoint))
+            {
+                drawingPathPoints.Add(completionPoint);
+            }
+
             if (drawingPathPoints.Count >= 2)
             {
-                var plot = GetPlotRectangle();
                 var visibleCountForDrawing = GetDrawingLayoutCount();
                 var visible = points.Skip(firstIndex).Take(visibleCountForDrawing).ToList();
                 if (visible.Count > 0)
